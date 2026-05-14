@@ -161,7 +161,8 @@
       font-size: 1rem;
       font-weight: 400;
       color: #99c9ff;
-      border: 1px solid #2a2a3a;
+      border-right: 1px solid #2a2a3a;
+      border-bottom: 1px solid #2a2a3a;
       cursor: pointer;
       background: #1b1b32;
       user-select: none;
@@ -379,7 +380,7 @@
       --text-bright:  #0a0a23;
     }
     html.light body { color: var(--text-subtle); }
-    html.light .cell { background: #ffffff; color: #2c5f8a; border-color: #d8d8e8; }
+    html.light .cell { background: #ffffff; color: #2c5f8a; border-right-color: #d8d8e8; border-bottom-color: #d8d8e8; }
     html.light .cell.in-two  { background: #eeeef8; }
     html.light .cell.in-four { background: #e4e4f4; }
     html.light .cell.given { color: #0a0a23; }
@@ -641,8 +642,8 @@ function applyBorders(cell, r, c) {
     if (lc === 2 || lc === 5 || lc === 8) thickRight  = true;
     if (lr === 2 || lr === 5 || lr === 8) thickBottom = true;
   }
-  if (thickRight)  cell.style.borderRight  = THICK;
-  if (thickBottom) cell.style.borderBottom = THICK;
+  if (thickRight  && c < COLS - 1) cell.style.borderRight  = THICK;
+  if (thickBottom && r < ROWS - 1) cell.style.borderBottom = THICK;
 }
 
 // ── Puzzle generator ──
