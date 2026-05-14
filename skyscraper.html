@@ -386,6 +386,13 @@
       .sky-left-clues .clue-cell, .sky-right-clues .clue-cell { width: 28px; height: 36px; }
       .top-bar { gap: 8px; }
       .top-bar .badge { display: none; }
+      body { padding-top: 20px; padding-bottom: 36px; padding-left: 12px; padding-right: 12px; }
+      .top-bar { margin-bottom: 20px; }
+      .top-bar h1 { font-size: 0.95rem; }
+      .num-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+      .numpad-row { gap: 5px; }
+      .numpad { gap: 5px; margin-bottom: 16px; }
+      .reveal-btn, .new-btn { width: 100%; box-sizing: border-box; }
     }
     @media (max-width: 375px) {
       body { padding-left: 8px; padding-right: 8px; }
@@ -408,7 +415,7 @@
   <h1>Skyscraper Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
 </div>
 </div>
 
@@ -491,7 +498,7 @@
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '\u263d\uFE0E' : '\u2600\uFE0E';
+    btn.textContent = t === 'light' ? '\u263d' : '\u263c';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');

@@ -410,7 +410,7 @@
     .game-left  { display: flex; flex-direction: column; align-items: center; }
     .game-right { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
     @media (max-width: 1050px) {
-      .game-layout { flex-direction: column; align-items: center; gap: 0; }
+      .game-layout { flex-direction: column; align-items: center; gap: 0; width: 100%; }
       .game-right { width: 100%; }
     }
 
@@ -441,7 +441,7 @@
   <h1>Super Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
 </div>
 </div>
 
@@ -523,7 +523,7 @@
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '\u263d\uFE0E' : '\u2600\uFE0E';
+    btn.textContent = t === 'light' ? '\u263d' : '\u263c';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
