@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUDOKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* freeCodeCamp Command-line Chic — semantic token layer */
+    :root {
+      --bg-primary:   #0a0a23; /* gray-90 */
+      --bg-secondary: #1b1b32; /* gray-85 */
+      --bg-surface:   #2a2a40; /* gray-80 */
+      --border:       #3b3b4f; /* gray-75 */
+      --text-muted:   #858591; /* gray-45 */
+      --text-subtle:  #d0d0d5; /* gray-15 */
+      --text-primary: #f5f6f7; /* gray-05 */
+      --text-bright:  #ffffff; /* gray-00 */
+      --accent-purple: #dbb8ff;
+      --accent-yellow: #f1be32;
+      --accent-blue:   #99c9ff;
+      --accent-green:  #acd157;
+      --accent-red:    #ffadad;
+      --focus-ring:    #198eee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 18px; }
+
+    body {
+      font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+      background: var(--bg-primary);
+      color: var(--text-subtle);
+      min-height: 100vh;
+      padding: 40px 24px 60px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 10px;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px)  { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent-blue);
+      background: var(--bg-surface);
+    }
+
+    .card:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.3;
+    }
+
+    .badge {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* fCC accent colors — semantic: green=success, yellow=warning, red=danger, purple=emphasis */
+    .badge-beginner     { background: #0d2a0d; color: var(--accent-green); border: 1px solid #2a4a1a; }
+    .badge-easy         { background: #0d2a0d; color: var(--accent-green); border: 1px solid #2a4a1a; }
+    .badge-intermediate { background: #2a2000; color: var(--accent-yellow); border: 1px solid #4a3800; }
+    .badge-advanced     { background: #2a0d0d; color: var(--accent-red);  border: 1px solid #4a1a1a; }
+    .badge-variable     { background: #1a0d2a; color: var(--accent-purple); border: 1px solid #3a1a4a; }
+
+    .preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 120px;
+      overflow: hidden;
+    }
+
+    /* ── Shared grid shell ── */
+    .sg {
+      display: grid;
+      border: 2px solid var(--border);
+      line-height: 0;
+    }
+
+    .sg span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      border: 0.5px solid #2a2a3a;
+    }
+
+    /* 4×4 */
+    .g4 { grid-template-columns: repeat(4, 16px); grid-template-rows: repeat(4, 16px); }
+    .g4 span { width: 16px; height: 16px; font-size: 8px; }
+
+    /* 9×9 */
+    .g9 { grid-template-columns: repeat(9, 13px); grid-template-rows: repeat(9, 13px); }
+    .g9 span { width: 13px; height: 13px; font-size: 7px; }
+
+    /* thick borders for 3×3 boxes */
+    .g9 span.rt  { border-right: 2px solid var(--border); }
+    .g9 span.rb  { border-bottom: 2px solid var(--border); }
+    .g9 span.rtr { border-right: 2px solid var(--border); border-bottom: 2px solid var(--border); }
+
+    /* colored cells — using fCC surface tones */
+    .cell-filled  { background: #2a2a50; }
+    .cell-dark    { background: #1f1f3a; }
+    .cell-shaded  { background: #2a2414; }
+    .cell-even    { background: #0d2a1a; }
+    .cell-cage1   { background: #1a1a30; border: 1px dashed var(--accent-purple) !important; }
+    .cell-cage2   { background: #0d2a18; border: 1px dashed var(--accent-green) !important; }
+    .cell-cage3   { background: #251a1a; border: 1px dashed #c07050 !important; }
+    .cell-cage4   { background: #252018; border: 1px dashed #90b040 !important; }
+    .cell-arrow   { background: #2a1010; }
+    .cell-window  { background: #1a1030; }
+    .cell-color-r { background: #3a1a1a; }
+    .cell-color-g { background: #1a3a1a; }
+    .cell-color-b { background: #1a1a3a; }
+    .cell-color-y { background: #3a3a1a; }
+    .cell-color-t { background: #1a2a3a; }
+    .cell-color-p { background: #2a1a3a; }
+    .cell-color-o { background: #3a2a1a; }
+    .cell-color-m { background: #1a3a2a; }
+    .cell-color-s { background: #2a2a2a; }
+    .cell-asterisk  { background: #2a1540; }
+    .cell-argyle1   { background: #28200c; }
+    .cell-argyle2   { background: #0c1e2c; }
+    .cell-argyle-x  { background: #201820; }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Light theme ── */
+    .theme-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .theme-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    html.light {
+      --bg-primary:   #f5f5f0;
+      --bg-secondary: #ebebE6;
+      --bg-surface:   #e0e0db;
+      --border:       #c8c8d8;
+      --text-muted:   #6a6a7a;
+      --text-subtle:  #2a2a40;
+      --text-primary: #1a1a2e;
+      --text-bright:  #0a0a23;
+    }
+    html.light body { color: var(--text-subtle); }
+    html.light .sg span { background: #ffffff; border-color: #c8c8d8; }
+    html.light .sg { border-color: #8080a8; }
+    html.light .g9 span.rt  { border-right-color:  #8080a8; }
+    html.light .g9 span.rb  { border-bottom-color: #8080a8; }
+    html.light .g9 span.rtr { border-right-color:  #8080a8; border-bottom-color: #8080a8; }
+    html.light .sg span.cell-filled  { background: #d0d0d0; }
+    html.light .sg span.cell-dark    { background: #e0e0e0; }
+    html.light .sg span.cell-shaded  { background: #e8ddb8; }
+    html.light .sg span.cell-even    { background: #b8ddb8; }
+    html.light .sg span.cell-cage1   { background: #d8d8f8; border-color: #9870d0 !important; }
+    html.light .sg span.cell-cage2   { background: #b8e8cc; border-color: #48a860 !important; }
+    html.light .sg span.cell-cage3   { background: #f8ddd8; border-color: #c06040 !important; }
+    html.light .sg span.cell-cage4   { background: #e8f0c0; border-color: #70a020 !important; }
+    html.light .sg span.cell-arrow   { background: #e8c8c8; }
+    html.light .sg span.cell-window  { background: #d8c8f0; }
+    html.light .sg span.cell-color-r { background: #f0c8c8; }
+    html.light .sg span.cell-color-g { background: #c8f0c8; }
+    html.light .sg span.cell-color-b { background: #c8d4f8; }
+    html.light .sg span.cell-color-y { background: #f0f0b8; }
+    html.light .sg span.cell-color-t { background: #c0e4f0; }
+    html.light .sg span.cell-color-p { background: #e0c8f8; }
+    html.light .sg span.cell-color-o { background: #f8e0c0; }
+    html.light .sg span.cell-color-m { background: #c0f0dc; }
+    html.light .sg span.cell-color-s { background: #d8d8d8; }
+    html.light .sg span.cell-asterisk  { background: #dcc8f4; }
+    html.light .sg span.cell-argyle1   { background: #f0e4b8; }
+    html.light .sg span.cell-argyle2   { background: #b8d4f0; }
+    html.light .sg span.cell-argyle-x  { background: #d4ccdc; }
+    html.light .badge-beginner     { background: #d4ead4; color: #2a6a2a; border-color: #90c090; }
+    html.light .badge-easy         { background: #d4ead4; color: #2a6a2a; border-color: #90c090; }
+    html.light .badge-intermediate { background: #f0e8c0; color: #7a6000; border-color: #c8b040; }
+    html.light .badge-advanced     { background: #f4d4d4; color: #8a2020; border-color: #d09090; }
+    html.light .badge-variable     { background: #e0d4f4; color: #602a90; border-color: #b090d8; }
+
+    /* ── Search ── */
+    .search-wrap {
+      max-width: 1100px;
+      margin: 0 auto 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #search {
+      width: 100%;
+      max-width: 340px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #search::placeholder { color: var(--text-muted); }
+    #search:focus { border-color: var(--accent-blue); }
+
+    #no-results {
+      display: none;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 40px 0;
+      grid-column: 1 / -1;
+    }
+  </style>
+  <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
+</head>
+<body>
+
+<header>
+  <h1>SUDOKU</h1>
+  <p>20 sudoku variants for every skill level</p>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme" style="margin:14px auto 0;">&#9728;</button>
+</header>
+
+<div class="search-wrap">
+  <input type="search" id="search" placeholder="Search puzzles…" autocomplete="off" spellcheck="false" aria-label="Search puzzles" />
+</div>
+
+<div class="grid">
+
+  <!-- 1. Classic Sudoku -->
+  <div class="card" onclick="location.href='classic-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='classic-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Classic Sudoku</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="classic"></div>
+    </div>
+    <p class="card-desc">The standard 9x9 puzzle. Fill every row, column, and 3x3 box with digits 1-9.</p>
+  </div>
+
+  <!-- 2. Killer Sudoku -->
+  <div class="card" onclick="location.href='killer-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='killer-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Killer Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="killer"></div>
+    </div>
+    <p class="card-desc">Cells are grouped into dashed cages with target sums. Digits in each cage must add up to the total without repeating.</p>
+  </div>
+
+  <!-- 3. Samurai Sudoku -->
+  <div class="card" onclick="location.href='samurai-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='samurai-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Samurai Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="samurai" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.</p>
+  </div>
+
+  <!-- 4. Sudoku X -->
+  <div class="card" onclick="location.href='sudoku-x.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sudoku-x.html'">
+    <div class="card-header">
+      <span class="card-name">Sudoku X</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="SUDOKUx"></div>
+    </div>
+    <p class="card-desc">The two main diagonals must also each contain digits 1-9 without repeats.</p>
+  </div>
+
+  <!-- 5. Jigsaw Sudoku -->
+  <div class="card" onclick="location.href='jigsaw-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='jigsaw-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Jigsaw Sudoku</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="jigsaw"></div>
+    </div>
+    <p class="card-desc">Nine irregular, interlocking regions replace the standard 3x3 boxes. Same rules, new shapes.</p>
+  </div>
+
+  <!-- 6. Windoku -->
+  <div class="card" onclick="location.href='windoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='windoku.html'">
+    <div class="card-header">
+      <span class="card-name">Windoku</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="windoku"></div>
+    </div>
+    <p class="card-desc">Four extra shaded 3x3 window regions must each contain digits 1-9, on top of the normal rules.</p>
+  </div>
+
+  <!-- 7. Arrow Sudoku -->
+  <div class="card" onclick="location.href='arrow-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='arrow-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Arrow Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="arrow" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Digits along an arrow sum to the circled number at the arrow base.</p>
+  </div>
+
+  <!-- 8. Even-Odd Sudoku -->
+  <div class="card" onclick="location.href='even-odd-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='even-odd-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Even-Odd Sudoku</span>
+      <span class="badge badge-beginner">Beginner</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="evenodd"></div>
+    </div>
+    <p class="card-desc">Shaded cells must contain even digits and unshaded cells must contain odd digits.</p>
+  </div>
+
+  <!-- 9. Consecutive Sudoku -->
+  <div class="card" onclick="location.href='consecutive-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='consecutive-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Consecutive Sudoku</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <canvas id="consecutive" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">White dots mark adjacent pairs that differ by exactly 1. Pairs without a dot must not be consecutive.</p>
+  </div>
+
+  <!-- 10. Greater-Than Sudoku -->
+  <div class="card" onclick="location.href='greater-than-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='greater-than-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Greater-Than Sudoku</span>
+      <span class="badge badge-intermediate">Intermediate</span>
+    </div>
+    <div class="preview">
+      <canvas id="greaterthan" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Triangles between every pair of adjacent cells point toward the smaller of the two digits.</p>
+  </div>
+
+  <!-- 11. Skyscraper Sudoku -->
+  <div class="card" onclick="location.href='skyscraper.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='skyscraper.html'">
+    <div class="card-header">
+      <span class="card-name">Skyscraper Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="skyscraper" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Clues around the edge tell you how many buildings are visible looking into each row or column.</p>
+  </div>
+
+  <!-- 12. Mini Sudoku 4x4 -->
+  <div class="card" onclick="location.href='mini-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='mini-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Mini Sudoku 4x4</span>
+      <span class="badge badge-beginner">Beginner</span>
+    </div>
+    <div class="preview">
+      <div class="sg g4" id="mini"></div>
+    </div>
+    <p class="card-desc">4x4 grid with numbers 1-4. The simplest form of sudoku, great for beginners.</p>
+  </div>
+
+  <!-- 13. Super Sudoku -->
+  <div class="card" onclick="location.href='super-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='super-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Super Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <div class="sg" style="grid-template-columns:repeat(16,7px);grid-template-rows:repeat(16,7px);border:2px solid #3b3b4f;" id="super"></div>
+    </div>
+    <p class="card-desc">16x16 grid using digits 1-9 and letters A-G. Every row, column, and 4x4 box must be complete.</p>
+  </div>
+
+  <!-- 14. Wordoku -->
+  <div class="card" onclick="location.href='wordoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='wordoku.html'">
+    <div class="card-header">
+      <span class="card-name">Wordoku</span>
+      <span class="badge badge-beginner">Beginner</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="wordoku"></div>
+    </div>
+    <p class="card-desc">Letters replace digits using a hidden nine-letter word. Find it reading across one row or down one column.</p>
+  </div>
+
+  <!-- 15. Color Sudoku -->
+  <div class="card" onclick="location.href='color-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='color-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Color Sudoku</span>
+      <span class="badge badge-beginner">Beginner</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="colorku"></div>
+    </div>
+    <p class="card-desc">Nine colors replace the digits 1-9. Each color must appear exactly once in every row, column, and 3x3 box.</p>
+  </div>
+
+  <!-- 16. Asterisk Sudoku -->
+  <div class="card" onclick="location.href='asterisk-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='asterisk-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Asterisk Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="asterisk-preview"></div>
+    </div>
+    <p class="card-desc">Nine cells forming a star must contain each digit 1–9, on top of standard sudoku rules.</p>
+  </div>
+
+  <!-- 17. Argyle Sudoku -->
+  <div class="card" onclick="location.href='argyle-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='argyle-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Argyle Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <div class="sg g9" id="argyle-preview"></div>
+    </div>
+    <p class="card-desc">Six argyle diagonals — each must contain distinct digits alongside standard row, column, and box rules.</p>
+  </div>
+
+  <!-- 18. Butterfly Sudoku -->
+  <div class="card" onclick="location.href='butterfly-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='butterfly-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Butterfly Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="butterfly-preview" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Four overlapping 9×9 grids sharing a central region, forming a butterfly shape on a 12×12 board.</p>
+  </div>
+
+  <!-- 19. Chain Sudoku -->
+  <div class="card" onclick="location.href='chain-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='chain-sudoku.html'">
+    <div class="card-header">
+      <span class="card-name">Chain Sudoku</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="chain-preview" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">Colored chains of cells must each contain a set of consecutive digits, in any order.</p>
+  </div>
+
+  <!-- 20. Sujiken -->
+  <div class="card" onclick="location.href='sujiken.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sujiken.html'">
+    <div class="card-header">
+      <span class="card-name">Sujiken</span>
+      <span class="badge badge-advanced">Advanced</span>
+    </div>
+    <div class="preview">
+      <canvas id="sujiken-preview" width="117" height="117" style="display:block;"></canvas>
+    </div>
+    <p class="card-desc">A triangular sudoku — rows, columns, and the main diagonal must each contain distinct digits.</p>
+  </div>
+
+  <p id="no-results">No puzzles match your search.</p>
+</div><!-- /grid -->
+
+  <script>
+// ── Theme toggle ──
+(function() {
+  const btn = document.getElementById('theme-btn');
+  function applyTheme(t) {
+    document.documentElement.classList.toggle('light', t === 'light');
+    btn.textContent = t === 'light' ? '\u263d' : '\u2600';
+    btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+    drawThemeDependent();
+  }
+  applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
+  btn.addEventListener('click', function() {
+    const next = document.documentElement.classList.contains('light') ? 'dark' : 'light';
+    localStorage.setItem('sudoku-theme', next);
+    applyTheme(next);
+  });
+})();
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function makeGrid9(id, cellFn) {
+  const el = document.getElementById(id);
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const sp = document.createElement('span');
+      // thick box borders
+      if (c === 2 || c === 5) sp.classList.add('rt');
+      if (r === 2 || r === 5) sp.classList.add('rb');
+      cellFn(sp, r, c);
+      el.appendChild(sp);
+    }
+  }
+}
+
+// ── 1. Mini Sudoku (4×4) ─────────────────────────────────────────────
+{
+  const nums = [
+    [1,'',3,''],[3,'',1,2],['',2,'',3],[2,3,'',1]
+  ];
+  const el = document.getElementById('mini');
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+    const sp = document.createElement('span');
+    if (c === 1) sp.style.borderRight = '2px solid #666';
+    if (r === 1) sp.style.borderBottom = '2px solid #666';
+    const v = nums[r][c];
+    if (v !== '') { sp.textContent = v; sp.classList.add('cell-filled'); }
+    el.appendChild(sp);
+  }
+}
+
+
+// ── 2. Classic Sudoku ────────────────────────────────────────────────────────────
+{
+  const givens = new Set([1,3,7,11,15,20,22,25,29,33,38,43,47,51,56,59,61,65,69,74,78]);
+  makeGrid9('classic', (sp, r, c) => {
+    const idx = r * 9 + c;
+    if (givens.has(idx)) {
+      const digits = [5,3,0,6,0,0,0,9,8,0,7,0,1,9,5,0,0,0,0,0,0,9,8,0,6,0,0,8,0,0,0,6,0,0,0,3,4,0,0,8,0,3,0,0,1,7,0,0,0,2,0,0,0,6,0,6,0,0,0,0,2,8,0,0,0,0,4,1,9,0,0,5,0,0,0,0,8,0,0,7,9];
+      sp.textContent = digits[idx] || '';
+      if (digits[idx]) sp.classList.add('cell-filled');
+    }
+  });
+}
+
+// ── 3. Super Sudoku (16×16 preview) ────────────────────────────────────────────────
+{
+  const el = document.getElementById('super');
+  for (let r = 0; r < 16; r++) for (let c = 0; c < 16; c++) {
+    const sp = document.createElement('span');
+    sp.style.width = '7px'; sp.style.height = '7px'; sp.style.fontSize = '0';
+    sp.style.display = 'flex'; sp.style.border = '0.5px solid #2a2a3a';
+    if (c === 3 || c === 7 || c === 11) sp.style.borderRight  = '2px solid #3b3b4f';
+    if (r === 3 || r === 7 || r === 11) sp.style.borderBottom = '2px solid #3b3b4f';
+    if (Math.random() < 0.38) sp.classList.add('cell-filled');
+    el.appendChild(sp);
+  }
+}
+
+// ── 4. Jigsaw Sudoku ───────────────────────────────────────────────────────────────
+function drawJigsaw() {
+  const regions = [
+    0,0,0,1,1,2,2,2,2,
+    0,0,1,1,2,2,3,3,2,
+    0,0,1,4,4,3,3,3,3,
+    0,4,4,4,5,5,3,6,6,
+    4,4,7,5,5,5,6,6,6,
+    7,7,7,5,8,5,6,6,6,
+    7,7,8,8,8,5,5,6,6,
+    7,8,8,8,8,8,5,6,6,
+    7,7,8,8,8,8,8,8,6,
+  ];
+  const isLight = document.documentElement.classList.contains('light');
+  const palette = isLight
+    ? ['#d8d8ec','#d8ead8','#ead8d8','#d8d8ea','#eaead8','#d8eaea','#ead8ea','#eae0d0','#d0d8ea']
+    : ['#1e2030','#1e2820','#2a1e1e','#1e1e2a','#2a2a1e','#1e2a2a','#2a1e2a','#2a2014','#14202a'];
+  const textColor = isLight ? '#2a2a40' : '#ccc';
+  document.getElementById('jigsaw').innerHTML = '';
+  makeGrid9('jigsaw', (sp, r, c) => {
+    sp.style.background = palette[regions[r*9+c]];
+    if (Math.random() < 0.18) { sp.textContent = Math.ceil(Math.random()*9); sp.style.color = textColor; }
+  });
+}
+
+// ── 5. Samurai Sudoku (canvas) ───────────────────────────────────────────────────────────
+function drawSamurai() {
+  const cv = document.getElementById('samurai');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  const s = 44;
+  const isLight = document.documentElement.classList.contains('light');
+  const gridFill    = isLight ? '#f5f5f0' : '#1b1b32';
+  const borderColor = isLight ? '#3060c0' : '#99c9ff';
+  const innerColor  = isLight ? '#c8c8d8' : '#333';
+  const centers = [[s/2,s/2],[W-s/2,s/2],[W/2,H/2],[s/2,H-s/2],[W-s/2,H-s/2]];
+  centers.forEach(([cx, cy]) => {
+    const x = cx - s/2, y = cy - s/2;
+    ctx.fillStyle = gridFill;
+    ctx.fillRect(x, y, s, s);
+    ctx.strokeStyle = innerColor; ctx.lineWidth = 0.5;
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath(); ctx.moveTo(x + i*s/3, y); ctx.lineTo(x + i*s/3, y+s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y + i*s/3); ctx.lineTo(x+s, y + i*s/3); ctx.stroke();
+    }
+    ctx.strokeStyle = borderColor; ctx.lineWidth = 1.5;
+    ctx.strokeRect(x, y, s, s);
+  });
+}
+
+// ── 6. Windoku ───────────────────────────────────────────────────────────────────
+{
+  const windowCells = new Set();
+  [[1,1],[1,5],[5,1],[5,5]].forEach(([wr,wc]) => {
+    for (let dr=0;dr<3;dr++) for (let dc=0;dc<3;dc++) windowCells.add((wr+dr)*9+(wc+dc));
+  });
+  makeGrid9('windoku', (sp, r, c) => {
+    if (windowCells.has(r*9+c)) sp.classList.add('cell-window');
+  });
+}
+
+// ── 7. Sudoku X ───────────────────────────────────────────────────────────────────────
+{
+  const diag = new Set();
+  for (let i=0;i<9;i++) { diag.add(i*9+i); diag.add(i*9+(8-i)); }
+  const givens9 = new Set([2,6,12,19,21,40,59,61,68,74,78]);
+  makeGrid9('SUDOKUx', (sp, r, c) => {
+    const idx = r*9+c;
+    if (diag.has(idx)) sp.classList.add('cell-shaded');
+    if (givens9.has(idx)) { sp.textContent = [3,7,5,4,2,9,8,6,1][idx%9] || ''; }
+  });
+}
+
+// ── 8. Skyscraper (canvas) ─────────────────────────────────────────────────────────────────
+function drawSkyscraper() {
+  const cv = document.getElementById('skyscraper');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const off = 18, cell = (cv.width - off*2) / 6;
+  const isLight = document.documentElement.classList.contains('light');
+  const gridColor = isLight ? '#c8c8d8' : '#444';
+  const clueColor = isLight ? '#3060c0' : '#99c9ff';
+  const fillColor = isLight ? '#c8d4f0' : '#2a3050';
+  ctx.strokeStyle = gridColor; ctx.lineWidth = 0.7;
+  for (let r=0;r<6;r++) for (let c=0;c<6;c++) {
+    ctx.strokeRect(off + c*cell, off + r*cell, cell, cell);
+  }
+  ctx.fillStyle = clueColor; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  [2,3,1,4,2,3].forEach((v,i) => ctx.fillText(v, off+i*cell+cell/2, off/2));
+  [3,2,4,1,3,2].forEach((v,i) => ctx.fillText(v, off+i*cell+cell/2, off+6*cell+off/2));
+  [2,4,1,3,2,3].forEach((v,i) => ctx.fillText(v, off/2, off+i*cell+cell/2));
+  [3,1,4,2,3,2].forEach((v,i) => ctx.fillText(v, off+6*cell+off/2, off+i*cell+cell/2));
+  ctx.fillStyle = fillColor;
+  [[0,0],[1,3],[2,5],[3,2],[4,1],[5,4]].forEach(([r,c]) => {
+    ctx.fillRect(off+c*cell+1, off+r*cell+1, cell-2, cell-2);
+  });
+}
+
+// ── 9. Killer Sudoku ─────────────────────────────────────────────────────────────────
+{
+  const cage1 = new Set([0,1,9,10]);
+  const cage2 = new Set([2,3,4]);
+  const cage3 = new Set([11,12,20,21]);
+  const cage4 = new Set([18,19,27]);
+  makeGrid9('killer', (sp, r, c) => {
+    const i = r*9+c;
+    if (cage1.has(i)) sp.classList.add('cell-cage1');
+    else if (cage2.has(i)) sp.classList.add('cell-cage2');
+    else if (cage3.has(i)) sp.classList.add('cell-cage3');
+    else if (cage4.has(i)) sp.classList.add('cell-cage4');
+    if (i===0)  { sp.textContent='15'; sp.style.fontSize='5px'; sp.style.alignItems='flex-start'; sp.style.justifyContent='flex-start'; sp.style.color='#aaa'; }
+    if (i===2)  { sp.textContent='12'; sp.style.fontSize='5px'; sp.style.alignItems='flex-start'; sp.style.justifyContent='flex-start'; sp.style.color='#aaa'; }
+    if (i===11) { sp.textContent='8';  sp.style.fontSize='5px'; sp.style.alignItems='flex-start'; sp.style.justifyContent='flex-start'; sp.style.color='#aaa'; }
+    if (i===18) { sp.textContent='11'; sp.style.fontSize='5px'; sp.style.alignItems='flex-start'; sp.style.justifyContent='flex-start'; sp.style.color='#aaa'; }
+  });
+}
+
+// ── 10. Even-Odd Sudoku ──────────────────────────────────────────────────────────────
+{
+  makeGrid9('evenodd', (sp, r, c) => {
+    if ((r+c) % 2 === 0) sp.classList.add('cell-even');
+    if (Math.random() < 0.15) sp.textContent = ((r+c)%2===0 ? [2,4,6,8] : [1,3,5,7,9])[Math.floor(Math.random()*4)];
+  });
+}
+
+// ── 11. Consecutive Sudoku (canvas) ────────────────────────────────────────────────────────
+{
+  const cv = document.getElementById('consecutive');
+  const ctx = cv.getContext('2d');
+  const n = 5, cell = cv.width / (n+1), off = cell/2;
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 0.7;
+  for (let r=0;r<n;r++) for (let c=0;c<n;c++) ctx.strokeRect(off+c*cell, off+r*cell, cell, cell);
+  ctx.fillStyle = '#c9b23a'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  [[0,0,'h'],[1,2,'v'],[2,1,'h'],[3,3,'v'],[1,0,'v']].forEach(([r,c,dir]) => {
+    if (dir==='h') ctx.fillText('\u25aa', off+c*cell+cell, off+r*cell+cell/2);
+    else            ctx.fillText('\u25aa', off+c*cell+cell/2, off+r*cell+cell);
+  });
+  ctx.fillStyle='#ccc'; ctx.font='bold 10px sans-serif';
+  [[0,0,3],[0,2,4],[1,1,5],[2,3,2],[3,0,6],[4,4,1]].forEach(([r,c,v])=>ctx.fillText(v, off+c*cell+cell/2, off+r*cell+cell/2));
+}
+
+// ── 12. Greater-Than Sudoku (canvas) ───────────────────────────────────────────────────────
+{
+  const cv = document.getElementById('greaterthan');
+  const ctx = cv.getContext('2d');
+  const n=5, cell=cv.width/(n+1), off=cell/2;
+  ctx.strokeStyle='#333'; ctx.lineWidth=0.7;
+  for (let r=0;r<n;r++) for (let c=0;c<n;c++) ctx.strokeRect(off+c*cell, off+r*cell, cell, cell);
+  ctx.fillStyle='#e08860'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  [[0,0,'h','<'],[1,1,'v','>'],[2,0,'h','>'],[0,2,'v','<'],[3,3,'h','<'],[2,3,'v','>']].forEach(([r,c,dir,s]) => {
+    if (dir==='h') ctx.fillText(s, off+c*cell+cell, off+r*cell+cell/2);
+    else            ctx.fillText(s, off+c*cell+cell/2, off+r*cell+cell);
+  });
+}
+
+// ── 13. Arrow Sudoku (canvas) ────────────────────────────────────────────────────────────────
+function drawArrow() {
+  const cv = document.getElementById('arrow');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const n=5, cell=cv.width/(n+1), off=cell/2;
+  const isLight = document.documentElement.classList.contains('light');
+  const gridColor  = isLight ? '#c8c8d8' : '#333';
+  const arrowColor = isLight ? '#5050b0' : '#8888dd';
+  const circleFill = isLight ? '#f0f0fc' : '#1a1d27';
+  const numColor   = isLight ? '#1a1a2e' : '#ddd';
+  const digitColor = isLight ? '#4a4a5a' : '#888';
+  ctx.strokeStyle=gridColor; ctx.lineWidth=0.7;
+  for (let r=0;r<n;r++) for (let c=0;c<n;c++) ctx.strokeRect(off+c*cell, off+r*cell, cell, cell);
+  const cx=off+1*cell+cell/2, cy=off+1*cell+cell/2;
+  ctx.beginPath(); ctx.arc(cx, cy, cell*0.35, 0, Math.PI*2);
+  ctx.strokeStyle=arrowColor; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.fillStyle=circleFill; ctx.fill();
+  ctx.strokeStyle=arrowColor; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(off+3*cell+cell/2, cy); ctx.stroke();
+  const ax=off+3*cell+cell/2, ay=cy;
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax-6, ay-4); ctx.lineTo(ax-6, ay+4); ctx.closePath();
+  ctx.fillStyle=arrowColor; ctx.fill();
+  ctx.fillStyle=numColor; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('9', cx, cy);
+  ctx.fillStyle=digitColor; ctx.font='9px sans-serif';
+  [[1,2,4],[1,3,5]].forEach(([r,c,v])=>ctx.fillText(v, off+c*cell+cell/2, off+r*cell+cell/2));
+}
+
+// ── 14. Wordoku ──────────────────────────────────────────────────────────────────────────
+{
+  const letters = 'ABCDEFGHI';
+  const givens = [
+    [0,2,'S'],[0,5,'U'],[0,8,'D'],
+    [1,1,'O'],[1,4,'K'],
+    [2,3,'U'],[2,7,'S'],
+    [3,0,'D'],[3,8,'K'],
+    [4,4,'O'],
+    [5,0,'U'],[5,8,'D'],
+    [6,1,'K'],[6,5,'O'],
+    [7,4,'S'],[7,7,'U'],
+    [8,0,'D'],[8,3,'K'],[8,6,'S'],
+  ];
+  const gmap = {};
+  givens.forEach(([r,c,v]) => gmap[r*9+c]=v);
+  makeGrid9('wordoku', (sp, r, c) => {
+    const k = r*9+c;
+    if (gmap[k]) { sp.textContent = gmap[k]; sp.classList.add('cell-filled'); }
+  });
+}
+
+// ── 15. Color Sudoku ──────────────────────────────────────────────────────────────────
+{
+  const colorClasses = ['cell-color-r','cell-color-g','cell-color-b','cell-color-y','cell-color-t','cell-color-p','cell-color-o','cell-color-m','cell-color-s'];
+  makeGrid9('colorku', (sp, r, c) => {
+    const colorIdx = (r + c * 3 + Math.floor(r/3)) % 9;
+    if (Math.random() < 0.45) sp.classList.add(colorClasses[colorIdx]);
+  });
+}
+
+// ── Sujiken preview (canvas) ────────────────────────────────────────────────
+function drawSujiken() {
+  const cv = document.getElementById('sujiken-preview');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  const n = 9, size = cv.width / (n + 1), off = size * 0.4;
+  const isLight = document.documentElement.classList.contains('light');
+  const gridColor = isLight ? '#c8c8d8' : '#3b3b4f';
+  const fillColor = isLight ? '#d0d0ec' : '#2a2a50';
+  const diagColor = isLight ? '#6060a0' : '#9898b8';
+  ctx.strokeStyle = gridColor; ctx.lineWidth = 0.6;
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c <= r; c++) {
+      ctx.strokeRect(off + c * size, off + r * size, size, size);
+      if (Math.random() < 0.22) {
+        ctx.fillStyle = fillColor;
+        ctx.fillRect(off + c * size + 0.5, off + r * size + 0.5, size - 1, size - 1);
+      }
+    }
+  }
+  ctx.strokeStyle = diagColor; ctx.lineWidth = 1.2;
+  for (let d = 0; d < n; d++) ctx.strokeRect(off + d * size, off + d * size, size, size);
+}
+
+// ── Butterfly Sudoku preview ──────────────────────────────────────────────────
+function drawButterfly() {
+  const cv = document.getElementById('butterfly-preview');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, CELLS = 12, cell = W / CELLS;
+  ctx.clearRect(0, 0, W, W);
+  const isLight = document.documentElement.classList.contains('light');
+  const fillOverlap4 = isLight ? '#d8d8ec' : '#252538';
+  const fillOverlap2 = isLight ? '#e8e8f8' : '#1f1f3a';
+  const fillSingle   = isLight ? '#f5f5f0' : '#1b1b32';
+  const cellLine     = isLight ? '#c8c8d8' : '#2a2a3a';
+  const boxLine      = isLight ? '#a0a0c0' : '#3b3b4f';
+  const borderColor  = isLight ? '#5060a0' : '#9898b8';
+
+  for (let r = 0; r < CELLS; r++) {
+    for (let c = 0; c < CELLS; c++) {
+      const n = (r<9&&c<9?1:0)+(r<9&&c>=3?1:0)+(r>=3&&c<9?1:0)+(r>=3&&c>=3?1:0);
+      ctx.fillStyle = n===4 ? fillOverlap4 : n===2 ? fillOverlap2 : fillSingle;
+      ctx.fillRect(c*cell, r*cell, cell, cell);
+    }
+  }
+
+  ctx.strokeStyle = cellLine; ctx.lineWidth = 0.4;
+  for (let i = 0; i <= CELLS; i++) {
+    ctx.beginPath(); ctx.moveTo(i*cell,0); ctx.lineTo(i*cell,W); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*cell); ctx.lineTo(W,i*cell); ctx.stroke();
+  }
+
+  ctx.strokeStyle = boxLine; ctx.lineWidth = 1.2;
+  [2,5,8].forEach(i => {
+    ctx.beginPath(); ctx.moveTo(0,(i+1)*cell); ctx.lineTo(W,(i+1)*cell); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo((i+1)*cell,0); ctx.lineTo((i+1)*cell,W); ctx.stroke();
+  });
+
+  ctx.strokeStyle = borderColor; ctx.lineWidth = 1.5;
+  [[0,0],[0,3],[3,0],[3,3]].forEach(([sr,sc]) => {
+    ctx.strokeRect(sc*cell+0.75, sr*cell+0.75, 9*cell-1.5, 9*cell-1.5);
+  });
+}
+
+// ── Chain Sudoku preview ──────────────────────────────────────────────────────
+{
+  const cv = document.getElementById('chain-preview');
+  const ctx = cv.getContext('2d');
+  const n = 9, cell = cv.width / n;
+  // grid lines
+  ctx.strokeStyle = '#2a2a3a'; ctx.lineWidth = 0.5;
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) ctx.strokeRect(c*cell, r*cell, cell, cell);
+  // box dividers
+  ctx.strokeStyle = '#3b3b4f'; ctx.lineWidth = 1.5;
+  [3,6].forEach(i => {
+    ctx.beginPath(); ctx.moveTo(i*cell,0); ctx.lineTo(i*cell,cv.height); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*cell); ctx.lineTo(cv.width,i*cell); ctx.stroke();
+  });
+  // chains
+  const CHAINS = [
+    [[0,1],[1,1],[1,2]],
+    [[0,6],[0,7],[1,7],[2,7]],
+    [[3,0],[4,0],[4,1],[4,2]],
+    [[3,5],[3,6],[4,6],[5,6]],
+    [[5,2],[5,3],[6,3]],
+    [[7,5],[7,6],[8,6],[8,7]],
+    [[0,3],[0,4],[0,5]],
+    [[2,0],[2,1],[2,2]],
+    [[1,3],[1,4],[1,5],[1,6]],
+    [[2,3],[2,4],[3,4],[3,3]],
+    [[6,0],[7,0],[7,1],[7,2]],
+    [[5,8],[6,8],[7,8]],
+  ];
+  const COLORS = [
+    '#99c9ff','#acd157','#f1be32','#ff9966','#cc88ff','#55ddbb',
+    '#ff88aa','#88ddff','#ffcc55','#dd88cc','#88ccaa','#ffaa66',
+  ];
+  ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  CHAINS.forEach((chain, i) => {
+    ctx.strokeStyle = COLORS[i];
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    chain.forEach(([r,c],j) => {
+      const x = c*cell + cell/2, y = r*cell + cell/2;
+      j === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+}
+
+// ── Asterisk Sudoku preview ──────────────────────────────────────────────────
+function drawAsterisk() {
+  const ASTERISK_NUMS = {
+    '1,4':7, '2,2':3, '2,6':9,
+    '4,1':5, '4,4':1, '4,7':6,
+    '6,2':8, '6,6':4, '7,4':2
+  };
+  const isLight = document.documentElement.classList.contains('light');
+  document.getElementById('asterisk-preview').innerHTML = '';
+  makeGrid9('asterisk-preview', (sp, r, c) => {
+    const key = `${r},${c}`;
+    if (ASTERISK_NUMS[key] !== undefined) {
+      sp.classList.add('cell-asterisk');
+      sp.textContent = ASTERISK_NUMS[key];
+      sp.style.color = isLight ? '#6020a0' : '#cc88ff';
+      sp.style.fontWeight = '700';
+    }
+  });
+}
+
+// ── Argyle Sudoku preview ─────────────────────────────────────────────────────
+{
+  const D1 = new Set([-3,0,3]);
+  const D2 = new Set([5,8,11]);
+  makeGrid9('argyle-preview', (sp, r, c) => {
+    const a1 = D1.has(r-c), a2 = D2.has(r+c);
+    if (a1 && a2) sp.classList.add('cell-argyle-x');
+    else if (a1)  sp.classList.add('cell-argyle1');
+    else if (a2)  sp.classList.add('cell-argyle2');
+  });
+}
+
+// ── Theme-dependent redraws ───────────────────────────────────────────────────
+function drawThemeDependent() {
+  drawJigsaw();
+  drawSamurai();
+  drawSkyscraper();
+  drawArrow();
+  drawSujiken();
+  drawButterfly();
+  drawAsterisk();
+}
+
+// ── Search ───────────────────────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', function () {
+  const q = this.value.trim().toLowerCase();
+  const cards = document.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card => {
+    const name  = card.querySelector('.card-name').textContent.toLowerCase();
+    const desc  = card.querySelector('.card-desc').textContent.toLowerCase();
+    const badge = card.querySelector('.badge').textContent.toLowerCase();
+    const show  = !q || name.includes(q) || desc.includes(q) || badge.includes(q);
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+});
+</script>
+</body>
+</html>

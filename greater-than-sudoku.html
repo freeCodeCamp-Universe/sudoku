@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greater-Than Sudoku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary:    #0a0a23;
+      --bg-secondary:  #1b1b32;
+      --bg-surface:    #2a2a40;
+      --border:        #3b3b4f;
+      --text-muted:    #858591;
+      --text-subtle:   #d0d0d5;
+      --text-primary:  #f5f6f7;
+      --text-bright:   #ffffff;
+      --accent-yellow: #f1be32;
+      --accent-blue:   #99c9ff;
+      --accent-green:  #acd157;
+      --accent-red:    #ffadad;
+      --focus-ring:    #198eee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 18px; }
+
+    body {
+      font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-subtle);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px 60px;
+    }
+
+    .page-wrapper { display: flex; flex-direction: column; align-items: stretch; width: fit-content; max-width: 100%; }
+    .top-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .back-btn {
+      display: flex; align-items: center;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-subtle);
+      font-family: inherit; font-size: 0.88rem;
+      padding: 6px 14px; border-radius: 2px;
+      cursor: pointer; text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .back-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .back-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .help-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-muted);
+      font-family: inherit; font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .help-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .help-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .top-bar-right { display: flex; align-items: center; gap: 10px; }
+    .help-rules {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 8px;
+      margin-top: 0;
+    }
+    .help-rules li {
+      padding-left: 16px;
+      position: relative;
+      font-size: 0.85rem; line-height: 1.5;
+      color: var(--text-subtle);
+    }
+    .help-rules li::before {
+      content: '\00b7';
+      position: absolute; left: 2px;
+      color: var(--accent-yellow);
+      font-size: 1.4rem; line-height: 1.1;
+    }
+    .help-rules li strong { color: var(--text-bright); font-weight: 700; }
+    .help-section {
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 2px 8px; border-radius: 2px;
+      margin-top: 4px; align-self: flex-start;
+    }
+    .help-section-basic { background: #0d2a0d; color: var(--accent-green); border: 1px solid #2a4a1a; }
+    .help-section-extra { background: #0a1a30; color: var(--accent-blue);  border: 1px solid #1a3a5a; }
+
+    .top-bar h1 { position: absolute; left: 50%; transform: translateX(-50%); font-size: 1.1rem; font-weight: 700; color: var(--text-bright); white-space: nowrap; pointer-events: none; }
+
+    .badge {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .badge-beginner     { background: #0d2a0d; color: var(--accent-green);  border: 1px solid #2a4a1a; }
+    .badge-intermediate { background: #2a2000; color: var(--accent-yellow); border: 1px solid #4a3800; }
+    .badge-advanced     { background: #2a0d0d; color: var(--accent-red);    border: 1px solid #4a1a1a; }
+    .badge-variable     { background: #1a0d2a; color: #d0a8ff;              border: 1px solid #3a1a4a; }
+
+    .timer {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 1.1rem; color: var(--text-muted);
+      letter-spacing: 2px; text-align: center; margin-bottom: 20px;
+    }
+    .timer.running { color: var(--text-subtle); }
+    .timer.done    { color: var(--accent-green); }
+
+    .grid-wrap { margin-bottom: 16px; }
+
+    .sudoku-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 52px);
+      grid-template-rows: repeat(9, 52px);
+      border: 3px solid #9898b8;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .cell {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; font-weight: 400;
+      color: #99c9ff;
+      border: 1px solid #2a2a3a;
+      cursor: pointer;
+      background: #1b1b32;
+      user-select: none;
+      transition: background 0.08s;
+      position: relative;
+    }
+
+    .cell.given    { font-weight: 900; cursor: default; }
+    .cell.peer     { background: #22243e; }
+    .cell.same-val { background: #1a4f4f; }
+    .cell.selected { outline: 3px solid #4a90d9; outline-offset: -3px; z-index: 2; }
+    .cell.conflict { background: #2a1515; }
+
+    .cell.error { color: #ff4444; }
+    .cell.correct { color: var(--accent-green); }
+
+    .cell.revealed { color: var(--accent-yellow); font-weight: 700; cursor: default; }
+
+    .reveal-btn {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      padding: 7px 20px; border-radius: 2px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary); color: var(--text-muted);
+      cursor: pointer; margin-bottom: 16px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .reveal-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    .cell.box-right  { border-right:  3px solid #9898b8; }
+    .cell.box-bottom { border-bottom: 3px solid #9898b8; }
+
+    /* Legend */
+    .legend {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.82rem; color: var(--text-muted);
+    }
+
+    .numpad { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .numpad-row { display: flex; gap: 8px; justify-content: center; }
+
+    .num-btn {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-bottom: 3px solid transparent;
+      border-radius: 2px;
+      color: var(--text-primary);
+      font-family: inherit; font-size: 1.3rem; font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .num-btn:hover { border-color: var(--accent-blue); background: var(--bg-surface); }
+    .num-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .num-btn.erase { font-size: 0.78rem; font-weight: 400; color: var(--text-muted); }
+    .num-btn.erase:hover { border-color: var(--accent-red); color: var(--accent-red); }
+    .num-btn.used   { opacity: 0.28; cursor: default; pointer-events: none; }
+    .num-btn.active { border-bottom: 3px solid var(--accent-blue); color: var(--accent-blue); background: var(--bg-surface); }
+
+    .check-toggle {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.88rem; color: var(--text-muted);
+    }
+    .toggle-btn {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 4px 12px; border-radius: 2px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary); color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .toggle-btn.on  { border-color: #2a4a1a; background: #0d2a0d; color: var(--accent-green); }
+    .toggle-btn.off { border-color: var(--border); background: var(--bg-secondary); color: var(--text-muted); }
+    .toggle-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    .status { height: 28px; font-size: 0.88rem; font-weight: 600; text-align: center; }
+    .status.win { color: var(--accent-green); }
+
+    .new-btn {
+      margin-top: 20px;
+      background: var(--accent-yellow); color: #0a0a23;
+      border: none; font-family: inherit;
+      font-size: 0.88rem; font-weight: 700;
+      padding: 10px 28px; border-radius: 2px;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .new-btn:hover { opacity: 0.88; }
+    .new-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10,10,35,0.85);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 40px 48px;
+      text-align: center; display: flex; flex-direction: column;
+      align-items: center; gap: 14px; max-width: 340px; width: 90%;
+    }
+    .modal-emoji  { font-size: 3rem; line-height: 1; }
+    .modal-title  { font-size: 1.8rem; font-weight: 700; color: var(--accent-green); }
+    .modal-sub    { font-size: 0.88rem; color: var(--text-muted); margin-top: -6px; }
+    .modal-time-wrap {
+      display: flex; align-items: center;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 2px; padding: 10px 20px; margin: 4px 0;
+    }
+    .modal-time {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 1.8rem; color: var(--text-bright); letter-spacing: 3px;
+    }
+    .modal-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 6px; }
+    .modal-btn {
+      width: 100%; font-family: inherit; font-size: 0.88rem; font-weight: 700;
+      padding: 11px 0; border-radius: 2px; cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap; display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.15s;
+    }
+    .modal-btn.primary   { background: var(--accent-yellow); color: #0a0a23; border: none; }
+    .modal-btn.secondary { background: none; color: var(--text-subtle); border: 1px solid var(--border); }
+    .modal-btn.secondary:hover { border-color: var(--accent-blue); color: var(--accent-blue); opacity: 1; }
+    .modal-btn:hover { opacity: 0.88; }
+    .modal-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    /* ── Light theme ── */
+    .theme-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+    .theme-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    html.light {
+      --bg-primary:   #f5f5f0;
+      --bg-secondary: #ebebE6;
+      --bg-surface:   #e0e0db;
+      --border:       #c8c8d8;
+      --text-muted:   #6a6a7a;
+      --text-subtle:  #2a2a40;
+      --text-primary: #1a1a2e;
+      --text-bright:  #0a0a23;
+    }
+    html.light body { color: var(--text-subtle); }
+    html.light .cell { background: #ffffff; color: #2c5f8a; border-color: #d8d8e8; }
+    html.light .cell.given { color: #0a0a23; }
+    html.light .cell.peer { background: #eaeaf4; }
+    html.light .cell.same-val { background: #d4ead4; }
+    html.light .cell.conflict { background: #f8dede; }
+    html.light .cell.error   { color: #cc0000; }
+    html.light .cell.selected { outline-color: #1a7cc0; }
+    html.light .sudoku-grid { border-color: #8080a8; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+    html.light .cell[data-c="2"], html.light .cell[data-c="5"] { border-right-color: #8080a8; }
+    html.light .cell[data-r="2"], html.light .cell[data-r="5"] { border-bottom-color: #8080a8; }
+    html.light .modal-overlay { background: rgba(180,180,210,0.75); }
+    html.light .modal-title { color: #1a1a2e; }
+    html.light .new-btn { color: #0a0a23; }
+    html.light .badge-beginner     { background: #d4ead4; color: #2a6a2a; border-color: #90c090; }
+    html.light .badge-intermediate { background: #f0e8c0; color: #7a6000; border-color: #c8b040; }
+    html.light .badge-advanced     { background: #f4d4d4; color: #8a2020; border-color: #d09090; }
+    html.light .badge-variable     { background: #e0d4f4; color: #602a90; border-color: #b090d8; }
+    html.light #gt-overlay circle, html.light .legend circle { fill: #ffffff; }
+  
+    /* ── Two-column game layout ── */
+    .game-layout {
+      display: flex;
+      gap: 48px;
+      align-items: stretch;
+      justify-content: center;
+      width: 100%;
+    }
+    .game-left  { display: flex; flex-direction: column; align-items: center; }
+    .game-right { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+    @media (max-width: 900px) {
+      .game-layout { flex-direction: column; align-items: center; gap: 0; }
+      .game-right { width: 100%; }
+    }
+
+    @media (max-width: 520px) {
+      .sudoku-grid { grid-template-columns: repeat(9, 36px); grid-template-rows: repeat(9, 36px); }
+      .cell { width: 36px; height: 36px; font-size: 1.1rem; }
+      .top-bar { gap: 8px; }
+      .top-bar .badge { display: none; }
+          body { padding-top: 20px; padding-bottom: 36px; padding-left: 12px; padding-right: 12px; }
+      .top-bar { margin-bottom: 20px; }
+      .top-bar h1 { font-size: 0.95rem; }
+      .num-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+      .numpad-row { gap: 5px; }
+      .numpad { gap: 5px; margin-bottom: 16px; }
+      .reveal-btn, .new-btn { width: 100%; box-sizing: border-box; }
+    }
+    @media (max-width: 375px) {
+      body { padding-left: 8px; padding-right: 8px; }
+      .sudoku-grid { grid-template-columns: repeat(9, 30px); grid-template-rows: repeat(9, 30px); }
+      .cell { width: 30px; height: 30px; font-size: 0.85rem; }
+      .num-btn { width: 38px; height: 38px; font-size: 0.9rem; }
+      .numpad-row { gap: 3px; }
+    }
+  </style>
+  <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
+</head>
+<body>
+
+<div class="page-wrapper">
+<div class="top-bar">
+  <a href="index.html" class="back-btn">&#8592; Back</a>
+  <h1>Greater-Than Sudoku</h1>
+  <div class="top-bar-right">
+  <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;</button>
+</div>
+</div>
+
+
+<div class="timer" id="timer">0:00</div>
+
+<div class="game-layout">
+  <div class="game-left">
+
+<div class="grid-wrap">
+  <div class="sudoku-grid" id="grid"></div>
+</div>
+
+<div class="legend">
+  <svg width="28" height="16" viewBox="0 0 28 16">
+    <circle cx="14" cy="8" r="7" fill="#1b1b32"/>
+    <polygon points="9,4 19,8 9,12" fill="#f1be32"/>
+  </svg>
+  <span>Triangle points toward the smaller of the two adjacent digits.</span>
+</div>
+  </div>
+  <div class="game-right">
+<div class="numpad">
+  <div class="numpad-row">
+    <button class="num-btn" data-val="1">1</button>
+    <button class="num-btn" data-val="2">2</button>
+    <button class="num-btn" data-val="3">3</button>
+    <button class="num-btn" data-val="4">4</button>
+    <button class="num-btn" data-val="5">5</button>
+  </div>
+  <div class="numpad-row">
+    <button class="num-btn" data-val="6">6</button>
+    <button class="num-btn" data-val="7">7</button>
+    <button class="num-btn" data-val="8">8</button>
+    <button class="num-btn" data-val="9">9</button>
+    <button class="num-btn erase" data-val="0">Erase</button>
+  </div>
+</div>
+
+<div class="check-toggle">
+  <span>Check answers</span>
+  <button class="toggle-btn on" id="check-toggle">On</button>
+  <span style="margin-left:12px;">Timer</span>
+  <button class="toggle-btn on" id="timer-toggle">On</button>
+</div>
+
+<button class="reveal-btn" id="reveal-btn">Reveal Cell</button>
+
+<div class="status" id="status"></div>
+<button class="new-btn" id="new-btn">New Game</button>
+  </div>
+</div><!-- /game-layout -->
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-emoji">&#127881;</div>
+    <div class="modal-title">Great job, puzzle master!</div>
+    <div class="modal-sub" id="modal-sub">You solved Greater-Than Sudoku in:</div>
+    <div class="modal-time-wrap" id="modal-time-wrap">
+      <span class="modal-time" id="modal-time">0:00</span>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="modal-new-btn">Play Again</button>
+      <button class="modal-btn secondary" id="modal-view-btn">View Puzzle</button>
+      <a href="index.html" class="modal-btn secondary">Start Page</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Theme toggle ──
+(function() {
+  const btn = document.getElementById('theme-btn');
+  function applyTheme(t) {
+    document.documentElement.classList.toggle('light', t === 'light');
+    btn.textContent = t === 'light' ? '\u263d' : '\u2600';
+    btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  }
+  applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
+  btn.addEventListener('click', function() {
+    const next = document.documentElement.classList.contains('light') ? 'dark' : 'light';
+    localStorage.setItem('sudoku-theme', next);
+    applyTheme(next);
+  });
+})();
+
+const N = 9;
+const REMOVE_TARGET = 68;
+
+// ── Standard Norvig solver ────────────────────────────────────────────────────
+const PEERS = Array.from({length: N*N}, (_, idx) => {
+  const r = Math.floor(idx / N), c = idx % N;
+  const ps = new Set();
+  for (let i = 0; i < N; i++) { ps.add(r*N+i); ps.add(i*N+c); }
+  const br = Math.floor(r/3)*3, bc = Math.floor(c/3)*3;
+  for (let dr = 0; dr < 3; dr++) for (let dc = 0; dc < 3; dc++) ps.add((br+dr)*N+(bc+dc));
+  ps.delete(idx);
+  return [...ps];
+});
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+const popcount  = n => { let c = 0; while (n) { c += n & 1; n >>= 1; } return c; };
+const lowestBit = n => { let v = 1; while (!(n & 1)) { n >>= 1; v++; } return v; };
+
+function elim(ca, idx, d) {
+  if (!(ca[idx] >> (d-1) & 1)) return true;
+  ca[idx] &= ~(1 << (d-1));
+  const rem = popcount(ca[idx]);
+  if (rem === 0) return false;
+  if (rem === 1) {
+    const f = lowestBit(ca[idx]);
+    for (const p of PEERS[idx]) if (!elim(ca, p, f)) return false;
+  }
+  return true;
+}
+
+function assign(ca, idx, d) {
+  for (let v = 1; v <= N; v++) if (v !== d && !elim(ca, idx, v)) return false;
+  return true;
+}
+
+function solveCA(ca) {
+  let best = 10, bi = -1;
+  for (let i = 0; i < N*N; i++) {
+    const p = popcount(ca[i]);
+    if (p === 0) return null;
+    if (p > 1 && p < best) { best = p; bi = i; }
+  }
+  if (bi === -1) return ca;
+  const vals = [];
+  for (let v = 1; v <= N; v++) if (ca[bi] >> (v-1) & 1) vals.push(v);
+  shuffle(vals);
+  for (const v of vals) {
+    const copy = new Int32Array(ca);
+    if (assign(copy, bi, v)) {
+      const res = solveCA(copy);
+      if (res) return res;
+    }
+  }
+  return null;
+}
+
+// ── Puzzle generation ─────────────────────────────────────────────────────────
+function generatePuzzle() {
+  const ca = new Int32Array(N*N).fill((1 << N) - 1);
+  const res = solveCA(ca);
+  if (!res) return null;
+
+  const perm = shuffle([1,2,3,4,5,6,7,8,9]);
+  const solution = Array.from({length: N}, (_, r) =>
+    Array.from({length: N}, (_, c) => perm[lowestBit(res[r*N+c]) - 1])
+  );
+
+  // gtH.has(r*N+c) → solution[r][c] > solution[r][c+1]  (left is greater)
+  // gtV.has(r*N+c) → solution[r][c] > solution[r+1][c]  (top is greater)
+  const gtH = new Set(), gtV = new Set();
+  for (let r = 0; r < N; r++)
+    for (let c = 0; c < N-1; c++)
+      if (solution[r][c] > solution[r][c+1]) gtH.add(r*N+c);
+  for (let r = 0; r < N-1; r++)
+    for (let c = 0; c < N; c++)
+      if (solution[r][c] > solution[r+1][c]) gtV.add(r*N+c);
+
+  const puzzle = solution.map(row => [...row]);
+  shuffle(Array.from({length: N*N}, (_, i) => i)).slice(0, REMOVE_TARGET).forEach(idx => {
+    puzzle[Math.floor(idx/N)][idx%N] = 0;
+  });
+
+  return { puzzle, solution, gtH, gtV };
+}
+
+// ── Game state ────────────────────────────────────────────────────────────────
+let current = null, board = [], given = [];
+let selected = null, highlightNum = 0;
+let checkingEnabled = true, timerEnabled = true;
+let timerInterval = null, timerStarted = false, elapsedSeconds = 0;
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null; timerStarted = false; elapsedSeconds = 0;
+  const el = document.getElementById('timer');
+  el.className = 'timer'; el.textContent = '0:00';
+  el.style.visibility = timerEnabled ? 'visible' : 'hidden';
+}
+function startTimerIfNeeded() {
+  if (!timerEnabled || timerStarted) return;
+  timerStarted = true;
+  document.getElementById('timer').className = 'timer running';
+  timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
+}
+function stopTimer() {
+  clearInterval(timerInterval); timerInterval = null;
+  document.getElementById('timer').className = 'timer done';
+}
+function updateTimerDisplay() {
+  const m = Math.floor(elapsedSeconds / 60), s = elapsedSeconds % 60;
+  document.getElementById('timer').textContent = `${m}:${String(s).padStart(2,'0')}`;
+}
+
+// ── Conflict detection ────────────────────────────────────────────────────────
+function getConflicts() {
+  const { gtH, gtV } = current;
+  const conflicts = new Set();
+
+  // Standard row / col / box
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const v = board[r][c];
+      if (!v) continue;
+      const idx = r*N+c;
+      for (let i = 0; i < N; i++) {
+        if (i !== c && board[r][i] === v) { conflicts.add(idx); conflicts.add(r*N+i); }
+        if (i !== r && board[i][c] === v) { conflicts.add(idx); conflicts.add(i*N+c); }
+      }
+      const br = Math.floor(r/3)*3, bc = Math.floor(c/3)*3;
+      for (let dr = 0; dr < 3; dr++) for (let dc = 0; dc < 3; dc++) {
+        const rr = br+dr, cc = bc+dc;
+        if ((rr !== r || cc !== c) && board[rr][cc] === v) { conflicts.add(idx); conflicts.add(rr*N+cc); }
+      }
+    }
+  }
+
+  // Greater-than constraints — both directions checked
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N-1; c++) {
+      const v1 = board[r][c], v2 = board[r][c+1];
+      if (!v1 || !v2) continue;
+      if (gtH.has(r*N+c) !== (v1 > v2)) { conflicts.add(r*N+c); conflicts.add(r*N+c+1); }
+    }
+  }
+  for (let r = 0; r < N-1; r++) {
+    for (let c = 0; c < N; c++) {
+      const v1 = board[r][c], v2 = board[r+1][c];
+      if (!v1 || !v2) continue;
+      if (gtV.has(r*N+c) !== (v1 > v2)) { conflicts.add(r*N+c); conflicts.add((r+1)*N+c); }
+    }
+  }
+
+  return conflicts;
+}
+
+// ── Greater-than triangle overlay (SVG) ──────────────────────────────────────
+// Triangles point toward the SMALLER value (pointy end = smaller side).
+function renderGTOverlay() {
+  const { gtH, gtV } = current;
+  const CELL = 52, S = 4;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const old = document.getElementById('gt-overlay');
+  if (old) old.remove();
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.id = 'gt-overlay';
+  svg.setAttribute('width', CELL * N);
+  svg.setAttribute('height', CELL * N);
+  svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:3;overflow:visible;';
+
+  function tri(cx, cy, dir) {
+    const bg = document.createElementNS(NS, 'circle');
+    bg.setAttribute('cx', cx); bg.setAttribute('cy', cy); bg.setAttribute('r', S + 2);
+    bg.setAttribute('fill', '#1b1b32');
+    svg.appendChild(bg);
+
+    let pts;
+    // Pointy end faces the smaller value
+    if      (dir === 'r') pts = `${cx-S},${cy-S} ${cx+S},${cy} ${cx-S},${cy+S}`; // → right is smaller
+    else if (dir === 'l') pts = `${cx+S},${cy-S} ${cx-S},${cy} ${cx+S},${cy+S}`; // ← left is smaller
+    else if (dir === 'd') pts = `${cx-S},${cy-S} ${cx},${cy+S} ${cx+S},${cy-S}`; // ↓ bottom is smaller
+    else                  pts = `${cx-S},${cy+S} ${cx},${cy-S} ${cx+S},${cy+S}`; // ↑ top is smaller
+
+    const p = document.createElementNS(NS, 'polygon');
+    p.setAttribute('points', pts);
+    p.setAttribute('fill', '#f1be32');
+    svg.appendChild(p);
+  }
+
+  // Horizontal: left > right → triangle points right (toward smaller = right cell)
+  for (let r = 0; r < N; r++)
+    for (let c = 0; c < N-1; c++)
+      tri((c+1)*CELL, r*CELL + CELL/2, gtH.has(r*N+c) ? 'r' : 'l');
+
+  // Vertical: top > bottom → triangle points down (toward smaller = bottom cell)
+  for (let r = 0; r < N-1; r++)
+    for (let c = 0; c < N; c++)
+      tri(c*CELL + CELL/2, (r+1)*CELL, gtV.has(r*N+c) ? 'd' : 'u');
+
+  document.getElementById('grid').appendChild(svg);
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const el = document.getElementById('grid');
+  el.innerHTML = '';
+  const conflicts = checkingEnabled ? getConflicts() : new Set();
+
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      const val = board[r][c], idx = r*N+c;
+      const isSel  = selected && selected.r === r && selected.c === c;
+      const isSame = highlightNum !== 0 && val === highlightNum;
+
+      if (given[r][c])        cell.classList.add('given');
+      if (revealed[r][c])     cell.classList.add('revealed');
+      if (isSel)              cell.classList.add('selected');
+      if (isSame)             cell.classList.add('same-val');
+      if (conflicts.has(idx)) cell.classList.add('conflict');
+
+      if (selected && !isSel && !isSame) {
+        const { r: sr, c: sc } = selected;
+        const sameBox = Math.floor(r/3) === Math.floor(sr/3) && Math.floor(c/3) === Math.floor(sc/3);
+        if (r === sr || c === sc || sameBox) cell.classList.add('peer');
+      }
+
+      if (val) {
+        cell.textContent = val;
+        if (!given[r][c] && !revealed[r][c] && checkingEnabled)
+          cell.classList.add(current.solution[r][c] === val ? 'correct' : 'error');
+      }
+
+      if (c === 2 || c === 5) cell.classList.add('box-right');
+      if (r === 2 || r === 5) cell.classList.add('box-bottom');
+
+      cell.addEventListener('click', () => {
+        const desel = selected && selected.r === r && selected.c === c;
+        selected     = desel ? null : { r, c };
+        highlightNum = desel ? 0 : (board[r][c] || 0);
+        render();
+      });
+      el.appendChild(cell);
+    }
+  }
+
+  renderGTOverlay();
+  updateNumpad();
+}
+
+function updateNumpad() {
+  const counts = Array(N+1).fill(0);
+  board.forEach(row => row.forEach(v => { if (v > 0) counts[v]++; }));
+  document.querySelectorAll('.num-btn[data-val]').forEach(btn => {
+    const v = +btn.dataset.val;
+    if (v === 0) return;
+    btn.classList.toggle('used',   counts[v] >= N);
+    btn.classList.toggle('active', v === highlightNum);
+  });
+}
+
+// ── Game logic ────────────────────────────────────────────────────────────────
+let revealed = [];
+
+function newGame() {
+  current = generatePuzzle();
+  board   = current.puzzle.map(row => [...row]);
+  given   = current.puzzle.map(row => row.map(v => v !== 0));
+  revealed = given.map(row => row.map(() => false));
+  selected = null; highlightNum = 0;
+  setStatus(''); resetTimer(); render();
+}
+
+function enterValue(val) {
+  if (!selected) return;
+  const { r, c } = selected;
+  if (given[r][c] || revealed[r][c]) return;
+  if (checkingEnabled && timerEnabled && val === 0 && board[r][c] !== 0 && board[r][c] === solution[r][c]) return;
+  board[r][c] = val;
+  if (val !== 0) startTimerIfNeeded();
+  render(); checkWin();
+}
+
+function checkWin() {
+  if (!board.every((row, r) => row.every((v, c) => v === current.solution[r][c]))) return;
+  selected = null; stopTimer(); render();
+  if (timerEnabled) {
+    const m = Math.floor(elapsedSeconds / 60), s = elapsedSeconds % 60;
+    document.getElementById('modal-sub').textContent = 'You solved Greater-Than Sudoku in:';
+    document.getElementById('modal-time').textContent = `${m}:${String(s).padStart(2,'0')}`;
+    document.getElementById('modal-time-wrap').style.display = 'flex';
+  } else {
+    document.getElementById('modal-sub').textContent = 'You solved Greater-Than Sudoku!';
+    document.getElementById('modal-time-wrap').style.display = 'none';
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function setStatus(msg, type = '') {
+  const el = document.getElementById('status');
+  el.textContent = msg; el.className = 'status ' + type;
+}
+
+// ── Event wiring ──────────────────────────────────────────────────────────────
+document.querySelectorAll('.num-btn').forEach(btn =>
+  btn.addEventListener('click', () => {
+    const v = +btn.dataset.val;
+    highlightNum = v === 0 ? 0 : (highlightNum === v ? 0 : v);
+    enterValue(v); render();
+  })
+);
+
+document.getElementById('new-btn').addEventListener('click', newGame);
+
+document.getElementById('modal-new-btn').addEventListener('click', () => {
+  document.getElementById('modal').classList.remove('open'); newGame();
+});
+document.getElementById('modal-view-btn').addEventListener('click', () => {
+  document.getElementById('modal').classList.remove('open');
+});
+
+document.getElementById('check-toggle').addEventListener('click', () => {
+  checkingEnabled = !checkingEnabled;
+  const btn = document.getElementById('check-toggle');
+  btn.textContent = checkingEnabled ? 'On' : 'Off';
+  btn.className = 'toggle-btn ' + (checkingEnabled ? 'on' : 'off');
+  render();
+});
+
+document.getElementById('timer-toggle').addEventListener('click', () => {
+  timerEnabled = !timerEnabled;
+  const btn = document.getElementById('timer-toggle');
+  btn.textContent = timerEnabled ? 'On' : 'Off';
+  btn.className = 'toggle-btn ' + (timerEnabled ? 'on' : 'off');
+  const el = document.getElementById('timer');
+  el.style.visibility = timerEnabled ? 'visible' : 'hidden';
+  if (!timerEnabled) { clearInterval(timerInterval); timerInterval = null; }
+  else if (timerStarted) {
+    timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const d = parseInt(e.key);
+  if (d >= 1 && d <= 9) { highlightNum = d; enterValue(d); render(); return; }
+  if (e.key === 'Backspace' || e.key === 'Delete') { enterValue(0); render(); return; }
+  if (!selected) return;
+  const { r, c } = selected;
+  if (e.key === 'ArrowUp'    && r > 0)   { selected = { r: r-1, c }; render(); }
+  if (e.key === 'ArrowDown'  && r < N-1) { selected = { r: r+1, c }; render(); }
+  if (e.key === 'ArrowLeft'  && c > 0)   { selected = { r, c: c-1 }; render(); }
+  if (e.key === 'ArrowRight' && c < N-1) { selected = { r, c: c+1 }; render(); }
+});
+
+
+// ── Reveal cell ───────────────────────────────────────────────────────────────
+function revealCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  if (given[r][c] || revealed[r][c]) return;
+  if (checkingEnabled && timerEnabled && val === 0 && board[r][c] !== 0 && board[r][c] === solution[r][c]) return;
+  board[r][c] = current.solution[r][c];
+  revealed[r][c] = true;
+  startTimerIfNeeded();
+  render(); checkWin();
+}
+document.getElementById('reveal-btn').addEventListener('click', revealCell);
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+newGame();
+
+// ── Help modal ────────────────────────────────────────────────────────────────
+document.getElementById('help-btn').addEventListener('click', () =>
+  document.getElementById('help-modal').classList.add('open'));
+document.addEventListener('click', e => {
+  if (e.target.id === 'help-close-btn' || e.target.id === 'help-modal')
+    document.getElementById('help-modal').classList.remove('open');
+});
+</script>
+<div class="modal-overlay" id="help-modal">
+  <div class="modal" style="text-align:left;gap:10px;max-width:420px;">
+    <div class="modal-title" style="font-size:1.15rem;color:var(--text-bright);">How to Play</div>
+    <div class="help-section help-section-basic">Basic Rules</div>
+    <ul class="help-rules">
+      <li><strong>The grid:</strong> A standard 9×9 sudoku — fill every row, column, and 3×3 box with digits 1–9.</li>
+      <li><strong>Triangles:</strong> A small triangle appears between every pair of adjacent cells across the entire grid.</li>
+      <li><strong>Direction:</strong> Each triangle points toward the smaller digit — the wide base faces the larger one.</li>
+    </ul>
+    <div class="help-section help-section-extra">Additional Rules</div>
+    <ul class="help-rules">
+      <li><strong>All pairs covered:</strong> Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.</li>
+    </ul>
+    <button class="modal-btn secondary" id="help-close-btn" style="margin-top:6px;">Got it</button>
+  </div>
+</div>
+
+</body>
+</html>
