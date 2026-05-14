@@ -178,7 +178,7 @@
       padding: 7px 20px; border-radius: 2px;
       border: 1px solid var(--border);
       background: var(--bg-secondary); color: var(--text-muted);
-      cursor: pointer; margin-bottom: 16px;
+      cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
     }
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
@@ -241,11 +241,11 @@
     .toggle-btn.off { border-color: var(--border); background: var(--bg-secondary); color: var(--text-muted); }
     .toggle-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-    .status { height: 28px; font-size: 0.88rem; font-weight: 600; text-align: center; }
+    .status { font-size: 0.88rem; font-weight: 600; text-align: center; margin-top: 12px; }
     .status.win { color: var(--accent-green); }
 
     .new-btn {
-      margin-top: 20px;
+      margin-top: 8px;
       background: var(--accent-yellow); color: #0a0a23;
       border: none; font-family: inherit;
       font-size: 0.88rem; font-weight: 700;
@@ -366,6 +366,7 @@
       .numpad-row { gap: 5px; }
       .numpad { gap: 5px; margin-bottom: 16px; }
       .reveal-btn, .new-btn { width: 100%; box-sizing: border-box; }
+      .cage-sum { font-size: 0.38rem; }
     }
     @media (max-width: 375px) {
       body { padding-left: 8px; padding-right: 8px; }
@@ -373,6 +374,7 @@
       .cell { width: 30px; height: 30px; font-size: 0.85rem; }
       .num-btn { width: 38px; height: 38px; font-size: 0.9rem; }
       .numpad-row { gap: 3px; }
+      .cage-sum { font-size: 0.3rem; }
     }
   </style>
   <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
@@ -385,7 +387,7 @@
   <h1>Killer Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
 </div>
 </div>
 
@@ -425,9 +427,8 @@
 </div>
 
 <button class="reveal-btn" id="reveal-btn">Reveal Cell</button>
-
-<div class="status" id="status"></div>
 <button class="new-btn" id="new-btn">New Game</button>
+<div class="status" id="status"></div>
   </div>
 </div><!-- /game-layout -->
 </div>
@@ -454,7 +455,7 @@
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '\u263d' : '\u2600';
+    btn.textContent = t === 'light' ? '\u263d\uFE0E' : '\u2600\uFE0E';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
@@ -699,8 +700,9 @@ const THICK = '3px solid #9898b8';
 // the thick CSS box-boundary borders.
 function renderCageOverlay() {
   const { cageOf } = current;
-  const CELL = 52;
-  const GAP  = 3; // small gap at segment ends (corner gap)
+  const CELL = document.querySelector('.cell')?.offsetWidth || 52;
+  const GAP  = Math.max(1, Math.round(CELL * 3 / 52));
+  const dash = CELL >= 48 ? '4 3' : CELL >= 34 ? '3 2' : '2 2';
   const NS   = 'http://www.w3.org/2000/svg';
 
   const old = document.getElementById('cage-overlay');
@@ -721,7 +723,7 @@ function renderCageOverlay() {
     l.setAttribute('x2', x2); l.setAttribute('y2', y2);
     l.setAttribute('stroke', dashColor);
     l.setAttribute('stroke-width', '2');
-    l.setAttribute('stroke-dasharray', '4 3');
+    l.setAttribute('stroke-dasharray', dash);
     svg.appendChild(l);
   }
 

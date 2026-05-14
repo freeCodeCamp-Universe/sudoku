@@ -191,7 +191,7 @@
       padding: 7px 20px; border-radius: 2px;
       border: 1px solid var(--border);
       background: var(--bg-secondary); color: var(--text-muted);
-      cursor: pointer; margin-bottom: 16px;
+      cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
     }
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
@@ -284,7 +284,7 @@
     .status.err { color: var(--accent-red); }
 
     .new-btn {
-      margin-top: 20px;
+      margin-top: 8px;
       background: var(--accent-yellow);
       color: #0a0a23;
       border: none;
@@ -475,7 +475,7 @@
   <h1>Mini Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
 </div>
 </div>
 
@@ -535,7 +535,7 @@
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '\u263d' : '\u2600';
+    btn.textContent = t === 'light' ? '\u263d\uFE0E' : '\u2600\uFE0E';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');

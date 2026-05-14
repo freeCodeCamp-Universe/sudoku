@@ -193,7 +193,7 @@
       padding: 7px 20px; border-radius: 2px;
       border: 1px solid var(--border);
       background: var(--bg-secondary); color: var(--text-muted);
-      cursor: pointer; margin-bottom: 16px;
+      cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
     }
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
@@ -265,11 +265,11 @@
     .toggle-btn.off { border-color: var(--border); background: var(--bg-secondary); color: var(--text-muted); }
     .toggle-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-    .status { height: 28px; font-size: 0.88rem; font-weight: 600; text-align: center; }
+    .status { font-size: 0.88rem; font-weight: 600; text-align: center; }
     .status.win { color: var(--accent-green); }
 
     .new-btn {
-      margin-top: 20px;
+      margin-top: 8px;
       background: var(--accent-yellow);
       color: #0a0a23;
       border: none;
@@ -440,7 +440,7 @@ html.light .cell.same-val { background: #d4ead4; }
   <h1>Chain Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
 </div>
 </div>
 
@@ -513,7 +513,7 @@ html.light .cell.same-val { background: #d4ead4; }
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '☽' : '☀';
+    btn.textContent = t === 'light' ? '☽︎' : '☀︎';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
@@ -884,13 +884,17 @@ function setStatus(msg, type = '') {
 function drawChains() {
   const svg = document.getElementById('chain-svg');
   svg.innerHTML = '';
-  const CS = 52, B = 3, HALF = CS / 2;
+  const CS = document.querySelector('.cell')?.offsetWidth || 52;
+  const B = 3, HALF = CS / 2;
+  svg.setAttribute('width',  CS * N + B * 2);
+  svg.setAttribute('height', CS * N + B * 2);
+  const sw = Math.max(4, Math.round(10 * CS / 52));
   CHAINS.forEach((chain, i) => {
     const pts = chain.map(([r, c]) => `${B + c*CS + HALF},${B + r*CS + HALF}`).join(' ');
     const pl = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     pl.setAttribute('points', pts);
     pl.setAttribute('stroke', CHAIN_COLORS[i]);
-    pl.setAttribute('stroke-width', '10');
+    pl.setAttribute('stroke-width', sw);
     pl.setAttribute('stroke-linecap', 'round');
     pl.setAttribute('stroke-linejoin', 'round');
     pl.setAttribute('fill', 'none');

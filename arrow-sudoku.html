@@ -182,7 +182,7 @@
       padding: 7px 20px; border-radius: 2px;
       border: 1px solid var(--border);
       background: var(--bg-secondary); color: var(--text-muted);
-      cursor: pointer; margin-bottom: 16px;
+      cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
     }
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
@@ -238,11 +238,11 @@
     .toggle-btn.off { border-color: var(--border); background: var(--bg-secondary); color: var(--text-muted); }
     .toggle-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-    .status { height: 28px; font-size: 0.88rem; font-weight: 600; text-align: center; }
+    .status { font-size: 0.88rem; font-weight: 600; text-align: center; }
     .status.win { color: var(--accent-green); }
 
     .new-btn {
-      margin-top: 20px;
+      margin-top: 8px;
       background: var(--accent-yellow); color: #0a0a23;
       border: none; font-family: inherit;
       font-size: 0.88rem; font-weight: 700;
@@ -353,6 +353,7 @@
     @media (max-width: 520px) {
       .sudoku-grid { grid-template-columns: repeat(9, 36px); grid-template-rows: repeat(9, 36px); }
       .cell { width: 36px; height: 36px; font-size: 1.1rem; }
+      .cell.arrow-bulb::after { inset: 6px; }
       .top-bar { gap: 8px; }
       .top-bar .badge { display: none; }
           body { padding-top: 20px; padding-bottom: 36px; padding-left: 12px; padding-right: 12px; }
@@ -367,6 +368,7 @@
       body { padding-left: 8px; padding-right: 8px; }
       .sudoku-grid { grid-template-columns: repeat(9, 30px); grid-template-rows: repeat(9, 30px); }
       .cell { width: 30px; height: 30px; font-size: 0.85rem; }
+      .cell.arrow-bulb::after { inset: 4px; }
       .num-btn { width: 38px; height: 38px; font-size: 0.9rem; }
       .numpad-row { gap: 3px; }
     }
@@ -381,7 +383,7 @@
   <h1>Arrow Sudoku</h1>
   <div class="top-bar-right">
   <button class="help-btn" id="help-btn" aria-label="How to play">?</button>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;</button>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle theme">&#9728;&#xFE0E;</button>
 </div>
 </div>
 
@@ -459,7 +461,7 @@
   const btn = document.getElementById('theme-btn');
   function applyTheme(t) {
     document.documentElement.classList.toggle('light', t === 'light');
-    btn.textContent = t === 'light' ? '\u263d' : '\u2600';
+    btn.textContent = t === 'light' ? '\u263d\uFE0E' : '\u2600\uFE0E';
     btn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
   }
   applyTheme(localStorage.getItem('sudoku-theme') || 'dark');
@@ -671,7 +673,9 @@ function getConflicts() {
 // ── Arrow SVG overlay ─────────────────────────────────────────────────────────
 function renderArrowOverlay() {
   const { arrows } = current;
-  const CELL = 52, R = 18, AH = 6;
+  const CELL = document.querySelector('.cell')?.offsetWidth || 52;
+  const R = Math.round(18 * CELL / 52);
+  const AH = Math.round(6 * CELL / 52);
   const NS = 'http://www.w3.org/2000/svg';
   const COL = '#9898b8';
 
