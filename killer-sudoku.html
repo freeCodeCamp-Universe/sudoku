@@ -863,7 +863,7 @@ function enterValue(val) {
   if (!selected) return;
   const { r, c } = selected;
   if (current.givens.has(r*N+c) || revealed[r][c]) return;
-  if (checkingEnabled && timerEnabled && val !== 0 && board[r][c] !== 0 && board[r][c] === solution[r][c]) return;
+  if (checkingEnabled && timerEnabled && val !== 0 && board[r][c] !== 0 && board[r][c] === current.solution[r][c]) return;
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
