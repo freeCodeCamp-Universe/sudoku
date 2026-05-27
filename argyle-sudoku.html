@@ -478,6 +478,7 @@
 <div class="grid-wrap">
   <div class="sudoku-grid" id="grid"></div>
 </div>
+<div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
 <div class="numpad">
@@ -764,6 +765,27 @@ function getCellValueLabel(val) {
   return val;
 }
 
+function announceToScreenReader(text) {
+  const announcer = document.getElementById('grid-announcer');
+  if (!announcer) return;
+  // Clear then re-set on the next frame so repeating the same text still
+  // registers as a change and is announced.
+  announcer.textContent = '';
+  requestAnimationFrame(() => { announcer.textContent = text; });
+}
+
+function announceCellValue(val, extra) {
+  announceToScreenReader(val === 0
+    ? 'empty'
+    : (extra ? `${getCellValueLabel(val)}, ${extra}` : `${getCellValueLabel(val)}`));
+}
+
+function announceActiveCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  announceToScreenReader(getCellAriaLabel(r, c, board[r][c]));
+}
+
 function getCellAriaLabel(r, c, val) {
   const positionLabel = `Row ${r + 1}, column ${c + 1}`;
   if (val === 0) return `${positionLabel}, empty`;
@@ -777,8 +799,6 @@ function updateGridAccessibility(grid) {
   grid.tabIndex = 0;
   grid.setAttribute('role', 'grid');
   grid.setAttribute('aria-label', 'Sudoku grid');
-  if (selected) grid.setAttribute('aria-activedescendant', `cell-${selected.r}-${selected.c}`);
-  else grid.removeAttribute('aria-activedescendant');
 }
 
 function selectFirstCell() {
@@ -786,6 +806,7 @@ function selectFirstCell() {
   selected = { r: 0, c: 0 };
   highlightNum = 0;
   render();
+  announceActiveCell();
 }
 
 function render() {
@@ -882,6 +903,7 @@ function enterValue(val) {
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
+  announceCellValue(val);
   checkWin();
 }
 
@@ -953,6 +975,7 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
 
 document.getElementById('grid').addEventListener('focus', () => {
   if (!selected) selectFirstCell();
+  else announceActiveCell();
 });
 
 document.addEventListener('keydown', e => {
@@ -960,12 +983,14 @@ document.addEventListener('keydown', e => {
   if (digits.includes(e.key)) { highlightNum = +e.key; enterValue(+e.key); render(); return; }
   if (e.key === 'Backspace' || e.key === 'Delete') { enterValue(0); render(); return; }
   if (!selected) return;
+  const prev = selected;
   const { r, c } = selected;
   if (e.key === 'ArrowUp'    && r > 0)   selected = { r: r-1, c };
   if (e.key === 'ArrowDown'  && r < N-1) selected = { r: r+1, c };
   if (e.key === 'ArrowLeft'  && c > 0)   selected = { r, c: c-1 };
   if (e.key === 'ArrowRight' && c < N-1) selected = { r, c: c+1 };
   render();
+  if (selected !== prev) announceActiveCell();
 });
 
 
@@ -977,7 +1002,9 @@ function revealCell() {
   board[r][c] = current.solution[r][c];
   revealed[r][c] = true;
   startTimerIfNeeded();
-  render(); checkWin();
+  render();
+  announceCellValue(board[r][c], 'revealed');
+  checkWin();
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
 

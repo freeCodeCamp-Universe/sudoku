@@ -452,6 +452,7 @@
 <div class="grid-wrap">
   <div class="samurai-grid" id="grid"></div>
 </div>
+<div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
 <div class="numpad">
@@ -791,6 +792,25 @@ function getCellValueLabel(val) {
   return val;
 }
 
+function announceToScreenReader(text) {
+  const announcer = document.getElementById('grid-announcer');
+  if (!announcer) return;
+  announcer.textContent = '';
+  requestAnimationFrame(() => { announcer.textContent = text; });
+}
+
+function announceCellValue(val, extra) {
+  announceToScreenReader(val === 0
+    ? 'empty'
+    : (extra ? `${getCellValueLabel(val)}, ${extra}` : `${getCellValueLabel(val)}`));
+}
+
+function announceActiveCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  announceToScreenReader(getCellAriaLabel(r, c, board[r][c]));
+}
+
 function getCellAriaLabel(r, c, val) {
   const positionLabel = `Row ${r + 1}, column ${c + 1}`;
   if (val === 0) return `${positionLabel}, empty`;
@@ -806,8 +826,6 @@ function updateGridAccessibility(grid) {
   grid.setAttribute('aria-label', 'Sudoku grid');
   grid.setAttribute('aria-rowcount', DIM);
   grid.setAttribute('aria-colcount', DIM);
-  if (selected) grid.setAttribute('aria-activedescendant', `cell-${selected.r}-${selected.c}`);
-  else grid.removeAttribute('aria-activedescendant');
 }
 
 function selectFirstCell() {
@@ -818,6 +836,7 @@ function selectFirstCell() {
       selected = { r, c };
       highlightNum = 0;
       render();
+      announceActiveCell();
       return;
     }
   }
@@ -925,6 +944,7 @@ function enterValue(val) {
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
+  announceCellValue(val);
   checkWin();
 }
 
@@ -999,6 +1019,7 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
 
 document.getElementById('grid').addEventListener('focus', () => {
   if (!selected) selectFirstCell();
+  else announceActiveCell();
 });
 
 document.addEventListener('keydown', e => {
@@ -1007,11 +1028,12 @@ document.addEventListener('keydown', e => {
   if (d >= 1 && d <= 9) { highlightNum = d; enterValue(d); render(); return; }
   if (e.key === 'Backspace' || e.key === 'Delete') { enterValue(0); render(); return; }
   if (!selected) return;
+  const prev = selected;
   const { r, c } = selected;
   const move = (dr, dc) => {
     let nr = r + dr, nc = c + dc;
     while (nr >= 0 && nr < DIM && nc >= 0 && nc < DIM) {
-      if (isActive(nr, nc)) { selected = { r: nr, c: nc }; highlightNum = board[nr][nc] || 0; render(); return; }
+      if (isActive(nr, nc)) { selected = { r: nr, c: nc }; highlightNum = board[nr][nc] || 0; return; }
       nr += dr; nc += dc;
     }
   };
@@ -1019,6 +1041,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown')  move( 1,  0);
   if (e.key === 'ArrowLeft')  move( 0, -1);
   if (e.key === 'ArrowRight') move( 0,  1);
+  render();
+  if (selected !== prev) announceActiveCell();
 });
 
 
@@ -1030,7 +1054,9 @@ function revealCell() {
   board[r][c] = current.solution[r][c];
   revealed[r][c] = true;
   startTimerIfNeeded();
-  render(); checkWin();
+  render();
+  announceCellValue(board[r][c], 'revealed');
+  checkWin();
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
 

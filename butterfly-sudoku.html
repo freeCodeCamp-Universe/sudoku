@@ -470,6 +470,7 @@
     <div class="grid-wrap">
       <div class="sudoku-grid" id="grid"></div>
     </div>
+<div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
     <div class="numpad">
@@ -783,6 +784,25 @@ function getCellValueLabel(val) {
   return val;
 }
 
+function announceToScreenReader(text) {
+  const announcer = document.getElementById('grid-announcer');
+  if (!announcer) return;
+  announcer.textContent = '';
+  requestAnimationFrame(() => { announcer.textContent = text; });
+}
+
+function announceCellValue(val, extra) {
+  announceToScreenReader(val === 0
+    ? 'empty'
+    : (extra ? `${getCellValueLabel(val)}, ${extra}` : `${getCellValueLabel(val)}`));
+}
+
+function announceActiveCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  announceToScreenReader(getCellAriaLabel(r, c, board[r][c]));
+}
+
 function getCellAriaLabel(r, c, val) {
   const positionLabel = `Row ${r + 1}, column ${c + 1}`;
   if (val === 0) return `${positionLabel}, empty`;
@@ -796,8 +816,6 @@ function updateGridAccessibility(grid) {
   grid.tabIndex = 0;
   grid.setAttribute('role', 'grid');
   grid.setAttribute('aria-label', 'Sudoku grid');
-  if (selected) grid.setAttribute('aria-activedescendant', `cell-${selected.r}-${selected.c}`);
-  else grid.removeAttribute('aria-activedescendant');
 }
 
 function selectFirstCell() {
@@ -805,6 +823,7 @@ function selectFirstCell() {
   selected = { r: 0, c: 0 };
   highlightNum = 0;
   render();
+  announceActiveCell();
 }
 
 function render() {
@@ -912,6 +931,7 @@ function enterValue(val) {
   highlightNum = val;
   if (val !== 0) startTimerIfNeeded();
   render();
+  announceCellValue(val);
   checkWin();
 }
 
@@ -952,6 +972,7 @@ function revealCell() {
   revealed[r][c] = true;
   startTimerIfNeeded();
   render();
+  announceCellValue(board[r][c], 'revealed');
   checkWin();
 }
 
@@ -1001,6 +1022,7 @@ document.getElementById('reveal-btn').addEventListener('click', revealCell);
 
 document.getElementById('grid').addEventListener('focus', () => {
   if (!selected) selectFirstCell();
+  else announceActiveCell();
 });
 
 document.addEventListener('keydown', e => {
@@ -1018,6 +1040,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (!selected) return;
+  const prev = selected;
   const { r, c } = selected;
   let nr = r, nc = c;
   if (e.key === 'ArrowUp')    nr = Math.max(0, r - 1);
@@ -1027,6 +1050,7 @@ document.addEventListener('keydown', e => {
   if (nr !== r || nc !== c) {
     selected = { r: nr, c: nc };
     render();
+    if (selected !== prev) announceActiveCell();
   }
 });
 
