@@ -149,6 +149,22 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     }
 
+    .grid-row {
+      display: contents;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .cell {
       width: 52px;
       height: 52px;
@@ -744,6 +760,34 @@ function getConflicts() {
   return conflicts;
 }
 
+function getCellValueLabel(val) {
+  return val;
+}
+
+function getCellAriaLabel(r, c, val) {
+  const positionLabel = `Row ${r + 1}, column ${c + 1}`;
+  if (val === 0) return `${positionLabel}, empty`;
+  const valueLabel = getCellValueLabel(val);
+  if (given[r][c]) return `${positionLabel}, ${valueLabel}, given`;
+  if (revealed[r][c]) return `${positionLabel}, ${valueLabel}, revealed`;
+  return `${positionLabel}, ${valueLabel}`;
+}
+
+function updateGridAccessibility(grid) {
+  grid.tabIndex = 0;
+  grid.setAttribute('role', 'grid');
+  grid.setAttribute('aria-label', 'Sudoku grid');
+  if (selected) grid.setAttribute('aria-activedescendant', `cell-${selected.r}-${selected.c}`);
+  else grid.removeAttribute('aria-activedescendant');
+}
+
+function selectFirstCell() {
+  if (selected) return;
+  selected = { r: 0, c: 0 };
+  highlightNum = 0;
+  render();
+}
+
 function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
@@ -751,6 +795,9 @@ function render() {
   const conflicts = checkingEnabled ? getConflicts() : new Set();
 
   for (let r = 0; r < N; r++) {
+    const row = document.createElement('div');
+    row.className = 'grid-row';
+    row.setAttribute('role', 'row');
     for (let c = 0; c < N; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
@@ -759,6 +806,16 @@ function render() {
       const val = board[r][c];
       const isSel = selected && selected.r === r && selected.c === c;
       const isSameVal = selVal !== 0 && val === selVal;
+      cell.setAttribute('role', 'gridcell');
+      cell.id = `cell-${r}-${c}`;
+      // Some screen readers ignore aria-label on a non-interactive gridcell,
+      // so the accessible name is supplied as visually-hidden text instead.
+      const labelEl = document.createElement('span');
+      labelEl.className = 'sr-only';
+      labelEl.textContent = getCellAriaLabel(r, c, val);
+      cell.appendChild(labelEl);
+      if (given[r][c] || revealed[r][c]) cell.setAttribute('aria-readonly', 'true');
+      if (isSel) cell.setAttribute('aria-selected', 'true');
 
       // Argyle diagonal highlights (added first so peer/selected/conflict can override)
       if (onD1(r, c)) cell.classList.add('argyle1');
@@ -781,7 +838,12 @@ function render() {
       }
 
       if (val !== 0) {
-        cell.textContent = val;
+        // Visible digit is hidden from assistive tech; the cell's aria-label
+        // already includes the value, so this avoids a double announcement.
+        const valueEl = document.createElement('span');
+        valueEl.setAttribute('aria-hidden', 'true');
+        valueEl.textContent = val;
+        cell.appendChild(valueEl);
         if (!given[r][c] && !revealed[r][c] && checkingEnabled) {
           cell.classList.add(current.solution[r][c] === val ? 'correct' : 'error');
         }
@@ -793,9 +855,11 @@ function render() {
         highlightNum = deselecting ? 0 : board[r][c];
         render();
       });
-      grid.appendChild(cell);
+      row.appendChild(cell);
     }
+    grid.appendChild(row);
   }
+  updateGridAccessibility(grid);
   updateNumpad();
 }
 
@@ -885,6 +949,10 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
   else if (timerStarted) {
     timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
   }
+});
+
+document.getElementById('grid').addEventListener('focus', () => {
+  if (!selected) selectFirstCell();
 });
 
 document.addEventListener('keydown', e => {

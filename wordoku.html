@@ -141,6 +141,22 @@
       position: relative;
     }
 
+    .grid-row {
+      display: contents;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .cell {
       width: 52px; height: 52px;
       display: flex; align-items: center; justify-content: center;
@@ -652,6 +668,34 @@ function getConflicts() {
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
+function getCellValueLabel(val) {
+  return current.word[val - 1];
+}
+
+function getCellAriaLabel(r, c, val) {
+  const positionLabel = `Row ${r + 1}, column ${c + 1}`;
+  if (val === 0) return `${positionLabel}, empty`;
+  const valueLabel = getCellValueLabel(val);
+  if (given[r][c]) return `${positionLabel}, ${valueLabel}, given`;
+  if (revealed[r][c]) return `${positionLabel}, ${valueLabel}, revealed`;
+  return `${positionLabel}, ${valueLabel}`;
+}
+
+function updateGridAccessibility(grid) {
+  grid.tabIndex = 0;
+  grid.setAttribute('role', 'grid');
+  grid.setAttribute('aria-label', 'Sudoku grid');
+  if (selected) grid.setAttribute('aria-activedescendant', `cell-${selected.r}-${selected.c}`);
+  else grid.removeAttribute('aria-activedescendant');
+}
+
+function selectFirstCell() {
+  if (selected) return;
+  selected = { r: 0, c: 0 };
+  highlightNum = 0;
+  render();
+}
+
 function render() {
   const el = document.getElementById('grid');
   el.innerHTML = '';
@@ -659,12 +703,23 @@ function render() {
   const { word, isRow, lineIdx } = current;
 
   for (let r = 0; r < N; r++) {
+    const row = document.createElement('div');
+    row.className = 'grid-row';
+    row.setAttribute('role', 'row');
     for (let c = 0; c < N; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
       const val = board[r][c], idx = r*N+c;
       const isSel  = selected && selected.r === r && selected.c === c;
       const isSame = highlightNum !== 0 && val === highlightNum;
+      cell.setAttribute('role', 'gridcell');
+      cell.id = `cell-${r}-${c}`;
+      const labelEl = document.createElement('span');
+      labelEl.className = 'sr-only';
+      labelEl.textContent = getCellAriaLabel(r, c, val);
+      cell.appendChild(labelEl);
+      if (given[r][c] || revealed[r][c]) cell.setAttribute('aria-readonly', 'true');
+      if (isSel) cell.setAttribute('aria-selected', 'true');
       const onLine = isRow ? r === lineIdx : c === lineIdx;
 
       if (given[r][c])        cell.classList.add('given');
@@ -681,7 +736,10 @@ function render() {
       }
 
       if (val) {
-        cell.textContent = word[val - 1]; // digit → letter
+        const valueEl = document.createElement('span');
+        valueEl.setAttribute('aria-hidden', 'true');
+        valueEl.textContent = word[val - 1]; // digit → letter
+        cell.appendChild(valueEl);
         if (!given[r][c] && !revealed[r][c] && checkingEnabled)
           cell.classList.add(current.solution[r][c] === val ? 'correct' : 'error');
       }
@@ -695,9 +753,11 @@ function render() {
         highlightNum = desel ? 0 : (board[r][c] || 0);
         render();
       });
-      el.appendChild(cell);
+      row.appendChild(cell);
     }
+    el.appendChild(row);
   }
+  updateGridAccessibility(el);
 
   updateNumpad();
 }
@@ -816,6 +876,10 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
   else if (timerStarted) {
     timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
   }
+});
+
+document.getElementById('grid').addEventListener('focus', () => {
+  if (!selected) selectFirstCell();
 });
 
 document.addEventListener('keydown', e => {
