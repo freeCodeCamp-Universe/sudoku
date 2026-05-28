@@ -151,6 +151,18 @@
       grid-template-rows:    repeat(21, 30px);
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .cell {
       width: 30px;
       height: 30px;
@@ -440,6 +452,7 @@
 <div class="grid-wrap">
   <div class="samurai-grid" id="grid"></div>
 </div>
+<div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
 <div class="numpad">
@@ -775,6 +788,60 @@ function applyBorders(cell, r, c) {
   if (thickBottom) cell.style.borderBottom = THICK;
 }
 
+function getCellValueLabel(val) {
+  return val;
+}
+
+function announceToScreenReader(text) {
+  const announcer = document.getElementById('grid-announcer');
+  if (!announcer) return;
+  announcer.textContent = '';
+  requestAnimationFrame(() => { announcer.textContent = text; });
+}
+
+function announceCellValue(val, extra) {
+  announceToScreenReader(val === 0
+    ? 'empty'
+    : (extra ? `${getCellValueLabel(val)}, ${extra}` : `${getCellValueLabel(val)}`));
+}
+
+function announceActiveCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  announceToScreenReader(getCellAriaLabel(r, c, board[r][c]));
+}
+
+function getCellAriaLabel(r, c, val) {
+  const positionLabel = `Row ${r + 1}, column ${c + 1}`;
+  if (val === 0) return `${positionLabel}, empty`;
+  const valueLabel = getCellValueLabel(val);
+  if (given[r][c]) return `${positionLabel}, ${valueLabel}, given`;
+  if (revealed[r][c]) return `${positionLabel}, ${valueLabel}, revealed`;
+  return `${positionLabel}, ${valueLabel}`;
+}
+
+function updateGridAccessibility(grid) {
+  grid.tabIndex = 0;
+  grid.setAttribute('role', 'grid');
+  grid.setAttribute('aria-label', 'Sudoku grid');
+  grid.setAttribute('aria-rowcount', DIM);
+  grid.setAttribute('aria-colcount', DIM);
+}
+
+function selectFirstCell() {
+  if (selected) return;
+  for (let r = 0; r < DIM; r++) {
+    for (let c = 0; c < DIM; c++) {
+      if (!isActive(r, c)) continue;
+      selected = { r, c };
+      highlightNum = 0;
+      render();
+      announceActiveCell();
+      return;
+    }
+  }
+}
+
 function render() {
   const el = document.getElementById('grid');
   el.innerHTML = '';
@@ -792,9 +859,21 @@ function render() {
       }
 
       cell.className = 'cell';
+      cell.dataset.r = r;
+      cell.dataset.c = c;
       const val = board[r][c];
       const isSel     = selected && selected.r === r && selected.c === c;
       const isSameVal = highlightNum !== 0 && val === highlightNum;
+      cell.setAttribute('role', 'gridcell');
+      cell.id = `cell-${r}-${c}`;
+      cell.setAttribute('aria-rowindex', r + 1);
+      cell.setAttribute('aria-colindex', c + 1);
+      const labelEl = document.createElement('span');
+      labelEl.className = 'sr-only';
+      labelEl.textContent = getCellAriaLabel(r, c, val);
+      cell.appendChild(labelEl);
+      if (given[r][c] || revealed[r][c]) cell.setAttribute('aria-readonly', 'true');
+      if (isSel) cell.setAttribute('aria-selected', 'true');
 
       if (given[r][c])              cell.classList.add('given');
       if (revealed[r][c])     cell.classList.add('revealed');
@@ -820,7 +899,10 @@ function render() {
       }
 
       if (val) {
-        cell.textContent = val;
+        const valueEl = document.createElement('span');
+        valueEl.setAttribute('aria-hidden', 'true');
+        valueEl.textContent = val;
+        cell.appendChild(valueEl);
         if (!given[r][c] && !revealed[r][c] && checkingEnabled)
           cell.classList.add(solution[r][c] === val ? 'correct' : 'error');
       }
@@ -836,6 +918,7 @@ function render() {
       el.appendChild(cell);
     }
   }
+  updateGridAccessibility(el);
   updateNumpad();
 }
 
@@ -861,6 +944,7 @@ function enterValue(val) {
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
+  announceCellValue(val);
   checkWin();
 }
 
@@ -933,17 +1017,23 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
   }
 });
 
+document.getElementById('grid').addEventListener('focus', () => {
+  if (!selected) selectFirstCell();
+  else announceActiveCell();
+});
+
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const d = parseInt(e.key);
   if (d >= 1 && d <= 9) { highlightNum = d; enterValue(d); render(); return; }
   if (e.key === 'Backspace' || e.key === 'Delete') { enterValue(0); render(); return; }
   if (!selected) return;
+  const prev = selected;
   const { r, c } = selected;
   const move = (dr, dc) => {
     let nr = r + dr, nc = c + dc;
     while (nr >= 0 && nr < DIM && nc >= 0 && nc < DIM) {
-      if (isActive(nr, nc)) { selected = { r: nr, c: nc }; highlightNum = board[nr][nc] || 0; render(); return; }
+      if (isActive(nr, nc)) { selected = { r: nr, c: nc }; highlightNum = board[nr][nc] || 0; return; }
       nr += dr; nc += dc;
     }
   };
@@ -951,6 +1041,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown')  move( 1,  0);
   if (e.key === 'ArrowLeft')  move( 0, -1);
   if (e.key === 'ArrowRight') move( 0,  1);
+  render();
+  if (selected !== prev) announceActiveCell();
 });
 
 
@@ -962,7 +1054,9 @@ function revealCell() {
   board[r][c] = current.solution[r][c];
   revealed[r][c] = true;
   startTimerIfNeeded();
-  render(); checkWin();
+  render();
+  announceCellValue(board[r][c], 'revealed');
+  checkWin();
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
 

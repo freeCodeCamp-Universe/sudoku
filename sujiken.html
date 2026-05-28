@@ -152,6 +152,22 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.5);
     }
 
+    .grid-row {
+      display: contents;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .cell {
       width: 52px;
       height: 52px;
@@ -447,6 +463,7 @@
 <div class="grid-wrap">
   <div class="sudoku-grid" id="grid"></div>
 </div>
+<div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
 <div class="numpad">
@@ -772,19 +789,68 @@ function getConflicts() {
 
 // ── Render ────────────────────────────────────────────────────────────────────
 
+function getCellValueLabel(val) {
+  return val;
+}
+
+function announceToScreenReader(text) {
+  const announcer = document.getElementById('grid-announcer');
+  if (!announcer) return;
+  announcer.textContent = '';
+  requestAnimationFrame(() => { announcer.textContent = text; });
+}
+
+function announceCellValue(val, extra) {
+  announceToScreenReader(val === 0
+    ? 'empty'
+    : (extra ? `${getCellValueLabel(val)}, ${extra}` : `${getCellValueLabel(val)}`));
+}
+
+function announceActiveCell() {
+  if (!selected) return;
+  const { r, c } = selected;
+  announceToScreenReader(getCellAriaLabel(r, c, board[r][c]));
+}
+
+function getCellAriaLabel(r, c, val) {
+  const positionLabel = `Row ${r + 1}, column ${c + 1}`;
+  if (val === 0) return `${positionLabel}, empty`;
+  const valueLabel = getCellValueLabel(val);
+  if (given[r][c]) return `${positionLabel}, ${valueLabel}, given`;
+  if (revealed[r][c]) return `${positionLabel}, ${valueLabel}, revealed`;
+  return `${positionLabel}, ${valueLabel}`;
+}
+
+function updateGridAccessibility(grid) {
+  grid.tabIndex = 0;
+  grid.setAttribute('role', 'grid');
+  grid.setAttribute('aria-label', 'Sudoku grid');
+}
+
+function selectFirstCell() {
+  if (selected) return;
+  selected = { r: 0, c: 0 };
+  highlightNum = 0;
+  render();
+  announceActiveCell();
+}
+
 function render() {
   const el = document.getElementById('grid');
   el.innerHTML = '';
   const conflicts = checkingEnabled ? getConflicts() : new Set();
 
   for (let r = 0; r < N; r++) {
+    const row = document.createElement('div');
+    row.className = 'grid-row';
+    row.setAttribute('role', 'row');
     for (let c = 0; c < N; c++) {
       const div = document.createElement('div');
 
       if (c > r) {
         // Void cell — upper-right triangle
         div.className = 'cell cell-void';
-        el.appendChild(div);
+        row.appendChild(div);
         continue;
       }
 
@@ -795,6 +861,14 @@ function render() {
       const idx = r * N + c;
       const isSel = selected && selected.r === r && selected.c === c;
       const isSameVal = highlightNum !== 0 && val === highlightNum;
+      div.setAttribute('role', 'gridcell');
+      div.id = `cell-${r}-${c}`;
+      const labelEl = document.createElement('span');
+      labelEl.className = 'sr-only';
+      labelEl.textContent = getCellAriaLabel(r, c, val);
+      div.appendChild(labelEl);
+      if (given[r][c] || revealed[r][c]) div.setAttribute('aria-readonly', 'true');
+      if (isSel) div.setAttribute('aria-selected', 'true');
 
       if (r === c)           div.classList.add('on-diag');
       if (given[r][c])       div.classList.add('given');
@@ -813,7 +887,10 @@ function render() {
       }
 
       if (val) {
-        div.textContent = val;
+        const valueEl = document.createElement('span');
+        valueEl.setAttribute('aria-hidden', 'true');
+        valueEl.textContent = val;
+        div.appendChild(valueEl);
         if (!given[r][c] && !revealed[r][c] && checkingEnabled)
           div.classList.add(current.solution[r][c] === val ? 'correct' : 'error');
       }
@@ -826,9 +903,11 @@ function render() {
         render();
       });
 
-      el.appendChild(div);
+      row.appendChild(div);
     }
+    el.appendChild(row);
   }
+  updateGridAccessibility(el);
   updateNumpad();
 }
 
@@ -860,6 +939,7 @@ function enterValue(val) {
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
+  announceCellValue(val);
   checkWin();
 }
 
@@ -936,38 +1016,46 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
 
 // ── Keyboard navigation ───────────────────────────────────────────────────────
 
+document.getElementById('grid').addEventListener('focus', () => {
+  if (!selected) selectFirstCell();
+  else announceActiveCell();
+});
+
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const d = parseInt(e.key);
   if (d >= 1 && d <= 9) { highlightNum = d; enterValue(d); render(); return; }
   if (e.key === 'Backspace' || e.key === 'Delete') { enterValue(0); render(); return; }
   if (!selected) return;
+  const prev = selected;
   let { r, c } = selected;
 
   if (e.key === 'ArrowRight') {
     // Move right within the same row (c increases, stays <= r)
     let nc = c + 1;
-    while (nc <= r) { selected = { r, c: nc }; render(); return; nc++; }
+    while (nc <= r) { selected = { r, c: nc }; break; }
     // No valid cell to the right — do nothing
   } else if (e.key === 'ArrowLeft') {
     // Move left within the same row
     let nc = c - 1;
-    if (nc >= 0) { selected = { r, c: nc }; render(); }
+    if (nc >= 0) { selected = { r, c: nc }; }
   } else if (e.key === 'ArrowDown') {
     // Move down in the same column (r increases, must stay >= c)
     let nr = r + 1;
     while (nr < N) {
-      if (c <= nr) { selected = { r: nr, c }; render(); return; }
+      if (c <= nr) { selected = { r: nr, c }; break; }
       nr++;
     }
   } else if (e.key === 'ArrowUp') {
     // Move up in the same column (r decreases, must stay >= c)
     let nr = r - 1;
     while (nr >= 0) {
-      if (c <= nr) { selected = { r: nr, c }; render(); return; }
+      if (c <= nr) { selected = { r: nr, c }; break; }
       nr--;
     }
   }
+  render();
+  if (selected !== prev) announceActiveCell();
 });
 
 // ── Reveal cell ───────────────────────────────────────────────────────────────
@@ -980,6 +1068,7 @@ function revealCell() {
   revealed[r][c] = true;
   startTimerIfNeeded();
   render();
+  announceCellValue(board[r][c], 'revealed');
   checkWin();
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
