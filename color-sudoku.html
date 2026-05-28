@@ -243,6 +243,43 @@
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
     .reveal-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
+    .clear-btn {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      padding: 7px 20px; border-radius: 2px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary); color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .clear-btn:hover { border-color: var(--accent-red); color: var(--accent-red); }
+    .clear-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .button-row { display: flex; gap: 8px; }
+    /* ── Check prompt ── */
+    .check-prompt {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--accent-red);
+      text-align: center;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+    .check-prompt-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-red);
+      background: none;
+      border: 1px solid var(--accent-red);
+      border-radius: 2px;
+      padding: 2px 10px;
+      margin-left: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .check-prompt-btn:hover { opacity: 0.7; }
+
+
+
     .cell.box-right  { border-right:  3px solid #9898b8; }
     .cell.box-bottom { border-bottom: 3px solid #9898b8; }
 
@@ -313,7 +350,8 @@
     .status.win { color: var(--accent-green); }
 
     .new-btn {
-      margin-top: 8px;
+      margin-top: 24px;
+      align-self: center;
       background: var(--accent-yellow); color: #0a0a23;
       border: none; font-family: inherit;
       font-size: 0.88rem; font-weight: 700;
@@ -323,6 +361,13 @@
     .new-btn:hover { opacity: 0.88; }
     .new-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
+
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10, 10, 35, 0.85);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .confirm-overlay.open { display: flex; }
     .modal-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(10,10,35,0.85);
@@ -424,8 +469,8 @@
     html.light .cell.given::after { background: rgba(0,0,0,0.25); }
 
     @media (max-width: 520px) {
-      .sudoku-grid { grid-template-columns: repeat(9, 36px); grid-template-rows: repeat(9, 36px); }
-      .cell { width: 36px; height: 36px; font-size: 1.1rem; }
+      .sudoku-grid { grid-template-columns: repeat(9, 44px); grid-template-rows: repeat(9, 44px); }
+      .cell { width: 44px; height: 44px; font-size: 1.2rem; }
       .color-dot { width: 20px; height: 20px; }
       .top-bar { gap: 8px; }
       .top-bar .badge { display: none; }
@@ -435,14 +480,22 @@
       .num-btn { width: 44px; height: 44px; font-size: 1.1rem; }
       .numpad-row { gap: 5px; }
       .numpad { gap: 5px; margin-bottom: 16px; }
-      .reveal-btn, .new-btn { width: 100%; box-sizing: border-box; }
+            .button-row { flex-direction: column; gap: 6px; }
+      .reveal-btn, .clear-btn, .new-btn { width: 100%; box-sizing: border-box; }
+      .mode-btn { padding: 10px 0; }
+      .check-prompt { flex-direction: column; align-items: center; gap: 6px; }
+      .check-prompt-btn { margin-left: 0; padding: 6px 16px; }
+      .note { font-size: 6px; }
     }
     @media (max-width: 375px) {
       body { padding-left: 8px; padding-right: 8px; }
-      .sudoku-grid { grid-template-columns: repeat(9, 30px); grid-template-rows: repeat(9, 30px); }
-      .cell { width: 30px; height: 30px; font-size: 0.85rem; }
+      .sudoku-grid { grid-template-columns: repeat(9, 38px); grid-template-rows: repeat(9, 38px); }
+      .cell { width: 38px; height: 38px; font-size: 1rem; }
       .num-btn { width: 38px; height: 38px; font-size: 0.9rem; }
       .numpad-row { gap: 3px; }
+      .note { font-size: 5px; }
+      .cell-notes { inset: 1px; }
+      .new-btn { margin-top: 16px; }
     }
   </style>
   <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
@@ -483,16 +536,46 @@
   <button class="toggle-btn on" id="check-toggle">On</button>
   <span style="margin-left:12px;">Timer</span>
   <button class="toggle-btn on" id="timer-toggle">On</button>
+
 </div>
 
+<div class="button-row">
 <button class="reveal-btn" id="reveal-btn">Reveal Cell</button>
+<button class="clear-btn" id="clear-btn">Clear All</button>
+</div>
+
+<div class="check-prompt" id="check-prompt">
+  All cells filled.
+  <button class="check-prompt-btn" id="check-prompt-btn">Check answers</button>
+</div>
 
 <div class="status" id="status"></div>
-<button class="new-btn" id="new-btn">New Game</button>
   </div>
 </div><!-- /game-layout -->
+<button class="new-btn" id="new-btn">New Game</button>
 </div>
 
+
+<div class="confirm-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-title" style="font-size:1.3rem; color:var(--text-bright);">Start a new game?</div>
+    <div class="modal-sub">Your current progress will be lost.</div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="confirm-new-btn">Start New Game</button>
+      <button class="modal-btn secondary" id="cancel-new-btn">Keep Playing</button>
+    </div>
+  </div>
+</div>
+<div class="confirm-overlay" id="clear-confirm-modal">
+  <div class="modal">
+    <div class="modal-title" style="font-size:1.3rem; color:var(--text-bright);">Clear all entries?</div>
+    <div class="modal-sub">All your entered digits will be removed.</div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="confirm-clear-btn">Clear All</button>
+      <button class="modal-btn secondary" id="cancel-clear-btn">Keep Playing</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-emoji">&#127881;</div>
@@ -871,9 +954,11 @@ function enterValue(val) {
   render();
   announceCellValue(val);
   checkWin();
+  updateCheckPrompt();
 }
 
 function checkWin() {
+  if (!checkingEnabled) return;
   if (!board.every((row, r) => row.every((v, c) => v === current.solution[r][c]))) return;
   selected = null; stopTimer(); render();
   if (timerEnabled) {
@@ -894,7 +979,31 @@ function setStatus(msg, type = '') {
 }
 
 // ── Event wiring ──────────────────────────────────────────────────────────────
-document.getElementById('new-btn').addEventListener('click', newGame);
+
+function hasProgress() {
+  if (!current) return false;
+  for (let r = 0; r < current.puzzle.length; r++)
+    for (let c = 0; c < current.puzzle[r].length; c++)
+      if (board[r][c] !== current.puzzle[r][c]) return true;
+  return false;
+}
+
+document.getElementById('new-btn').addEventListener('click', function() {
+  if (hasProgress()) {
+    document.getElementById('confirm-modal').classList.add('open');
+  } else {
+    newGame();
+  }
+});
+
+document.getElementById('confirm-new-btn').addEventListener('click', function() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  newGame();
+});
+
+document.getElementById('cancel-new-btn').addEventListener('click', function() {
+  document.getElementById('confirm-modal').classList.remove('open');
+});
 
 document.getElementById('modal-new-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.remove('open'); newGame();
@@ -903,13 +1012,34 @@ document.getElementById('modal-view-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.remove('open');
 });
 
+function isBoardFull() {
+  if (!current) return false;
+  return board.every(row => row.every(v => v !== 0));
+}
+
+function updateCheckPrompt() {
+  const el = document.getElementById('check-prompt');
+  if (el) el.style.display = (!checkingEnabled && isBoardFull()) ? 'block' : 'none';
+}
+
+document.getElementById('check-prompt-btn').addEventListener('click', function() {
+  checkingEnabled = true;
+  document.getElementById('check-toggle').textContent = 'On';
+  document.getElementById('check-toggle').className = 'toggle-btn on';
+  updateCheckPrompt();
+  render();
+  checkWin();
+});
+
 document.getElementById('check-toggle').addEventListener('click', () => {
   checkingEnabled = !checkingEnabled;
   const btn = document.getElementById('check-toggle');
   btn.textContent = checkingEnabled ? 'On' : 'Off';
   btn.className = 'toggle-btn ' + (checkingEnabled ? 'on' : 'off');
   render();
+  updateCheckPrompt();
 });
+
 
 document.getElementById('timer-toggle').addEventListener('click', () => {
   timerEnabled = !timerEnabled;
@@ -923,6 +1053,8 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
     timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
   }
 });
+
+
 
 document.getElementById('grid').addEventListener('focus', () => {
   if (!selected) selectFirstCell();
@@ -962,6 +1094,30 @@ function revealCell() {
   checkWin();
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
+
+function clearAll() {
+  for (let r = 0; r < board.length; r++)
+    for (let c = 0; c < board[r].length; c++)
+      if (current.puzzle[r][c] !== null && !given[r][c] && !revealed[r][c])
+        board[r][c] = 0;
+  selected = null;
+  render();
+}
+
+document.getElementById('clear-btn').addEventListener('click', function() {
+  if (hasProgress()) {
+    document.getElementById('clear-confirm-modal').classList.add('open');
+  }
+});
+
+document.getElementById('confirm-clear-btn').addEventListener('click', function() {
+  document.getElementById('clear-confirm-modal').classList.remove('open');
+  clearAll();
+});
+
+document.getElementById('cancel-clear-btn').addEventListener('click', function() {
+  document.getElementById('clear-confirm-modal').classList.remove('open');
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 buildLegend();

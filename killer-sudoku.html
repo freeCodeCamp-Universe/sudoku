@@ -174,15 +174,15 @@
       font-weight: 400;
       color: #99c9ff;
       cursor: pointer;
-      background: #1b1b32;
+      background: var(--cage-bg, #1b1b32);
       user-select: none;
       position: relative;
       transition: background 0.08s;
     }
 
     .cell.given     { color: var(--text-primary); font-weight: 700; cursor: default; }
-    .cell.peer      { background: #22243e; }
-    .cell.same-val  { background: #1a4f4f; }
+    .cell.peer      { background-color: var(--cage-bg, #1b1b32); background-image: linear-gradient(rgba(0,0,0,0.38), rgba(0,0,0,0.38)); }
+    .cell.same-val  { background-color: var(--cage-bg, #1b1b32); background-image: linear-gradient(rgba(255,255,255,0.22), rgba(255,255,255,0.22)); }
     .cell.selected  { outline: 3px solid #4a90d9; outline-offset: -3px; z-index: 2; }
     .cell.conflict  { background: #2a1515; }
     .cell.error     { color: #ff4444; }
@@ -199,6 +199,99 @@
     }
     .reveal-btn:hover { border-color: var(--accent-yellow); color: var(--accent-yellow); }
     .reveal-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    .clear-btn {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      padding: 7px 20px; border-radius: 2px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary); color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .clear-btn:hover { border-color: var(--accent-red); color: var(--accent-red); }
+    .clear-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .button-row { display: flex; gap: 8px; }
+    /* ── Check prompt ── */
+    .check-prompt {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--accent-red);
+      text-align: center;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+    .check-prompt-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent-red);
+      background: none;
+      border: 1px solid var(--accent-red);
+      border-radius: 2px;
+      padding: 2px 10px;
+      margin-left: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .check-prompt-btn:hover { opacity: 0.7; }
+
+
+    /* ── Mode switcher ── */
+    .mode-switcher {
+      display: flex;
+      width: 100%;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .mode-btn {
+      flex: 1;
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 7px 0;
+      border: none;
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mode-btn + .mode-btn { border-left: 1px solid var(--border); }
+    .mode-btn.active { background: var(--bg-surface); color: var(--text-bright); }
+    .mode-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+    /* ── Candidate numpad ── */
+    .numpad.candidate .num-btn {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* ── Pencil marks ── */
+    .cell-notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      position: absolute;
+      inset: 2px;
+      pointer-events: none;
+    }
+    .note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 7px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    html.light .note { color: #8888aa; }
+
+
 
     .cage-sum {
       position: absolute;
@@ -261,15 +354,25 @@
     .status.win { color: var(--accent-green); }
 
     .new-btn {
-      margin-top: 8px;
+      display: flex; align-items: center;
       background: var(--accent-yellow); color: #0a0a23;
-      border: none; font-family: inherit;
-      font-size: 0.88rem; font-weight: 700;
+      border: none;
+      font-family: inherit; font-size: 0.88rem; font-weight: 700;
       padding: 10px 28px; border-radius: 2px;
-      cursor: pointer; transition: opacity 0.15s;
+      cursor: pointer; white-space: nowrap;
+      margin-top: 24px;
+      align-self: center;
+      transition: opacity 0.15s;
     }
     .new-btn:hover { opacity: 0.88; }
     .new-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10, 10, 35, 0.85);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .confirm-overlay.open { display: flex; }
 
     .modal-overlay {
       display: none; position: fixed; inset: 0;
@@ -337,10 +440,10 @@
       --text-bright:  #0a0a23;
     }
     html.light body { color: var(--text-subtle); }
-    html.light .cell { background: #ffffff; color: #2c5f8a; border-color: #d8d8e8; }
+    html.light .cell { background: var(--cage-bg, #ffffff); color: #2c5f8a; border-color: #d8d8e8; }
     html.light .cell.given { color: #0a0a23; }
-    html.light .cell.peer { background: #eaeaf4; }
-    html.light .cell.same-val { background: #d4ead4; }
+    html.light .cell.peer      { background-color: var(--cage-bg, #ffffff); background-image: linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)); }
+    html.light .cell.same-val  { background-color: var(--cage-bg, #ffffff); background-image: linear-gradient(rgba(0,80,200,0.14), rgba(0,80,200,0.14)); }
     html.light .cell.conflict { background: #f8dede; }
     html.light .cell.error   { color: #cc0000; }
     html.light .cell.selected { outline-color: #1a7cc0; }
@@ -371,8 +474,8 @@
     }
 
     @media (max-width: 520px) {
-      .sudoku-grid { grid-template-columns: repeat(9, 36px); grid-template-rows: repeat(9, 36px); }
-      .cell { width: 36px; height: 36px; font-size: 1.1rem; }
+      .sudoku-grid { grid-template-columns: repeat(9, 44px); grid-template-rows: repeat(9, 44px); }
+      .cell { width: 44px; height: 44px; font-size: 1.2rem; }
       .top-bar { gap: 8px; }
       .top-bar .badge { display: none; }
           body { padding-top: 20px; padding-bottom: 36px; padding-left: 12px; padding-right: 12px; }
@@ -381,16 +484,24 @@
       .num-btn { width: 44px; height: 44px; font-size: 1.1rem; }
       .numpad-row { gap: 5px; }
       .numpad { gap: 5px; margin-bottom: 16px; }
-      .reveal-btn, .new-btn { width: 100%; box-sizing: border-box; }
+            .button-row { flex-direction: column; gap: 6px; }
+      .reveal-btn, .clear-btn, .new-btn { width: 100%; box-sizing: border-box; }
+      .mode-btn { padding: 10px 0; }
+      .check-prompt { flex-direction: column; align-items: center; gap: 6px; }
+      .check-prompt-btn { margin-left: 0; padding: 6px 16px; }
+      .note { font-size: 6px; }
       .cage-sum { font-size: 0.38rem; }
     }
     @media (max-width: 375px) {
       body { padding-left: 8px; padding-right: 8px; }
-      .sudoku-grid { grid-template-columns: repeat(9, 30px); grid-template-rows: repeat(9, 30px); }
-      .cell { width: 30px; height: 30px; font-size: 0.85rem; }
+      .sudoku-grid { grid-template-columns: repeat(9, 38px); grid-template-rows: repeat(9, 38px); }
+      .cell { width: 38px; height: 38px; font-size: 1rem; }
       .num-btn { width: 38px; height: 38px; font-size: 0.9rem; }
       .numpad-row { gap: 3px; }
       .cage-sum { font-size: 0.3rem; }
+      .note { font-size: 5px; }
+      .cell-notes { inset: 1px; }
+      .new-btn { margin-top: 16px; }
     }
   </style>
   <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
@@ -419,7 +530,12 @@
 <div class="sr-only" id="grid-announcer" aria-live="polite" aria-atomic="true"></div>
   </div>
   <div class="game-right">
-<div class="numpad">
+<div class="mode-switcher">
+  <button class="mode-btn active" id="mode-normal">Normal</button>
+  <button class="mode-btn" id="mode-candidate">Candidate</button>
+</div>
+
+<div class="numpad" id="numpad">
   <div class="numpad-row">
     <button class="num-btn" data-val="1">1</button>
     <button class="num-btn" data-val="2">2</button>
@@ -441,15 +557,40 @@
   <button class="toggle-btn on" id="check-toggle">On</button>
   <span style="margin-left:12px;">Timer</span>
   <button class="toggle-btn on" id="timer-toggle">On</button>
+
 </div>
 
+<div class="button-row">
 <button class="reveal-btn" id="reveal-btn">Reveal Cell</button>
-<button class="new-btn" id="new-btn">New Game</button>
+<button class="clear-btn" id="clear-btn">Clear All</button>
+</div>
 <div class="status" id="status"></div>
   </div>
 </div><!-- /game-layout -->
+<button class="new-btn" id="new-btn">New Game</button>
 </div>
 
+<div class="confirm-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-title" style="font-size:1.3rem; color:var(--text-bright);">Start a new game?</div>
+    <div class="modal-sub">Your current progress will be lost.</div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="confirm-new-btn">Start New Game</button>
+      <button class="modal-btn secondary" id="cancel-new-btn">Keep Playing</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="clear-confirm-modal">
+  <div class="modal">
+    <div class="modal-title" style="font-size:1.3rem; color:var(--text-bright);">Clear all entries?</div>
+    <div class="modal-sub">All your entered digits will be removed.</div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="confirm-clear-btn">Clear All</button>
+      <button class="modal-btn secondary" id="cancel-clear-btn">Keep Playing</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-emoji">&#127881;</div>
@@ -480,6 +621,7 @@
     const next = document.documentElement.classList.contains('light') ? 'dark' : 'light';
     localStorage.setItem('sudoku-theme', next);
     applyTheme(next);
+    if (current) render();
   });
 })();
 
@@ -609,6 +751,25 @@ function generateCages(solution) {
   return { cages, cageOf };
 }
 
+function graphColorCages(cageOf, numCages) {
+  const adj = Array.from({length: numCages}, () => new Set());
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const id = cageOf[r*N+c];
+      if (c+1 < N) { const nb = cageOf[r*N+c+1]; if (nb !== id) { adj[id].add(nb); adj[nb].add(id); } }
+      if (r+1 < N) { const nb = cageOf[(r+1)*N+c]; if (nb !== id) { adj[id].add(nb); adj[nb].add(id); } }
+    }
+  }
+  const colors = new Array(numCages).fill(-1);
+  for (let id = 0; id < numCages; id++) {
+    const used = new Set([...adj[id]].map(nb => colors[nb]).filter(c => c >= 0));
+    let col = 0;
+    while (used.has(col)) col++;
+    colors[id] = col;
+  }
+  return colors;
+}
+
 function generatePuzzle() {
   const solution = generateSolution();
   if (!solution) return null;
@@ -630,12 +791,15 @@ function generatePuzzle() {
   const cageSums = new Map();
   for (const cage of cages) cageSums.set(cage.topLeft, cage.sum);
 
-  return { puzzle, solution, cageOf, cageSums, givens };
+  const cageColors = graphColorCages(cageOf, cages.length);
+  return { puzzle, solution, cageOf, cageSums, givens, cageColors };
 }
 
 // ── Game state ─────────────────────────────────────────────────────────────────
 let current = null;
 let board = [];
+let notes = [];
+let notesMode = false;
 let selected = null;
 let highlightNum = 0;
 let checkingEnabled = true;
@@ -712,6 +876,13 @@ function getConflicts() {
 
 // ── Render ─────────────────────────────────────────────────────────────────────
 const THICK = '3px solid #9898b8';
+
+const CAGE_PALETTES = {
+  dark:  ['#28214a','#112e20','#30200e','#101f36','#2e1e0c',
+          '#0e2c2c','#2e0e1e','#1e2e0c','#200d30'],
+  light: ['#f5f2ff','#eaf7f0','#fff7e8','#eaf4ff','#fff2e6',
+          '#e8f9f9','#fff0f5','#f2faec','#faf0ff'],
+};
 
 // Draws dashed cage boundaries as an SVG overlay so they never conflict with
 // the thick CSS box-boundary borders.
@@ -817,10 +988,12 @@ function selectFirstCell() {
 }
 
 function render() {
-  const { cageOf, cageSums } = current;
+  const { cageOf, cageSums, cageColors } = current;
   const el = document.getElementById('grid');
   el.innerHTML = '';
   const conflicts = checkingEnabled ? getConflicts() : new Set();
+  const isLightTheme = document.documentElement.classList.contains('light');
+  const CAGE_PALETTE = CAGE_PALETTES[isLightTheme ? 'light' : 'dark'];
 
   for (let r = 0; r < N; r++) {
     const row = document.createElement('div');
@@ -833,6 +1006,7 @@ function render() {
 
       const val     = board[r][c];
       const myId    = cageOf[idx];
+      cell.style.setProperty('--cage-bg', CAGE_PALETTE[cageColors[myId] % CAGE_PALETTE.length]);
       const isGiven = current.givens.has(idx);
       const isSel   = selected && selected.r === r && selected.c === c;
       const isSame  = highlightNum !== 0 && val === highlightNum;
@@ -918,6 +1092,7 @@ let revealed = [];
 function newGame() {
   current = generatePuzzle();
   board = current.puzzle.map(row => [...row]);
+  notes = board.map(row => row.map(() => new Set()));
   revealed = Array.from({length: N}, () => Array(N).fill(false));
   selected = null;
   highlightNum = 0;
@@ -930,15 +1105,24 @@ function enterValue(val) {
   if (!selected) return;
   const { r, c } = selected;
   if (current.givens.has(r*N+c) || revealed[r][c]) return;
+  if (notesMode) {
+    if (val === 0) { notes[r][c].clear(); }
+    else if (notes[r][c].has(val)) { notes[r][c].delete(val); }
+    else { notes[r][c].add(val); }
+    render();
+    return;
+  }
   if (checkingEnabled && timerEnabled && val !== 0 && board[r][c] !== 0 && board[r][c] === current.solution[r][c]) return;
   board[r][c] = val;
   if (val !== 0) startTimerIfNeeded();
   render();
   announceCellValue(val);
   checkWin();
+  updateCheckPrompt();
 }
 
 function checkWin() {
+  if (!checkingEnabled) return;
   const complete = board.every((row, r) => row.every((v, c) => v === current.solution[r][c]));
   if (!complete) return;
   selected = null;
@@ -973,7 +1157,30 @@ document.querySelectorAll('.num-btn').forEach(btn =>
   })
 );
 
-document.getElementById('new-btn').addEventListener('click', newGame);
+function hasProgress() {
+  if (!current) return false;
+  for (let r = 0; r < N; r++)
+    for (let c = 0; c < N; c++)
+      if (board[r][c] !== current.puzzle[r][c]) return true;
+  return false;
+}
+
+document.getElementById('new-btn').addEventListener('click', function() {
+  if (hasProgress()) {
+    document.getElementById('confirm-modal').classList.add('open');
+  } else {
+    newGame();
+  }
+});
+
+document.getElementById('confirm-new-btn').addEventListener('click', function() {
+  document.getElementById('confirm-modal').classList.remove('open');
+  newGame();
+});
+
+document.getElementById('cancel-new-btn').addEventListener('click', function() {
+  document.getElementById('confirm-modal').classList.remove('open');
+});
 
 document.getElementById('modal-new-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.remove('open');
@@ -991,6 +1198,7 @@ document.getElementById('check-toggle').addEventListener('click', () => {
   render();
 });
 
+
 document.getElementById('timer-toggle').addEventListener('click', () => {
   timerEnabled = !timerEnabled;
   const btn = document.getElementById('timer-toggle');
@@ -1003,6 +1211,36 @@ document.getElementById('timer-toggle').addEventListener('click', () => {
     timerInterval = setInterval(() => { elapsedSeconds++; updateTimerDisplay(); }, 1000);
   }
 });
+
+function setMode(candidate) {
+  notesMode = candidate;
+  document.getElementById('numpad').classList.toggle('candidate', candidate);
+  document.getElementById('mode-normal').classList.toggle('active', !candidate);
+  document.getElementById('mode-candidate').classList.toggle('active', candidate);
+}
+
+document.getElementById('mode-normal').addEventListener('click', () => setMode(false));
+document.getElementById('mode-candidate').addEventListener('click', () => setMode(true));
+
+function isBoardFull() {
+  if (!current) return false;
+  return board.every(row => row.every(v => v !== 0));
+}
+
+function updateCheckPrompt() {
+  const el = document.getElementById('check-prompt');
+  if (el) el.style.display = (!checkingEnabled && isBoardFull()) ? 'block' : 'none';
+}
+
+document.getElementById('check-prompt-btn').addEventListener('click', function() {
+  checkingEnabled = true;
+  document.getElementById('check-toggle').textContent = 'On';
+  document.getElementById('check-toggle').className = 'toggle-btn on';
+  updateCheckPrompt();
+  render();
+  checkWin();
+});
+
 
 document.getElementById('grid').addEventListener('focus', () => {
   if (!selected) selectFirstCell();
@@ -1040,6 +1278,30 @@ function revealCell() {
 }
 document.getElementById('reveal-btn').addEventListener('click', revealCell);
 
+function clearAll() {
+  for (let r = 0; r < N; r++)
+    for (let c = 0; c < N; c++)
+      if (!current.givens.has(r * N + c) && !revealed[r][c])
+        board[r][c] = 0;
+  selected = null;
+  render();
+}
+
+document.getElementById('clear-btn').addEventListener('click', function() {
+  if (hasProgress()) {
+    document.getElementById('clear-confirm-modal').classList.add('open');
+  }
+});
+
+document.getElementById('confirm-clear-btn').addEventListener('click', function() {
+  document.getElementById('clear-confirm-modal').classList.remove('open');
+  clearAll();
+});
+
+document.getElementById('cancel-clear-btn').addEventListener('click', function() {
+  document.getElementById('clear-confirm-modal').classList.remove('open');
+});
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 newGame();
 
@@ -1056,14 +1318,14 @@ document.addEventListener('click', e => {
     <div class="modal-title" style="font-size:1.15rem;color:var(--text-bright);">How to Play</div>
     <div class="help-section help-section-basic">Basic Rules</div>
     <ul class="help-rules">
-      <li><strong>The grid:</strong> A standard 9×9 sudoku — fill every row, column, and 3×3 box with digits 1–9.</li>
+      <li><strong>The grid:</strong> A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.</li>
       <li><strong>Cages:</strong> Cells are grouped into dashed cages, each with a small target number in its corner.</li>
-      <li><strong>Sum rule:</strong> The digits inside each cage must add up to that target exactly.</li>
+      <li><strong>Sum rule:</strong> The digits inside each dashed cage must add up to that target exactly.</li>
     </ul>
     <div class="help-section help-section-extra">Additional Rules</div>
     <ul class="help-rules">
       <li><strong>No repeats in cages:</strong> A digit may not appear twice within the same cage, even if sudoku rules would otherwise allow it.</li>
-      <li><strong>No givens:</strong> There are no pre-filled cells — the cages and their sums are your only starting clues.</li>
+      <li><strong>No givens:</strong> There are no pre-filled cells. The cages and their sums are your only starting clues.</li>
     </ul>
     <button class="modal-btn secondary" id="help-close-btn" style="margin-top:6px;">Got it</button>
   </div>

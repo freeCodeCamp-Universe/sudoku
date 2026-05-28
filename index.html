@@ -69,7 +69,12 @@
 
     @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 700px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 500px)  { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 500px)  {
+      .grid { grid-template-columns: 1fr; }
+      .sort-wrap { flex-direction: column; gap: 6px; }
+      #sort-select { width: 100%; max-width: 100%; }
+      #search { max-width: 100%; }
+    }
 
     .card {
       background: var(--bg-secondary);
@@ -289,6 +294,40 @@
       padding: 40px 0;
       grid-column: 1 / -1;
     }
+
+    /* ── Sort controls ── */
+    .sort-wrap {
+      max-width: 1100px;
+      margin: 0 auto 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sort-label {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+    }
+
+    #sort-select {
+      font-family: 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    #sort-select:focus { border-color: var(--accent-blue); }
+    #sort-select:hover { border-color: var(--accent-blue); }
   </style>
   <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
 </head>
@@ -304,10 +343,19 @@
   <input type="search" id="search" placeholder="Search puzzles…" autocomplete="off" spellcheck="false" aria-label="Search puzzles" />
 </div>
 
+<div class="sort-wrap">
+  <label class="sort-label" for="sort-select">Sort by</label>
+  <select id="sort-select" aria-label="Sort puzzles by">
+    <option value="popularity">Popularity</option>
+    <option value="alpha">A–Z</option>
+    <option value="difficulty">Difficulty</option>
+  </select>
+</div>
+
 <div class="grid">
 
   <!-- 1. Classic Sudoku -->
-  <div class="card" onclick="location.href='classic-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='classic-sudoku.html'">
+  <div class="card" data-popularity="1" onclick="location.href='classic-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='classic-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Classic Sudoku</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -319,7 +367,7 @@
   </div>
 
   <!-- 2. Killer Sudoku -->
-  <div class="card" onclick="location.href='killer-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='killer-sudoku.html'">
+  <div class="card" data-popularity="2" onclick="location.href='killer-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='killer-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Killer Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -331,7 +379,7 @@
   </div>
 
   <!-- 3. Samurai Sudoku -->
-  <div class="card" onclick="location.href='samurai-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='samurai-sudoku.html'">
+  <div class="card" data-popularity="3" onclick="location.href='samurai-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='samurai-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Samurai Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -343,7 +391,7 @@
   </div>
 
   <!-- 4. Sudoku X -->
-  <div class="card" onclick="location.href='sudoku-x.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sudoku-x.html'">
+  <div class="card" data-popularity="4" onclick="location.href='sudoku-x.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sudoku-x.html'">
     <div class="card-header">
       <span class="card-name">Sudoku X</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -355,7 +403,7 @@
   </div>
 
   <!-- 5. Jigsaw Sudoku -->
-  <div class="card" onclick="location.href='jigsaw-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='jigsaw-sudoku.html'">
+  <div class="card" data-popularity="5" onclick="location.href='jigsaw-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='jigsaw-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Jigsaw Sudoku</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -367,7 +415,7 @@
   </div>
 
   <!-- 6. Windoku -->
-  <div class="card" onclick="location.href='windoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='windoku.html'">
+  <div class="card" data-popularity="6" onclick="location.href='windoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='windoku.html'">
     <div class="card-header">
       <span class="card-name">Windoku</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -379,7 +427,7 @@
   </div>
 
   <!-- 7. Arrow Sudoku -->
-  <div class="card" onclick="location.href='arrow-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='arrow-sudoku.html'">
+  <div class="card" data-popularity="7" onclick="location.href='arrow-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='arrow-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Arrow Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -391,7 +439,7 @@
   </div>
 
   <!-- 8. Even-Odd Sudoku -->
-  <div class="card" onclick="location.href='even-odd-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='even-odd-sudoku.html'">
+  <div class="card" data-popularity="8" onclick="location.href='even-odd-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='even-odd-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Even-Odd Sudoku</span>
       <span class="badge badge-beginner">Beginner</span>
@@ -403,7 +451,7 @@
   </div>
 
   <!-- 9. Consecutive Sudoku -->
-  <div class="card" onclick="location.href='consecutive-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='consecutive-sudoku.html'">
+  <div class="card" data-popularity="9" onclick="location.href='consecutive-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='consecutive-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Consecutive Sudoku</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -415,7 +463,7 @@
   </div>
 
   <!-- 10. Greater-Than Sudoku -->
-  <div class="card" onclick="location.href='greater-than-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='greater-than-sudoku.html'">
+  <div class="card" data-popularity="10" onclick="location.href='greater-than-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='greater-than-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Greater-Than Sudoku</span>
       <span class="badge badge-intermediate">Intermediate</span>
@@ -427,7 +475,7 @@
   </div>
 
   <!-- 11. Skyscraper Sudoku -->
-  <div class="card" onclick="location.href='skyscraper.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='skyscraper.html'">
+  <div class="card" data-popularity="11" onclick="location.href='skyscraper.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='skyscraper.html'">
     <div class="card-header">
       <span class="card-name">Skyscraper Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -439,7 +487,7 @@
   </div>
 
   <!-- 12. Mini Sudoku 4x4 -->
-  <div class="card" onclick="location.href='mini-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='mini-sudoku.html'">
+  <div class="card" data-popularity="12" onclick="location.href='mini-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='mini-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Mini Sudoku 4x4</span>
       <span class="badge badge-beginner">Beginner</span>
@@ -451,7 +499,7 @@
   </div>
 
   <!-- 13. Super Sudoku -->
-  <div class="card" onclick="location.href='super-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='super-sudoku.html'">
+  <div class="card" data-popularity="13" onclick="location.href='super-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='super-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Super Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -463,7 +511,7 @@
   </div>
 
   <!-- 14. Wordoku -->
-  <div class="card" onclick="location.href='wordoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='wordoku.html'">
+  <div class="card" data-popularity="14" onclick="location.href='wordoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='wordoku.html'">
     <div class="card-header">
       <span class="card-name">Wordoku</span>
       <span class="badge badge-beginner">Beginner</span>
@@ -475,7 +523,7 @@
   </div>
 
   <!-- 15. Color Sudoku -->
-  <div class="card" onclick="location.href='color-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='color-sudoku.html'">
+  <div class="card" data-popularity="15" onclick="location.href='color-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='color-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Color Sudoku</span>
       <span class="badge badge-beginner">Beginner</span>
@@ -487,7 +535,7 @@
   </div>
 
   <!-- 16. Asterisk Sudoku -->
-  <div class="card" onclick="location.href='asterisk-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='asterisk-sudoku.html'">
+  <div class="card" data-popularity="16" onclick="location.href='asterisk-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='asterisk-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Asterisk Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -499,7 +547,7 @@
   </div>
 
   <!-- 17. Argyle Sudoku -->
-  <div class="card" onclick="location.href='argyle-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='argyle-sudoku.html'">
+  <div class="card" data-popularity="17" onclick="location.href='argyle-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='argyle-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Argyle Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -507,11 +555,11 @@
     <div class="preview">
       <div class="sg g9" id="argyle-preview"></div>
     </div>
-    <p class="card-desc">Six argyle diagonals — each must contain distinct digits alongside standard row, column, and box rules.</p>
+    <p class="card-desc">Six argyle diagonals, each must contain distinct digits alongside standard row, column, and box rules.</p>
   </div>
 
   <!-- 18. Butterfly Sudoku -->
-  <div class="card" onclick="location.href='butterfly-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='butterfly-sudoku.html'">
+  <div class="card" data-popularity="18" onclick="location.href='butterfly-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='butterfly-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Butterfly Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -523,7 +571,7 @@
   </div>
 
   <!-- 19. Chain Sudoku -->
-  <div class="card" onclick="location.href='chain-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='chain-sudoku.html'">
+  <div class="card" data-popularity="19" onclick="location.href='chain-sudoku.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='chain-sudoku.html'">
     <div class="card-header">
       <span class="card-name">Chain Sudoku</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -535,7 +583,7 @@
   </div>
 
   <!-- 20. Sujiken -->
-  <div class="card" onclick="location.href='sujiken.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sujiken.html'">
+  <div class="card" data-popularity="20" onclick="location.href='sujiken.html'" tabindex="0" role="link" onkeydown="if(event.key==='Enter')location.href='sujiken.html'">
     <div class="card-header">
       <span class="card-name">Sujiken</span>
       <span class="badge badge-advanced">Advanced</span>
@@ -543,7 +591,7 @@
     <div class="preview">
       <canvas id="sujiken-preview" width="117" height="117" style="display:block;"></canvas>
     </div>
-    <p class="card-desc">A triangular sudoku — rows, columns, and the main diagonal must each contain distinct digits.</p>
+    <p class="card-desc">A triangular sudoku where rows, columns, and the main diagonal must each contain distinct digits.</p>
   </div>
 
   <p id="no-results">No puzzles match your search.</p>
@@ -996,6 +1044,36 @@ function drawThemeDependent() {
   drawButterfly();
   drawAsterisk();
 }
+
+// ── Sort ─────────────────────────────────────────────────────────────────────
+(function () {
+  const DIFF_ORDER = { beginner: 1, intermediate: 2, advanced: 3, variable: 4 };
+
+  function sortCards(mode) {
+    const grid = document.querySelector('.grid');
+    const noResults = document.getElementById('no-results');
+    const cards = [...grid.querySelectorAll('.card')];
+    cards.sort((a, b) => {
+      if (mode === 'alpha') {
+        const na = a.querySelector('.card-name').textContent.trim().toLowerCase();
+        const nb = b.querySelector('.card-name').textContent.trim().toLowerCase();
+        return na < nb ? -1 : na > nb ? 1 : 0;
+      }
+      if (mode === 'difficulty') {
+        const cls = c => [...c.querySelector('.badge').classList].find(x => x.startsWith('badge-') && x !== 'badge') || '';
+        const da = DIFF_ORDER[cls(a).replace('badge-', '')] || 99;
+        const db = DIFF_ORDER[cls(b).replace('badge-', '')] || 99;
+        return da - db;
+      }
+      return parseInt(a.dataset.popularity, 10) - parseInt(b.dataset.popularity, 10);
+    });
+    cards.forEach(c => grid.insertBefore(c, noResults));
+  }
+
+  document.getElementById('sort-select').addEventListener('change', function () {
+    sortCards(this.value);
+  });
+})();
 
 // ── Search ───────────────────────────────────────────────────────────────────
 document.getElementById('search').addEventListener('input', function () {
