@@ -186,6 +186,21 @@
       position: relative;
     }
 
+    .cell.box-right::after {
+      content: ''; position: absolute;
+      top: -1px; bottom: -1px; right: -1px;
+      width: 3px; background: #9898b8;
+      z-index: 1; pointer-events: none;
+    }
+    .cell.box-bottom::before {
+      content: ''; position: absolute;
+      left: -1px; right: -1px; bottom: -1px;
+      height: 3px; background: #9898b8;
+      z-index: 1; pointer-events: none;
+    }
+    html.light .cell.box-right::after  { background: #8080a8; }
+    html.light .cell.box-bottom::before { background: #8080a8; }
+
     /* Overlap region backgrounds — must come before peer/same-val/conflict */
     .cell.in-two  { background: #222248; }
     .cell.in-four { background: #2c2c5a; }
@@ -810,8 +825,8 @@ function applyBorders(cell, r, c) {
     if (lc === 2 || lc === 5 || lc === 8) thickRight  = true;
     if (lr === 2 || lr === 5 || lr === 8) thickBottom = true;
   }
-  if (thickRight  && c < COLS - 1) cell.style.borderRight  = THICK;
-  if (thickBottom && r < ROWS - 1) cell.style.borderBottom = THICK;
+  if (thickRight  && c < COLS - 1) cell.classList.add('box-right');
+  if (thickBottom && r < ROWS - 1) cell.classList.add('box-bottom');
 }
 
 // ── Puzzle generator ──
