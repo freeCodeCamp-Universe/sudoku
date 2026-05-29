@@ -837,8 +837,8 @@ let given = [];
 let revealed = [];
 let selected = null;
 let highlightNum = 0;
-let checkingEnabled = true;
-let timerEnabled = true;
+let checkingEnabled = localStorage.getItem('sudoku-check-answers') !== 'false';
+let timerEnabled    = localStorage.getItem('sudoku-timer') !== 'false';
 let timerInterval = null;
 let timerStarted = false;
 let elapsedSeconds = 0;
@@ -1181,6 +1181,7 @@ document.getElementById('modal-view-btn').addEventListener('click', () => {
 
 document.getElementById('check-toggle').addEventListener('click', () => {
   checkingEnabled = !checkingEnabled;
+  localStorage.setItem('sudoku-check-answers', checkingEnabled);
   const btn = document.getElementById('check-toggle');
   btn.textContent = checkingEnabled ? 'On' : 'Off';
   btn.className = 'toggle-btn ' + (checkingEnabled ? 'on' : 'off');
@@ -1191,6 +1192,7 @@ document.getElementById('check-toggle').addEventListener('click', () => {
 
 document.getElementById('timer-toggle').addEventListener('click', () => {
   timerEnabled = !timerEnabled;
+  localStorage.setItem('sudoku-timer', timerEnabled);
   const btn = document.getElementById('timer-toggle');
   btn.textContent = timerEnabled ? 'On' : 'Off';
   btn.className = 'toggle-btn ' + (timerEnabled ? 'on' : 'off');
@@ -1302,6 +1304,19 @@ document.addEventListener('click', e => {
 });
 
 // ── Init ──
+
+// Apply persisted toggle states to UI
+(function() {
+  if (!checkingEnabled) {
+    const b = document.getElementById('check-toggle');
+    b.textContent = 'Off'; b.className = 'toggle-btn off';
+  }
+  if (!timerEnabled) {
+    const b = document.getElementById('timer-toggle');
+    b.textContent = 'Off'; b.className = 'toggle-btn off';
+    document.getElementById('timer').style.visibility = 'hidden';
+  }
+})();
 newGame();
 </script>
 </body>
