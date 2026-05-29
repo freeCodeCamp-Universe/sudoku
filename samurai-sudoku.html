@@ -172,7 +172,7 @@
       font-size: 0.82rem;
       font-weight: 400;
       color: #99c9ff;
-      border: 1px solid #2a2a3a;
+      border: 1px solid #3b3b4f;
       cursor: pointer;
       background: #1b1b32;
       user-select: none;
@@ -187,6 +187,27 @@
       pointer-events: none;
       cursor: default;
     }
+
+    .cell.box-right::after, .cell.box-left::after {
+      content: ''; position: absolute;
+      top: -1px; bottom: -1px; width: 3px;
+      background: #9898b8; z-index: 1; pointer-events: none;
+    }
+    .cell.box-right::after { right: -1px; }
+    .cell.box-left::after  { left:  -1px; }
+
+    .cell.box-bottom::before, .cell.box-top::before {
+      content: ''; position: absolute;
+      left: -1px; right: -1px; height: 3px;
+      background: #9898b8; z-index: 1; pointer-events: none;
+    }
+    .cell.box-bottom::before { bottom: -1px; }
+    .cell.box-top::before    { top:    -1px; }
+
+    html.light .cell.box-right::after,
+    html.light .cell.box-left::after   { background: #8080a8; }
+    html.light .cell.box-bottom::before,
+    html.light .cell.box-top::before   { background: #8080a8; }
 
     .cell.given    { font-weight: 900; cursor: default; }
     .cell.peer     { background: #22243e; }
@@ -478,7 +499,7 @@
       --text-bright:  #0a0a23;
     }
     html.light body { color: var(--text-subtle); }
-    html.light .cell { background: #ffffff; color: #2c5f8a; border-color: #d8d8e8; }
+    html.light .cell { background: #ffffff; color: #2c5f8a; border-color: #d0d0e0; }
     html.light .cell.cell-inactive { background: transparent; border-color: transparent; }
     html.light .cell.given { color: #0a0a23; }
     html.light .cell.peer { background: #eaeaf4; }
@@ -678,7 +699,7 @@ const GRIDS = [
 ];
 const DIM = 21;
 const REMOVE_TARGET = 225;
-const THICK = '3px solid #9898b8';
+
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -917,23 +938,16 @@ function getConflicts() {
 }
 
 function applyBorders(cell, r, c) {
-  let thickTop = false, thickLeft = false, thickRight = false, thickBottom = false;
-  for (const gi of cellGrids(r, c)) {
-    const g = GRIDS[gi];
-    const lr = r - g.r, lc = c - g.c;
-    // Box dividers — always thick
-    if (lc === 2 || lc === 5) thickRight  = true;
-    if (lr === 2 || lr === 5) thickBottom = true;
-    // Outer edges — only where the neighbor is a gap (inactive), not another sub-grid
-    if (lr === 0 && (r === 0          || !isActive(r - 1, c))) thickTop    = true;
-    if (lc === 0 && (c === 0          || !isActive(r, c - 1))) thickLeft   = true;
-    if (lc === 8 && (c === DIM - 1    || !isActive(r, c + 1))) thickRight  = true;
-    if (lr === 8 && (r === DIM - 1    || !isActive(r + 1, c))) thickBottom = true;
-  }
-  if (thickTop)    cell.style.borderTop    = THICK;
-  if (thickLeft)   cell.style.borderLeft   = THICK;
-  if (thickRight)  cell.style.borderRight  = THICK;
-  if (thickBottom) cell.style.borderBottom = THICK;
+  if (c % 3 === 2) cell.classList.add('box-right');
+  if (r % 3 === 2) cell.classList.add('box-bottom');
+  const isLight = document.documentElement.classList.contains('light');
+  const col = isLight ? '#8080a8' : '#9898b8';
+  const shadows = [];
+  if (c === 0 || !isActive(r, c - 1)) shadows.push(`-3px 0 0 0 ${col}`);
+  if (r === 0 || !isActive(r - 1, c)) shadows.push(`0 -3px 0 0 ${col}`);
+  if (shadows.length) cell.style.boxShadow = shadows.join(', ');
+  if (r === 0) cell.classList.add('box-top');
+  if (c === 0) cell.classList.add('box-left');
 }
 
 function getCellValueLabel(val) {
