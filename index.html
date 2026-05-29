@@ -69,12 +69,7 @@
 
     @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 700px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 500px)  {
-      .grid { grid-template-columns: 1fr; }
-      .sort-wrap { flex-direction: column; gap: 6px; }
-      #sort-select { width: 100%; max-width: 100%; }
-      #search { max-width: 100%; }
-    }
+    @media (max-width: 500px)  { .grid { grid-template-columns: 1fr; } }
 
     .card {
       background: var(--bg-secondary);
@@ -312,12 +307,15 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       color: var(--text-muted);
+      white-space: nowrap;
     }
 
     #sort-select {
       font-family: 'Fira Mono', Menlo, Consolas, monospace;
       font-size: 0.82rem;
       padding: 6px 12px;
+      text-align: center;
+      text-align-last: center;
       color: var(--text-primary);
       background: var(--bg-secondary);
       border: 1px solid var(--border);
@@ -328,6 +326,11 @@
     }
     #sort-select:focus { border-color: var(--accent-blue); }
     #sort-select:hover { border-color: var(--accent-blue); }
+    @media (max-width: 500px) {
+      .sort-wrap { justify-content: center; }
+      #sort-select { width: 100%; max-width: 100%; }
+      #search { max-width: 100%; }
+    }
   </style>
   <script>if(localStorage.getItem('sudoku-theme')==='light')document.documentElement.classList.add('light');</script>
 </head>
