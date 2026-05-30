@@ -39,4 +39,16 @@ describe('generate', () => {
     const { givens } = generate(model, 'beginner', seeded(3));
     expect(givens.size).toBeGreaterThanOrEqual(cluesFor('beginner', 81));
   });
+
+  it('should use variant-provided givens when generateGivens is defined', () => {
+    const customModel: VariantModel = {
+      ...model,
+      generateGivens(solution) {
+        return new Map([...solution.entries()].slice(0, 2));
+      },
+    };
+
+    const { givens } = generate(customModel, 'intermediate', seeded(4));
+    expect(givens.size).toBe(2);
+  });
 });

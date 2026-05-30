@@ -1,3 +1,4 @@
+import { arrow } from './arrow';
 import { argyle } from './argyle';
 import { asterisk } from './asterisk';
 import type { Variant } from '@/engine/types';
@@ -6,8 +7,10 @@ import { classic } from './classic';
 import { color } from './color';
 import { evenOdd } from './evenOdd';
 import { jigsaw } from './jigsaw';
+import { killer } from './killer';
 import { mini } from './mini';
 import { samurai } from './samurai';
+import { skyscraper } from './skyscraper';
 import { super16 } from './super16';
 import { sujiken } from './sujiken';
 import { sudokuX } from './sudoku-x';
@@ -15,6 +18,7 @@ import { windoku } from './windoku';
 import { wordoku } from './wordoku';
 
 export const variantRegistry: Record<string, Variant> = {
+  [arrow.id]: arrow,
   [argyle.id]: argyle,
   [asterisk.id]: asterisk,
   [butterfly.id]: butterfly,
@@ -22,8 +26,10 @@ export const variantRegistry: Record<string, Variant> = {
   [color.id]: color,
   [evenOdd.id]: evenOdd,
   [jigsaw.id]: jigsaw,
+  [killer.id]: killer,
   [mini.id]: mini,
   [samurai.id]: samurai,
+  [skyscraper.id]: skyscraper,
   [super16.id]: super16,
   [sujiken.id]: sujiken,
   [sudokuX.id]: sudokuX,

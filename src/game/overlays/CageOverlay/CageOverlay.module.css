@@ -1,0 +1,25 @@
+.overlay {
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.cageLine {
+  stroke: #9898b8;
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 3;
+}
+
+.sumLabel {
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  fill: #f1be32;
+  dominant-baseline: hanging;
+}
+
+@media (min-width: 768px) {
+  .sumLabel {
+    font-size: 10px;
+  }
+}

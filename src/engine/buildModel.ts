@@ -139,6 +139,7 @@ export function buildModel(variant: Variant): VariantModel {
     constraints: resolveConstraints(variant.constraintIds),
     symbols: variant.symbols,
     generateSolution: variant.generateSolution,
+    generateGivens: variant.generateGivens,
     minimumClues: variant.minimumClues,
   };
 }

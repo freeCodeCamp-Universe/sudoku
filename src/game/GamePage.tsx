@@ -51,7 +51,10 @@ function GameInner() {
   const layoutStrategy = useMemo(() => resolveLayout(liveVariant.layout.kind), [liveVariant.layout.kind]);
   const rects = useMemo(() => layoutStrategy.cellRects(liveVariant), [layoutStrategy, liveVariant]);
   const size = useMemo(() => layoutStrategy.canvasSize(liveVariant), [layoutStrategy, liveVariant]);
-  const gutters = useMemo(() => layoutStrategy.gutters?.(liveVariant), [layoutStrategy, liveVariant]);
+  const gutters = useMemo(
+    () => liveVariant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(liveVariant),
+    [layoutStrategy, liveVariant, structure]
+  );
   const overlays = useMemo(
     () =>
       resolveOverlays(liveVariant.overlayIds ?? []).map((Overlay, index) => (

@@ -2,15 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
+import { arrow } from './arrow';
 import { argyle } from './argyle';
 import { asterisk } from './asterisk';
 import { butterfly } from './butterfly';
 import { color } from './color';
 import { evenOdd } from './evenOdd';
 import { jigsaw } from './jigsaw';
+import { killer } from './killer';
 import { mini } from './mini';
 import { getVariant } from './registry';
 import { samurai } from './samurai';
+import { skyscraper } from './skyscraper';
 import { super16 } from './super16';
 import { sujiken } from './sujiken';
 import { sudokuX } from './sudoku-x';
@@ -41,13 +44,16 @@ describe('classic variant end-to-end', () => {
 describe('geometry variants registry', () => {
   it('should resolve all registered region and geometry variants by id', () => {
     expect(getVariant('argyle')).toBe(argyle);
+    expect(getVariant('arrow')).toBe(arrow);
     expect(getVariant('asterisk')).toBe(asterisk);
     expect(getVariant('samurai')).toBe(samurai);
     expect(getVariant('butterfly')).toBe(butterfly);
     expect(getVariant('color')).toBe(color);
     expect(getVariant('even-odd')).toBe(evenOdd);
     expect(getVariant('jigsaw')).toBe(jigsaw);
+    expect(getVariant('killer')).toBe(killer);
     expect(getVariant('mini')).toBe(mini);
+    expect(getVariant('skyscraper')).toBe(skyscraper);
     expect(getVariant('sujiken')).toBe(sujiken);
     expect(getVariant('super')).toBe(super16);
     expect(getVariant('sudoku-x')).toBe(sudokuX);

@@ -18,6 +18,23 @@ export interface GutterSlots {
   end?: GutterCell[];
 }
 
+export interface Cage {
+  cells: CellId[];
+  sum: number;
+}
+
+export interface Arrow {
+  bulb: CellId;
+  path: CellId[];
+}
+
+export interface EdgeClues {
+  top: number[];
+  bottom: number[];
+  start: number[];
+  end: number[];
+}
+
 export interface LayoutStrategy {
   cellRects(variant: Variant): Map<CellId, Rect>;
   canvasSize(variant: Variant): Size;

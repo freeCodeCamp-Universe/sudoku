@@ -74,4 +74,11 @@ describe('GamePage - Classic integration', () => {
 
     expect(screen.getByRole('gridcell', { name: /Row 1, column 1, Red, readonly/i })).toBeTruthy();
   });
+
+  it('should render skyscraper gutters from derived structure', () => {
+    renderGamePage('skyscraper');
+
+    expect(screen.getAllByLabelText(/Top clue for column /i)).toHaveLength(9);
+    expect(screen.getAllByLabelText(/Start clue for row /i)).toHaveLength(9);
+  });
 });

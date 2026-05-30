@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { gridCells } from '@/engine/grid';
 import type { Cell as CellType, CellId } from '@/engine/types';
 import type { BoardProps } from '@/game/Board/Board';
+import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { gridLayout } from '@/game/layouts/grid';
 import { Board } from './Board';
 
@@ -65,5 +66,37 @@ describe('Board', () => {
 
     expect(cells[2]).toHaveAttribute('data-box-right', 'true');
     expect(cells[18]).toHaveAttribute('data-box-bottom', 'true');
+  });
+});
+
+describe('Board gutter slots', () => {
+  it('should render top gutter cells when gutters.top is provided', () => {
+    const topGutters: GutterCell[] = Array.from({ length: 9 }, (_, index) => ({
+      id: `top-${index}`,
+      col: index,
+      label: String(index + 1),
+    }));
+    const gutters: GutterSlots = { top: topGutters };
+    render(<Board {...makeBoardProps({ gutters })} />);
+
+    expect(screen.getByLabelText('Top clue for column 1: 1')).toBeTruthy();
+  });
+
+  it('should render start gutter cells when gutters.start is provided', () => {
+    const startGutters: GutterCell[] = Array.from({ length: 9 }, (_, index) => ({
+      id: `start-${index}`,
+      row: index,
+      label: String(index + 1),
+    }));
+    const gutters: GutterSlots = { start: startGutters };
+    render(<Board {...makeBoardProps({ gutters })} />);
+
+    expect(screen.getByLabelText('Start clue for row 1: 1')).toBeTruthy();
+  });
+
+  it('should not render any gutter wrapper when gutters prop is absent', () => {
+    render(<Board {...makeBoardProps()} />);
+
+    expect(screen.queryByLabelText(/clue for /i)).toBeNull();
   });
 });

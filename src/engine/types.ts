@@ -27,6 +27,12 @@ export interface VariantModel {
   symbols: SymbolValue[];
   structure?: unknown;
   generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
+  generateGivens?: (
+    solution: Solution,
+    model: VariantModel,
+    difficulty: Difficulty,
+    rng?: () => number
+  ) => Values;
   minimumClues?: number;
 }
 
@@ -74,8 +80,15 @@ export interface Variant {
   overlayIds?: string[];
   annotatorIds?: string[];
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
+  deriveGutters?: (structure: unknown) => import('@/game/gameTypes').GutterSlots | undefined;
   renderSymbol?: (value: SymbolValue, structure?: unknown) => string;
   generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
+  generateGivens?: (
+    solution: Solution,
+    model: VariantModel,
+    difficulty: Difficulty,
+    rng?: () => number
+  ) => Values;
   minimumClues?: number;
   solve?: (model: VariantModel, given: Values, opts?: { max?: number }) => Solution[];
 }

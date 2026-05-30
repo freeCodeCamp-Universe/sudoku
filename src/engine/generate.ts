@@ -61,6 +61,13 @@ export function generate(
   rng: () => number = Math.random
 ): { solution: Solution; givens: Values } {
   const solution = generateSolution(model, rng);
+  if (model.generateGivens) {
+    return {
+      solution,
+      givens: model.generateGivens(solution, model, difficulty, rng),
+    };
+  }
+
   const givens: Values = new Map(solution);
   const target = Math.max(cluesFor(difficulty, model.cells.length), model.minimumClues ?? 0);
 
