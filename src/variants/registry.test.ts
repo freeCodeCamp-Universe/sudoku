@@ -2,10 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
+import { argyle } from './argyle';
+import { asterisk } from './asterisk';
 import { butterfly } from './butterfly';
+import { jigsaw } from './jigsaw';
 import { getVariant } from './registry';
 import { samurai } from './samurai';
 import { sujiken } from './sujiken';
+import { sudokuX } from './sudoku-x';
+import { windoku } from './windoku';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -29,9 +34,14 @@ describe('classic variant end-to-end', () => {
 });
 
 describe('geometry variants registry', () => {
-  it('should resolve Samurai, Butterfly, and Sujiken by id', () => {
+  it('should resolve all registered region and geometry variants by id', () => {
+    expect(getVariant('argyle')).toBe(argyle);
+    expect(getVariant('asterisk')).toBe(asterisk);
     expect(getVariant('samurai')).toBe(samurai);
     expect(getVariant('butterfly')).toBe(butterfly);
+    expect(getVariant('jigsaw')).toBe(jigsaw);
     expect(getVariant('sujiken')).toBe(sujiken);
+    expect(getVariant('sudoku-x')).toBe(sudokuX);
+    expect(getVariant('windoku')).toBe(windoku);
   });
 });

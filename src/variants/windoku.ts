@@ -1,0 +1,44 @@
+import { cellId } from '@/engine/grid';
+import type { BoardLayout, House, Variant } from '@/engine/types';
+
+export const WINDOKU_WINDOWS: [number, number][][] = [
+  [
+    [1, 1], [1, 2], [1, 3],
+    [2, 1], [2, 2], [2, 3],
+    [3, 1], [3, 2], [3, 3],
+  ],
+  [
+    [1, 5], [1, 6], [1, 7],
+    [2, 5], [2, 6], [2, 7],
+    [3, 5], [3, 6], [3, 7],
+  ],
+  [
+    [5, 1], [5, 2], [5, 3],
+    [6, 1], [6, 2], [6, 3],
+    [7, 1], [7, 2], [7, 3],
+  ],
+  [
+    [5, 5], [5, 6], [5, 7],
+    [6, 5], [6, 6], [6, 7],
+    [7, 5], [7, 6], [7, 7],
+  ],
+];
+
+function windokuExtraHouses(_layout: BoardLayout): House[] {
+  return WINDOKU_WINDOWS.map((cells, index) => ({
+    id: `window-${index}`,
+    cells: cells.map(([row, col]) => cellId(row, col)),
+  }));
+}
+
+export const windoku: Variant = {
+  id: 'windoku',
+  name: 'Windoku',
+  difficulty: 'intermediate',
+  layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
+  symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  constraintIds: ['uniqueness'],
+  extraHouses: windokuExtraHouses,
+  overlayIds: ['windoku'],
+  annotatorIds: ['windoku'],
+};

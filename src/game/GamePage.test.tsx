@@ -61,4 +61,11 @@ describe('GamePage - Classic integration', () => {
   it('should throw when an unknown variantId is used', () => {
     expect(() => renderGamePage('not-a-variant')).toThrow();
   });
+
+  it('should render the jigsaw variant', () => {
+    renderGamePage('jigsaw');
+
+    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
+    expect(screen.getAllByRole('gridcell')).toHaveLength(81);
+  });
 });

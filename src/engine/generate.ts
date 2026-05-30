@@ -1,17 +1,7 @@
 import { shuffle } from './grid';
+import { assignValue, createSearchState, pickNextCell, unassignValue } from './searchState';
 import { solve } from './solve';
-import type { Difficulty, Solution, SymbolValue, Values, VariantModel } from './types';
-
-function permitted(
-  values: Values,
-  cellId: string,
-  value: SymbolValue,
-  model: VariantModel
-): boolean {
-  return model.constraints.every((constraint) =>
-    constraint.permits ? constraint.permits(values, cellId, value, model) : true
-  );
-}
+import type { Difficulty, Solution, Values, VariantModel } from './types';
 
 export function cluesFor(difficulty: Difficulty, totalCells: number): number {
   const ratio: Record<Difficulty, number> = {
@@ -27,32 +17,34 @@ export function generateSolution(
   model: VariantModel,
   rng: () => number = Math.random
 ): Solution {
-  const ids = model.cells.map((cell) => cell.id);
   const values: Values = new Map();
+  const state = createSearchState(model, values);
 
-  function backtrack(index: number): boolean {
-    if (index === ids.length) {
+  function backtrack(): boolean {
+    const { cellId, candidates } = pickNextCell(state, values, model, (candidateValues) =>
+      shuffle(candidateValues, rng)
+    );
+
+    if (cellId === null) {
+      if (candidates.length === 0 && values.size !== model.cells.length) {
+        return false;
+      }
+
       return true;
     }
 
-    const id = ids[index];
-
-    for (const value of shuffle(model.symbols, rng)) {
-      if (!permitted(values, id, value, model)) {
-        continue;
-      }
-
-      values.set(id, value);
-      if (backtrack(index + 1)) {
+    for (const value of candidates) {
+      assignValue(state, values, cellId, value);
+      if (backtrack()) {
         return true;
       }
-      values.delete(id);
+      unassignValue(state, values, cellId, value);
     }
 
     return false;
   }
 
-  if (!backtrack(0)) {
+  if (!backtrack()) {
     throw new Error('Failed to generate a complete solution');
   }
 

@@ -5,7 +5,9 @@ import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { getVariant } from '@/variants/registry';
+import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
 import { resolveAnnotators } from './annotators/registry';
+import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import { useGameContext } from './GameContext';
 import { GameProvider } from './GameProvider';
@@ -27,31 +29,45 @@ function GameInner() {
     () => variant.deriveStructure?.(solution, baseModel),
     [baseModel, solution, variant]
   );
+  const liveVariant = useMemo(() => {
+    if (variant.id === 'jigsaw' && isJigsawStructure(structure)) {
+      return makeJigsawVariant(structure.regions);
+    }
+
+    return variant;
+  }, [structure, variant]);
   const model = useMemo(
-    () => (structure === undefined ? baseModel : { ...baseModel, structure }),
-    [baseModel, structure]
+    () => {
+      const liveModel = liveVariant === variant ? baseModel : buildModel(liveVariant);
+
+      return structure === undefined ? liveModel : { ...liveModel, structure };
+    },
+    [baseModel, liveVariant, structure, variant]
   );
-  const layoutStrategy = useMemo(() => resolveLayout(variant.layout.kind), [variant.layout.kind]);
-  const rects = useMemo(() => layoutStrategy.cellRects(variant), [layoutStrategy, variant]);
-  const size = useMemo(() => layoutStrategy.canvasSize(variant), [layoutStrategy, variant]);
-  const gutters = useMemo(() => layoutStrategy.gutters?.(variant), [layoutStrategy, variant]);
+  const layoutStrategy = useMemo(() => resolveLayout(liveVariant.layout.kind), [liveVariant.layout.kind]);
+  const rects = useMemo(() => layoutStrategy.cellRects(liveVariant), [layoutStrategy, liveVariant]);
+  const size = useMemo(() => layoutStrategy.canvasSize(liveVariant), [layoutStrategy, liveVariant]);
+  const gutters = useMemo(() => layoutStrategy.gutters?.(liveVariant), [layoutStrategy, liveVariant]);
   const overlays = useMemo(
     () =>
-      resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (
-        <Overlay key={`${variant.id}-overlay-${index}`} rects={rects} structure={structure} />
+      resolveOverlays(liveVariant.overlayIds ?? []).map((Overlay, index) => (
+        <Overlay key={`${liveVariant.id}-overlay-${index}`} rects={rects} structure={structure} />
       )),
-    [rects, structure, variant.id, variant.overlayIds]
+    [liveVariant.id, liveVariant.overlayIds, rects, structure]
   );
   const annotators = useMemo(
-    () => resolveAnnotators(variant.annotatorIds ?? []),
-    [variant.annotatorIds]
+    () =>
+      variant.id === 'jigsaw' && isJigsawStructure(structure)
+        ? [jigsawAnnotator(structure)]
+        : resolveAnnotators(liveVariant.annotatorIds ?? []),
+    [liveVariant.annotatorIds, structure, variant.id]
   );
   const renderSymbol = useMemo(
     () =>
-      variant.renderSymbol
-        ? (value: SymbolValue) => variant.renderSymbol!(value, structure)
+      liveVariant.renderSymbol
+        ? (value: SymbolValue) => liveVariant.renderSymbol!(value, structure)
         : (value: SymbolValue) => String(value),
-    [structure, variant]
+    [liveVariant, structure]
   );
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
 

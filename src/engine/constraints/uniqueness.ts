@@ -1,4 +1,38 @@
-import type { Conflict, Constraint } from '../types';
+import type { CellId, Conflict, Constraint, VariantModel } from '../types';
+
+const peersByModel = new WeakMap<VariantModel, Map<CellId, CellId[]>>();
+
+function peersFor(model: VariantModel): Map<CellId, CellId[]> {
+  const cached = peersByModel.get(model);
+
+  if (cached) {
+    return cached;
+  }
+
+  const peers = new Map<CellId, Set<CellId>>();
+
+  for (const house of model.houses) {
+    for (const cellId of house.cells) {
+      const cellPeers = peers.get(cellId) ?? new Set<string>();
+
+      for (const peerId of house.cells) {
+        if (peerId !== cellId) {
+          cellPeers.add(peerId);
+        }
+      }
+
+      peers.set(cellId, cellPeers);
+    }
+  }
+
+  const normalized = new Map(
+    [...peers.entries()].map(([cellId, cellPeers]) => [cellId, [...cellPeers]])
+  );
+
+  peersByModel.set(model, normalized);
+
+  return normalized;
+}
 
 export const uniqueness: Constraint = {
   id: 'uniqueness',
@@ -29,15 +63,9 @@ export const uniqueness: Constraint = {
     return conflicts;
   },
   permits(values, cellId, value, model) {
-    for (const house of model.houses) {
-      if (!house.cells.includes(cellId)) {
-        continue;
-      }
-
-      for (const id of house.cells) {
-        if (id !== cellId && values.get(id) === value) {
-          return false;
-        }
+    for (const peerId of peersFor(model).get(cellId) ?? []) {
+      if (values.get(peerId) === value) {
+        return false;
       }
     }
 

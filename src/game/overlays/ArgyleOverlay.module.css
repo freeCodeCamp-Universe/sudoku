@@ -1,0 +1,28 @@
+.overlay {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+}
+
+.d1Cell {
+  fill: #22180a;
+  fill-opacity: 0.55;
+  stroke: none;
+}
+
+.d2Cell {
+  fill: #0a1820;
+  fill-opacity: 0.55;
+  stroke: none;
+}
+
+:global(html.light) .d1Cell {
+  fill: #f0e4b8;
+  fill-opacity: 0.65;
+}
+
+:global(html.light) .d2Cell {
+  fill: #b8d4f0;
+  fill-opacity: 0.65;
+}

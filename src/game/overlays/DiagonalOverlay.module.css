@@ -1,0 +1,16 @@
+.overlay {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+}
+
+.diagonalLine {
+  stroke: #5b5b8f;
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+
+:global(html.light) .diagonalLine {
+  stroke: #8080b8;
+}
