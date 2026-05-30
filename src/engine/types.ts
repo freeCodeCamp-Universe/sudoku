@@ -43,7 +43,21 @@ export interface GridLayout {
   box: { rows: number; cols: number };
 }
 
-export type BoardLayout = GridLayout;
+export interface MultiGridLayout {
+  kind: 'multigrid';
+  subGridSize: number;
+  box: { rows: number; cols: number };
+  canvasRows: number;
+  canvasCols: number;
+  subGrids: { originRow: number; originCol: number }[];
+}
+
+export interface TriangularLayout {
+  kind: 'triangular';
+  size: number;
+}
+
+export type BoardLayout = GridLayout | MultiGridLayout | TriangularLayout;
 
 export interface Variant {
   id: string;

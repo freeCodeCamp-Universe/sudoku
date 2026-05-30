@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
+import { butterfly } from './butterfly';
 import { getVariant } from './registry';
+import { samurai } from './samurai';
+import { sujiken } from './sujiken';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -22,5 +25,13 @@ describe('classic variant end-to-end', () => {
 
   it('should throw for an unknown variant id', () => {
     expect(() => getVariant('nope')).toThrow('Unknown variant: nope');
+  });
+});
+
+describe('geometry variants registry', () => {
+  it('should resolve Samurai, Butterfly, and Sujiken by id', () => {
+    expect(getVariant('samurai')).toBe(samurai);
+    expect(getVariant('butterfly')).toBe(butterfly);
+    expect(getVariant('sujiken')).toBe(sujiken);
   });
 });
