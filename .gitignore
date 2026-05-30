@@ -1,0 +1,13 @@
+# Node
+node_modules/
+
+# Vite / build output
+dist/
+build/
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# Test coverage
+coverage/
