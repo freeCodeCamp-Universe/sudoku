@@ -1,0 +1,7 @@
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content;
+  max-width: 100%;
+}

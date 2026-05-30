@@ -1,0 +1,119 @@
+.cell {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent-blue);
+  border: 1px solid #2a2a3a;
+  cursor: pointer;
+  background: var(--bg-secondary);
+  user-select: none;
+  transition: background 0.08s;
+  position: relative;
+}
+
+.cell[data-col='2']::after,
+.cell[data-col='5']::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  right: -1px;
+  width: 3px;
+  background: #9898b8;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cell[data-row='2']::before,
+.cell[data-row='5']::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  height: 3px;
+  background: #9898b8;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cell[data-given] {
+  font-weight: 900;
+  color: var(--text-subtle);
+  cursor: default;
+}
+
+.cell[data-selected] {
+  outline: 3px solid #4a90d9;
+  outline-offset: -3px;
+  z-index: 1;
+}
+
+.cell[data-conflict] {
+  background: #2a1515;
+}
+
+.value {
+  display: contents;
+}
+
+.candidates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+}
+
+.candidate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 7px;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+:global(.light) .cell {
+  background: #ffffff;
+  color: #2c5f8a;
+  border-color: #d8d8e8;
+}
+
+:global(.light) .cell[data-given] {
+  color: #0a0a23;
+}
+
+:global(.light) .cell[data-conflict] {
+  background: #f8dede;
+}
+
+:global(.light) .cell[data-col='2']::after,
+:global(.light) .cell[data-col='5']::after,
+:global(.light) .cell[data-row='2']::before,
+:global(.light) .cell[data-row='5']::before {
+  background: #8080a8;
+}
+
+:global(.light) .candidate {
+  color: #8888aa;
+}
+
+@media (max-width: 519px) {
+  .cell {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+  }
+
+  .candidate {
+    font-size: 6px;
+  }
+}

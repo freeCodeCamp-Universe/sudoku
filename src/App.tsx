@@ -1,5 +1,16 @@
-import styles from './App.module.css';
+import { BrowserRouter } from 'react-router-dom';
+import { Layout } from '@/app/Layout';
+import { ThemeProvider } from '@/app/ThemeProvider';
+import { AppRoutes } from './routes';
 
-export default function App() {
-  return <h1 className={styles.heading}>Hello</h1>;
+export function App() {
+  return (
+    <BrowserRouter>
+      <ThemeProvider>
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      </ThemeProvider>
+    </BrowserRouter>
+  );
 }

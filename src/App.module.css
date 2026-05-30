@@ -1,4 +1,4 @@
-.heading {
-  font-family: system-ui, sans-serif;
-  margin: 2rem;
+.galleryPlaceholder {
+  color: var(--text-subtle);
+  padding: 48px 24px;
 }

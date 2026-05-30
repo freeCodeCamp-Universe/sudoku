@@ -1,0 +1,39 @@
+.gamePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gameLayout {
+  display: flex;
+  gap: 48px;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+}
+
+.gameLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gameRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .gameLayout {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .gameRight {
+    width: 100%;
+  }
+}

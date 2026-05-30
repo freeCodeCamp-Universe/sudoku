@@ -25,6 +25,7 @@ export interface VariantModel {
   houses: House[];
   constraints: Constraint[];
   symbols: SymbolValue[];
+  structure?: unknown;
 }
 
 export interface Constraint {
@@ -50,5 +51,13 @@ export interface Variant {
   difficulty: Difficulty;
   layout: BoardLayout;
   symbols: SymbolValue[];
+  symbolKind?: 'digit' | 'letter' | 'color';
   constraintIds: string[];
+  buildHouses?: (layout: BoardLayout) => House[];
+  extraHouses?: (layout: BoardLayout) => House[];
+  overlayIds?: string[];
+  annotatorIds?: string[];
+  deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
+  renderSymbol?: (value: SymbolValue, structure?: unknown) => string;
+  solve?: (model: VariantModel, given: Values, opts?: { max?: number }) => Solution[];
 }

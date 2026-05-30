@@ -1,0 +1,15 @@
+.boardWrap {
+  margin-block-end: 24px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.grid {
+  border: 3px solid #9898b8;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 50%);
+}
+
+:global(.light) .grid {
+  border-color: #8080a8;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 12%);
+}
