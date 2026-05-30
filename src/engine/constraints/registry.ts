@@ -1,7 +1,9 @@
 import type { Constraint } from '../types';
+import { evenOdd } from './evenOdd';
 import { uniqueness } from './uniqueness';
 
 export const constraintRegistry: Record<string, Constraint> = {
+  [evenOdd.id]: evenOdd,
   [uniqueness.id]: uniqueness,
 };
 

@@ -17,6 +17,10 @@ export function generateSolution(
   model: VariantModel,
   rng: () => number = Math.random
 ): Solution {
+  if (model.generateSolution) {
+    return model.generateSolution(model, rng);
+  }
+
   const values: Values = new Map();
   const state = createSearchState(model, values);
 
@@ -58,7 +62,7 @@ export function generate(
 ): { solution: Solution; givens: Values } {
   const solution = generateSolution(model, rng);
   const givens: Values = new Map(solution);
-  const target = cluesFor(difficulty, model.cells.length);
+  const target = Math.max(cluesFor(difficulty, model.cells.length), model.minimumClues ?? 0);
 
   for (const id of shuffle([...givens.keys()], rng)) {
     if (givens.size <= target) {

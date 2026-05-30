@@ -16,16 +16,19 @@ interface UseSudokuGridOptions {
   checkEnabled?: boolean;
   candidateMode?: boolean;
   annotators?: CellAnnotator[];
+  renderSymbol?: (value: SymbolValue) => string;
+  describeSymbol?: (value: SymbolValue) => string;
 }
 
 function getCellLabel(
   cell: Cell,
   value: SymbolValue | undefined,
   extras: string[],
-  isReadonly: boolean
+  isReadonly: boolean,
+  describeSymbol: (value: SymbolValue) => string
 ): string {
   const base = value !== undefined
-    ? `Row ${cell.row + 1}, column ${cell.col + 1}, ${value}`
+    ? `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(value)}`
     : `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
 
   const flags = [...extras];
@@ -49,6 +52,8 @@ export function useSudokuGrid({
   checkEnabled = false,
   candidateMode = false,
   annotators = [],
+  renderSymbol = (value) => String(value),
+  describeSymbol = renderSymbol,
 }: UseSudokuGridOptions): GridInteraction {
   const [selectedId, setSelectedId] = useState<CellId | null>(null);
   const announcerRef = useRef<HTMLDivElement | null>(null);
@@ -99,9 +104,9 @@ export function useSudokuGrid({
         .map((annotator) => annotator.describe(id, { values, model, cellState: getCellState }))
         .filter((message): message is string => message !== null);
 
-      return getCellLabel(cell, state.value, extras, state.given);
+      return getCellLabel(cell, state.value, extras, state.given, describeSymbol);
     },
-    [annotators, cellsById, getCellState, model, values]
+    [annotators, cellsById, describeSymbol, getCellState, model, values]
   );
 
   const selectCell = useCallback(
@@ -177,7 +182,13 @@ export function useSudokuGrid({
         return;
       }
 
-      const digit = Number.parseInt(key, 10);
+      const normalizedKey = key.trim().toUpperCase();
+      const renderedSymbol = model.symbols.find((symbol) => {
+        const label = renderSymbol(symbol).trim().toUpperCase();
+
+        return label.length === 1 && label === normalizedKey;
+      });
+      const digit = renderedSymbol ?? Number.parseInt(key, 10);
 
       if (Number.isNaN(digit) || digit < 1 || !model.symbols.includes(digit)) {
         return;
@@ -191,9 +202,9 @@ export function useSudokuGrid({
         onEnterValue(currentId, digit as SymbolValue);
       }
 
-      announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${digit}`);
+      announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
     },
-    [announce, candidateMode, cellsById, givens, model.cells.length, model.symbols, onEnterValue, onToggleCandidate, revealed, selectCell]
+    [announce, candidateMode, cellsById, describeSymbol, givens, model.cells.length, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
   );
 
   const firstCellId = cells[0]?.id ?? null;

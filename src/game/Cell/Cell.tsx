@@ -6,11 +6,15 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   id: string;
   value?: SymbolValue;
   candidates: SymbolValue[];
+  symbols: SymbolValue[];
   given: boolean;
   selected: boolean;
   conflict: boolean;
   onClick: React.MouseEventHandler<HTMLDivElement>;
   renderSymbol: (value: SymbolValue) => string;
+  symbolKind?: 'digit' | 'letter' | 'color';
+  boxBoundaryRight?: boolean;
+  boxBoundaryBottom?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -30,15 +34,20 @@ export function Cell({
   id,
   value,
   candidates,
+  symbols,
   given,
   selected,
   conflict,
   onClick,
   renderSymbol,
+  symbolKind = 'digit',
+  boxBoundaryRight = false,
+  boxBoundaryBottom = false,
   className,
   ...rest
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
+  const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
 
   return (
     <div
@@ -49,6 +58,8 @@ export function Cell({
       data-given={given || undefined}
       data-selected={selected || undefined}
       data-conflict={conflict || undefined}
+      data-box-right={boxBoundaryRight || undefined}
+      data-box-bottom={boxBoundaryBottom || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
@@ -56,15 +67,33 @@ export function Cell({
       {...rest}
     >
       {value !== undefined ? (
-        <span aria-hidden="true" className={styles.value}>
-          {renderSymbol(value)}
-        </span>
+        symbolKind === 'color' ? (
+          <span
+            aria-hidden="true"
+            className={styles.colorChip}
+            data-color-chip
+            data-testid="cell-color-chip"
+            style={{ background: renderSymbol(value) }}
+          >
+            <span className={styles.colorLabel}>{value}</span>
+          </span>
+        ) : (
+          <span aria-hidden="true" className={styles.value}>
+            {renderSymbol(value)}
+          </span>
+        )
       ) : candidates.length > 0 ? (
-        <div aria-hidden="true" className={styles.candidates}>
-          {Array.from({ length: 9 }, (_, index) => index + 1).map((candidate) => (
-            <span key={candidate} className={styles.candidate}>
+        <div
+          aria-hidden="true"
+          className={styles.candidates}
+          style={{ '--candidate-columns': String(candidateColumns) } as React.CSSProperties}
+        >
+          {symbols.map((candidate) => (
+            <span key={candidate} className={styles.candidate} data-testid="candidate-mark">
               {candidates.includes(candidate as SymbolValue)
-                ? renderSymbol(candidate as SymbolValue)
+                ? symbolKind === 'color'
+                  ? String(candidate)
+                  : renderSymbol(candidate as SymbolValue)
                 : ''}
             </span>
           ))}

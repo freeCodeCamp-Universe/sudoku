@@ -7,6 +7,7 @@ const baseProps = {
   id: 'r0c0',
   value: undefined as number | undefined,
   candidates: [] as number[],
+  symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9] as number[],
   given: false,
   selected: false,
   conflict: false,
@@ -68,5 +69,49 @@ describe('Cell', () => {
     render(<Cell {...baseProps} id="r4c5" />);
 
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-cell', 'r4c5');
+  });
+
+  describe('Cell with symbolKind color', () => {
+    const colorProps = {
+      ...baseProps,
+      value: 3 as number,
+      renderSymbol: (_value: number) => '#d4a828',
+      symbolKind: 'color' as const,
+      'aria-label': 'Yellow, row 1, column 1',
+    };
+
+    it('should render a color chip element when symbolKind is color', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByTestId('cell-color-chip')).toBeTruthy();
+    });
+
+    it('should render a visible numeric label alongside the color chip', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByText('3')).toBeTruthy();
+    });
+
+    it('should set the chip background to the color returned by renderSymbol', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByTestId('cell-color-chip')).toHaveStyle({ background: '#d4a828' });
+    });
+
+    it('should not render a color chip for symbolKind digit', () => {
+      render(
+        <Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />
+      );
+
+      expect(screen.queryByTestId('cell-color-chip')).toBeNull();
+    });
+  });
+
+  it('should render all available candidate slots for a 4x4 board', () => {
+    render(<Cell {...baseProps} symbols={[1, 2, 3, 4]} candidates={[1, 4]} />);
+
+    expect(screen.getAllByTestId('candidate-mark')).toHaveLength(4);
+    expect(screen.getByText('1')).toBeTruthy();
+    expect(screen.getByText('4')).toBeTruthy();
   });
 });

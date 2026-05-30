@@ -20,6 +20,10 @@ import { usePersistence } from './usePersistence';
 import { useSudokuGrid } from './useSudokuGrid';
 import styles from './GamePage.module.css';
 
+type VariantWithColorNames = {
+  colorNames?: string[];
+};
+
 function GameInner() {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const { settings, toggleCheck, toggleTimer } = usePersistence(variant.id);
@@ -69,6 +73,15 @@ function GameInner() {
         : (value: SymbolValue) => String(value),
     [liveVariant, structure]
   );
+  const describeSymbol = useMemo(() => {
+    const colorNames = (liveVariant as VariantWithColorNames).colorNames;
+
+    if (Array.isArray(colorNames)) {
+      return (value: SymbolValue) => colorNames[value - 1] ?? renderSymbol(value);
+    }
+
+    return renderSymbol;
+  }, [liveVariant, renderSymbol]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
 
   const onEnterValue = useCallback(
@@ -97,6 +110,8 @@ function GameInner() {
     checkEnabled: settings.checkEnabled,
     candidateMode,
     annotators,
+    renderSymbol,
+    describeSymbol,
   });
 
   useEffect(() => {
@@ -175,6 +190,7 @@ function GameInner() {
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
           <Board
+            variant={liveVariant}
             cells={model.cells}
             rects={rects}
             size={size}
@@ -207,6 +223,8 @@ function GameInner() {
             }}
             candidateMode={candidateMode}
             renderSymbol={renderSymbol}
+            describeSymbol={describeSymbol}
+            symbolKind={liveVariant.symbolKind}
           />
           <Toolbar
             candidateMode={candidateMode}

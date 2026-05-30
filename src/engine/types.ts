@@ -26,6 +26,8 @@ export interface VariantModel {
   constraints: Constraint[];
   symbols: SymbolValue[];
   structure?: unknown;
+  generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
+  minimumClues?: number;
 }
 
 export interface Constraint {
@@ -73,5 +75,7 @@ export interface Variant {
   annotatorIds?: string[];
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
   renderSymbol?: (value: SymbolValue, structure?: unknown) => string;
+  generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
+  minimumClues?: number;
   solve?: (model: VariantModel, given: Values, opts?: { max?: number }) => Solution[];
 }

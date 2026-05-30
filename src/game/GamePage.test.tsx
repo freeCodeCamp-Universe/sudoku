@@ -68,4 +68,10 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
     expect(screen.getAllByRole('gridcell')).toHaveLength(81);
   });
+
+  it('should use color names in cell accessibility labels for the color variant', () => {
+    renderGamePage('color');
+
+    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, Red, readonly/i })).toBeTruthy();
+  });
 });

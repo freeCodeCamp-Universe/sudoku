@@ -69,4 +69,20 @@ describe('NumberPad', () => {
 
     expect(screen.getByRole('button', { name: '7' })).toBeDisabled();
   });
+
+  it('should use descriptive aria-labels for color symbols', () => {
+    render(
+      <NumberPad
+        symbols={[1, 2, 3]}
+        usedSymbols={new Set()}
+        onEnter={() => {}}
+        candidateMode={false}
+        renderSymbol={() => '#d4a828'}
+        describeSymbol={(value) => ['Red', 'Orange', 'Yellow'][value - 1]}
+        symbolKind="color"
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Yellow' })).toBeTruthy();
+  });
 });

@@ -1,0 +1,9 @@
+.even {
+  background: rgba(58, 128, 224, 0.2);
+  pointer-events: none;
+}
+
+.odd {
+  background: rgba(212, 168, 40, 0.22);
+  pointer-events: none;
+}

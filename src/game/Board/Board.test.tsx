@@ -21,6 +21,7 @@ function makeBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
   const size = gridLayout.canvasSize(classicVariant);
 
   return {
+    variant: classicVariant,
     cells,
     rects,
     size,
@@ -56,5 +57,13 @@ describe('Board', () => {
     render(<Board {...makeBoardProps({ overlays: [<div key="overlay" data-testid="overlay">overlay</div>] })} />);
 
     expect(screen.getByTestId('overlay')).toBeTruthy();
+  });
+
+  it('should mark 3x3 box boundaries on classic cells', () => {
+    render(<Board {...makeBoardProps()} />);
+    const cells = screen.getAllByRole('gridcell');
+
+    expect(cells[2]).toHaveAttribute('data-box-right', 'true');
+    expect(cells[18]).toHaveAttribute('data-box-bottom', 'true');
   });
 });

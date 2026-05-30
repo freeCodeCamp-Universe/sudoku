@@ -14,6 +14,7 @@ describe('Sujiken Board renders correct cell count', () => {
 
     render(
       <Board
+        variant={sujiken}
         cells={model.cells}
         rects={rects}
         size={size}

@@ -5,12 +5,17 @@ import { solve } from '@/engine/solve';
 import { argyle } from './argyle';
 import { asterisk } from './asterisk';
 import { butterfly } from './butterfly';
+import { color } from './color';
+import { evenOdd } from './evenOdd';
 import { jigsaw } from './jigsaw';
+import { mini } from './mini';
 import { getVariant } from './registry';
 import { samurai } from './samurai';
+import { super16 } from './super16';
 import { sujiken } from './sujiken';
 import { sudokuX } from './sudoku-x';
 import { windoku } from './windoku';
+import { wordoku } from './wordoku';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -39,9 +44,14 @@ describe('geometry variants registry', () => {
     expect(getVariant('asterisk')).toBe(asterisk);
     expect(getVariant('samurai')).toBe(samurai);
     expect(getVariant('butterfly')).toBe(butterfly);
+    expect(getVariant('color')).toBe(color);
+    expect(getVariant('even-odd')).toBe(evenOdd);
     expect(getVariant('jigsaw')).toBe(jigsaw);
+    expect(getVariant('mini')).toBe(mini);
     expect(getVariant('sujiken')).toBe(sujiken);
+    expect(getVariant('super')).toBe(super16);
     expect(getVariant('sudoku-x')).toBe(sudokuX);
     expect(getVariant('windoku')).toBe(windoku);
+    expect(getVariant('wordoku')).toBe(wordoku);
   });
 });

@@ -15,8 +15,7 @@
   position: relative;
 }
 
-.cell[data-col='2']::after,
-.cell[data-col='5']::after {
+.cell[data-box-right]::after {
   content: '';
   position: absolute;
   top: -1px;
@@ -28,8 +27,7 @@
   pointer-events: none;
 }
 
-.cell[data-row='2']::before,
-.cell[data-row='5']::before {
+.cell[data-box-bottom]::before {
   content: '';
   position: absolute;
   left: -1px;
@@ -58,13 +56,17 @@
 }
 
 .value {
-  display: contents;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .candidates {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--candidate-columns, 3), 1fr);
+  grid-template-rows: repeat(var(--candidate-columns, 3), 1fr);
   position: absolute;
   inset: 2px;
   pointer-events: none;
@@ -81,6 +83,25 @@
   line-height: 1;
 }
 
+.colorChip {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.colorLabel {
+  position: absolute;
+  inset-block-end: 2px;
+  inset-inline-end: 3px;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 7px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
 :global(.light) .cell {
   background: #ffffff;
   color: #2c5f8a;
@@ -95,15 +116,18 @@
   background: #f8dede;
 }
 
-:global(.light) .cell[data-col='2']::after,
-:global(.light) .cell[data-col='5']::after,
-:global(.light) .cell[data-row='2']::before,
-:global(.light) .cell[data-row='5']::before {
+:global(.light) .cell[data-box-right]::after,
+:global(.light) .cell[data-box-bottom]::before {
   background: #8080a8;
 }
 
 :global(.light) .candidate {
   color: #8888aa;
+}
+
+:global(.light) .colorLabel {
+  color: rgba(0, 0, 0, 0.7);
+  text-shadow: none;
 }
 
 @media (max-width: 519px) {

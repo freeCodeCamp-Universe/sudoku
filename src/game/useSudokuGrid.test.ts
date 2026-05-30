@@ -111,4 +111,21 @@ describe('useSudokuGrid', () => {
 
     expect(result.current.announcerRef).toBeTruthy();
   });
+
+  it('should describe values with the provided symbol label function', () => {
+    const values: Values = new Map([['r0c0', 3]]);
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        describeSymbol: (value) => ['Red', 'Orange', 'Yellow'][value - 1] ?? String(value),
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, Yellow');
+  });
 });

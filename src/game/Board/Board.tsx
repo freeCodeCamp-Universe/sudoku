@@ -5,7 +5,51 @@ import styles from './Board.module.css';
 
 export type { BoardProps };
 
-export function Board({ cells, rects, size, gutters: _gutters, overlays, grid, renderSymbol }: BoardProps) {
+function isBoxBoundary(
+  variant: BoardProps['variant'],
+  cell: BoardProps['cells'][number],
+  axis: 'row' | 'col'
+): boolean {
+  switch (variant.layout.kind) {
+    case 'grid': {
+      const size = variant.layout.size;
+      const step = axis === 'row' ? variant.layout.box.rows : variant.layout.box.cols;
+      const value = axis === 'row' ? cell.row : cell.col;
+
+      return (value + 1) % step === 0 && value < size - 1;
+    }
+    case 'multigrid': {
+      if (cell.grid === undefined) {
+        return false;
+      }
+
+      const origin = variant.layout.subGrids[cell.grid];
+
+      if (!origin) {
+        return false;
+      }
+
+      const localValue =
+        axis === 'row' ? cell.row - origin.originRow : cell.col - origin.originCol;
+      const step = axis === 'row' ? variant.layout.box.rows : variant.layout.box.cols;
+
+      return (localValue + 1) % step === 0 && localValue < variant.layout.subGridSize - 1;
+    }
+    default:
+      return false;
+  }
+}
+
+export function Board({
+  variant,
+  cells,
+  rects,
+  size,
+  gutters: _gutters,
+  overlays,
+  grid,
+  renderSymbol,
+}: BoardProps) {
   return (
     <div className={styles.boardWrap}>
       <div
@@ -39,10 +83,14 @@ export function Board({ cells, rects, size, gutters: _gutters, overlays, grid, r
                 id={cell.id}
                 value={state.value}
                 candidates={state.candidates}
+                symbols={variant.symbols}
                 given={state.given}
                 selected={state.selected}
                 conflict={state.conflict}
                 renderSymbol={renderSymbol}
+                symbolKind={variant.symbolKind}
+                boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
+                boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
                 onClick={props.onClick ?? (() => {})}
                 {...props}
               />

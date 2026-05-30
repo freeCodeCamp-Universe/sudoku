@@ -39,6 +39,7 @@ export interface GridInteraction {
 }
 
 export interface BoardProps {
+  variant: Variant;
   cells: Cell[];
   rects: Map<CellId, Rect>;
   size: Size;

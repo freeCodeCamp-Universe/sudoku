@@ -14,6 +14,7 @@ describe('Samurai Board renders correct cell count', () => {
 
     render(
       <Board
+        variant={samurai}
         cells={model.cells}
         rects={rects}
         size={size}

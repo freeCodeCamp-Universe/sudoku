@@ -14,6 +14,7 @@ describe('Butterfly Board renders correct cell count', () => {
 
     render(
       <Board
+        variant={butterfly}
         cells={model.cells}
         rects={rects}
         size={size}

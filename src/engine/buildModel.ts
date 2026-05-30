@@ -138,5 +138,7 @@ export function buildModel(variant: Variant): VariantModel {
     houses,
     constraints: resolveConstraints(variant.constraintIds),
     symbols: variant.symbols,
+    generateSolution: variant.generateSolution,
+    minimumClues: variant.minimumClues,
   };
 }

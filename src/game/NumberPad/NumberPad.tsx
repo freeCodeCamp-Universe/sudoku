@@ -7,6 +7,8 @@ interface NumberPadProps {
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
   renderSymbol?: (value: SymbolValue) => string;
+  describeSymbol?: (value: SymbolValue) => string;
+  symbolKind?: 'digit' | 'letter' | 'color';
 }
 
 export function NumberPad({
@@ -15,6 +17,8 @@ export function NumberPad({
   onEnter,
   candidateMode,
   renderSymbol = (value) => String(value),
+  describeSymbol = renderSymbol,
+  symbolKind = 'digit',
 }: NumberPadProps) {
   const half = Math.ceil(symbols.length / 2);
   const rows = [symbols.slice(0, half), symbols.slice(half)];
@@ -30,10 +34,20 @@ export function NumberPad({
               className={styles.numBtn}
               data-used={usedSymbols.has(symbol) || undefined}
               disabled={usedSymbols.has(symbol)}
-              aria-label={String(symbol)}
+              aria-label={describeSymbol(symbol)}
               onClick={() => onEnter(symbol)}
             >
-              {renderSymbol(symbol)}
+              {symbolKind === 'color' ? (
+                <span
+                  aria-hidden="true"
+                  className={styles.colorChip}
+                  style={{ background: renderSymbol(symbol) }}
+                >
+                  <span className={styles.colorLabel}>{symbol}</span>
+                </span>
+              ) : (
+                renderSymbol(symbol)
+              )}
             </button>
           ))}
           {index === rows.length - 1 ? (
