@@ -1,0 +1,10 @@
+.overlay {
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+
+.line {
+  fill: none;
+  opacity: 0.3;
+}

@@ -3,8 +3,11 @@ import { ArrowOverlay } from './ArrowOverlay';
 import { ArgyleOverlay } from './ArgyleOverlay';
 import { AsteriskOverlay } from './AsteriskOverlay';
 import { CageOverlay } from './CageOverlay';
+import { ChainOverlay } from './ChainOverlay';
+import { ConsecutiveOverlay } from './ConsecutiveOverlay';
 import { DiagonalOverlay } from './DiagonalOverlay';
 import { EvenOddOverlay } from './EvenOddOverlay';
+import { InequalityOverlay } from './InequalityOverlay';
 import { JigsawOverlay } from './JigsawOverlay';
 import { WindokuOverlay } from './WindokuOverlay';
 
@@ -13,8 +16,11 @@ export const overlayRegistry: Record<string, OverlayComponent> = {
   argyle: ArgyleOverlay,
   asterisk: AsteriskOverlay,
   cage: CageOverlay,
+  'chain-overlay': ChainOverlay,
+  'consecutive-dots': ConsecutiveOverlay,
   diagonal: DiagonalOverlay,
   'evenOdd-shading': EvenOddOverlay,
+  inequality: InequalityOverlay,
   jigsaw: JigsawOverlay,
   windoku: WindokuOverlay,
 };

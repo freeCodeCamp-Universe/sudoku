@@ -1,0 +1,11 @@
+.overlay {
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+.dot {
+  fill: #d0d0e8;
+  stroke: #1b1b32;
+  stroke-width: 1.5px;
+}

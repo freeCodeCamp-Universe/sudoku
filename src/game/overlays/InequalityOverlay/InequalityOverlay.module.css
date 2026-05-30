@@ -1,0 +1,9 @@
+.overlay {
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+.triangle {
+  fill: var(--accent-yellow, #f1be32);
+}

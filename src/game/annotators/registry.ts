@@ -3,7 +3,10 @@ import { arrowBulbAnnotator, arrowPathAnnotator } from './arrow';
 import { argyleAnnotator } from './argyle';
 import { asteriskAnnotator } from './asterisk';
 import { cageSumAnnotator } from './cage';
+import { chainAnnotator } from './chain';
+import { consecutiveAnnotator } from './consecutive';
 import { evenCellAnnotator, oddCellAnnotator } from './evenOdd';
+import { greaterThanAnnotator } from './greaterThan';
 import { jigsawAnnotatorPlaceholder } from './jigsaw';
 import { skyscraperClueAnnotator } from './skyscraper';
 import { sudokuXAnnotator } from './sudoku-x';
@@ -15,7 +18,10 @@ export const annotatorRegistry: Record<string, CellAnnotator> = {
   [argyleAnnotator.id]: argyleAnnotator,
   [asteriskAnnotator.id]: asteriskAnnotator,
   [cageSumAnnotator.id]: cageSumAnnotator,
+  [chainAnnotator.id]: chainAnnotator,
+  [consecutiveAnnotator.id]: consecutiveAnnotator,
   [evenCellAnnotator.id]: evenCellAnnotator,
+  [greaterThanAnnotator.id]: greaterThanAnnotator,
   [jigsawAnnotatorPlaceholder.id]: jigsawAnnotatorPlaceholder,
   [oddCellAnnotator.id]: oddCellAnnotator,
   [skyscraperClueAnnotator.id]: skyscraperClueAnnotator,

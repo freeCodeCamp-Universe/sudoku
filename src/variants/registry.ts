@@ -3,9 +3,12 @@ import { argyle } from './argyle';
 import { asterisk } from './asterisk';
 import type { Variant } from '@/engine/types';
 import { butterfly } from './butterfly';
+import { chainVariant } from './chain';
 import { classic } from './classic';
 import { color } from './color';
+import { consecutiveVariant } from './consecutive';
 import { evenOdd } from './evenOdd';
+import { greaterThanVariant } from './greaterThan';
 import { jigsaw } from './jigsaw';
 import { killer } from './killer';
 import { mini } from './mini';
@@ -22,9 +25,12 @@ export const variantRegistry: Record<string, Variant> = {
   [argyle.id]: argyle,
   [asterisk.id]: asterisk,
   [butterfly.id]: butterfly,
+  [chainVariant.id]: chainVariant,
   [classic.id]: classic,
   [color.id]: color,
+  [consecutiveVariant.id]: consecutiveVariant,
   [evenOdd.id]: evenOdd,
+  [greaterThanVariant.id]: greaterThanVariant,
   [jigsaw.id]: jigsaw,
   [killer.id]: killer,
   [mini.id]: mini,

@@ -1,14 +1,20 @@
 import type { Constraint } from '../types';
 import { arrowSum } from './arrowSum';
+import { chain } from './chain';
 import { cageSum } from './cageSum';
+import { consecutive } from './consecutive';
 import { evenOdd } from './evenOdd';
+import { greaterThan } from './greaterThan';
 import { skyscraperVisibility } from './skyscraperVisibility';
 import { uniqueness } from './uniqueness';
 
 export const constraintRegistry: Record<string, Constraint> = {
   [arrowSum.id]: arrowSum,
+  [chain.id]: chain,
   [cageSum.id]: cageSum,
+  [consecutive.id]: consecutive,
   [evenOdd.id]: evenOdd,
+  [greaterThan.id]: greaterThan,
   [skyscraperVisibility.id]: skyscraperVisibility,
   [uniqueness.id]: uniqueness,
 };
