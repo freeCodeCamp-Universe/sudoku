@@ -1,43 +1,3 @@
-.modeSwitcher {
-  display: flex;
-  width: 100%;
-  margin-block-end: 16px;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.modeBtn {
-  flex: 1;
-  font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 7px 0;
-  border: none;
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-
-.modeBtn + .modeBtn {
-  border-inline-start: 1px solid var(--border);
-}
-
-.active {
-  background: var(--bg-surface);
-  color: var(--text-bright);
-}
-
-.modeBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
-}
-
 .checkToggle {
   display: flex;
   align-items: center;
@@ -247,9 +207,5 @@
   .newBtn {
     width: 100%;
     box-sizing: border-box;
-  }
-
-  .modeBtn {
-    padding: 10px 0;
   }
 }

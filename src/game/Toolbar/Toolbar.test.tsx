@@ -4,12 +4,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { Toolbar } from './Toolbar';
 
 const baseProps = {
-  candidateMode: false,
   checkEnabled: true,
   timerEnabled: true,
   onUndo: vi.fn(),
   onErase: vi.fn(),
-  onToggleCandidateMode: vi.fn(),
   onToggleCheck: vi.fn(),
   onToggleTimer: vi.fn(),
   onReveal: vi.fn(),
@@ -54,12 +52,5 @@ describe('Toolbar', () => {
 
     expect(onNewGame).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('dialog')).toBeNull();
-  });
-
-  it('should toggle candidateMode display', () => {
-    const { rerender } = render(<Toolbar {...baseProps} candidateMode={false} />);
-    rerender(<Toolbar {...baseProps} candidateMode />);
-
-    expect(screen.getByRole('button', { name: 'Candidate' })).toHaveAttribute('data-active', 'true');
   });
 });

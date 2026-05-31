@@ -2,13 +2,11 @@ import { useState } from 'react';
 import styles from './Toolbar.module.css';
 
 interface ToolbarProps {
-  candidateMode: boolean;
   checkEnabled: boolean;
   timerEnabled: boolean;
   hasProgress?: boolean;
   onUndo: () => void;
   onErase: () => void;
-  onToggleCandidateMode: () => void;
   onToggleCheck: () => void;
   onToggleTimer: () => void;
   onReveal: () => void;
@@ -16,13 +14,11 @@ interface ToolbarProps {
 }
 
 export function Toolbar({
-  candidateMode,
   checkEnabled,
   timerEnabled,
   hasProgress = false,
   onUndo,
   onErase,
-  onToggleCandidateMode,
   onToggleCheck,
   onToggleTimer,
   onReveal,
@@ -46,32 +42,6 @@ export function Toolbar({
 
   return (
     <>
-      <div className={styles.modeSwitcher}>
-        <button
-          type="button"
-          className={`${styles.modeBtn}${!candidateMode ? ` ${styles.active}` : ''}`}
-          onClick={() => {
-            if (candidateMode) {
-              onToggleCandidateMode();
-            }
-          }}
-        >
-          Normal
-        </button>
-        <button
-          type="button"
-          className={`${styles.modeBtn}${candidateMode ? ` ${styles.active}` : ''}`}
-          data-active={candidateMode || undefined}
-          onClick={() => {
-            if (!candidateMode) {
-              onToggleCandidateMode();
-            }
-          }}
-        >
-          Candidate
-        </button>
-      </div>
-
       <div className={styles.checkToggle}>
         <span>Check answers</span>
         <button

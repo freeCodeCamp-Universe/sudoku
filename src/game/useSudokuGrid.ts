@@ -57,6 +57,10 @@ export function useSudokuGrid({
 }: UseSudokuGridOptions): GridInteraction {
   const [selectedId, setSelectedId] = useState<CellId | null>(null);
   const announcerRef = useRef<HTMLDivElement | null>(null);
+  const mouseDownSelectionRef = useRef<{ active: boolean; selectedId: CellId | null }>({
+    active: false,
+    selectedId: null,
+  });
 
   const cellsById = useMemo(() => new Map(cells.map((cell) => [cell.id, cell])), [cells]);
 
@@ -214,8 +218,17 @@ export function useSudokuGrid({
       'data-cell': id,
       tabIndex: selectedId === id || (selectedId === null && firstCellId === id) ? 0 : -1,
       'aria-label': describeCell(id),
+      onMouseDown() {
+        mouseDownSelectionRef.current = { active: true, selectedId };
+      },
       onClick() {
-        selectCell(selectedId === id ? null : id);
+        const wasSelected =
+          mouseDownSelectionRef.current.active
+            ? mouseDownSelectionRef.current.selectedId === id
+            : selectedId === id;
+
+        mouseDownSelectionRef.current = { active: false, selectedId: null };
+        selectCell(wasSelected ? null : id);
       },
       onFocus() {
         if (selectedId !== id) {

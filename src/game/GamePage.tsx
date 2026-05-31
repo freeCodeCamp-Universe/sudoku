@@ -12,6 +12,7 @@ import { Board } from './Board';
 import { useGameContext } from './GameContext';
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
+import { ModeSwitcher } from './ModeSwitcher';
 import { NumberPad } from './NumberPad';
 import { resolveOverlays } from './overlays/registry';
 import { Timer } from './Timer';
@@ -204,6 +205,7 @@ function GameInner() {
           />
         </div>
         <div className={styles.gameRight}>
+          <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={model.symbols}
             usedSymbols={usedSymbols}
@@ -230,7 +232,6 @@ function GameInner() {
             symbolKind={liveVariant.symbolKind}
           />
           <Toolbar
-            candidateMode={candidateMode}
             checkEnabled={settings.checkEnabled}
             timerEnabled={settings.timerEnabled}
             hasProgress={hasProgress}
@@ -240,7 +241,6 @@ function GameInner() {
                 dispatch({ type: 'erase', cellId: selectedCellId });
               }
             }}
-            onToggleCandidateMode={toggleCandidateMode}
             onToggleCheck={toggleCheck}
             onToggleTimer={toggleTimer}
             onReveal={handleReveal}

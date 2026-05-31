@@ -188,4 +188,18 @@ describe('useSudokuGrid', () => {
     shouldAssert.equal(downCell?.getAttribute('data-cell'), 'r1c1');
     shouldAssert.equal(downCell?.getAttribute('aria-selected'), 'true');
   });
+
+  it('should keep a clicked cell selected after focus moves to it', () => {
+    render(React.createElement(TestBoard));
+
+    const targetCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+
+    fireEvent.mouseDown(targetCell);
+    fireEvent.focus(targetCell);
+    fireEvent.click(targetCell);
+
+    expect(targetCell).toBeTruthy();
+    shouldAssert.equal(targetCell.getAttribute('aria-selected'), 'true');
+    shouldAssert.equal(targetCell.getAttribute('tabindex'), '0');
+  });
 });
