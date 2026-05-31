@@ -1,33 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
+import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 export function ConsecutivePreview() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const isLight = theme === 'light';
     const n = 5;
-    const cell = canvas.width / (n + 1);
+    const cell = width / (n + 1);
     const offset = cell / 2;
     const gridColor = isLight ? '#333' : '#333';
     const markerColor = isLight ? '#c9b23a' : '#c9b23a';
     const digitColor = isLight ? '#ccc' : '#ccc';
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.7;
 
@@ -70,7 +55,14 @@ export function ConsecutivePreview() {
     digits.forEach(([row, col, value]) => {
       ctx.fillText(String(value), offset + col * cell + cell / 2, offset + row * cell + cell / 2);
     });
-  }, [theme]);
+  }, [theme]));
 
-  return <canvas ref={canvasRef} className={styles.canvas} width={117} height={117} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={PREVIEW_CANVAS_SIZE}
+      height={PREVIEW_CANVAS_SIZE}
+    />
+  );
 }

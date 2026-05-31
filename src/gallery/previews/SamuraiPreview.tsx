@@ -1,28 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
+import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 export function SamuraiPreview() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
-    const { width, height } = canvas;
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width, height }) => {
     const isLight = theme === 'light';
-
-    ctx.clearRect(0, 0, width, height);
 
     const size = 44;
     const gridFill = isLight ? '#f5f5f0' : '#1b1b32';
@@ -60,7 +44,14 @@ export function SamuraiPreview() {
       ctx.lineWidth = 1.5;
       ctx.strokeRect(x, y, size, size);
     });
-  }, [theme]);
+  }, [theme]));
 
-  return <canvas ref={canvasRef} className={styles.canvas} width={117} height={117} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={PREVIEW_CANVAS_SIZE}
+      height={PREVIEW_CANVAS_SIZE}
+    />
+  );
 }

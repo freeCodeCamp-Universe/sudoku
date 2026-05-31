@@ -11,6 +11,7 @@
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;
   font-weight: 600;
+  line-height: 1;
   color: var(--text-subtle);
   border:
     var(--preview-border-width, 0.5px)
@@ -256,6 +257,8 @@
 
 .canvas {
   display: block;
+  inline-size: 117px;
+  block-size: 117px;
 }
 
 :global(html.light) .sg {

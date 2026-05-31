@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { hashVariantId, seeded } from './seeded';
+import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 export function SujikenPreview({ variantId }: { variantId: string }) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
   const filledCells = useMemo(() => {
     const random = seeded(hashVariantId(variantId));
@@ -20,29 +20,14 @@ export function SujikenPreview({ variantId }: { variantId: string }) {
 
     return cells;
   }, [variantId]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const n = 9;
-    const size = canvas.width / (n + 1);
+    const size = width / (n + 1);
     const offset = size * 0.4;
     const isLight = theme === 'light';
     const gridColor = isLight ? '#c8c8d8' : '#3b3b4f';
     const fillColor = isLight ? '#d0d0ec' : '#2a2a50';
     const diagonalColor = isLight ? '#6060a0' : '#9898b8';
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.6;
 
@@ -63,7 +48,14 @@ export function SujikenPreview({ variantId }: { variantId: string }) {
     for (let diagonal = 0; diagonal < n; diagonal += 1) {
       ctx.strokeRect(offset + diagonal * size, offset + diagonal * size, size, size);
     }
-  }, [filledCells, theme]);
+  }, [filledCells, theme]));
 
-  return <canvas ref={canvasRef} className={styles.canvas} width={117} height={117} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={PREVIEW_CANVAS_SIZE}
+      height={PREVIEW_CANVAS_SIZE}
+    />
+  );
 }

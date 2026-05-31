@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
+import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 const CHAINS = [
   [[0, 1], [1, 1], [1, 2]],
@@ -33,29 +34,13 @@ const COLORS = [
 ] as const;
 
 export function ChainPreview() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width, height }) => {
     const isLight = theme === 'light';
     const n = 9;
-    const cell = canvas.width / n;
+    const cell = width / n;
     const gridColor = isLight ? '#2a2a3a' : '#2a2a3a';
     const boxColor = isLight ? '#3b3b4f' : '#3b3b4f';
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.5;
 
@@ -70,11 +55,11 @@ export function ChainPreview() {
     [3, 6].forEach((index) => {
       ctx.beginPath();
       ctx.moveTo(index * cell, 0);
-      ctx.lineTo(index * cell, canvas.height);
+      ctx.lineTo(index * cell, height);
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(0, index * cell);
-      ctx.lineTo(canvas.width, index * cell);
+      ctx.lineTo(width, index * cell);
       ctx.stroke();
     });
     ctx.lineWidth = 4;
@@ -97,7 +82,14 @@ export function ChainPreview() {
       ctx.stroke();
     });
     ctx.globalAlpha = 1;
-  }, [theme]);
+  }, [theme]));
 
-  return <canvas ref={canvasRef} className={styles.canvas} width={117} height={117} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={PREVIEW_CANVAS_SIZE}
+      height={PREVIEW_CANVAS_SIZE}
+    />
+  );
 }

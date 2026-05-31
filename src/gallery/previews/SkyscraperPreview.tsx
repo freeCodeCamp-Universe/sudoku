@@ -1,32 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
+import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 export function SkyscraperPreview() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      return;
-    }
-
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const isLight = theme === 'light';
     const offset = 18;
-    const cell = (canvas.width - offset * 2) / 6;
+    const cell = (width - offset * 2) / 6;
     const gridColor = isLight ? '#c8c8d8' : '#444';
     const clueColor = isLight ? '#3060c0' : '#99c9ff';
     const fillColor = isLight ? '#c8d4f0' : '#2a3050';
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.7;
 
@@ -48,7 +33,14 @@ export function SkyscraperPreview() {
     [[0, 0], [1, 3], [2, 5], [3, 2], [4, 1], [5, 4]].forEach(([row, col]) => {
       ctx.fillRect(offset + col * cell + 1, offset + row * cell + 1, cell - 2, cell - 2);
     });
-  }, [theme]);
+  }, [theme]));
 
-  return <canvas ref={canvasRef} className={styles.canvas} width={117} height={117} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={PREVIEW_CANVAS_SIZE}
+      height={PREVIEW_CANVAS_SIZE}
+    />
+  );
 }
