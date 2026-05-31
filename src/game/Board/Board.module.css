@@ -17,6 +17,10 @@
   position: absolute;
 }
 
+.row {
+  display: contents;
+}
+
 :global(.light) .grid {
   border-color: #8080a8;
   box-shadow: 0 4px 24px rgb(0 0 0 / 12%);

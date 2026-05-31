@@ -92,53 +92,76 @@ export function Board({
   renderSymbol,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
+  const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
+  const colCount = cells.reduce((max, cell) => Math.max(max, cell.col), -1) + 1;
+  const rowGroups = new Map<number, typeof cells>();
+
+  for (const cell of cells) {
+    const group = rowGroups.get(cell.row);
+
+    if (group) {
+      group.push(cell);
+    } else {
+      rowGroups.set(cell.row, [cell]);
+    }
+  }
+
+  const sortedRows = [...rowGroups.entries()].sort(([a], [b]) => a - b);
   const gridCanvas = (
     <div
       role="grid"
       aria-label="Sudoku grid"
+      aria-rowcount={rowCount}
+      aria-colcount={colCount}
       className={styles.grid}
       style={{ width: size.w, height: size.h }}
     >
-      {cells.map((cell) => {
-        const rect = rects.get(cell.id);
+      {sortedRows.map(([rowIndex, rowCells]) => (
+        <div key={`row-${rowIndex}`} role="row" aria-rowindex={rowIndex + 1} className={styles.row}>
+          {rowCells.map((cell) => {
+            const rect = rects.get(cell.id);
 
-        if (!rect) {
-          return null;
-        }
+            if (!rect) {
+              return null;
+            }
 
-        const state = grid.cellState(cell.id);
-        const props = grid.cellProps(cell.id);
+            const state = grid.cellState(cell.id);
+            const props = grid.cellProps(cell.id);
 
-        return (
-          <div
-            key={cell.id}
-            className={styles.cellSlot}
-            style={{
-              insetInlineStart: rect.x,
-              insetBlockStart: rect.y,
-              width: rect.w,
-              height: rect.h,
-            }}
-          >
-            <Cell
-              id={cell.id}
-              value={state.value}
-              candidates={state.candidates}
-              symbols={variant.symbols}
-              given={state.given}
-              selected={state.selected}
-              conflict={state.conflict}
-              renderSymbol={renderSymbol}
-              symbolKind={variant.symbolKind}
-              boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
-              boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
-              overlap={subgridOverlap(variant, cell)}
-              onClick={props.onClick ?? (() => {})}
-              {...props}
-            />
-          </div>
-        );
-      })}
+            return (
+              <div
+                key={cell.id}
+                role="presentation"
+                className={styles.cellSlot}
+                style={{
+                  insetInlineStart: rect.x,
+                  insetBlockStart: rect.y,
+                  width: rect.w,
+                  height: rect.h,
+                }}
+              >
+                <Cell
+                  id={cell.id}
+                  value={state.value}
+                  candidates={state.candidates}
+                  symbols={variant.symbols}
+                  given={state.given}
+                  selected={state.selected}
+                  conflict={state.conflict}
+                  renderSymbol={renderSymbol}
+                  symbolKind={variant.symbolKind}
+                  boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
+                  boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
+                  overlap={subgridOverlap(variant, cell)}
+                  aria-colindex={cell.col + 1}
+                  onClick={props.onClick ?? (() => {})}
+                  {...props}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ))}
       {overlays}
     </div>
   );

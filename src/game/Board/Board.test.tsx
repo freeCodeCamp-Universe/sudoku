@@ -1,12 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, should } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { buildModel } from '@/engine/buildModel';
 import { gridCells } from '@/engine/grid';
 import type { Cell as CellType, CellId } from '@/engine/types';
 import type { BoardProps } from '@/game/Board/Board';
 import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { gridLayout } from '@/game/layouts/grid';
+import { multigridLayout } from '@/game/layouts/multigrid';
+import { butterfly } from '@/variants/butterfly';
 import { Board } from './Board';
 
+const shouldAssert = should();
 const classicVariant = {
   id: 'classic',
   name: 'Classic Sudoku',
@@ -18,16 +22,12 @@ const classicVariant = {
   constraintIds: [],
 };
 
-function makeBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
-  const cells: CellType[] = gridCells(9);
-  const rects = gridLayout.cellRects(classicVariant);
-  const size = gridLayout.canvasSize(classicVariant);
-
+function makeBoardProps(
+  base: Pick<BoardProps, 'variant' | 'cells' | 'rects' | 'size'>,
+  overrides: Partial<BoardProps> = {}
+): BoardProps {
   return {
-    variant: classicVariant,
-    cells,
-    rects,
-    size,
+    ...base,
     grid: {
       cellState: (_id: CellId) => ({
         candidates: [],
@@ -43,31 +43,105 @@ function makeBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
   };
 }
 
+function makeClassicBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
+  const cells: CellType[] = gridCells(9);
+
+  return makeBoardProps(
+    {
+      variant: classicVariant,
+      cells,
+      rects: gridLayout.cellRects(classicVariant),
+      size: gridLayout.canvasSize(classicVariant),
+    },
+    overrides
+  );
+}
+
+function makeButterflyBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
+  const model = buildModel(butterfly);
+
+  return makeBoardProps(
+    {
+      variant: butterfly,
+      cells: model.cells,
+      rects: multigridLayout.cellRects(butterfly),
+      size: multigridLayout.canvasSize(butterfly),
+    },
+    overrides
+  );
+}
+
 describe('Board', () => {
   it('should render a grid element with aria-label', () => {
-    render(<Board {...makeBoardProps()} />);
+    render(<Board {...makeClassicBoardProps()} />);
 
     expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
   });
 
   it('should render 81 gridcells for a 9x9 board', () => {
-    render(<Board {...makeBoardProps()} />);
+    render(<Board {...makeClassicBoardProps()} />);
 
     expect(screen.getAllByRole('gridcell')).toHaveLength(81);
   });
 
   it('should render overlay nodes when provided', () => {
-    render(<Board {...makeBoardProps({ overlays: [<div key="overlay" data-testid="overlay">overlay</div>] })} />);
+    render(
+      <Board {...makeClassicBoardProps({ overlays: [<div key="overlay" data-testid="overlay">overlay</div>] })} />
+    );
 
     expect(screen.getByTestId('overlay')).toBeTruthy();
   });
 
   it('should mark 3x3 box boundaries on classic cells', () => {
-    render(<Board {...makeBoardProps()} />);
+    render(<Board {...makeClassicBoardProps()} />);
     const cells = screen.getAllByRole('gridcell');
 
     expect(cells[2]).toHaveAttribute('data-box-right', 'true');
     expect(cells[18]).toHaveAttribute('data-box-bottom', 'true');
+  });
+
+  it('should expose row and column metadata for a classic board', () => {
+    render(<Board {...makeClassicBoardProps()} />);
+
+    const grid = screen.getByRole('grid', { name: /sudoku grid/i });
+    const rows = screen.getAllByRole('row');
+    const cells = screen.getAllByRole('gridcell');
+
+    expect(grid).toBeTruthy();
+    shouldAssert.equal(grid.getAttribute('aria-rowcount'), '9');
+    shouldAssert.equal(grid.getAttribute('aria-colcount'), '9');
+    shouldAssert.equal(rows.length, 9);
+    shouldAssert.equal(cells.length, 81);
+
+    rows.forEach((row, index) => {
+      shouldAssert.equal(row.getAttribute('aria-rowindex'), String(index + 1));
+    });
+
+    cells.forEach((cell) => {
+      shouldAssert.exist(cell.getAttribute('aria-colindex'));
+    });
+  });
+
+  it('should expose row ownership metadata for a butterfly board', () => {
+    render(<Board {...makeButterflyBoardProps()} />);
+
+    const grid = screen.getByRole('grid', { name: /sudoku grid/i });
+    const rows = screen.getAllByRole('row');
+    const cells = screen.getAllByRole('gridcell');
+
+    expect(grid).toBeTruthy();
+    shouldAssert.equal(grid.getAttribute('aria-rowcount'), '12');
+    shouldAssert.equal(grid.getAttribute('aria-colcount'), '12');
+    shouldAssert.equal(rows.length, 12);
+    shouldAssert.equal(cells.length, 144);
+
+    rows.forEach((row, index) => {
+      shouldAssert.equal(row.getAttribute('aria-rowindex'), String(index + 1));
+    });
+
+    cells.forEach((cell) => {
+      shouldAssert.exist(cell.getAttribute('aria-colindex'));
+    });
   });
 });
 
@@ -79,7 +153,7 @@ describe('Board gutter slots', () => {
       label: String(index + 1),
     }));
     const gutters: GutterSlots = { top: topGutters };
-    render(<Board {...makeBoardProps({ gutters })} />);
+    render(<Board {...makeClassicBoardProps({ gutters })} />);
 
     expect(screen.getByLabelText('Top clue for column 1: 1')).toBeTruthy();
   });
@@ -91,13 +165,13 @@ describe('Board gutter slots', () => {
       label: String(index + 1),
     }));
     const gutters: GutterSlots = { start: startGutters };
-    render(<Board {...makeBoardProps({ gutters })} />);
+    render(<Board {...makeClassicBoardProps({ gutters })} />);
 
     expect(screen.getByLabelText('Start clue for row 1: 1')).toBeTruthy();
   });
 
   it('should not render any gutter wrapper when gutters prop is absent', () => {
-    render(<Board {...makeBoardProps()} />);
+    render(<Board {...makeClassicBoardProps()} />);
 
     expect(screen.queryByLabelText(/clue for /i)).toBeNull();
   });

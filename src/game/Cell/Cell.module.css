@@ -60,6 +60,11 @@
   z-index: 1;
 }
 
+.cell[data-selected]::after,
+.cell[data-selected]::before {
+  content: none;
+}
+
 .cell[data-conflict] {
   background: #2a1515;
 }
