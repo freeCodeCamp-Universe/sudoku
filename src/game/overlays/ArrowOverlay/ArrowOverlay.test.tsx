@@ -41,6 +41,25 @@ describe('ArrowOverlay', () => {
     expect(screen.getAllByTestId('arrow-path-line')).toHaveLength(2);
   });
 
+  it('should render one arrowhead per arrow', () => {
+    render(<ArrowOverlay rects={rects} structure={{ arrows }} />);
+
+    expect(screen.getAllByTestId('arrowhead')).toHaveLength(2);
+  });
+
+  it('should trim shaft start and end away from cell centers', () => {
+    render(<ArrowOverlay rects={rects} structure={{ arrows: [arrows[0]] }} />);
+
+    const line = screen.getByTestId('arrow-path-line');
+    const points = line.getAttribute('points');
+
+    expect(points).toBeTruthy();
+    expect(points).toContain('44,26');
+    expect(points).toContain('120,26');
+    expect(points).not.toContain('26,26');
+    expect(points).not.toContain('130,26');
+  });
+
   it('should render nothing when arrows list is empty', () => {
     render(<ArrowOverlay rects={rects} structure={{ arrows: [] }} />);
 

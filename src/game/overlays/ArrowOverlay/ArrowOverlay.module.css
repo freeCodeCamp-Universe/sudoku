@@ -10,22 +10,15 @@
 .bulbCircle {
   fill: none;
   stroke: #9898b8;
-  stroke-width: 2px;
+  stroke-width: 1.5px;
 }
 
 .arrowLine {
   fill: none;
   stroke: #9898b8;
-  stroke-width: 2px;
+  stroke-width: 1.5px;
 }
 
 .arrowhead {
   fill: #9898b8;
-}
-
-@media (min-width: 768px) {
-  .bulbCircle,
-  .arrowLine {
-    stroke-width: 2.5px;
-  }
 }

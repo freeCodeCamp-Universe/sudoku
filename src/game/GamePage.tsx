@@ -199,6 +199,16 @@ function GameInner() {
             grid={grid}
             renderSymbol={renderSymbol}
           />
+          {liveVariant.id === 'arrow' ? (
+            <div className={styles.variantLegend} aria-label="Arrow rule legend">
+              <svg width="100" height="24" viewBox="0 0 100 24" aria-hidden="true" className={styles.legendIcon}>
+                <circle cx="15" cy="12" r="8" className={styles.legendCircle} />
+                <line x1="23" y1="12" x2="81" y2="12" className={styles.legendLine} />
+                <polygon points="88,12 79,7 79,17" className={styles.legendHead} />
+              </svg>
+              <span>Digits along each arrow sum to the number in the circle.</span>
+            </div>
+          ) : null}
         </div>
         <div className={styles.gameRight}>
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />

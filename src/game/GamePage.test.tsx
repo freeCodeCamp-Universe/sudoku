@@ -83,6 +83,19 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getAllByLabelText(/Start clue for row /i)).toHaveLength(9);
   });
 
+  it('should render the arrow rule legend for arrow sudoku', () => {
+    renderGamePage('arrow');
+
+    expect(screen.getByText('Digits along each arrow sum to the number in the circle.')).toBeTruthy();
+    expect(screen.getByLabelText('Arrow rule legend')).toBeTruthy();
+  });
+
+  it('should not render the arrow rule legend for non-arrow variants', () => {
+    renderGamePage('classic');
+
+    expect(screen.queryByText('Digits along each arrow sum to the number in the circle.')).toBeNull();
+  });
+
   it('should open the help dialog with the current variant help rules', async () => {
     const user = userEvent.setup();
 
