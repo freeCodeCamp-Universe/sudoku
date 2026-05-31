@@ -1,4 +1,5 @@
 import { useTheme } from '@/app/ThemeProvider';
+import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -12,9 +13,9 @@ export function Header({ title, backHref, onHelpOpen }: HeaderProps) {
 
   return (
     <header className={styles.topBar}>
-      <a href={backHref} className={styles.backBtn}>
+      <Link to={backHref} className={styles.backBtn}>
         ← Back
-      </a>
+      </Link>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.topBarRight}>
         {onHelpOpen ? (
