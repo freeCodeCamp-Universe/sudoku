@@ -129,7 +129,6 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
       className={styles.overlay}
       width={maxX}
       height={maxY}
-      style={{ position: 'absolute', insetInlineStart: 0, insetBlockStart: 0 }}
     >
       {edges.map((edge, index) => (
         <line

@@ -72,7 +72,7 @@ export function Board({
       role="grid"
       aria-label="Sudoku grid"
       className={styles.grid}
-      style={{ width: size.w, height: size.h, position: 'relative' }}
+      style={{ width: size.w, height: size.h }}
     >
       {cells.map((cell) => {
         const rect = rects.get(cell.id);
@@ -87,8 +87,8 @@ export function Board({
         return (
           <div
             key={cell.id}
+            className={styles.cellSlot}
             style={{
-              position: 'absolute',
               insetInlineStart: rect.x,
               insetBlockStart: rect.y,
               width: rect.w,

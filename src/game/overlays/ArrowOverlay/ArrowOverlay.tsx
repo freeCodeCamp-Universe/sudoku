@@ -32,7 +32,6 @@ export function ArrowOverlay({ rects, structure }: ArrowOverlayProps) {
       className={styles.overlay}
       width={maxX}
       height={maxY}
-      style={{ position: 'absolute', insetInlineStart: 0, insetBlockStart: 0 }}
     >
       <defs>
         <marker

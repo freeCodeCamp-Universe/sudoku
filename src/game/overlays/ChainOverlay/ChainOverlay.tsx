@@ -33,7 +33,6 @@ export function ChainOverlay({ rects, structure }: ChainOverlayProps) {
       className={styles.overlay}
       width={maxX}
       height={maxY}
-      style={{ position: 'absolute', insetInlineStart: 0, insetBlockStart: 0 }}
     >
       {chains.map((chainDef, index) => {
         const points = chainDef.cells

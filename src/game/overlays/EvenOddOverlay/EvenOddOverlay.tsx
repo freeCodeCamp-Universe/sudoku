@@ -30,7 +30,6 @@ export function EvenOddOverlay({ rects, structure }: EvenOddOverlayProps) {
             data-testid={parity === 0 ? 'parity-even' : 'parity-odd'}
             className={parity === 0 ? styles.even : styles.odd}
             style={{
-              position: 'absolute',
               insetInlineStart: rect.x,
               insetBlockStart: rect.y,
               width: rect.w,

@@ -50,7 +50,6 @@ export function InequalityOverlay({ rects, structure }: InequalityOverlayProps) 
       className={styles.overlay}
       width={maxX}
       height={maxY}
-      style={{ position: 'absolute', insetInlineStart: 0, insetBlockStart: 0 }}
     >
       {relations.map(({ greater, lesser }, index) => {
         const greaterRect = rects.get(greater);

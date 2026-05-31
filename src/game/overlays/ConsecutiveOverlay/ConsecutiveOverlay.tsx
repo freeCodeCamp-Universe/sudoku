@@ -33,7 +33,6 @@ export function ConsecutiveOverlay({ rects, structure }: ConsecutiveOverlayProps
       className={styles.overlay}
       width={maxX}
       height={maxY}
-      style={{ position: 'absolute', insetInlineStart: 0, insetBlockStart: 0 }}
     >
       {marks.map(({ a, b }, index) => {
         const aRect = rects.get(a);
