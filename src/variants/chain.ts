@@ -44,6 +44,7 @@ function deriveStructure(_solution: Solution, _model: VariantModel): { chains: C
 export const chainVariant: Variant = {
   id: 'chain',
   name: 'Chain Sudoku',
+  description: 'Colored chains of cells must each contain a set of consecutive digits, in any order.',
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

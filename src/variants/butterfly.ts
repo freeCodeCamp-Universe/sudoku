@@ -63,6 +63,7 @@ function buildButterflyHouses(boardLayout: BoardLayout): House[] {
 export const butterfly: Variant = {
   id: 'butterfly',
   name: 'Butterfly Sudoku',
+  description: 'Four overlapping 9×9 grids sharing a central region, forming a butterfly shape on a 12×12 board.',
   difficulty: 'advanced',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

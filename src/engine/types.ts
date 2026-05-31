@@ -70,6 +70,7 @@ export type BoardLayout = GridLayout | MultiGridLayout | TriangularLayout;
 export interface Variant {
   id: string;
   name: string;
+  description: string;
   difficulty: Difficulty;
   layout: BoardLayout;
   symbols: SymbolValue[];

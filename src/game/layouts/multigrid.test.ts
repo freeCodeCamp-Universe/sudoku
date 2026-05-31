@@ -5,6 +5,7 @@ import { multigridLayout } from './multigrid';
 const samuraiVariant: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
+  description: 'Test variant.',
   difficulty: 'advanced',
   layout: {
     kind: 'multigrid',
@@ -27,6 +28,7 @@ const samuraiVariant: Variant = {
 const butterflyVariant: Variant = {
   id: 'butterfly',
   name: 'Butterfly Sudoku',
+  description: 'Test variant.',
   difficulty: 'advanced',
   layout: {
     kind: 'multigrid',

@@ -19,6 +19,7 @@ function buildDiagonalExtra(boardLayout: BoardLayout): House[] {
 export const sujiken: Variant = {
   id: 'sujiken',
   name: 'Sujiken',
+  description: 'A triangular sudoku where rows, columns, and the main diagonal must each contain distinct digits.',
   difficulty: 'intermediate',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

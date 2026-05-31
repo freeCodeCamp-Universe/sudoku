@@ -58,6 +58,7 @@ function generateSuper16Solution(model: VariantModel, rng: () => number = Math.r
 export const super16: Variant = {
   id: 'super',
   name: 'Super Sudoku',
+  description: '16x16 grid using digits 1-9 and letters A-G. Every row, column, and 4x4 box must be complete.',
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 16, box: { rows: 4, cols: 4 } },
   symbols: Array.from({ length: 16 }, (_, index) => index + 1),

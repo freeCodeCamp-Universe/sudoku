@@ -8,6 +8,7 @@ import { ConsecutiveOverlay } from './ConsecutiveOverlay';
 const variant: Variant = {
   id: 'consecutive',
   name: 'Consecutive Sudoku',
+  description: 'Test variant.',
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

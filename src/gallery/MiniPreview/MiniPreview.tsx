@@ -12,6 +12,10 @@ interface MiniPreviewProps {
 
 const MAX_PREVIEW_WIDTH = 220;
 const MAX_PREVIEW_HEIGHT = 120;
+// `size` is the cell area only; the board's `.grid` adds a 3px border outside it
+// (see Board.module.css). Include that border on every side so the scaled board's
+// full footprint fits inside the clip region instead of being cut off.
+const BOARD_BORDER = 3;
 
 function getPreviewScale(width: number, height: number): number {
   return Math.min(1, MAX_PREVIEW_WIDTH / width, MAX_PREVIEW_HEIGHT / height);
@@ -20,7 +24,9 @@ function getPreviewScale(width: number, height: number): number {
 export function MiniPreview({ variantId }: MiniPreviewProps) {
   const announcerRef = useRef<HTMLDivElement | null>(null);
   const preview = getPreview(variantId);
-  const scale = getPreviewScale(preview.size.w, preview.size.h);
+  const footprintWidth = preview.size.w + BOARD_BORDER * 2;
+  const footprintHeight = preview.size.h + BOARD_BORDER * 2;
+  const scale = getPreviewScale(footprintWidth, footprintHeight);
   const overlays = resolveOverlays(preview.variant.overlayIds ?? []).map((Overlay, index) => (
     <Overlay
       key={`${preview.variant.id}-preview-overlay-${index}`}
@@ -49,15 +55,15 @@ export function MiniPreview({ variantId }: MiniPreviewProps) {
       <div
         className={styles.previewViewport}
         style={{
-          width: preview.size.w * scale,
-          height: preview.size.h * scale,
+          width: footprintWidth * scale,
+          height: footprintHeight * scale,
         }}
       >
         <div
           className={styles.previewScale}
           style={{
-            width: preview.size.w,
-            height: preview.size.h,
+            width: footprintWidth,
+            height: footprintHeight,
             transform: `scale(${scale})`,
           }}
         >

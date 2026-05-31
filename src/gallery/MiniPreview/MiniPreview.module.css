@@ -9,12 +9,13 @@
 }
 
 .previewViewport {
+  position: relative;
   flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .previewScale {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   transform-origin: top left;
 }

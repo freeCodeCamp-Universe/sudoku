@@ -5,6 +5,7 @@ import type { BoardLayout, House, MultiGridLayout, TriangularLayout, Variant } f
 const classicLike: Variant = {
   id: 'classic',
   name: 'Classic Sudoku',
+  description: 'Test variant.',
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -28,6 +29,7 @@ describe('buildModel with buildHouses override', () => {
     const variant: Variant = {
       id: 'custom',
       name: 'Custom',
+      description: 'Test variant.',
       difficulty: 'intermediate',
       layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
       symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -45,6 +47,7 @@ describe('buildModel with buildHouses override', () => {
     const variant: Variant = {
       id: 'extra',
       name: 'Extra',
+      description: 'Test variant.',
       difficulty: 'intermediate',
       layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
       symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -62,6 +65,7 @@ describe('buildModel with buildHouses override', () => {
     const variant: Variant = {
       id: 'bad',
       name: 'Bad',
+      description: 'Test variant.',
       difficulty: 'intermediate',
       layout: {
         kind: 'mystery',
@@ -91,6 +95,7 @@ describe('buildCells for multigrid (Butterfly 12x12)', () => {
   const variant: Variant = {
     id: 'butterfly',
     name: 'Butterfly',
+    description: 'Test variant.',
     difficulty: 'intermediate',
     layout: butterflyLayout,
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -137,6 +142,7 @@ describe('buildCells for multigrid (Samurai 21x21)', () => {
   const variant: Variant = {
     id: 'samurai',
     name: 'Samurai',
+    description: 'Test variant.',
     difficulty: 'advanced',
     layout: samuraiLayout,
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -156,6 +162,7 @@ describe('buildCells for triangular (Sujiken 9x9)', () => {
   const variant: Variant = {
     id: 'sujiken',
     name: 'Sujiken',
+    description: 'Test variant.',
     difficulty: 'intermediate',
     layout: triangularLayout,
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

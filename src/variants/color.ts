@@ -27,6 +27,7 @@ const COLOR_NAMES = [
 export const color: Variant & { colorNames: string[] } = {
   id: 'color',
   name: 'Color Sudoku',
+  description: 'Nine colors replace the digits 1-9. Each color must appear exactly once in every row, column, and 3x3 box.',
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

@@ -73,3 +73,10 @@
   align-items: center;
   min-height: 120px;
 }
+
+.cardDesc {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}

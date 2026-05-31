@@ -10,6 +10,7 @@ import { Board } from './Board';
 const classicVariant = {
   id: 'classic',
   name: 'Classic Sudoku',
+  description: 'Test variant.',
   difficulty: 'intermediate' as const,
   layout: { kind: 'grid' as const, size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

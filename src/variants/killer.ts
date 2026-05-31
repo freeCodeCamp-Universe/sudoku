@@ -30,6 +30,7 @@ function carveCages(solution: Solution, _model: VariantModel): { cages: Cage[] }
 export const killer: Variant = {
   id: 'killer',
   name: 'Killer Sudoku',
+  description: 'Cells are grouped into dashed cages with target sums. Digits in each cage must add up to the total without repeating.',
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

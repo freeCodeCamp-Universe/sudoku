@@ -25,6 +25,7 @@ export function VariantCard({ variant }: VariantCardProps) {
       <div className={styles.preview}>
         <MiniPreview variantId={variant.id} />
       </div>
+      <p className={styles.cardDesc}>{variant.description}</p>
     </Link>
   );
 }

@@ -80,6 +80,7 @@ function carveArrows(solution: Solution, _model: VariantModel): { arrows: Arrow[
 export const arrow: Variant = {
   id: 'arrow',
   name: 'Arrow Sudoku',
+  description: 'Digits along an arrow sum to the circled number at the arrow base.',
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
