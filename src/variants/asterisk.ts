@@ -20,6 +20,24 @@ export const asterisk: Variant = {
   id: 'asterisk',
   name: 'Asterisk Sudoku',
   description: 'Nine cells forming a star must contain each digit 1–9, on top of standard sudoku rules.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The asterisk', text: 'Nine specific cells form a star shape across the grid, marked by highlighting.' },
+        { term: 'Star rule', text: 'The nine asterisk cells must together contain each digit from 1 to 9 exactly once.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Double duty', text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.' },
+      ],
+    },
+  ],
   popularity: 16,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

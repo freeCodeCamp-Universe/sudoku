@@ -31,6 +31,25 @@ export const killer: Variant = {
   id: 'killer',
   name: 'Killer Sudoku',
   description: 'Cells are grouped into dashed cages with target sums. Digits in each cage must add up to the total without repeating.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'Cages', text: 'Cells are grouped into dashed cages, each with a small target number in its corner.' },
+        { term: 'Sum rule', text: 'The digits inside each dashed cage must add up to that target exactly.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'No repeats in cages', text: 'A digit may not appear twice within the same cage, even if sudoku rules would otherwise allow it.' },
+        { term: 'No givens', text: 'There are no pre-filled cells. The cages and their sums are your only starting clues.' },
+      ],
+    },
+  ],
   popularity: 2,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

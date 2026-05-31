@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
@@ -10,6 +10,7 @@ import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import { useGameContext } from './GameContext';
+import { HelpDialog } from './HelpDialog';
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
 import { ModeSwitcher } from './ModeSwitcher';
@@ -254,6 +255,7 @@ function GameInner() {
 
 export function GamePage() {
   const { variantId } = useParams<{ variantId: string }>();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -273,10 +275,16 @@ export function GamePage() {
 
   return (
     <>
-      <Header title={variant.name} backHref="/" />
+      <Header title={variant.name} backHref="/" onHelpOpen={() => setHelpOpen(true)} />
       <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
         <GameInner />
       </GameProvider>
+      <HelpDialog
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        help={variant.help}
+        description={variant.description}
+      />
     </>
   );
 }

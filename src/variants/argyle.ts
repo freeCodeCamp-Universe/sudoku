@@ -57,6 +57,24 @@ export const argyle: Variant = {
   id: 'argyle',
   name: 'Argyle Sudoku',
   description: 'Six argyle diagonals, each must contain distinct digits alongside standard row, column, and box rules.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'Argyle diagonals', text: 'Six diagonal lines are highlighted across the grid in an argyle pattern.' },
+        { term: 'Diagonal rule', text: 'No digit may repeat along any single highlighted diagonal.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Variable lengths', text: 'Diagonals vary in length, so not every diagonal needs all nine digits. Just no repeats within each one.' },
+      ],
+    },
+  ],
   popularity: 17,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

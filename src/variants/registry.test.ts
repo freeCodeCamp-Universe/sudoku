@@ -11,7 +11,7 @@ import { evenOdd } from './evenOdd';
 import { jigsaw } from './jigsaw';
 import { killer } from './killer';
 import { mini } from './mini';
-import { getVariant } from './registry';
+import { getVariant, variantRegistry } from './registry';
 import { samurai } from './samurai';
 import { skyscraper } from './skyscraper';
 import { super16 } from './super16';
@@ -59,5 +59,12 @@ describe('geometry variants registry', () => {
     expect(getVariant('sudoku-x')).toBe(sudokuX);
     expect(getVariant('windoku')).toBe(windoku);
     expect(getVariant('wordoku')).toBe(wordoku);
+  });
+
+  it('should provide help data for every registered variant', () => {
+    Object.values(variantRegistry).forEach((variant) => {
+      expect(variant.help?.length).toBeGreaterThan(0);
+      expect(variant.help?.[0]?.tone).toBe('basic');
+    });
   });
 });

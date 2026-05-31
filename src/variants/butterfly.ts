@@ -64,6 +64,25 @@ export const butterfly: Variant = {
   id: 'butterfly',
   name: 'Butterfly Sudoku',
   description: 'Four overlapping 9×9 grids sharing a central region, forming a butterfly shape on a 12×12 board.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The layout', text: 'Four 9×9 grids are placed on a 12×12 board, overlapping at the corners to create a butterfly shape.' },
+        { term: 'Fill with 1–9', text: 'Every cell within each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Shared corners', text: 'Where two grids overlap, the shared 3×3 box must satisfy the rules of both grids at the same time.' },
+        { term: 'Solve together', text: 'The four grids are linked through their overlapping corners. None can be solved in isolation.' },
+      ],
+    },
+  ],
   popularity: 18,
   difficulty: 'advanced',
   layout,

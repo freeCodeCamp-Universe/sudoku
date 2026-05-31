@@ -59,6 +59,25 @@ export const super16: Variant = {
   id: 'super',
   name: 'Super Sudoku',
   description: '16x16 grid using digits 1-9 and letters A-G. Every row, column, and 4x4 box must be complete.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1–9 and letters A–G.' },
+        { term: 'Rows and columns', text: 'Every row and column must contain all 16 symbols exactly once.' },
+        { term: 'Boxes', text: 'Each 4×4 box must also hold all 16 symbols exactly once.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Given symbols', text: 'Pre-filled cells are fixed. Build your solution around them.' },
+        { term: 'Entering symbols', text: 'Use the on-screen pad to enter digits or letters.' },
+      ],
+    },
+  ],
   popularity: 13,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 16, box: { rows: 4, cols: 4 } },

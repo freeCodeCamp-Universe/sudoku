@@ -20,6 +20,17 @@ export interface Conflict {
   constraintId: string;
 }
 
+export interface HelpRule {
+  term: string;
+  text: string;
+}
+
+export interface HelpSection {
+  label: string;
+  tone: 'basic' | 'extra';
+  rules: HelpRule[];
+}
+
 export interface VariantModel {
   cells: Cell[];
   houses: House[];
@@ -71,6 +82,7 @@ export interface Variant {
   id: string;
   name: string;
   description: string;
+  help?: HelpSection[];
   popularity: number;
   difficulty: Difficulty;
   layout: BoardLayout;

@@ -50,6 +50,24 @@ export const greaterThanVariant: Variant = {
   id: 'greater-than',
   name: 'Greater-Than Sudoku',
   description: 'Triangles between every pair of adjacent cells point toward the smaller of the two digits.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'Triangles', text: 'A small triangle appears between every pair of adjacent cells across the entire grid.' },
+        { term: 'Direction', text: 'Each triangle points toward the smaller digit. The wide base faces the larger one.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'All pairs covered', text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.' },
+      ],
+    },
+  ],
   popularity: 10,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

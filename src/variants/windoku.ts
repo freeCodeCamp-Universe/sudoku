@@ -35,6 +35,24 @@ export const windoku: Variant = {
   id: 'windoku',
   name: 'Windoku',
   description: 'Four extra shaded 3x3 window regions must each contain digits 1-9, on top of the normal rules.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'Four windows', text: 'Four extra shaded 3×3 regions are overlaid on the grid.' },
+        { term: 'Window rule', text: 'Each window must also contain digits 1–9 without any repeats.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Linked constraints', text: 'Placing a digit in one window limits where it can go in the others, creating a chain of extra deductions across the board.' },
+      ],
+    },
+  ],
   popularity: 6,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

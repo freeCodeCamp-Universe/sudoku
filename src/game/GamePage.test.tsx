@@ -1,5 +1,6 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
 import { gridCells } from '@/engine/grid';
@@ -80,5 +81,30 @@ describe('GamePage - Classic integration', () => {
 
     expect(screen.getAllByLabelText(/Top clue for column /i)).toHaveLength(9);
     expect(screen.getAllByLabelText(/Start clue for row /i)).toHaveLength(9);
+  });
+
+  it('should open the help dialog with the current variant help rules', async () => {
+    const user = userEvent.setup();
+
+    renderGamePage();
+    await user.click(screen.getByRole('button', { name: /how to play/i }));
+
+    expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Basic Rules', level: 3 })).toBeTruthy();
+    expect(screen.getByText('The grid:')).toBeTruthy();
+    expect(screen.getByText('A 9×9 board divided into nine 3×3 boxes. Fill every cell with a digit from 1 to 9.')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
+    expect(screen.getByText('Given digits:')).toBeTruthy();
+  });
+
+  it('should render samurai additional rules from the upstream dialog content', async () => {
+    const user = userEvent.setup();
+
+    renderGamePage('samurai');
+    await user.click(screen.getByRole('button', { name: /how to play/i }));
+
+    expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
+    expect(screen.getByText('Shared corners:')).toBeTruthy();
+    expect(screen.getByText('Solve as one:')).toBeTruthy();
   });
 });

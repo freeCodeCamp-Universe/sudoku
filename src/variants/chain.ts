@@ -45,6 +45,25 @@ export const chainVariant: Variant = {
   id: 'chain',
   name: 'Chain Sudoku',
   description: 'Colored chains of cells must each contain a set of consecutive digits, in any order.',
+  help: [
+    {
+      label: 'Basic Rules',
+      tone: 'basic',
+      rules: [
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'Chains', text: 'Groups of connected cells are linked by a colored chain running through the grid.' },
+        { term: 'Chain rule', text: 'The digits within a chain must be consecutive, forming an unbroken sequence of numbers in any order.' },
+      ],
+    },
+    {
+      label: 'Additional Rules',
+      tone: 'extra',
+      rules: [
+        { term: 'Sequence length', text: 'A chain of three cells holds three consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
+        { term: 'Sudoku still applies', text: 'Every chain cell must also satisfy its row, column, and box.' },
+      ],
+    },
+  ],
   popularity: 19,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
