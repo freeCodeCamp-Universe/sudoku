@@ -8,6 +8,7 @@ import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { gridLayout } from '@/game/layouts/grid';
 import { multigridLayout } from '@/game/layouts/multigrid';
 import { butterfly } from '@/variants/butterfly';
+import { samurai } from '@/variants/samurai';
 import { Board } from './Board';
 
 const shouldAssert = should();
@@ -57,6 +58,18 @@ function makeClassicBoardProps(overrides: Partial<BoardProps> = {}): BoardProps 
   );
 }
 
+function getRenderedCell(id: CellId): HTMLElement {
+  const cell = screen.getAllByRole('gridcell').find((gridCell) => gridCell.getAttribute('data-cell') === id);
+
+  shouldAssert.exist(cell);
+
+  if (!cell) {
+    throw new Error(`Missing cell ${id}`);
+  }
+
+  return cell;
+}
+
 function makeButterflyBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
   const model = buildModel(butterfly);
 
@@ -66,6 +79,20 @@ function makeButterflyBoardProps(overrides: Partial<BoardProps> = {}): BoardProp
       cells: model.cells,
       rects: multigridLayout.cellRects(butterfly),
       size: multigridLayout.canvasSize(butterfly),
+    },
+    overrides
+  );
+}
+
+function makeSamuraiBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
+  const model = buildModel(samurai);
+
+  return makeBoardProps(
+    {
+      variant: samurai,
+      cells: model.cells,
+      rects: multigridLayout.cellRects(samurai),
+      size: multigridLayout.canvasSize(samurai),
     },
     overrides
   );
@@ -142,6 +169,22 @@ describe('Board', () => {
     cells.forEach((cell) => {
       shouldAssert.exist(cell.getAttribute('aria-colindex'));
     });
+  });
+
+  it('should only mark internal 3x3 boundaries for a samurai board', () => {
+    render(<Board {...makeSamuraiBoardProps()} />);
+
+    expect(getRenderedCell('r8c0')).not.toHaveAttribute('data-box-bottom');
+    expect(getRenderedCell('r0c8')).not.toHaveAttribute('data-box-right');
+    expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-bottom', 'true');
+    expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-right', 'true');
+  });
+
+  it('should render one outer frame per samurai sub-grid without overlap highlighting', () => {
+    render(<Board {...makeSamuraiBoardProps()} />);
+
+    expect(screen.getAllByTestId('multigrid-line').length).toBeGreaterThan(0);
+    expect(getRenderedCell('r6c6')).not.toHaveAttribute('data-overlap');
   });
 });
 

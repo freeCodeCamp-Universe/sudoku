@@ -1,5 +1,8 @@
 .topBar {
-  width: 100%;
+  width: min(1280px, 100%);
+  margin-inline: auto;
+  padding-inline: 16px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -95,6 +98,7 @@
   .topBar {
     gap: 8px;
     margin-block-end: 20px;
+    padding-inline: 0;
   }
 
   .title {

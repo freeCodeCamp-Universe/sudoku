@@ -24,7 +24,7 @@
   background: #2c2c5a;
 }
 
-.cell[data-box-right]::after {
+.cell[data-box-right]:not([data-overlay-borders])::after {
   content: '';
   position: absolute;
   top: -1px;
@@ -36,7 +36,7 @@
   pointer-events: none;
 }
 
-.cell[data-box-bottom]::before {
+.cell[data-box-bottom]:not([data-overlay-borders])::before {
   content: '';
   position: absolute;
   left: -1px;

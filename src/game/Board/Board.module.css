@@ -1,7 +1,8 @@
 .boardWrap {
   margin-block-end: 24px;
-  overflow-x: auto;
-  max-width: 100%;
+  width: max-content;
+  max-width: none;
+  overflow: visible;
 }
 
 .grid {
@@ -13,8 +14,20 @@
   box-shadow: 0 4px 24px rgb(0 0 0 / 50%);
 }
 
+.multigrid {
+  border: none;
+  box-shadow: none;
+}
+
 .cellSlot {
   position: absolute;
+}
+
+.samuraiEdge {
+  position: absolute;
+  background: #9898b8;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .row {
@@ -24,6 +37,19 @@
 :global(.light) .grid {
   border-color: #8080a8;
   box-shadow: 0 4px 24px rgb(0 0 0 / 12%);
+}
+
+:global(.light) .samuraiEdge {
+  background: #8080a8;
+}
+
+@media (max-width: 1280px) {
+  .boardWrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
 }
 
 .gutterLayout {

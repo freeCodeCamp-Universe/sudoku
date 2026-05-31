@@ -2,6 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
 }

@@ -1,4 +1,4 @@
-import type { GutterCell, GutterSlots } from '@/game/gameTypes';
+import type { GutterCell, GutterSlots, Rect } from '@/game/gameTypes';
 import { Cell } from '@/game/Cell';
 import { LiveRegion } from '@/game/LiveRegion';
 import type { BoardProps } from '@/game/gameTypes';
@@ -52,7 +52,7 @@ function isBoxBoundary(
 
         const local = axis === 'row' ? cell.row - originRow : cell.col - originCol;
 
-        return (local + 1) % step === 0;
+        return (local + 1) % step === 0 && local < subGridSize - 1;
       });
 
       return isLocalBoundary && value < canvasMax - 1;
@@ -62,11 +62,121 @@ function isBoxBoundary(
   }
 }
 
+function mergeRanges(
+  ranges: Array<{ start: number; end: number }>
+): Array<{ start: number; end: number }> {
+  const sorted = [...ranges].sort((left, right) => left.start - right.start);
+  const merged: Array<{ start: number; end: number }> = [];
+
+  for (const range of sorted) {
+    const previous = merged[merged.length - 1];
+
+    if (!previous || range.start > previous.end) {
+      merged.push({ ...range });
+      continue;
+    }
+
+    previous.end = Math.max(previous.end, range.end);
+  }
+
+  return merged;
+}
+
+function buildMultigridLines(
+  variant: BoardProps['variant'],
+  rects: BoardProps['rects']
+): Array<Rect & { id: string }> {
+  if (variant.layout.kind !== 'multigrid') {
+    return [];
+  }
+
+  const { subGrids, subGridSize, box } = variant.layout;
+  const stroke = 3;
+  const offset = 1;
+  const horizontal = new Map<number, Array<{ start: number; end: number }>>();
+  const vertical = new Map<number, Array<{ start: number; end: number }>>();
+
+  function pushHorizontal(y: number, start: number, end: number) {
+    const segments = horizontal.get(y) ?? [];
+    segments.push({ start, end });
+    horizontal.set(y, segments);
+  }
+
+  function pushVertical(x: number, start: number, end: number) {
+    const segments = vertical.get(x) ?? [];
+    segments.push({ start, end });
+    vertical.set(x, segments);
+  }
+
+  for (const { originRow, originCol } of subGrids) {
+    const topLeft = rects.get(`r${originRow}c${originCol}`);
+    const bottomRight = rects.get(`r${originRow + subGridSize - 1}c${originCol + subGridSize - 1}`);
+
+    if (!topLeft || !bottomRight) {
+      continue;
+    }
+
+    const xStart = topLeft.x - offset;
+    const xEnd = bottomRight.x + bottomRight.w + offset;
+    const yStart = topLeft.y - offset;
+    const yEnd = bottomRight.y + bottomRight.h + offset;
+
+    pushHorizontal(yStart, xStart, xEnd);
+    pushHorizontal(bottomRight.y + bottomRight.h - offset, xStart, xEnd);
+    pushVertical(xStart, yStart, yEnd);
+    pushVertical(bottomRight.x + bottomRight.w - offset, yStart, yEnd);
+
+    for (let localRow = box.rows - 1; localRow < subGridSize - 1; localRow += box.rows) {
+      const boundaryCell = rects.get(`r${originRow + localRow}c${originCol}`);
+
+      if (boundaryCell) {
+        pushHorizontal(boundaryCell.y + boundaryCell.h - offset, xStart, xEnd);
+      }
+    }
+
+    for (let localCol = box.cols - 1; localCol < subGridSize - 1; localCol += box.cols) {
+      const boundaryCell = rects.get(`r${originRow}c${originCol + localCol}`);
+
+      if (boundaryCell) {
+        pushVertical(boundaryCell.x + boundaryCell.w - offset, yStart, yEnd);
+      }
+    }
+  }
+
+  const edges: Array<Rect & { id: string }> = [];
+
+  for (const [y, ranges] of horizontal.entries()) {
+    for (const [index, range] of mergeRanges(ranges).entries()) {
+      edges.push({
+        id: `h-${y}-${index}`,
+        x: range.start,
+        y,
+        w: range.end - range.start,
+        h: stroke,
+      });
+    }
+  }
+
+  for (const [x, ranges] of vertical.entries()) {
+    for (const [index, range] of mergeRanges(ranges).entries()) {
+      edges.push({
+        id: `v-${x}-${index}`,
+        x,
+        y: range.start,
+        w: stroke,
+        h: range.end - range.start,
+      });
+    }
+  }
+
+  return edges;
+}
+
 function subgridOverlap(
   variant: BoardProps['variant'],
   cell: BoardProps['cells'][number]
 ): number {
-  if (variant.layout.kind !== 'multigrid') {
+  if (variant.layout.kind !== 'multigrid' || variant.id === 'samurai') {
     return 0;
   }
 
@@ -94,6 +204,7 @@ export function Board({
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
   const colCount = cells.reduce((max, cell) => Math.max(max, cell.col), -1) + 1;
+  const multigridLines = buildMultigridLines(variant, rects);
   const rowGroups = new Map<number, typeof cells>();
 
   for (const cell of cells) {
@@ -113,7 +224,7 @@ export function Board({
       aria-label="Sudoku grid"
       aria-rowcount={rowCount}
       aria-colcount={colCount}
-      className={styles.grid}
+      className={`${styles.grid}${variant.layout.kind === 'multigrid' ? ` ${styles.multigrid}` : ''}`}
       style={{ width: size.w, height: size.h }}
     >
       {sortedRows.map(([rowIndex, rowCells]) => (
@@ -138,6 +249,7 @@ export function Board({
                   insetBlockStart: rect.y,
                   width: rect.w,
                   height: rect.h,
+                  zIndex: state.selected ? 2 : 0,
                 }}
               >
                 <Cell
@@ -152,6 +264,7 @@ export function Board({
                   symbolKind={variant.symbolKind}
                   boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
                   boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
+                  overlayBorders={variant.layout.kind === 'multigrid'}
                   overlap={subgridOverlap(variant, cell)}
                   aria-colindex={cell.col + 1}
                   onClick={props.onClick ?? (() => {})}
@@ -161,6 +274,20 @@ export function Board({
             );
           })}
         </div>
+      ))}
+      {multigridLines.map((line) => (
+        <div
+          key={line.id}
+          aria-hidden="true"
+          data-testid="multigrid-line"
+          className={styles.samuraiEdge}
+          style={{
+            insetInlineStart: line.x,
+            insetBlockStart: line.y,
+            width: line.w,
+            height: line.h,
+          }}
+        />
       ))}
       {overlays}
     </div>

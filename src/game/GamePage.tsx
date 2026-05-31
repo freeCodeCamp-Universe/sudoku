@@ -9,6 +9,7 @@ import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
+import { findCompletedSymbols } from './completedSymbols';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
 import { GameProvider } from './GameProvider';
@@ -172,14 +173,8 @@ function GameInner() {
   }
 
   const usedSymbols = useMemo(
-    () =>
-      new Set<SymbolValue>(
-        model.symbols.filter(
-          (symbol) =>
-            [...state.values.values()].filter((value) => value === symbol).length >= model.symbols.length
-        )
-      ),
-    [model.symbols, state.values]
+    () => findCompletedSymbols(state.values, model.symbols, model.cells.length),
+    [model.cells.length, model.symbols, state.values]
   );
   const hasProgress =
     state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;

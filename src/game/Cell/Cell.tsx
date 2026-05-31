@@ -15,6 +15,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   symbolKind?: 'digit' | 'letter' | 'color';
   boxBoundaryRight?: boolean;
   boxBoundaryBottom?: boolean;
+  overlayBorders?: boolean;
   overlap?: number;
 }
 
@@ -44,6 +45,7 @@ export function Cell({
   symbolKind = 'digit',
   boxBoundaryRight = false,
   boxBoundaryBottom = false,
+  overlayBorders = false,
   overlap = 0,
   className,
   ...rest
@@ -63,6 +65,7 @@ export function Cell({
       data-conflict={conflict || undefined}
       data-box-right={boxBoundaryRight || undefined}
       data-box-bottom={boxBoundaryBottom || undefined}
+      data-overlay-borders={overlayBorders || undefined}
       data-overlap={overlapClass}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}

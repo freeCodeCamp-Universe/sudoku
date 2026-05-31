@@ -4,7 +4,7 @@ import type { LayoutStrategy, Rect } from '@/game/gameTypes';
 
 function getCellSize(canvasCols: number): number {
   if (canvasCols === 21) {
-    return 30;
+    return 40;
   }
 
   if (canvasCols === 12) {
