@@ -62,6 +62,25 @@ function isBoxBoundary(
   }
 }
 
+function subgridOverlap(
+  variant: BoardProps['variant'],
+  cell: BoardProps['cells'][number]
+): number {
+  if (variant.layout.kind !== 'multigrid') {
+    return 0;
+  }
+
+  const { subGrids, subGridSize } = variant.layout;
+
+  return subGrids.filter(
+    ({ originRow, originCol }) =>
+      cell.row >= originRow &&
+      cell.row < originRow + subGridSize &&
+      cell.col >= originCol &&
+      cell.col < originCol + subGridSize
+  ).length;
+}
+
 export function Board({
   variant,
   cells,
@@ -113,6 +132,7 @@ export function Board({
               symbolKind={variant.symbolKind}
               boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
               boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
+              overlap={subgridOverlap(variant, cell)}
               onClick={props.onClick ?? (() => {})}
               {...props}
             />

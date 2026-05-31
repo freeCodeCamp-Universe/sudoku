@@ -16,6 +16,14 @@
   position: relative;
 }
 
+.cell[data-overlap='two'] {
+  background: #222248;
+}
+
+.cell[data-overlap='four'] {
+  background: #2c2c5a;
+}
+
 .cell[data-box-right]::after {
   content: '';
   position: absolute;
@@ -107,6 +115,14 @@
   background: #ffffff;
   color: #2c5f8a;
   border-color: #d8d8e8;
+}
+
+:global(.light) .cell[data-overlap='two'] {
+  background: #eeeef8;
+}
+
+:global(.light) .cell[data-overlap='four'] {
+  background: #e4e4f4;
 }
 
 :global(.light) .cell[data-given] {

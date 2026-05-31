@@ -15,6 +15,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   symbolKind?: 'digit' | 'letter' | 'color';
   boxBoundaryRight?: boolean;
   boxBoundaryBottom?: boolean;
+  overlap?: number;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -43,11 +44,13 @@ export function Cell({
   symbolKind = 'digit',
   boxBoundaryRight = false,
   boxBoundaryBottom = false,
+  overlap = 0,
   className,
   ...rest
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
   const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
+  const overlapClass = overlap === 4 ? 'four' : overlap === 2 ? 'two' : undefined;
 
   return (
     <div
@@ -60,6 +63,7 @@ export function Cell({
       data-conflict={conflict || undefined}
       data-box-right={boxBoundaryRight || undefined}
       data-box-bottom={boxBoundaryBottom || undefined}
+      data-overlap={overlapClass}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
