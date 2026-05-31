@@ -1,6 +1,9 @@
 # Node
 node_modules/
 
+# Environment variables
+.env
+
 # Vite / build output
 dist/
 build/
@@ -9,5 +12,5 @@ build/
 # TypeScript
 *.tsbuildinfo
 
-# Test coverage
-coverage/
+# OS
+.DS_Store
