@@ -129,33 +129,26 @@ export function useSudokuGrid({
       }
 
       let nextId: CellId | null = null;
+      const rowCols = cells.filter((entry) => entry.row === cell.row).map((entry) => entry.col);
 
       switch (key) {
         case 'ArrowUp':
-          if (cell.row > 0) {
-            nextId = `r${cell.row - 1}c${cell.col}`;
-          }
+          nextId = `r${cell.row - 1}c${cell.col}`;
           break;
         case 'ArrowDown':
-          if (cell.row < model.cells.length ** 0.5 - 1) {
-            nextId = `r${cell.row + 1}c${cell.col}`;
-          }
+          nextId = `r${cell.row + 1}c${cell.col}`;
           break;
         case 'ArrowLeft':
-          if (cell.col > 0) {
-            nextId = `r${cell.row}c${cell.col - 1}`;
-          }
+          nextId = `r${cell.row}c${cell.col - 1}`;
           break;
         case 'ArrowRight':
-          if (cell.col < model.cells.length ** 0.5 - 1) {
-            nextId = `r${cell.row}c${cell.col + 1}`;
-          }
+          nextId = `r${cell.row}c${cell.col + 1}`;
           break;
         case 'Home':
-          nextId = `r${cell.row}c0`;
+          nextId = `r${cell.row}c${Math.min(...rowCols)}`;
           break;
         case 'End':
-          nextId = `r${cell.row}c${model.cells.length ** 0.5 - 1}`;
+          nextId = `r${cell.row}c${Math.max(...rowCols)}`;
           break;
         case 'Escape':
           event.preventDefault();
@@ -165,9 +158,16 @@ export function useSudokuGrid({
           break;
       }
 
+      if (nextId && !cellsById.has(nextId)) {
+        nextId = null;
+      }
+
       if (nextId) {
         event.preventDefault();
         selectCell(nextId);
+        const grid = event.currentTarget.closest?.('[role="grid"]');
+        const target = grid?.querySelector<HTMLElement>(`[data-cell="${nextId}"]`);
+        target?.focus();
         return;
       }
 
@@ -204,7 +204,7 @@ export function useSudokuGrid({
 
       announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
     },
-    [announce, candidateMode, cellsById, describeSymbol, givens, model.cells.length, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
+    [announce, candidateMode, cells, cellsById, describeSymbol, givens, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
   );
 
   const firstCellId = cells[0]?.id ?? null;
