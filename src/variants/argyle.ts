@@ -57,6 +57,7 @@ export const argyle: Variant = {
   id: 'argyle',
   name: 'Argyle Sudoku',
   description: 'Six argyle diagonals, each must contain distinct digits alongside standard row, column, and box rules.',
+  popularity: 17,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

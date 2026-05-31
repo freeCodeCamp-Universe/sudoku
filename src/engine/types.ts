@@ -71,6 +71,7 @@ export interface Variant {
   id: string;
   name: string;
   description: string;
+  popularity: number;
   difficulty: Difficulty;
   layout: BoardLayout;
   symbols: SymbolValue[];

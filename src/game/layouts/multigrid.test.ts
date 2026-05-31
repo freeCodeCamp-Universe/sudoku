@@ -6,6 +6,7 @@ const samuraiVariant: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
   description: 'Test variant.',
+  popularity: 0,
   difficulty: 'advanced',
   layout: {
     kind: 'multigrid',
@@ -29,6 +30,7 @@ const butterflyVariant: Variant = {
   id: 'butterfly',
   name: 'Butterfly Sudoku',
   description: 'Test variant.',
+  popularity: 0,
   difficulty: 'advanced',
   layout: {
     kind: 'multigrid',

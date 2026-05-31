@@ -35,6 +35,7 @@ export const windoku: Variant = {
   id: 'windoku',
   name: 'Windoku',
   description: 'Four extra shaded 3x3 window regions must each contain digits 1-9, on top of the normal rules.',
+  popularity: 6,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

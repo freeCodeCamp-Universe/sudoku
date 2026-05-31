@@ -34,6 +34,7 @@ export const consecutiveVariant: Variant = {
   id: 'consecutive',
   name: 'Consecutive Sudoku',
   description: 'White dots mark adjacent pairs that differ by exactly 1. Pairs without a dot must not be consecutive.',
+  popularity: 9,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

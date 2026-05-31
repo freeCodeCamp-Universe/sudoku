@@ -62,12 +62,22 @@ describe('Gallery', () => {
     expect(screen.queryByText(/Arrow Sudoku/i)).toBeNull();
   });
 
+  it('should filter cards when a search term matches a variant description', async () => {
+    const user = userEvent.setup();
+
+    renderGallery();
+
+    await user.type(screen.getByRole('searchbox', { name: /search puzzles/i }), 'triangular');
+
+    expect(screen.getByText(/Sujiken/i)).toBeTruthy();
+  });
+
   it('should sort cards alphabetically when requested', async () => {
     const user = userEvent.setup();
 
     renderGallery();
 
-    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/Arrow Sudoku/i);
+    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/Classic Sudoku/i);
 
     await user.selectOptions(screen.getByRole('combobox', { name: /sort puzzles by/i }), 'alpha');
 

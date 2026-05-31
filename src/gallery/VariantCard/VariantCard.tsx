@@ -1,5 +1,5 @@
 import type { Variant } from '@/engine/types';
-import { MiniPreview } from '@/gallery/MiniPreview';
+import { Preview } from '@/gallery/previews';
 import { Link } from 'react-router-dom';
 import styles from './VariantCard.module.css';
 
@@ -23,7 +23,7 @@ export function VariantCard({ variant }: VariantCardProps) {
         </span>
       </div>
       <div className={styles.preview}>
-        <MiniPreview variantId={variant.id} />
+        <Preview variantId={variant.id} />
       </div>
       <p className={styles.cardDesc}>{variant.description}</p>
     </Link>

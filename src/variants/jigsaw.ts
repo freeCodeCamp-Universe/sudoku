@@ -89,6 +89,7 @@ export function makeJigsawVariant(regions: number[][]): Variant {
     id: 'jigsaw',
     name: 'Jigsaw Sudoku',
     description: 'Nine irregular, interlocking regions replace the standard 3x3 boxes. Same rules, new shapes.',
+    popularity: 5,
     difficulty: 'intermediate',
     layout: { kind: 'grid', size: JIGSAW_SIZE, box: { rows: 3, cols: 3 } },
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

@@ -4,9 +4,9 @@ import { describe, expect, it, vi } from 'vitest';
 import type { Variant } from '@/engine/types';
 import { VariantCard } from './VariantCard';
 
-vi.mock('@/gallery/MiniPreview', () => ({
-  MiniPreview: ({ variantId }: { variantId: string }) => (
-    <div data-testid="mini-preview">preview:{variantId}</div>
+vi.mock('@/gallery/previews', () => ({
+  Preview: ({ variantId }: { variantId: string }) => (
+    <div data-testid="preview">preview:{variantId}</div>
   ),
 }));
 
@@ -14,6 +14,7 @@ const classicVariant: Variant = {
   id: 'classic',
   name: 'Classic Sudoku',
   description: 'Test variant.',
+  popularity: 1,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -51,13 +52,13 @@ describe('VariantCard', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '/classic');
   });
 
-  it('should render a MiniPreview', () => {
+  it('should render a Preview', () => {
     render(
       <MemoryRouter>
         <VariantCard variant={classicVariant} />
       </MemoryRouter>
     );
 
-    expect(screen.getByTestId('mini-preview')).toHaveTextContent('preview:classic');
+    expect(screen.getByTestId('preview')).toHaveTextContent('preview:classic');
   });
 });

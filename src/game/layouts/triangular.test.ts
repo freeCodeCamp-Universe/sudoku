@@ -6,6 +6,7 @@ const sujikenVariant: Variant = {
   id: 'sujiken',
   name: 'Sujiken',
   description: 'Test variant.',
+  popularity: 0,
   difficulty: 'intermediate',
   layout: { kind: 'triangular', size: 9 },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

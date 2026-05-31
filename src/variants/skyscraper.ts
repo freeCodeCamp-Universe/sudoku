@@ -72,6 +72,7 @@ export const skyscraper: Variant = {
   id: 'skyscraper',
   name: 'Skyscraper Sudoku',
   description: 'Clues around the edge tell you how many buildings are visible looking into each row or column.',
+  popularity: 11,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

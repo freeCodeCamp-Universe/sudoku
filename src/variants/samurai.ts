@@ -65,6 +65,7 @@ export const samurai: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
   description: 'Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.',
+  popularity: 3,
   difficulty: 'advanced',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

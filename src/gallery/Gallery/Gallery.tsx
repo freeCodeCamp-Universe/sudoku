@@ -24,6 +24,7 @@ function filterVariants(variants: Variant[], query: string): Variant[] {
   return variants.filter(
     (variant) =>
       variant.name.toLowerCase().includes(normalizedQuery) ||
+      variant.description.toLowerCase().includes(normalizedQuery) ||
       variant.difficulty.toLowerCase().includes(normalizedQuery)
   );
 }
@@ -33,6 +34,16 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
 
   if (sortMode === 'alpha') {
     sortedVariants.sort((left, right) => left.name.localeCompare(right.name));
+  } else if (sortMode === 'popularity') {
+    sortedVariants.sort((left, right) => {
+      const popularityDiff = left.popularity - right.popularity;
+
+      if (popularityDiff !== 0) {
+        return popularityDiff;
+      }
+
+      return left.name.localeCompare(right.name);
+    });
   } else if (sortMode === 'difficulty') {
     sortedVariants.sort((left, right) => {
       const difficultyDiff =
