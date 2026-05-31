@@ -1,6 +1,7 @@
 .cell {
-  width: 52px;
-  height: 52px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,16 +129,4 @@
 :global(.light) .colorLabel {
   color: rgba(0, 0, 0, 0.7);
   text-shadow: none;
-}
-
-@media (max-width: 519px) {
-  .cell {
-    width: 44px;
-    height: 44px;
-    font-size: 1.2rem;
-  }
-
-  .candidate {
-    font-size: 6px;
-  }
 }

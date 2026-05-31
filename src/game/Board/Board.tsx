@@ -35,21 +35,27 @@ function isBoxBoundary(
       return (value + 1) % step === 0 && value < size - 1;
     }
     case 'multigrid': {
-      if (cell.grid === undefined) {
-        return false;
-      }
+      const { subGrids, subGridSize, box, canvasCols, canvasRows } = variant.layout;
+      const step = axis === 'row' ? box.rows : box.cols;
+      const value = axis === 'row' ? cell.row : cell.col;
+      const canvasMax = axis === 'row' ? canvasRows : canvasCols;
+      const isLocalBoundary = subGrids.some(({ originRow, originCol }) => {
+        const inGrid =
+          cell.row >= originRow &&
+          cell.row < originRow + subGridSize &&
+          cell.col >= originCol &&
+          cell.col < originCol + subGridSize;
 
-      const origin = variant.layout.subGrids[cell.grid];
+        if (!inGrid) {
+          return false;
+        }
 
-      if (!origin) {
-        return false;
-      }
+        const local = axis === 'row' ? cell.row - originRow : cell.col - originCol;
 
-      const localValue =
-        axis === 'row' ? cell.row - origin.originRow : cell.col - origin.originCol;
-      const step = axis === 'row' ? variant.layout.box.rows : variant.layout.box.cols;
+        return (local + 1) % step === 0;
+      });
 
-      return (localValue + 1) % step === 0 && localValue < variant.layout.subGridSize - 1;
+      return isLocalBoundary && value < canvasMax - 1;
     }
     default:
       return false;
