@@ -4,6 +4,7 @@ import { generate, generateSolution, cluesFor } from './generate';
 import { gridCells, standardHouses } from './grid';
 import { solve } from './solve';
 import type { VariantModel } from './types';
+import { getVariant } from '@/variants/registry';
 
 const model: VariantModel = {
   cells: gridCells(9),
@@ -51,4 +52,21 @@ describe('generate', () => {
     const { givens } = generate(customModel, 'intermediate', seeded(4));
     expect(givens.size).toBe(2);
   });
+});
+
+describe('generate perf guard', () => {
+  it('should keep samurai advanced generation bounded and still unique', () => {
+    const model = getVariant('samurai');
+    const maxGenerationMs = 3_000;
+    const runs = 3;
+
+    for (let run = 0; run < runs; run += 1) {
+      const start = Date.now();
+      const { givens } = generate(model, 'advanced', seeded(100 + run));
+      const elapsed = Date.now() - start;
+
+      expect(elapsed).toBeLessThan(maxGenerationMs);
+      expect(solve(model, givens, { max: 2 })).toHaveLength(1);
+    }
+  }, 180_000);
 });
