@@ -4,6 +4,7 @@ import { generate, generateSolution, cluesFor } from './generate';
 import { gridCells, standardHouses } from './grid';
 import { solve } from './solve';
 import type { VariantModel } from './types';
+import { buildModel } from './buildModel';
 import { getVariant } from '@/variants/registry';
 
 const model: VariantModel = {
@@ -56,7 +57,7 @@ describe('generate', () => {
 
 describe('generate perf guard', () => {
   it('should keep samurai advanced generation bounded and still unique', () => {
-    const model = getVariant('samurai');
+    const model = buildModel(getVariant('samurai'));
     const maxGenerationMs = 3_000;
     const runs = 3;
 
