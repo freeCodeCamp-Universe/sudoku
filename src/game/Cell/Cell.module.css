@@ -1,0 +1,153 @@
+.cell {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent-blue);
+  border: 1px solid #2a2a3a;
+  cursor: pointer;
+  background: var(--bg-secondary);
+  user-select: none;
+  transition: background 0.08s;
+  position: relative;
+}
+
+.cell[data-overlap='two'] {
+  background: #222248;
+}
+
+.cell[data-overlap='four'] {
+  background: #2c2c5a;
+}
+
+.cell[data-box-right]:not([data-overlay-borders])::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  right: -1px;
+  width: 3px;
+  background: #9898b8;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cell[data-box-bottom]:not([data-overlay-borders])::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  height: 3px;
+  background: #9898b8;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.cell[data-given] {
+  font-weight: 900;
+  color: var(--text-subtle);
+  cursor: default;
+}
+
+.cell[data-selected] {
+  outline: 3px solid #4a90d9;
+  outline-offset: -3px;
+  z-index: 1;
+}
+
+.cell[data-selected]::after,
+.cell[data-selected]::before {
+  content: none;
+}
+
+.cell[data-conflict] {
+  background: #2a1515;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.candidates {
+  display: grid;
+  grid-template-columns: repeat(var(--candidate-columns, 3), 1fr);
+  grid-template-rows: repeat(var(--candidate-columns, 3), 1fr);
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+}
+
+.candidate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 7px;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.colorChip {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.colorLabel {
+  position: absolute;
+  inset-block-end: 2px;
+  inset-inline-end: 3px;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 7px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+:global(.light) .cell {
+  background: #ffffff;
+  color: #2c5f8a;
+  border-color: #d8d8e8;
+}
+
+:global(.light) .cell[data-overlap='two'] {
+  background: #eeeef8;
+}
+
+:global(.light) .cell[data-overlap='four'] {
+  background: #e4e4f4;
+}
+
+:global(.light) .cell[data-given] {
+  color: #0a0a23;
+}
+
+:global(.light) .cell[data-conflict] {
+  background: #f8dede;
+}
+
+:global(.light) .cell[data-box-right]::after,
+:global(.light) .cell[data-box-bottom]::before {
+  background: #8080a8;
+}
+
+:global(.light) .candidate {
+  color: #8888aa;
+}
+
+:global(.light) .colorLabel {
+  color: rgba(0, 0, 0, 0.7);
+  text-shadow: none;
+}

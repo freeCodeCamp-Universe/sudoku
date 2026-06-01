@@ -1,0 +1,24 @@
+.overlay {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.bulbCircle {
+  fill: none;
+  stroke: #9898b8;
+  stroke-width: 1.5px;
+}
+
+.arrowLine {
+  fill: none;
+  stroke: #9898b8;
+  stroke-width: 1.5px;
+}
+
+.arrowhead {
+  fill: #9898b8;
+}

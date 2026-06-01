@@ -1,0 +1,129 @@
+.dialog {
+  color: var(--text-muted);
+  inline-size: 90%;
+  max-inline-size: 420px;
+  margin: auto;
+  padding-block: 32px;
+  padding-inline: 36px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-surface);
+}
+
+.dialog::backdrop {
+  background: rgb(10 10 35 / 85%);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: start;
+}
+
+.title {
+  align-self: center;
+  color: var(--text-bright);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.sectionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.badge {
+  align-self: start;
+  display: inline-block;
+  margin-block-start: 8px;
+  padding-block: 2px;
+  padding-inline: 8px;
+  border-radius: 2px;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.basic {
+  background: #0d2a0d;
+  color: var(--accent-green);
+  border: 1px solid #2a4a1a;
+}
+
+.extra {
+  background: #0a1a30;
+  color: var(--accent-blue);
+  border: 1px solid #1a3a5a;
+}
+
+:global(.light) .basic {
+  background: #dbecc5;
+  color: #355617;
+  border-color: #95b566;
+}
+
+:global(.light) .extra {
+  background: #dceaf8;
+  color: #1d4f85;
+  border-color: #8cb1d9;
+}
+
+.rules {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
+}
+
+.rules li {
+  position: relative;
+  padding-inline-start: 16px;
+  color: var(--text-subtle);
+}
+
+.rules strong {
+  color: var(--text-bright);
+}
+
+.rules li::before {
+  content: '\00b7';
+  position: absolute;
+  inset-inline-start: 2px;
+  color: var(--accent-yellow);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.closeBtn {
+  inline-size: 100%;
+  margin-block-start: 6px;
+  padding-block: 11px;
+  padding-inline: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  color: var(--text-subtle);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.closeBtn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,78 @@
+.gamePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(1280px, 100%);
+  margin-inline: auto;
+}
+
+.gameLayout {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.gameLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.variantLegend {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: 14px;
+  color: #9898b8;
+  font-size: 0.95rem;
+}
+
+.legendIcon {
+  flex-shrink: 0;
+}
+
+.legendCircle {
+  fill: none;
+  stroke: #9898b8;
+  stroke-width: 2;
+}
+
+.legendLine {
+  stroke: #9898b8;
+  stroke-width: 2;
+}
+
+.legendHead {
+  fill: #9898b8;
+}
+
+.gameRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .gameLayout {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .gameLeft {
+    align-items: center;
+    width: 100%;
+  }
+
+  .variantLegend {
+    text-align: center;
+  }
+
+  .gameRight {
+    width: 100%;
+  }
+}

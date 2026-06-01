@@ -1,0 +1,117 @@
+import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Cell } from './Cell';
+
+const baseProps = {
+  id: 'r0c0',
+  value: undefined as number | undefined,
+  candidates: [] as number[],
+  symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9] as number[],
+  given: false,
+  selected: false,
+  conflict: false,
+  onClick: () => {},
+  renderSymbol: (value: number) => String(value),
+};
+
+describe('Cell', () => {
+  it('should render empty when no value and no candidates', () => {
+    render(<Cell {...baseProps} />);
+
+    expect(screen.getByRole('gridcell')).toBeTruthy();
+  });
+
+  it('should render the value when provided', () => {
+    render(<Cell {...baseProps} value={7} />);
+
+    expect(screen.getByText('7')).toBeTruthy();
+  });
+
+  it('should apply the given modifier when given=true', () => {
+    render(<Cell {...baseProps} value={3} given />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-given', 'true');
+  });
+
+  it('should apply the selected modifier when selected=true', () => {
+    render(<Cell {...baseProps} selected />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-selected', 'true');
+  });
+
+  it('should apply the conflict modifier when conflict=true', () => {
+    render(<Cell {...baseProps} value={5} conflict />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-conflict', 'true');
+  });
+
+  it('should render candidates as pencil marks when no value present', () => {
+    render(<Cell {...baseProps} candidates={[1, 3, 7]} />);
+
+    expect(screen.getByText('1')).toBeTruthy();
+    expect(screen.getByText('3')).toBeTruthy();
+    expect(screen.getByText('7')).toBeTruthy();
+  });
+
+  it('should call onClick when clicked', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+
+    render(<Cell {...baseProps} onClick={onClick} />);
+
+    await user.click(screen.getByRole('gridcell'));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should expose data-cell attribute with the cell id', () => {
+    render(<Cell {...baseProps} id="r4c5" />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-cell', 'r4c5');
+  });
+
+  describe('Cell with symbolKind color', () => {
+    const colorProps = {
+      ...baseProps,
+      value: 3 as number,
+      renderSymbol: (_value: number) => '#d4a828',
+      symbolKind: 'color' as const,
+      'aria-label': 'Yellow, row 1, column 1',
+    };
+
+    it('should render a color chip element when symbolKind is color', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByTestId('cell-color-chip')).toBeTruthy();
+    });
+
+    it('should render a visible numeric label alongside the color chip', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByText('3')).toBeTruthy();
+    });
+
+    it('should set the chip background to the color returned by renderSymbol', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.getByTestId('cell-color-chip')).toHaveStyle({ background: '#d4a828' });
+    });
+
+    it('should not render a color chip for symbolKind digit', () => {
+      render(
+        <Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />
+      );
+
+      expect(screen.queryByTestId('cell-color-chip')).toBeNull();
+    });
+  });
+
+  it('should render all available candidate slots for a 4x4 board', () => {
+    render(<Cell {...baseProps} symbols={[1, 2, 3, 4]} candidates={[1, 4]} />);
+
+    expect(screen.getAllByTestId('candidate-mark')).toHaveLength(4);
+    expect(screen.getByText('1')).toBeTruthy();
+    expect(screen.getByText('4')).toBeTruthy();
+  });
+});

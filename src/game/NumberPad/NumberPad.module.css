@@ -1,0 +1,105 @@
+.numpad {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block-end: 24px;
+}
+
+.numpadRow {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.numBtn {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-block-end: 3px solid transparent;
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.numBtn:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-surface);
+}
+
+.numBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.numBtn[data-used] {
+  opacity: 0.28;
+  cursor: default;
+  pointer-events: none;
+}
+
+.erase {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.erase:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.candidate .numBtn {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.colorChip {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.colorLabel {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-end: 6px;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+:global(.light) .colorLabel {
+  color: rgba(0, 0, 0, 0.7);
+  text-shadow: none;
+}
+
+@media (max-width: 520px) {
+  .numBtn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .numpadRow {
+    gap: 5px;
+  }
+
+  .numpad {
+    gap: 5px;
+    margin-block-end: 16px;
+  }
+}

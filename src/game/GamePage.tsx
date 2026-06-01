@@ -1,0 +1,295 @@
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Header } from '@/app/Header';
+import { buildModel } from '@/engine/buildModel';
+import { generate } from '@/engine/generate';
+import type { CellId, SymbolValue } from '@/engine/types';
+import { getVariant } from '@/variants/registry';
+import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
+import { resolveAnnotators } from './annotators/registry';
+import { jigsawAnnotator } from './annotators/jigsaw';
+import { Board } from './Board';
+import { findCompletedSymbols } from './completedSymbols';
+import { useGameContext } from './GameContext';
+import { HelpDialog } from './HelpDialog';
+import { GameProvider } from './GameProvider';
+import { resolveLayout } from './layouts/registry';
+import { ModeSwitcher } from './ModeSwitcher';
+import { NumberPad } from './NumberPad';
+import { resolveOverlays } from './overlays/registry';
+import { Timer } from './Timer';
+import { Toolbar } from './Toolbar';
+import { usePersistence } from './usePersistence';
+import { useSudokuGrid } from './useSudokuGrid';
+import styles from './GamePage.module.css';
+
+type VariantWithColorNames = {
+  colorNames?: string[];
+};
+
+function GameInner() {
+  const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
+  const { settings, toggleCheck, toggleTimer } = usePersistence(variant.id);
+  const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
+
+  const structure = useMemo(
+    () => variant.deriveStructure?.(solution, baseModel),
+    [baseModel, solution, variant]
+  );
+  const liveVariant = useMemo(() => {
+    if (variant.id === 'jigsaw' && isJigsawStructure(structure)) {
+      return makeJigsawVariant(structure.regions);
+    }
+
+    return variant;
+  }, [structure, variant]);
+  const model = useMemo(
+    () => {
+      const liveModel = liveVariant === variant ? baseModel : buildModel(liveVariant);
+
+      return structure === undefined ? liveModel : { ...liveModel, structure };
+    },
+    [baseModel, liveVariant, structure, variant]
+  );
+  const layoutStrategy = useMemo(() => resolveLayout(liveVariant.layout.kind), [liveVariant.layout.kind]);
+  const rects = useMemo(() => layoutStrategy.cellRects(liveVariant), [layoutStrategy, liveVariant]);
+  const size = useMemo(() => layoutStrategy.canvasSize(liveVariant), [layoutStrategy, liveVariant]);
+  const gutters = useMemo(
+    () => liveVariant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(liveVariant),
+    [layoutStrategy, liveVariant, structure]
+  );
+  const overlays = useMemo(
+    () =>
+      resolveOverlays(liveVariant.overlayIds ?? []).map((Overlay, index) => (
+        <Overlay key={`${liveVariant.id}-overlay-${index}`} rects={rects} structure={structure} />
+      )),
+    [liveVariant.id, liveVariant.overlayIds, rects, structure]
+  );
+  const annotators = useMemo(
+    () =>
+      variant.id === 'jigsaw' && isJigsawStructure(structure)
+        ? [jigsawAnnotator(structure)]
+        : resolveAnnotators(liveVariant.annotatorIds ?? []),
+    [liveVariant.annotatorIds, structure, variant.id]
+  );
+  const renderSymbol = useMemo(
+    () =>
+      liveVariant.renderSymbol
+        ? (value: SymbolValue) => liveVariant.renderSymbol!(value, structure)
+        : (value: SymbolValue) => String(value),
+    [liveVariant, structure]
+  );
+  const describeSymbol = useMemo(() => {
+    const colorNames = (liveVariant as VariantWithColorNames).colorNames;
+
+    if (Array.isArray(colorNames)) {
+      return (value: SymbolValue) => colorNames[value - 1] ?? renderSymbol(value);
+    }
+
+    return renderSymbol;
+  }, [liveVariant, renderSymbol]);
+  const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
+
+  const onEnterValue = useCallback(
+    (cellId: CellId, value: SymbolValue | 0) => {
+      dispatch({ type: 'enterValue', cellId, value });
+    },
+    [dispatch]
+  );
+
+  const onToggleCandidate = useCallback(
+    (cellId: CellId, value: SymbolValue) => {
+      dispatch({ type: 'toggleCandidate', cellId, value });
+    },
+    [dispatch]
+  );
+
+  const grid = useSudokuGrid({
+    cells: model.cells,
+    model,
+    values: state.values,
+    candidates: state.candidates,
+    givens: givensSet,
+    revealed: state.revealed,
+    onEnterValue,
+    onToggleCandidate,
+    checkEnabled: settings.checkEnabled,
+    candidateMode,
+    annotators,
+    renderSymbol,
+    describeSymbol,
+  });
+
+  useEffect(() => {
+    if (!settings.timerEnabled || state.solved) {
+      return undefined;
+    }
+
+    const timerId = window.setInterval(() => {
+      dispatch({ type: 'tick' });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [dispatch, settings.timerEnabled, state.solved]);
+
+  useEffect(() => {
+    if (!state.solved || !grid.announcerRef.current) {
+      return;
+    }
+
+    grid.announcerRef.current.textContent = '';
+    const timeoutId = window.setTimeout(() => {
+      if (grid.announcerRef.current) {
+        grid.announcerRef.current.textContent = 'Puzzle solved';
+      }
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [grid.announcerRef, state.solved]);
+
+  const selectedCellId =
+    model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
+
+  function handleReveal() {
+    if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
+      return;
+    }
+
+    const solutionValue = solution.get(selectedCellId);
+
+    if (solutionValue === undefined) {
+      return;
+    }
+
+    dispatch({ type: 'reveal', cellId: selectedCellId, solutionValue });
+  }
+
+  function handleNewGame() {
+    dispatch({ type: 'newGame' });
+  }
+
+  const usedSymbols = useMemo(
+    () => findCompletedSymbols(state.values, model.symbols, model.cells.length),
+    [model.cells.length, model.symbols, state.values]
+  );
+  const hasProgress =
+    state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;
+
+  return (
+    <div className={styles.gamePage}>
+      <Timer
+        elapsedSeconds={state.elapsedSeconds}
+        running={settings.timerEnabled && !state.solved}
+        visible={settings.timerEnabled}
+        done={state.solved}
+      />
+      <div className={styles.gameLayout}>
+        <div className={styles.gameLeft}>
+          <Board
+            variant={liveVariant}
+            cells={model.cells}
+            rects={rects}
+            size={size}
+            gutters={gutters}
+            overlays={overlays}
+            grid={grid}
+            renderSymbol={renderSymbol}
+          />
+          {liveVariant.id === 'arrow' ? (
+            <div className={styles.variantLegend} aria-label="Arrow rule legend">
+              <svg width="100" height="24" viewBox="0 0 100 24" aria-hidden="true" className={styles.legendIcon}>
+                <circle cx="15" cy="12" r="8" className={styles.legendCircle} />
+                <line x1="23" y1="12" x2="81" y2="12" className={styles.legendLine} />
+                <polygon points="88,12 79,7 79,17" className={styles.legendHead} />
+              </svg>
+              <span>Digits along each arrow sum to the number in the circle.</span>
+            </div>
+          ) : null}
+        </div>
+        <div className={styles.gameRight}>
+          <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
+          <NumberPad
+            symbols={model.symbols}
+            usedSymbols={usedSymbols}
+            onEnter={(value) => {
+              if (!selectedCellId) {
+                return;
+              }
+
+              if (value === 0) {
+                dispatch({ type: 'erase', cellId: selectedCellId });
+                return;
+              }
+
+              if (candidateMode) {
+                onToggleCandidate(selectedCellId, value);
+                return;
+              }
+
+              onEnterValue(selectedCellId, value);
+            }}
+            candidateMode={candidateMode}
+            renderSymbol={renderSymbol}
+            describeSymbol={describeSymbol}
+            symbolKind={liveVariant.symbolKind}
+          />
+          <Toolbar
+            checkEnabled={settings.checkEnabled}
+            timerEnabled={settings.timerEnabled}
+            hasProgress={hasProgress}
+            onUndo={() => dispatch({ type: 'undo' })}
+            onErase={() => {
+              if (selectedCellId) {
+                dispatch({ type: 'erase', cellId: selectedCellId });
+              }
+            }}
+            onToggleCheck={toggleCheck}
+            onToggleTimer={toggleTimer}
+            onReveal={handleReveal}
+            onNewGame={handleNewGame}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function GamePage() {
+  const { variantId } = useParams<{ variantId: string }>();
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  if (!variantId) {
+    throw new Error('Missing variant id');
+  }
+
+  const variant = useMemo(() => getVariant(variantId), [variantId]);
+  const { model, givens, solution } = useMemo(() => {
+    const builtModel = buildModel(variant);
+    const puzzle = generate(builtModel, variant.difficulty);
+
+    return {
+      model: builtModel,
+      givens: puzzle.givens,
+      solution: puzzle.solution,
+    };
+  }, [variant]);
+
+  return (
+    <>
+      <Header title={variant.name} backHref="/" onHelpOpen={() => setHelpOpen(true)} />
+      <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
+        <GameInner />
+      </GameProvider>
+      <HelpDialog
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        help={variant.help}
+        description={variant.description}
+      />
+    </>
+  );
+}

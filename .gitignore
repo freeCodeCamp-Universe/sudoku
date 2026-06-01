@@ -1,0 +1,16 @@
+# Node
+node_modules/
+
+# Environment variables
+.env
+
+# Vite / build output
+dist/
+build/
+.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS
+.DS_Store
