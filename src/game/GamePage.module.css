@@ -1,3 +1,7 @@
+.mainContent:focus {
+  outline: none;
+}
+
 .gamePage {
   display: flex;
   flex-direction: column;

@@ -335,9 +335,11 @@ export function GamePage() {
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
       />
-      <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
-        <GameInner settings={settings} toggleCheck={toggleCheck} toggleTimer={toggleTimer} />
-      </GameProvider>
+      <main id="main-content" tabIndex={-1} className={styles.mainContent}>
+        <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
+          <GameInner settings={settings} toggleCheck={toggleCheck} toggleTimer={toggleTimer} />
+        </GameProvider>
+      </main>
       <HelpDialog
         open={helpOpen}
         onClose={() => setHelpOpen(false)}

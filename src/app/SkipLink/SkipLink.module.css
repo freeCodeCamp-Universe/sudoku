@@ -1,0 +1,22 @@
+.skipLink {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 1000;
+  transform: translateY(-150%);
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  margin-block: 0.5rem;
+  margin-inline: 0.5rem;
+  background: var(--bg-surface);
+  color: var(--text-bright);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
