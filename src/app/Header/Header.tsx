@@ -1,4 +1,5 @@
 import { useTheme } from '@/app/ThemeProvider';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 
@@ -6,10 +7,36 @@ interface HeaderProps {
   title: string;
   backHref: string;
   onHelpOpen?: () => void;
+  checkEnabled?: boolean;
+  timerEnabled?: boolean;
+  onToggleCheck?: () => void;
+  onToggleTimer?: () => void;
 }
 
-export function Header({ title, backHref, onHelpOpen }: HeaderProps) {
+export function Header({
+  title,
+  backHref,
+  onHelpOpen,
+  checkEnabled,
+  timerEnabled,
+  onToggleCheck,
+  onToggleTimer,
+}: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined;
 
   return (
     <header className={styles.topBar}>
@@ -18,6 +45,46 @@ export function Header({ title, backHref, onHelpOpen }: HeaderProps) {
       </Link>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.topBarRight}>
+        {hasSettings ? (
+          <div className={styles.settingsWrap} ref={settingsRef}>
+            <button
+              type="button"
+              className={styles.settingsBtn}
+              aria-label="Settings"
+              onClick={() => setSettingsOpen((v) => !v)}
+            >
+              ⚙
+            </button>
+            {settingsOpen ? (
+              <div className={styles.dropdown}>
+                {onToggleCheck !== undefined ? (
+                  <div className={styles.dropdownRow}>
+                    <span className={styles.dropdownLabel}>Check answers</span>
+                    <button
+                      type="button"
+                      className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
+                      onClick={onToggleCheck}
+                    >
+                      {checkEnabled ? 'On' : 'Off'}
+                    </button>
+                  </div>
+                ) : null}
+                {onToggleTimer !== undefined ? (
+                  <div className={styles.dropdownRow}>
+                    <span className={styles.dropdownLabel}>Timer</span>
+                    <button
+                      type="button"
+                      className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
+                      onClick={onToggleTimer}
+                    >
+                      {timerEnabled ? 'On' : 'Off'}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         {onHelpOpen ? (
           <button
             type="button"

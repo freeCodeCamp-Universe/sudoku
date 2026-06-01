@@ -16,6 +16,34 @@
   position: relative;
 }
 
+.cell[data-diagonal] {
+  background: #1a1b38;
+}
+
+:global(.light) .cell[data-diagonal] {
+  background: #e8e8fa;
+}
+
+.cell[data-small] {
+  font-size: 0.82rem;
+}
+
+.cell[data-window],
+.cell[data-asterisk] {
+  background: #1a1b38;
+}
+
+:global(.light) .cell[data-window],
+:global(.light) .cell[data-asterisk] {
+  background: #e8e8fa;
+}
+
+.cell[data-argyle-d1] { background: #3d2c0c; }
+.cell[data-argyle-d2] { background: #0c2848; }
+
+:global(.light) .cell[data-argyle-d1] { background: #fef0d2; }
+:global(.light) .cell[data-argyle-d2] { background: #d8eaff; }
+
 .cell[data-overlap='two'] {
   background: #222248;
 }

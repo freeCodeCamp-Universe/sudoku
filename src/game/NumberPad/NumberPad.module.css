@@ -57,6 +57,10 @@
   color: var(--accent-red);
 }
 
+.eraseFullWidth {
+  width: 100%;
+}
+
 .candidate .numBtn {
   font-size: 0.6rem;
   font-weight: 700;

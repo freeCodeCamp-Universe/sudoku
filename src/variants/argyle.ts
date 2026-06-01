@@ -81,6 +81,6 @@ export const argyle: Variant = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
   extraHouses: argyleExtraHouses,
-  overlayIds: ['argyle'],
+  overlayIds: [],
   annotatorIds: ['argyle'],
 };

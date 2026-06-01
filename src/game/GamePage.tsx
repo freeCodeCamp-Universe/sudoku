@@ -14,6 +14,7 @@ import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
+import { useResponsiveCellSize } from './useResponsiveCellSize';
 import { ModeSwitcher } from './ModeSwitcher';
 import { NumberPad } from './NumberPad';
 import { resolveOverlays } from './overlays/registry';
@@ -27,10 +28,20 @@ type VariantWithColorNames = {
   colorNames?: string[];
 };
 
-function GameInner() {
+interface GameInnerProps {
+  settings: { checkEnabled: boolean; timerEnabled: boolean };
+  toggleCheck: () => void;
+  toggleTimer: () => void;
+}
+
+function GameInner({ settings, toggleCheck, toggleTimer }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
-  const { settings, toggleCheck, toggleTimer } = usePersistence(variant.id);
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
+  const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
+
+  const isBoardFull = state.values.size === solution.size;
+  const effectiveSolved = state.solved && settings.checkEnabled;
+  const showCheckPrompt = isBoardFull && !settings.checkEnabled && !effectiveSolved;
 
   const structure = useMemo(
     () => variant.deriveStructure?.(solution, baseModel),
@@ -52,8 +63,9 @@ function GameInner() {
     [baseModel, liveVariant, structure, variant]
   );
   const layoutStrategy = useMemo(() => resolveLayout(liveVariant.layout.kind), [liveVariant.layout.kind]);
-  const rects = useMemo(() => layoutStrategy.cellRects(liveVariant), [layoutStrategy, liveVariant]);
-  const size = useMemo(() => layoutStrategy.canvasSize(liveVariant), [layoutStrategy, liveVariant]);
+  const cellSize = useResponsiveCellSize(liveVariant);
+  const rects = useMemo(() => layoutStrategy.cellRects(liveVariant, cellSize), [layoutStrategy, liveVariant, cellSize]);
+  const size = useMemo(() => layoutStrategy.canvasSize(liveVariant, cellSize), [layoutStrategy, liveVariant, cellSize]);
   const gutters = useMemo(
     () => liveVariant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(liveVariant),
     [layoutStrategy, liveVariant, structure]
@@ -121,7 +133,7 @@ function GameInner() {
   });
 
   useEffect(() => {
-    if (!settings.timerEnabled || state.solved) {
+    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved) {
       return undefined;
     }
 
@@ -132,10 +144,10 @@ function GameInner() {
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, settings.timerEnabled, state.solved]);
+  }, [dispatch, effectiveSolved, settings.timerEnabled, state.timerStarted]);
 
   useEffect(() => {
-    if (!state.solved || !grid.announcerRef.current) {
+    if (!effectiveSolved || !grid.announcerRef.current) {
       return;
     }
 
@@ -149,7 +161,7 @@ function GameInner() {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [grid.announcerRef, state.solved]);
+  }, [grid.announcerRef, effectiveSolved]);
 
   const selectedCellId =
     model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
@@ -169,6 +181,10 @@ function GameInner() {
   }
 
   function handleNewGame() {
+    if (hasProgress) {
+      setNewGameConfirmOpen(true);
+      return;
+    }
     dispatch({ type: 'newGame' });
   }
 
@@ -183,9 +199,9 @@ function GameInner() {
     <div className={styles.gamePage}>
       <Timer
         elapsedSeconds={state.elapsedSeconds}
-        running={settings.timerEnabled && !state.solved}
+        running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
         visible={settings.timerEnabled}
-        done={state.solved}
+        done={effectiveSolved}
       />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
@@ -215,6 +231,7 @@ function GameInner() {
           <NumberPad
             symbols={model.symbols}
             usedSymbols={usedSymbols}
+            columns={model.symbols.length === 16 ? 4 : undefined}
             onEnter={(value) => {
               if (!selectedCellId) {
                 return;
@@ -238,22 +255,50 @@ function GameInner() {
             symbolKind={liveVariant.symbolKind}
           />
           <Toolbar
-            checkEnabled={settings.checkEnabled}
-            timerEnabled={settings.timerEnabled}
-            hasProgress={hasProgress}
-            onUndo={() => dispatch({ type: 'undo' })}
-            onErase={() => {
-              if (selectedCellId) {
-                dispatch({ type: 'erase', cellId: selectedCellId });
-              }
-            }}
-            onToggleCheck={toggleCheck}
-            onToggleTimer={toggleTimer}
+            onClearAll={() => dispatch({ type: 'clearAll' })}
             onReveal={handleReveal}
-            onNewGame={handleNewGame}
           />
         </div>
       </div>
+      {showCheckPrompt ? (
+        <div className={styles.checkPrompt}>
+          All cells filled.
+          <button
+            type="button"
+            className={styles.checkPromptBtn}
+            onClick={() => { toggleCheck(); }}
+          >
+            Check answers
+          </button>
+        </div>
+      ) : null}
+      <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
+        New Game
+      </button>
+      {newGameConfirmOpen ? (
+        <div role="dialog" aria-modal="true" aria-label="Start a new game?" className={styles.confirmOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalTitle}>Start a new game?</div>
+            <div className={styles.modalSub}>Your current progress will be lost.</div>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.primary}`}
+                onClick={() => { setNewGameConfirmOpen(false); dispatch({ type: 'newGame' }); }}
+              >
+                Start New Game
+              </button>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.secondary}`}
+                onClick={() => setNewGameConfirmOpen(false)}
+              >
+                Keep Playing
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -267,6 +312,7 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
+  const { settings, toggleCheck, toggleTimer } = usePersistence(variantId);
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
     const puzzle = generate(builtModel, variant.difficulty);
@@ -280,9 +326,17 @@ export function GamePage() {
 
   return (
     <>
-      <Header title={variant.name} backHref="/" onHelpOpen={() => setHelpOpen(true)} />
+      <Header
+        title={variant.name}
+        backHref="/"
+        onHelpOpen={() => setHelpOpen(true)}
+        checkEnabled={settings.checkEnabled}
+        timerEnabled={settings.timerEnabled}
+        onToggleCheck={toggleCheck}
+        onToggleTimer={toggleTimer}
+      />
       <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
-        <GameInner />
+        <GameInner settings={settings} toggleCheck={toggleCheck} toggleTimer={toggleTimer} />
       </GameProvider>
       <HelpDialog
         open={helpOpen}

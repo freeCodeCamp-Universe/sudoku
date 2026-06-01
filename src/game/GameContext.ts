@@ -15,12 +15,14 @@ export interface GameState {
   elapsedSeconds: number;
   solved: boolean;
   revealed: Set<CellId>;
+  timerStarted: boolean;
 }
 
 export type GameAction =
   | { type: 'enterValue'; cellId: CellId; value: SymbolValue | 0 }
   | { type: 'toggleCandidate'; cellId: CellId; value: SymbolValue }
   | { type: 'erase'; cellId: CellId }
+  | { type: 'clearAll' }
   | { type: 'undo' }
   | { type: 'reveal'; cellId: CellId; solutionValue: SymbolValue }
   | { type: 'tick' }

@@ -86,7 +86,7 @@ export const super16: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: [],
-  minimumClues: 224,
+  minimumClues: 96,
   generateSolution: generateSuper16Solution,
   renderSymbol(value: SymbolValue): string {
     return SUPER_LABELS[value] ?? String(value);

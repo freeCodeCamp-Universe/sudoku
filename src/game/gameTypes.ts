@@ -36,8 +36,8 @@ export interface EdgeClues {
 }
 
 export interface LayoutStrategy {
-  cellRects(variant: Variant): Map<CellId, Rect>;
-  canvasSize(variant: Variant): Size;
+  cellRects(variant: Variant, cellSizeOverride?: number): Map<CellId, Rect>;
+  canvasSize(variant: Variant, cellSizeOverride?: number): Size;
   gutters?(variant: Variant): GutterSlots;
 }
 

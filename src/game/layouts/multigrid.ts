@@ -4,7 +4,7 @@ import type { LayoutStrategy, Rect } from '@/game/gameTypes';
 
 function getCellSize(canvasCols: number): number {
   if (canvasCols === 21) {
-    return 40;
+    return 30;
   }
 
   if (canvasCols === 12) {
@@ -23,9 +23,9 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGr
 }
 
 export const multigridLayout: LayoutStrategy = {
-  cellRects(variant) {
+  cellRects(variant, cellSizeOverride) {
     const { canvasRows, canvasCols, subGridSize, subGrids } = getLayout(variant);
-    const cellSize = getCellSize(canvasCols);
+    const cellSize = cellSizeOverride ?? getCellSize(canvasCols);
     const rects = new Map<string, Rect>();
 
     for (let row = 0; row < canvasRows; row += 1) {
@@ -53,9 +53,9 @@ export const multigridLayout: LayoutStrategy = {
 
     return rects;
   },
-  canvasSize(variant) {
+  canvasSize(variant, cellSizeOverride) {
     const { canvasRows, canvasCols } = getLayout(variant);
-    const cellSize = getCellSize(canvasCols);
+    const cellSize = cellSizeOverride ?? getCellSize(canvasCols);
 
     return { w: canvasCols * cellSize, h: canvasRows * cellSize };
   },

@@ -48,6 +48,7 @@ function createInitialState(givens: Values, solution: Values): GameState {
     elapsedSeconds: 0,
     solved: isSolved(values, solution),
     revealed: new Set(),
+    timerStarted: false,
   };
 }
 
@@ -78,6 +79,7 @@ function createReducer(initialGivens: Values, solution: Values) {
           candidates: nextCandidates,
           history: [...state.history, snapshotState(state)],
           solved: isSolved(nextValues, solution),
+          timerStarted: true,
         };
       }
       case 'toggleCandidate': {
@@ -106,6 +108,7 @@ function createReducer(initialGivens: Values, solution: Values) {
         return {
           ...state,
           candidates: nextCandidates,
+          timerStarted: true,
         };
       }
       case 'erase': {
@@ -128,6 +131,25 @@ function createReducer(initialGivens: Values, solution: Values) {
           candidates: nextCandidates,
           history: [...state.history, snapshotState(state)],
           solved: isSolved(nextValues, solution),
+        };
+      }
+      case 'clearAll': {
+        const clearedValues = new Map(state.values);
+        const clearedCandidates = cloneCandidates(state.candidates);
+        for (const cellId of clearedValues.keys()) {
+          if (!givenSet.has(cellId) && !state.revealed.has(cellId)) {
+            clearedValues.delete(cellId);
+          }
+        }
+        for (const cellId of clearedCandidates.keys()) {
+          if (!givenSet.has(cellId)) clearedCandidates.delete(cellId);
+        }
+        return {
+          ...state,
+          values: clearedValues,
+          candidates: clearedCandidates,
+          history: [...state.history, snapshotState(state)],
+          solved: false,
         };
       }
       case 'undo': {

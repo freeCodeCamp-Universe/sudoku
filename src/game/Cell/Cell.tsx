@@ -17,6 +17,12 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   boxBoundaryBottom?: boolean;
   overlayBorders?: boolean;
   overlap?: number;
+  diagonal?: boolean;
+  small?: boolean;
+  window?: boolean;
+  asterisk?: boolean;
+  argyleD1?: boolean;
+  argyleD2?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -47,6 +53,12 @@ export function Cell({
   boxBoundaryBottom = false,
   overlayBorders = false,
   overlap = 0,
+  diagonal = false,
+  small = false,
+  window: isWindow = false,
+  asterisk = false,
+  argyleD1 = false,
+  argyleD2 = false,
   className,
   ...rest
 }: CellProps) {
@@ -67,6 +79,12 @@ export function Cell({
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}
       data-overlap={overlapClass}
+      data-diagonal={diagonal || undefined}
+      data-small={small || undefined}
+      data-window={isWindow || undefined}
+      data-asterisk={asterisk || undefined}
+      data-argyle-d1={argyleD1 || undefined}
+      data-argyle-d2={argyleD2 || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}

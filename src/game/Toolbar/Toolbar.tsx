@@ -2,103 +2,52 @@ import { useState } from 'react';
 import styles from './Toolbar.module.css';
 
 interface ToolbarProps {
-  checkEnabled: boolean;
-  timerEnabled: boolean;
-  hasProgress?: boolean;
-  onUndo: () => void;
-  onErase: () => void;
-  onToggleCheck: () => void;
-  onToggleTimer: () => void;
+  onClearAll: () => void;
   onReveal: () => void;
-  onNewGame: () => void;
 }
 
-export function Toolbar({
-  checkEnabled,
-  timerEnabled,
-  hasProgress = false,
-  onUndo,
-  onErase,
-  onToggleCheck,
-  onToggleTimer,
-  onReveal,
-  onNewGame,
-}: ToolbarProps) {
-  const [confirmOpen, setConfirmOpen] = useState(false);
-
-  function handleNewGame() {
-    if (hasProgress) {
-      setConfirmOpen(true);
-      return;
-    }
-
-    onNewGame();
-  }
-
-  function handleConfirmNewGame() {
-    setConfirmOpen(false);
-    onNewGame();
-  }
+export function Toolbar({ onClearAll, onReveal }: ToolbarProps) {
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
   return (
     <>
-      <div className={styles.checkToggle}>
-        <span>Check answers</span>
-        <button
-          type="button"
-          className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
-          onClick={onToggleCheck}
-        >
-          {checkEnabled ? 'On' : 'Off'}
-        </button>
-        <span className={styles.timerLabel}>Timer</span>
-        <button
-          type="button"
-          className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
-          onClick={onToggleTimer}
-        >
-          {timerEnabled ? 'On' : 'Off'}
-        </button>
-      </div>
-
       <div className={styles.buttonRow}>
-        <button type="button" className={styles.toolBtn} onClick={onUndo} aria-label="Undo">
-          Undo
-        </button>
-        <button type="button" className={styles.toolBtn} onClick={onErase} aria-label="Erase">
-          Erase
-        </button>
         <button type="button" className={styles.revealBtn} onClick={onReveal}>
           Reveal Cell
         </button>
+        <button
+          type="button"
+          className={styles.toolBtn}
+          onClick={() => setClearConfirmOpen(true)}
+          aria-label="Clear All"
+        >
+          Clear All
+        </button>
       </div>
 
-      <button type="button" className={styles.newBtn} onClick={handleNewGame}>
-        New Game
-      </button>
 
-      {confirmOpen ? (
+      {clearConfirmOpen ? (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Start a new game?"
+          aria-label="Clear all entries?"
           className={styles.confirmOverlay}
         >
           <div className={styles.modal}>
-            <div className={styles.modalTitle}>Start a new game?</div>
-            <div className={styles.modalSub}>Your current progress will be lost.</div>
+            <div className={styles.modalTitle}>Clear all entries?</div>
+            <div className={styles.modalSub}>All your entered digits will be removed.</div>
             <div className={styles.modalActions}>
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={handleConfirmNewGame}
+                onClick={() => { setClearConfirmOpen(false); onClearAll(); }}
               >
-                Start New Game
+                Clear All
               </button>
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => setConfirmOpen(false)}
+                onClick={() => setClearConfirmOpen(false)}
               >
                 Keep Playing
               </button>
@@ -106,6 +55,7 @@ export function Toolbar({
           </div>
         </div>
       ) : null}
+
     </>
   );
 }

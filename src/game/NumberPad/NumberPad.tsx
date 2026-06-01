@@ -6,6 +6,7 @@ interface NumberPadProps {
   usedSymbols: Set<SymbolValue>;
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
+  columns?: number;
   renderSymbol?: (value: SymbolValue) => string;
   describeSymbol?: (value: SymbolValue) => string;
   symbolKind?: 'digit' | 'letter' | 'color';
@@ -16,12 +17,16 @@ export function NumberPad({
   usedSymbols,
   onEnter,
   candidateMode,
+  columns,
   renderSymbol = (value) => String(value),
   describeSymbol = renderSymbol,
   symbolKind = 'digit',
 }: NumberPadProps) {
-  const half = Math.ceil(symbols.length / 2);
-  const rows = [symbols.slice(0, half), symbols.slice(half)];
+  const cols = columns ?? Math.ceil(symbols.length / 2);
+  const rows: SymbolValue[][] = [];
+  for (let i = 0; i < symbols.length; i += cols) {
+    rows.push(symbols.slice(i, i + cols));
+  }
 
   return (
     <div className={`${styles.numpad}${candidateMode ? ` ${styles.candidate}` : ''}`}>
@@ -50,7 +55,7 @@ export function NumberPad({
               )}
             </button>
           ))}
-          {index === rows.length - 1 ? (
+          {index === rows.length - 1 && !columns ? (
             <button
               type="button"
               className={`${styles.numBtn} ${styles.erase}`}
@@ -62,6 +67,18 @@ export function NumberPad({
           ) : null}
         </div>
       ))}
+      {columns ? (
+        <div className={styles.numpadRow}>
+          <button
+            type="button"
+            className={`${styles.numBtn} ${styles.erase} ${styles.eraseFullWidth}`}
+            aria-label="Erase"
+            onClick={() => onEnter(0)}
+          >
+            Erase
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
