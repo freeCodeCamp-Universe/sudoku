@@ -48,6 +48,7 @@ export interface CellState {
   given: boolean;
   selected: boolean;
   conflict: boolean;
+  correct?: boolean;
 }
 
 export interface GridInteraction {

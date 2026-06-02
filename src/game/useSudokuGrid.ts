@@ -11,6 +11,7 @@ interface UseSudokuGridOptions {
   candidates?: Map<CellId, SymbolValue[]>;
   givens: Set<CellId>;
   revealed?: Set<CellId>;
+  solution?: Values;
   onEnterValue: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate: (id: CellId, value: SymbolValue) => void;
   checkEnabled?: boolean;
@@ -26,6 +27,7 @@ function getCellLabel(
   value: SymbolValue | undefined,
   candidates: SymbolValue[],
   extras: string[],
+  correct: boolean | undefined,
   inConflict: boolean,
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
@@ -48,6 +50,12 @@ function getCellLabel(
 
   const flags: string[] = [];
 
+  if (correct === true) {
+    flags.push('correct');
+  } else if (correct === false) {
+    flags.push('incorrect');
+  }
+
   if (inConflict) {
     flags.push('in conflict');
   }
@@ -68,6 +76,7 @@ export function useSudokuGrid({
   candidates = new Map(),
   givens,
   revealed = new Set(),
+  solution = new Map(),
   onEnterValue,
   onToggleCandidate,
   checkEnabled = false,
@@ -105,14 +114,24 @@ export function useSudokuGrid({
   );
 
   const getCellState = useCallback(
-    (id: CellId): CellState => ({
-      value: values.get(id),
-      candidates: candidates.get(id) ?? [],
-      given: givens.has(id) || revealed.has(id),
-      selected: selectedId === id,
-      conflict: conflictSet.has(id),
-    }),
-    [candidates, conflictSet, givens, revealed, selectedId, values]
+    (id: CellId): CellState => {
+      const value = values.get(id);
+      const given = givens.has(id) || revealed.has(id);
+      const correct =
+        checkEnabled && !given && value !== undefined && solution.has(id)
+          ? value === solution.get(id)
+          : undefined;
+
+      return {
+        value,
+        candidates: candidates.get(id) ?? [],
+        given,
+        selected: selectedId === id,
+        conflict: conflictSet.has(id),
+        correct,
+      };
+    },
+    [candidates, checkEnabled, conflictSet, givens, revealed, selectedId, solution, values]
   );
 
   const announce = useCallback((message: string) => {
@@ -151,6 +170,7 @@ export function useSudokuGrid({
         state.value,
         sortedCandidates,
         extras,
+        state.correct,
         state.conflict,
         state.given,
         describeSymbol
@@ -263,9 +283,15 @@ export function useSudokuGrid({
         nextValues.set(currentId, digit as SymbolValue);
         const inConflict =
           checkEnabled && validate(nextValues, model).some((c) => c.cells.includes(currentId));
+        const correctness =
+          checkEnabled && solution.has(currentId)
+            ? digit === solution.get(currentId)
+              ? ', correct'
+              : ', incorrect'
+            : '';
 
         announce(
-          `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${inConflict ? ', in conflict' : ''}`
+          `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${correctness}${inConflict ? ', in conflict' : ''}`
         );
       }
     },
@@ -284,6 +310,7 @@ export function useSudokuGrid({
       renderSymbol,
       revealed,
       selectCell,
+      solution,
       values,
     ]
   );

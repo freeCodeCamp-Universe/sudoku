@@ -46,6 +46,30 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-conflict', 'true');
   });
 
+  it('should apply the correct modifier when correct=true', () => {
+    render(<Cell {...baseProps} value={5} correct />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-correct', 'true');
+    expect(cell).not.toHaveAttribute('data-incorrect');
+  });
+
+  it('should apply the incorrect modifier when correct=false', () => {
+    render(<Cell {...baseProps} value={5} correct={false} />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-incorrect', 'true');
+    expect(cell).not.toHaveAttribute('data-correct');
+  });
+
+  it('should apply neither correctness modifier when correct is undefined', () => {
+    render(<Cell {...baseProps} value={5} />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).not.toHaveAttribute('data-correct');
+    expect(cell).not.toHaveAttribute('data-incorrect');
+  });
+
   it('should render candidates as pencil marks when no value present', () => {
     render(<Cell {...baseProps} candidates={[1, 3, 7]} />);
 

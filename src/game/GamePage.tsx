@@ -128,6 +128,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
     candidates: state.candidates,
     givens: givensSet,
     revealed: state.revealed,
+    solution,
     onEnterValue,
     onToggleCandidate,
     checkEnabled: settings.checkEnabled,

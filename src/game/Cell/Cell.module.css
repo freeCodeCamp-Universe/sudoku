@@ -97,6 +97,22 @@
   background: #2a1515;
 }
 
+.cell[data-correct] .value {
+  color: var(--accent-green);
+}
+
+.cell[data-incorrect] .value {
+  color: var(--accent-red);
+}
+
+:global(.light) .cell[data-correct] .value {
+  color: #3a7d00;
+}
+
+:global(.light) .cell[data-incorrect] .value {
+  color: #c00000;
+}
+
 .value {
   display: flex;
   align-items: center;

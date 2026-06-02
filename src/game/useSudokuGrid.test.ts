@@ -37,6 +37,7 @@ interface TestBoardProps {
   describeSymbol?: (value: SymbolValue) => string;
   values?: Values;
   checkEnabled?: boolean;
+  solution?: Values;
 }
 
 function TestBoard({
@@ -46,6 +47,7 @@ function TestBoard({
   describeSymbol,
   values = emptyValues,
   checkEnabled = false,
+  solution = new Map(),
 }: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
@@ -58,6 +60,7 @@ function TestBoard({
     onToggleCandidate,
     describeSymbol,
     checkEnabled,
+    solution,
   });
 
   return React.createElement(Board, {
@@ -406,6 +409,142 @@ describe('useSudokuGrid', () => {
     });
 
     expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5');
+    vi.useRealTimers();
+  });
+
+  it('should mark a filled cell correct when it matches the solution and checking is on', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([['r0c0', 5]]),
+        solution: new Map([['r0c0', 5]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: true,
+      })
+    );
+
+    expect(result.current.cellState('r0c0').correct).toBe(true);
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, correct');
+  });
+
+  it('should mark a filled cell incorrect when it does not match the solution', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([['r0c0', 3]]),
+        solution: new Map([['r0c0', 5]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: true,
+      })
+    );
+
+    expect(result.current.cellState('r0c0').correct).toBe(false);
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 3, incorrect');
+  });
+
+  it('should not mark correctness when checking is off', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([['r0c0', 3]]),
+        solution: new Map([['r0c0', 5]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: false,
+      })
+    );
+
+    expect(result.current.cellState('r0c0').correct).toBeUndefined();
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 3');
+  });
+
+  it('should not mark correctness for given cells', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([['r0c0', 5]]),
+        solution: new Map([['r0c0', 5]]),
+        givens: new Set(['r0c0']),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: true,
+      })
+    );
+
+    expect(result.current.cellState('r0c0').correct).toBeUndefined();
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, readonly');
+  });
+
+  it('should announce correctness and conflict independently', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([
+          ['r0c0', 5],
+          ['r0c4', 5],
+        ]),
+        solution: new Map([
+          ['r0c0', 5],
+          ['r0c4', 2],
+        ]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: true,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, correct, in conflict'
+    );
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
+      'Row 1, column 5, box 2, 5, incorrect, in conflict'
+    );
+  });
+
+  it('should announce correctness immediately when a value entry matches the solution', async () => {
+    vi.useFakeTimers();
+    render(React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, correct');
+    vi.useRealTimers();
+  });
+
+  it('should announce incorrect immediately when a value entry does not match the solution', async () => {
+    vi.useFakeTimers();
+    render(React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '3' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 3, incorrect');
     vi.useRealTimers();
   });
 });
