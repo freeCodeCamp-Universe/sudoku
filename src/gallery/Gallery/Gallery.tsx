@@ -70,7 +70,7 @@ export function Gallery() {
   );
 
   return (
-    <main className={styles.main}>
+    <main id="main-content" tabIndex={-1} className={styles.main}>
       <header className={styles.header}>
         <h1 className={styles.heading}>SUDOKU</h1>
         <p className={styles.subheading}>20 sudoku variants for every skill level</p>
