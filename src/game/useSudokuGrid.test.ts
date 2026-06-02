@@ -484,7 +484,7 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, readonly');
   });
 
-  it('should announce correctness and conflict independently', () => {
+  it('should not flag a correct cell as in conflict, but should flag the wrong cell it clashes with', () => {
     const { result } = renderHook(() =>
       useSudokuGrid({
         cells,
@@ -504,9 +504,11 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, correct, in conflict'
-    );
+    // r0c0 holds the correct 5; the clash is the wrong 5 in r0c4, so r0c0 is not flagged.
+    expect(result.current.cellState('r0c0').conflict).toBe(false);
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, correct');
+
+    expect(result.current.cellState('r0c4').conflict).toBe(true);
     expect(result.current.cellProps('r0c4')['aria-label']).toBe(
       'Row 1, column 5, box 2, 5, incorrect, in conflict'
     );
@@ -545,6 +547,33 @@ describe('useSudokuGrid', () => {
     });
 
     expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 3, incorrect');
+    vi.useRealTimers();
+  });
+
+  it('should announce a correct entry as correct even when it clashes with a wrong cell', async () => {
+    vi.useFakeTimers();
+    render(
+      React.createElement(TestBoard, {
+        checkEnabled: true,
+        values: new Map([['r0c4', 5]]),
+        solution: new Map([
+          ['r0c0', 5],
+          ['r0c4', 2],
+        ]),
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, correct');
     vi.useRealTimers();
   });
 });

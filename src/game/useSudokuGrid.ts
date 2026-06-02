@@ -127,7 +127,9 @@ export function useSudokuGrid({
         candidates: candidates.get(id) ?? [],
         given,
         selected: selectedId === id,
-        conflict: conflictSet.has(id),
+        // A provably-correct cell is never flagged as a conflict: the clash
+        // belongs to the wrong cell elsewhere in the house, not this one.
+        conflict: conflictSet.has(id) && correct !== true,
         correct,
       };
     },
@@ -281,14 +283,13 @@ export function useSudokuGrid({
 
         const nextValues = new Map(values);
         nextValues.set(currentId, digit as SymbolValue);
-        const inConflict =
-          checkEnabled && validate(nextValues, model).some((c) => c.cells.includes(currentId));
+        const isCorrect = checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
         const correctness =
-          checkEnabled && solution.has(currentId)
-            ? digit === solution.get(currentId)
-              ? ', correct'
-              : ', incorrect'
-            : '';
+          checkEnabled && solution.has(currentId) ? (isCorrect ? ', correct' : ', incorrect') : '';
+        const inConflict =
+          !isCorrect &&
+          checkEnabled &&
+          validate(nextValues, model).some((c) => c.cells.includes(currentId));
 
         announce(
           `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${correctness}${inConflict ? ', in conflict' : ''}`
