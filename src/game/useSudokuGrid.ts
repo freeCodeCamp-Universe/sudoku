@@ -22,6 +22,7 @@ interface UseSudokuGridOptions {
 
 function getCellLabel(
   cell: Cell,
+  boxNumber: number | undefined,
   value: SymbolValue | undefined,
   candidates: SymbolValue[],
   extras: string[],
@@ -29,16 +30,20 @@ function getCellLabel(
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
+  const location = `Row ${cell.row + 1}, column ${cell.col + 1}${
+    boxNumber !== undefined ? `, box ${boxNumber}` : ''
+  }`;
+
   let base: string;
 
   if (value !== undefined) {
-    base = `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(value)}`;
+    base = `${location}, ${describeSymbol(value)}`;
   } else if (candidates.length > 0) {
     const candidateList = candidates.map((s) => describeSymbol(s)).join(', ');
     const prefix = candidates.length === 1 ? 'candidate' : 'candidates';
-    base = `Row ${cell.row + 1}, column ${cell.col + 1}, ${prefix} ${candidateList}`;
+    base = `${location}, ${prefix} ${candidateList}`;
   } else {
-    base = `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
+    base = `${location}, empty`;
   }
 
   const flags: string[] = [];
@@ -79,6 +84,20 @@ export function useSudokuGrid({
   });
 
   const cellsById = useMemo(() => new Map(cells.map((cell) => [cell.id, cell])), [cells]);
+
+  const boxNumberByCell = useMemo(() => {
+    const map = new Map<CellId, number>();
+
+    model.houses
+      .filter((house) => /^box-\d+-\d+$/.test(house.id))
+      .forEach((house, index) => {
+        for (const id of house.cells) {
+          map.set(id, index + 1);
+        }
+      });
+
+    return map;
+  }, [model.houses]);
 
   const conflictSet = useMemo(
     () => (checkEnabled ? new Set(validate(values, model).flatMap((conflict) => conflict.cells)) : new Set<CellId>()),
@@ -128,6 +147,7 @@ export function useSudokuGrid({
 
       return getCellLabel(
         cell,
+        boxNumberByCell.get(id),
         state.value,
         sortedCandidates,
         extras,
@@ -136,7 +156,7 @@ export function useSudokuGrid({
         describeSymbol
       );
     },
-    [annotators, cellsById, describeSymbol, getCellState, model, values]
+    [annotators, boxNumberByCell, cellsById, describeSymbol, getCellState, model, values]
   );
 
   const selectCell = useCallback(

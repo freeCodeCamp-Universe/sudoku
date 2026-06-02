@@ -179,13 +179,13 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, Yellow');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, Yellow');
   });
 
   it('should move focus with arrow-key navigation in the rendered board', () => {
     render(React.createElement(TestBoard, {}));
 
-    const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
 
     fireEvent.focus(firstCell);
     fireEvent.keyDown(firstCell, { key: 'ArrowRight' });
@@ -212,7 +212,7 @@ describe('useSudokuGrid', () => {
   it('should keep a clicked cell selected after focus moves to it', () => {
     render(React.createElement(TestBoard, {}));
 
-    const targetCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const targetCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
 
     fireEvent.mouseDown(targetCell);
     fireEvent.focus(targetCell);
@@ -236,7 +236,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidates 2, 5, 7');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidates 2, 5, 7');
   });
 
   it('should use singular "candidate" for exactly one candidate', () => {
@@ -252,7 +252,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidate 4');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidate 4');
   });
 
   it('should render candidates through describeSymbol', () => {
@@ -269,7 +269,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidates Red, Yellow');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidates Red, Yellow');
   });
 
   it('should ignore candidates if a value is present', () => {
@@ -286,7 +286,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 9');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 9');
   });
 
   it('should announce candidate added/removed when toggling', async () => {
@@ -295,7 +295,7 @@ describe('useSudokuGrid', () => {
 
     const { rerender } = render(React.createElement(TestBoard, { candidateMode: true, onToggleCandidate }));
 
-    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');
 
     fireEvent.focus(cell);
@@ -317,7 +317,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    const cellWithCandidate = screen.getByRole('gridcell', { name: 'Row 1, column 1, candidate 5' });
+    const cellWithCandidate = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, candidate 5' });
 
     fireEvent.focus(cellWithCandidate);
     fireEvent.keyDown(cellWithCandidate, { key: '5' });
@@ -347,9 +347,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 5, in conflict');
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, 5, in conflict');
-    expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, empty');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict');
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, box 2, 5, in conflict');
+    expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, box 1, empty');
   });
 
   it('should not include "in conflict" in the cell label when checkEnabled is false', () => {
@@ -369,7 +369,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 5');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5');
   });
 
   it('should announce conflict immediately when a value entry creates one', async () => {
@@ -377,7 +377,7 @@ describe('useSudokuGrid', () => {
     const values = new Map([['r0c4', 5]]);
     render(React.createElement(TestBoard, { values, checkEnabled: true }));
 
-    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');
 
     fireEvent.focus(cell);
@@ -395,7 +395,7 @@ describe('useSudokuGrid', () => {
     vi.useFakeTimers();
     render(React.createElement(TestBoard, { checkEnabled: true }));
 
-    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');
 
     fireEvent.focus(cell);

@@ -73,7 +73,7 @@ describe('GamePage - Classic integration', () => {
   it('should use color names in cell accessibility labels for the color variant', () => {
     renderGamePage('color');
 
-    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, Red, readonly/i })).toBeTruthy();
+    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, box 1, Red, readonly/i })).toBeTruthy();
   });
 
   it('should render skyscraper gutters from derived structure', () => {
