@@ -108,7 +108,8 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.settingsBtn:hover {
+.settingsBtn:hover,
+.settingsBtn.open {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
 }

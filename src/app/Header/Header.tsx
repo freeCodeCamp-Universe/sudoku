@@ -25,6 +25,7 @@ export function Header({
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
+  const settingsBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -36,6 +37,13 @@ export function Header({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && settingsOpen) {
+      setSettingsOpen(false);
+      settingsBtnRef.current?.focus();
+    }
+  };
+
   const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined;
 
   return (
@@ -46,17 +54,25 @@ export function Header({
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.topBarRight}>
         {hasSettings ? (
-          <div className={styles.settingsWrap} ref={settingsRef}>
+          <div className={styles.settingsWrap} ref={settingsRef} onKeyDown={handleKeyDown}>
             <button
               type="button"
-              className={styles.settingsBtn}
+              ref={settingsBtnRef}
+              className={`${styles.settingsBtn} ${settingsOpen ? styles.open : ''}`}
               aria-label="Settings"
+              aria-expanded={settingsOpen}
+              aria-controls={settingsOpen ? 'header-settings-panel' : undefined}
               onClick={() => setSettingsOpen((v) => !v)}
             >
               ⚙
             </button>
             {settingsOpen ? (
-              <div className={styles.dropdown}>
+              <div
+                id="header-settings-panel"
+                className={styles.dropdown}
+                role="group"
+                aria-label="Settings"
+              >
                 {onToggleCheck !== undefined ? (
                   <div className={styles.dropdownRow}>
                     <span id="settings-check-label" className={styles.dropdownLabel}>

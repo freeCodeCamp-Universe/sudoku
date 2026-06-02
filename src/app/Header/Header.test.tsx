@@ -111,5 +111,32 @@ describe('Header', () => {
       await user.click(timerSwitch);
       expect(timerSwitch).toBeChecked();
     });
+
+    it('should implement ARIA Disclosure pattern and handle Escape key', async () => {
+      const user = userEvent.setup();
+      render(<SettingsHarness />);
+
+      const settingsBtn = screen.getByRole('button', { name: /settings/i });
+
+      // Initial state
+      expect(settingsBtn).toHaveAttribute('aria-expanded', 'false');
+      expect(settingsBtn).not.toHaveAttribute('aria-controls');
+      expect(screen.queryByRole('group', { name: /settings/i })).toBeNull();
+
+      // Open settings
+      await user.click(settingsBtn);
+      expect(settingsBtn).toHaveAttribute('aria-expanded', 'true');
+      expect(settingsBtn).toHaveAttribute('aria-controls', 'header-settings-panel');
+
+      const panel = screen.getByRole('group', { name: /settings/i });
+      expect(panel).toBeInTheDocument();
+      expect(panel).toHaveAttribute('id', 'header-settings-panel');
+
+      // Close with Escape
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('group', { name: /settings/i })).toBeNull();
+      expect(settingsBtn).toHaveAttribute('aria-expanded', 'false');
+      expect(settingsBtn).toHaveFocus();
+    });
   });
 });
