@@ -9,6 +9,7 @@ export interface GutterCell {
   row?: number;
   col?: number;
   label: string;
+  description?: string;
 }
 
 export interface GutterSlots {

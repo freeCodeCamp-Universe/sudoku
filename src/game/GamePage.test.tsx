@@ -79,8 +79,8 @@ describe('GamePage - Classic integration', () => {
   it('should render skyscraper gutters from derived structure', () => {
     renderGamePage('skyscraper');
 
-    expect(screen.getAllByLabelText(/Top clue for column /i)).toHaveLength(9);
-    expect(screen.getAllByLabelText(/Start clue for row /i)).toHaveLength(9);
+    expect(screen.getAllByLabelText(/visible from the top of column /i)).toHaveLength(9);
+    expect(screen.getAllByLabelText(/visible from the start of row /i)).toHaveLength(9);
   });
 
   it('should render the arrow rule legend for arrow sudoku', () => {
