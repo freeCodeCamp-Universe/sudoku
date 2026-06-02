@@ -1,9 +1,9 @@
 import React from 'react';
 import { renderHook, act, fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, should } from 'vitest';
+import { describe, expect, it, should, vi } from 'vitest';
 import { uniqueness } from '@/engine/constraints/uniqueness';
 import { gridCells, standardHouses } from '@/engine/grid';
-import type { Values, Variant, VariantModel } from '@/engine/types';
+import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
 import { Board } from '@/game/Board/Board';
 import { gridLayout } from '@/game/layouts/grid';
 import { useSudokuGrid } from './useSudokuGrid';
@@ -30,14 +30,29 @@ const classicVariant: Variant = {
   constraintIds: [],
 };
 
-function TestBoard() {
+interface TestBoardProps {
+  candidates?: Map<CellId, SymbolValue[]>;
+  candidateMode?: boolean;
+  onToggleCandidate?: (id: CellId, value: SymbolValue) => void;
+  describeSymbol?: (value: SymbolValue) => string;
+}
+
+function TestBoard({
+  candidates = new Map(),
+  candidateMode = false,
+  onToggleCandidate = noop,
+  describeSymbol,
+}: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
     model,
     values: emptyValues,
+    candidates,
+    candidateMode,
     givens: new Set(),
     onEnterValue: noop,
-    onToggleCandidate: noop,
+    onToggleCandidate,
+    describeSymbol,
   });
 
   return React.createElement(Board, {
@@ -163,7 +178,7 @@ describe('useSudokuGrid', () => {
   });
 
   it('should move focus with arrow-key navigation in the rendered board', () => {
-    render(React.createElement(TestBoard));
+    render(React.createElement(TestBoard, {}));
 
     const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
 
@@ -190,7 +205,7 @@ describe('useSudokuGrid', () => {
   });
 
   it('should keep a clicked cell selected after focus moves to it', () => {
-    render(React.createElement(TestBoard));
+    render(React.createElement(TestBoard, {}));
 
     const targetCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
 
@@ -201,5 +216,112 @@ describe('useSudokuGrid', () => {
     expect(targetCell).toBeTruthy();
     shouldAssert.equal(targetCell.getAttribute('aria-selected'), 'true');
     shouldAssert.equal(targetCell.getAttribute('tabindex'), '0');
+  });
+
+  it('should include sorted candidates in the cell label when no value is present', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        candidates: new Map([['r0c0', [5, 2, 7]]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidates 2, 5, 7');
+  });
+
+  it('should use singular "candidate" for exactly one candidate', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        candidates: new Map([['r0c0', [4]]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidate 4');
+  });
+
+  it('should render candidates through describeSymbol', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        candidates: new Map([['r0c0', [1, 3]]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        describeSymbol: (value) => (value === 1 ? 'Red' : value === 3 ? 'Yellow' : String(value)),
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, candidates Red, Yellow');
+  });
+
+  it('should ignore candidates if a value is present', () => {
+    const values: Values = new Map([['r0c0', 9]]);
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values,
+        candidates: new Map([['r0c0', [1, 2, 3]]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 9');
+  });
+
+  it('should announce candidate added/removed when toggling', async () => {
+    vi.useFakeTimers();
+    const onToggleCandidate = vi.fn();
+
+    const { rerender } = render(React.createElement(TestBoard, { candidateMode: true, onToggleCandidate }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const getAnnouncer = () => document.getElementById('grid-announcer');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(onToggleCandidate).toHaveBeenCalledWith('r0c0', 5);
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, candidate 5 added');
+
+    // Test removal
+    rerender(
+      React.createElement(TestBoard, {
+        candidateMode: true,
+        onToggleCandidate,
+        candidates: new Map([['r0c0', [5]]]),
+      })
+    );
+
+    const cellWithCandidate = screen.getByRole('gridcell', { name: 'Row 1, column 1, candidate 5' });
+
+    fireEvent.focus(cellWithCandidate);
+    fireEvent.keyDown(cellWithCandidate, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, candidate 5 removed');
+    vi.useRealTimers();
   });
 });

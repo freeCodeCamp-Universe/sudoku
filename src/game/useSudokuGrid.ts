@@ -23,13 +23,22 @@ interface UseSudokuGridOptions {
 function getCellLabel(
   cell: Cell,
   value: SymbolValue | undefined,
+  candidates: SymbolValue[],
   extras: string[],
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
-  const base = value !== undefined
-    ? `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(value)}`
-    : `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
+  let base: string;
+
+  if (value !== undefined) {
+    base = `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(value)}`;
+  } else if (candidates.length > 0) {
+    const candidateList = candidates.map((s) => describeSymbol(s)).join(', ');
+    const prefix = candidates.length === 1 ? 'candidate' : 'candidates';
+    base = `Row ${cell.row + 1}, column ${cell.col + 1}, ${prefix} ${candidateList}`;
+  } else {
+    base = `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
+  }
 
   const flags = [...extras];
 
@@ -104,11 +113,13 @@ export function useSudokuGrid({
       }
 
       const state = getCellState(id);
+      const sortedCandidates = model.symbols.filter((s) => state.candidates.includes(s));
+
       const extras = annotators
         .map((annotator) => annotator.describe(id, { values, model, cellState: getCellState }))
         .filter((message): message is string => message !== null);
 
-      return getCellLabel(cell, state.value, extras, state.given, describeSymbol);
+      return getCellLabel(cell, state.value, sortedCandidates, extras, state.given, describeSymbol);
     },
     [annotators, cellsById, describeSymbol, getCellState, model, values]
   );
@@ -201,14 +212,21 @@ export function useSudokuGrid({
       event.preventDefault();
 
       if (candidateMode) {
+        const current = candidates.get(currentId) ?? [];
+        const adding = !current.includes(digit as SymbolValue);
+
         onToggleCandidate(currentId, digit as SymbolValue);
+
+        const action = adding ? 'added' : 'removed';
+        announce(
+          `Row ${cell.row + 1}, column ${cell.col + 1}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
+        );
       } else {
         onEnterValue(currentId, digit as SymbolValue);
+        announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
       }
-
-      announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
     },
-    [announce, candidateMode, cells, cellsById, describeSymbol, givens, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
+    [announce, candidateMode, candidates, cells, cellsById, describeSymbol, givens, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
   );
 
   const firstCellId = cells[0]?.id ?? null;
