@@ -59,26 +59,48 @@ export function Header({
               <div className={styles.dropdown}>
                 {onToggleCheck !== undefined ? (
                   <div className={styles.dropdownRow}>
-                    <span className={styles.dropdownLabel}>Check answers</span>
-                    <button
-                      type="button"
-                      className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
-                      onClick={onToggleCheck}
-                    >
-                      {checkEnabled ? 'On' : 'Off'}
-                    </button>
+                    <span id="settings-check-label" className={styles.dropdownLabel}>
+                      Check answers
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(checkEnabled)}
+                        aria-labelledby="settings-check-label"
+                        onChange={onToggleCheck}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
+                      >
+                        {checkEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
                   </div>
                 ) : null}
                 {onToggleTimer !== undefined ? (
                   <div className={styles.dropdownRow}>
-                    <span className={styles.dropdownLabel}>Timer</span>
-                    <button
-                      type="button"
-                      className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
-                      onClick={onToggleTimer}
-                    >
-                      {timerEnabled ? 'On' : 'Off'}
-                    </button>
+                    <span id="settings-timer-label" className={styles.dropdownLabel}>
+                      Timer
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(timerEnabled)}
+                        aria-labelledby="settings-timer-label"
+                        onChange={onToggleTimer}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
+                      >
+                        {timerEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
                   </div>
                 ) : null}
               </div>

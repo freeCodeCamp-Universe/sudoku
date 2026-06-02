@@ -53,18 +53,24 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
 
     return variant;
   }, [structure, variant]);
-  const model = useMemo(
-    () => {
-      const liveModel = liveVariant === variant ? baseModel : buildModel(liveVariant);
+  const model = useMemo(() => {
+    const liveModel = liveVariant === variant ? baseModel : buildModel(liveVariant);
 
-      return structure === undefined ? liveModel : { ...liveModel, structure };
-    },
-    [baseModel, liveVariant, structure, variant]
+    return structure === undefined ? liveModel : { ...liveModel, structure };
+  }, [baseModel, liveVariant, structure, variant]);
+  const layoutStrategy = useMemo(
+    () => resolveLayout(liveVariant.layout.kind),
+    [liveVariant.layout.kind]
   );
-  const layoutStrategy = useMemo(() => resolveLayout(liveVariant.layout.kind), [liveVariant.layout.kind]);
   const cellSize = useResponsiveCellSize(liveVariant);
-  const rects = useMemo(() => layoutStrategy.cellRects(liveVariant, cellSize), [layoutStrategy, liveVariant, cellSize]);
-  const size = useMemo(() => layoutStrategy.canvasSize(liveVariant, cellSize), [layoutStrategy, liveVariant, cellSize]);
+  const rects = useMemo(
+    () => layoutStrategy.cellRects(liveVariant, cellSize),
+    [layoutStrategy, liveVariant, cellSize]
+  );
+  const size = useMemo(
+    () => layoutStrategy.canvasSize(liveVariant, cellSize),
+    [layoutStrategy, liveVariant, cellSize]
+  );
   const gutters = useMemo(
     () => liveVariant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(liveVariant),
     [layoutStrategy, liveVariant, structure]
@@ -162,8 +168,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
     };
   }, [grid.announcerRef, effectiveSolved]);
 
-  const selectedCellId =
-    model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
+  const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
   function handleReveal() {
     if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
@@ -216,7 +221,13 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
           />
           {liveVariant.id === 'arrow' ? (
             <div className={styles.variantLegend} aria-label="Arrow rule legend">
-              <svg width="100" height="24" viewBox="0 0 100 24" aria-hidden="true" className={styles.legendIcon}>
+              <svg
+                width="100"
+                height="24"
+                viewBox="0 0 100 24"
+                aria-hidden="true"
+                className={styles.legendIcon}
+              >
                 <circle cx="15" cy="12" r="8" className={styles.legendCircle} />
                 <line x1="23" y1="12" x2="81" y2="12" className={styles.legendLine} />
                 <polygon points="88,12 79,7 79,17" className={styles.legendHead} />
@@ -253,10 +264,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
             describeSymbol={describeSymbol}
             symbolKind={liveVariant.symbolKind}
           />
-          <Toolbar
-            onClearAll={() => dispatch({ type: 'clearAll' })}
-            onReveal={handleReveal}
-          />
+          <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
         </div>
       </div>
       {showCheckPrompt ? (
@@ -265,7 +273,9 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
           <button
             type="button"
             className={styles.checkPromptBtn}
-            onClick={() => { toggleCheck(); }}
+            onClick={() => {
+              toggleCheck();
+            }}
           >
             Check answers
           </button>
@@ -275,7 +285,12 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
         New Game
       </button>
       {newGameConfirmOpen ? (
-        <div role="dialog" aria-modal="true" aria-label="Start a new game?" className={styles.confirmOverlay}>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Start a new game?"
+          className={styles.confirmOverlay}
+        >
           <div className={styles.modal}>
             <div className={styles.modalTitle}>Start a new game?</div>
             <div className={styles.modalSub}>Your current progress will be lost.</div>
@@ -283,7 +298,10 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={() => { setNewGameConfirmOpen(false); dispatch({ type: 'newGame' }); }}
+                onClick={() => {
+                  setNewGameConfirmOpen(false);
+                  dispatch({ type: 'newGame' });
+                }}
               >
                 Start New Game
               </button>
@@ -336,9 +354,10 @@ export function GamePage() {
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
-          <GameInner settings={settings} toggleCheck={toggleCheck} toggleTimer={toggleTimer} />
+          <GameInner settings={settings} toggleCheck={toggleCheck} />
         </GameProvider>
       </main>
+
       <HelpDialog
         open={helpOpen}
         onClose={() => setHelpOpen(false)}

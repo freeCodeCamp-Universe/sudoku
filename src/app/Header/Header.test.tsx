@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -67,5 +68,48 @@ describe('Header', () => {
     );
 
     expect(screen.getByRole('button', { name: /theme/i })).toBeTruthy();
+  });
+
+  describe('settings', () => {
+    function SettingsHarness() {
+      const [checkEnabled, setCheckEnabled] = useState(false);
+      const [timerEnabled, setTimerEnabled] = useState(false);
+
+      return (
+        <MemoryRouter>
+          <ThemeProvider>
+            <Header
+              title="Classic Sudoku"
+              backHref="/"
+              checkEnabled={checkEnabled}
+              timerEnabled={timerEnabled}
+              onToggleCheck={() => setCheckEnabled((v) => !v)}
+              onToggleTimer={() => setTimerEnabled((v) => !v)}
+            />
+          </ThemeProvider>
+        </MemoryRouter>
+      );
+    }
+
+    it('should expose proper switch semantics for Check answers and Timer', async () => {
+      const user = userEvent.setup();
+
+      render(<SettingsHarness />);
+
+      // Open settings
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      const checkSwitch = screen.getByRole('switch', { name: /check answers/i });
+      expect(checkSwitch).not.toBeChecked();
+
+      const timerSwitch = screen.getByRole('switch', { name: /timer/i });
+      expect(timerSwitch).not.toBeChecked();
+
+      await user.click(checkSwitch);
+      expect(checkSwitch).toBeChecked();
+
+      await user.click(timerSwitch);
+      expect(timerSwitch).toBeChecked();
+    });
   });
 });

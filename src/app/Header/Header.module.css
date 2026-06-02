@@ -160,8 +160,27 @@
   border: 1px solid var(--border);
   background: var(--bg-secondary);
   color: var(--text-muted);
-  cursor: pointer;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.toggleControl {
+  position: relative;
+  display: inline-flex;
+}
+
+.toggleInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggleInput:focus-visible + .toggleBtn {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .on {
