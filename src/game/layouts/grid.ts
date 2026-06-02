@@ -1,15 +1,9 @@
 import { cellId, range } from '@/engine/grid';
-import type { LayoutStrategy, Rect, Size } from '@/game/gameTypes';
+import type { LayoutStrategy, Rect } from '@/game/gameTypes';
 
 function getCellSize(gridSize: number): number {
   if (gridSize === 16) return 30;
   return 52;
-}
-
-function getGridSize(size: number): Size {
-  const total = size * getCellSize(size);
-
-  return { w: total, h: total };
 }
 
 export const gridLayout: LayoutStrategy = {

@@ -31,10 +31,9 @@ type VariantWithColorNames = {
 interface GameInnerProps {
   settings: { checkEnabled: boolean; timerEnabled: boolean };
   toggleCheck: () => void;
-  toggleTimer: () => void;
 }
 
-function GameInner({ settings, toggleCheck, toggleTimer }: GameInnerProps) {
+function GameInner({ settings, toggleCheck }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);

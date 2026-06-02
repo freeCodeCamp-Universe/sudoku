@@ -1,56 +1,62 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { Toolbar } from './Toolbar';
 
 const baseProps = {
-  checkEnabled: true,
-  timerEnabled: true,
-  onUndo: vi.fn(),
-  onErase: vi.fn(),
-  onToggleCheck: vi.fn(),
-  onToggleTimer: vi.fn(),
+  onClearAll: vi.fn(),
   onReveal: vi.fn(),
-  onNewGame: vi.fn(),
 };
 
 describe('Toolbar', () => {
-  it('should render Undo, Erase, Reveal Cell, and New Game buttons', () => {
+  it('should render Reveal Cell and Clear All buttons', () => {
     render(<Toolbar {...baseProps} />);
 
-    expect(screen.getByRole('button', { name: /undo/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /erase/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /reveal/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /new game/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /reveal cell/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /clear all/i })).toBeTruthy();
   });
 
-  it('should call onUndo when the Undo button is clicked', async () => {
+  it('should call onReveal when the Reveal Cell button is clicked', async () => {
     const user = userEvent.setup();
-    const onUndo = vi.fn();
+    const onReveal = vi.fn();
 
-    render(<Toolbar {...baseProps} onUndo={onUndo} />);
-    await user.click(screen.getByRole('button', { name: /undo/i }));
+    render(<Toolbar {...baseProps} onReveal={onReveal} />);
+    await user.click(screen.getByRole('button', { name: /reveal cell/i }));
 
-    expect(onUndo).toHaveBeenCalledTimes(1);
+    expect(onReveal).toHaveBeenCalledTimes(1);
   });
 
-  it('should show a confirmation dialog when New Game is clicked with hasProgress=true', async () => {
+  it('should open a confirmation dialog when Clear All is clicked', async () => {
     const user = userEvent.setup();
 
-    render(<Toolbar {...baseProps} hasProgress />);
-    await user.click(screen.getByRole('button', { name: /new game/i }));
+    render(<Toolbar {...baseProps} />);
+    await user.click(screen.getByRole('button', { name: 'Clear All' }));
 
-    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.getByRole('dialog', { name: /clear all entries\?/i })).toBeTruthy();
   });
 
-  it('should call onNewGame directly when New Game is clicked with hasProgress=false', async () => {
+  it('should call onClearAll when the clear is confirmed', async () => {
     const user = userEvent.setup();
-    const onNewGame = vi.fn();
+    const onClearAll = vi.fn();
 
-    render(<Toolbar {...baseProps} onNewGame={onNewGame} hasProgress={false} />);
-    await user.click(screen.getByRole('button', { name: /new game/i }));
+    render(<Toolbar {...baseProps} onClearAll={onClearAll} />);
+    await user.click(screen.getByRole('button', { name: 'Clear All' }));
+    const dialog = screen.getByRole('dialog', { name: /clear all entries\?/i });
+    await user.click(within(dialog).getByRole('button', { name: 'Clear All' }));
 
-    expect(onNewGame).toHaveBeenCalledTimes(1);
+    expect(onClearAll).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('should close the dialog without clearing when Keep Playing is clicked', async () => {
+    const user = userEvent.setup();
+    const onClearAll = vi.fn();
+
+    render(<Toolbar {...baseProps} onClearAll={onClearAll} />);
+    await user.click(screen.getByRole('button', { name: 'Clear All' }));
+    await user.click(screen.getByRole('button', { name: /keep playing/i }));
+
+    expect(onClearAll).not.toHaveBeenCalled();
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
