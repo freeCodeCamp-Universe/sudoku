@@ -25,6 +25,7 @@ export function Header({
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
+  const settingsBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -36,6 +37,13 @@ export function Header({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && settingsOpen) {
+      setSettingsOpen(false);
+      settingsBtnRef.current?.focus();
+    }
+  };
+
   const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined;
 
   return (
@@ -46,39 +54,69 @@ export function Header({
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.topBarRight}>
         {hasSettings ? (
-          <div className={styles.settingsWrap} ref={settingsRef}>
+          <div className={styles.settingsWrap} ref={settingsRef} onKeyDown={handleKeyDown}>
             <button
               type="button"
-              className={styles.settingsBtn}
+              ref={settingsBtnRef}
+              className={`${styles.settingsBtn} ${settingsOpen ? styles.open : ''}`}
               aria-label="Settings"
+              aria-expanded={settingsOpen}
+              aria-controls={settingsOpen ? 'header-settings-panel' : undefined}
               onClick={() => setSettingsOpen((v) => !v)}
             >
               ⚙
             </button>
             {settingsOpen ? (
-              <div className={styles.dropdown}>
+              <div
+                id="header-settings-panel"
+                className={styles.dropdown}
+                role="group"
+                aria-label="Settings"
+              >
                 {onToggleCheck !== undefined ? (
                   <div className={styles.dropdownRow}>
-                    <span className={styles.dropdownLabel}>Check answers</span>
-                    <button
-                      type="button"
-                      className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
-                      onClick={onToggleCheck}
-                    >
-                      {checkEnabled ? 'On' : 'Off'}
-                    </button>
+                    <span id="settings-check-label" className={styles.dropdownLabel}>
+                      Check answers
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(checkEnabled)}
+                        aria-labelledby="settings-check-label"
+                        onChange={onToggleCheck}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
+                      >
+                        {checkEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
                   </div>
                 ) : null}
                 {onToggleTimer !== undefined ? (
                   <div className={styles.dropdownRow}>
-                    <span className={styles.dropdownLabel}>Timer</span>
-                    <button
-                      type="button"
-                      className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
-                      onClick={onToggleTimer}
-                    >
-                      {timerEnabled ? 'On' : 'Off'}
-                    </button>
+                    <span id="settings-timer-label" className={styles.dropdownLabel}>
+                      Timer
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(timerEnabled)}
+                        aria-labelledby="settings-timer-label"
+                        onChange={onToggleTimer}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
+                      >
+                        {timerEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
                   </div>
                 ) : null}
               </div>

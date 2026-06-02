@@ -55,7 +55,7 @@ describe('multigridLayout - Samurai', () => {
   });
 
   it('should place r0c0 at x=0, y=0 with cellSize=40', () => {
-    expect(multigridLayout.cellRects(samuraiVariant).get('r0c0')).toEqual({
+    expect(multigridLayout.cellRects(samuraiVariant, 40).get('r0c0')).toEqual({
       x: 0,
       y: 0,
       w: 40,
@@ -64,7 +64,7 @@ describe('multigridLayout - Samurai', () => {
   });
 
   it('should place the center-grid origin r6c6 at x=240, y=240', () => {
-    expect(multigridLayout.cellRects(samuraiVariant).get('r6c6')).toEqual({
+    expect(multigridLayout.cellRects(samuraiVariant, 40).get('r6c6')).toEqual({
       x: 240,
       y: 240,
       w: 40,
@@ -73,7 +73,7 @@ describe('multigridLayout - Samurai', () => {
   });
 
   it('should produce an 840x840 canvas', () => {
-    expect(multigridLayout.canvasSize(samuraiVariant)).toEqual({ w: 840, h: 840 });
+    expect(multigridLayout.canvasSize(samuraiVariant, 40)).toEqual({ w: 840, h: 840 });
   });
 });
 
