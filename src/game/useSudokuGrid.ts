@@ -25,6 +25,7 @@ function getCellLabel(
   value: SymbolValue | undefined,
   candidates: SymbolValue[],
   extras: string[],
+  inConflict: boolean,
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
@@ -40,7 +41,13 @@ function getCellLabel(
     base = `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
   }
 
-  const flags = [...extras];
+  const flags: string[] = [];
+
+  if (inConflict) {
+    flags.push('in conflict');
+  }
+
+  flags.push(...extras);
 
   if (isReadonly) {
     flags.push('readonly');
@@ -119,7 +126,15 @@ export function useSudokuGrid({
         .map((annotator) => annotator.describe(id, { values, model, cellState: getCellState }))
         .filter((message): message is string => message !== null);
 
-      return getCellLabel(cell, state.value, sortedCandidates, extras, state.given, describeSymbol);
+      return getCellLabel(
+        cell,
+        state.value,
+        sortedCandidates,
+        extras,
+        state.conflict,
+        state.given,
+        describeSymbol
+      );
     },
     [annotators, cellsById, describeSymbol, getCellState, model, values]
   );
@@ -223,10 +238,34 @@ export function useSudokuGrid({
         );
       } else {
         onEnterValue(currentId, digit as SymbolValue);
-        announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
+
+        const nextValues = new Map(values);
+        nextValues.set(currentId, digit as SymbolValue);
+        const inConflict =
+          checkEnabled && validate(nextValues, model).some((c) => c.cells.includes(currentId));
+
+        announce(
+          `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${inConflict ? ', in conflict' : ''}`
+        );
       }
     },
-    [announce, candidateMode, candidates, cells, cellsById, describeSymbol, givens, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
+    [
+      announce,
+      candidateMode,
+      candidates,
+      cells,
+      cellsById,
+      checkEnabled,
+      describeSymbol,
+      givens,
+      model,
+      onEnterValue,
+      onToggleCandidate,
+      renderSymbol,
+      revealed,
+      selectCell,
+      values,
+    ]
   );
 
   const firstCellId = cells[0]?.id ?? null;

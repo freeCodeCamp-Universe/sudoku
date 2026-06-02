@@ -35,6 +35,8 @@ interface TestBoardProps {
   candidateMode?: boolean;
   onToggleCandidate?: (id: CellId, value: SymbolValue) => void;
   describeSymbol?: (value: SymbolValue) => string;
+  values?: Values;
+  checkEnabled?: boolean;
 }
 
 function TestBoard({
@@ -42,17 +44,20 @@ function TestBoard({
   candidateMode = false,
   onToggleCandidate = noop,
   describeSymbol,
+  values = emptyValues,
+  checkEnabled = false,
 }: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
     model,
-    values: emptyValues,
+    values,
     candidates,
     candidateMode,
     givens: new Set(),
     onEnterValue: noop,
     onToggleCandidate,
     describeSymbol,
+    checkEnabled,
   });
 
   return React.createElement(Board, {
@@ -291,7 +296,7 @@ describe('useSudokuGrid', () => {
     const { rerender } = render(React.createElement(TestBoard, { candidateMode: true, onToggleCandidate }));
 
     const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
-    const getAnnouncer = () => document.getElementById('grid-announcer');
+    const getAnnouncer = () => screen.getByRole('status');
 
     fireEvent.focus(cell);
     fireEvent.keyDown(cell, { key: '5' });
@@ -322,6 +327,85 @@ describe('useSudokuGrid', () => {
     });
 
     expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, candidate 5 removed');
+    vi.useRealTimers();
+  });
+
+  it('should include "in conflict" in the cell label when checkEnabled is true and there is a conflict', () => {
+    const values: Values = new Map([
+      ['r0c0', 5],
+      ['r0c4', 5],
+    ]);
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: true,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 5, in conflict');
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, 5, in conflict');
+    expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, empty');
+  });
+
+  it('should not include "in conflict" in the cell label when checkEnabled is false', () => {
+    const values: Values = new Map([
+      ['r0c0', 5],
+      ['r0c4', 5],
+    ]);
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        checkEnabled: false,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, 5');
+  });
+
+  it('should announce conflict immediately when a value entry creates one', async () => {
+    vi.useFakeTimers();
+    const values = new Map([['r0c4', 5]]);
+    render(React.createElement(TestBoard, { values, checkEnabled: true }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, in conflict');
+    vi.useRealTimers();
+  });
+
+  it('should not announce conflict immediately when a value entry does not create one', async () => {
+    vi.useFakeTimers();
+    render(React.createElement(TestBoard, { checkEnabled: true }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5');
     vi.useRealTimers();
   });
 });
