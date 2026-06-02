@@ -91,6 +91,6 @@ export const samurai: Variant = {
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
   overlayIds: [],
-  annotatorIds: [],
+  annotatorIds: ['overlap'],
   buildHouses: buildSamuraiHouses,
 };
