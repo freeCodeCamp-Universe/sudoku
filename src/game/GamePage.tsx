@@ -31,9 +31,10 @@ type VariantWithColorNames = {
 interface GameInnerProps {
   settings: { checkEnabled: boolean; timerEnabled: boolean };
   toggleCheck: () => void;
+  onNewGame?: () => void;
 }
 
-function GameInner({ settings, toggleCheck }: GameInnerProps) {
+function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
@@ -189,6 +190,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
       setNewGameConfirmOpen(true);
       return;
     }
+    onNewGame?.();
     dispatch({ type: 'newGame' });
   }
 
@@ -329,6 +331,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
                 className={`${styles.modalBtn} ${styles.primary}`}
                 onClick={() => {
                   setNewGameConfirmOpen(false);
+                  onNewGame?.();
                   dispatch({ type: 'newGame' });
                 }}
               >
@@ -362,12 +365,7 @@ export function GamePage() {
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
     const puzzle = generate(builtModel, variant.difficulty);
-
-    return {
-      model: builtModel,
-      givens: puzzle.givens,
-      solution: puzzle.solution,
-    };
+    return { model: builtModel, givens: puzzle.givens, solution: puzzle.solution };
   }, [variant]);
 
   return (

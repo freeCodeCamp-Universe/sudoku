@@ -286,8 +286,8 @@ export function Board({
                   conflict={state.conflict}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
-                  boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
-                  boxBoundaryBottom={isBoxBoundary(variant, cell, 'row')}
+                  boxBoundaryRight={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'col')}
+                  boxBoundaryBottom={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'row')}
                   overlayBorders={variant.layout.kind === 'multigrid'}
                   overlap={subgridOverlap(variant, cell)}
                   diagonal={variant.id === 'sudoku-x' && diagonalSet.has(cell.id)}
