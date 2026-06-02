@@ -10,12 +10,20 @@ function getChains(ctx: Parameters<CellAnnotator['describe']>[1]): Chain[] {
 export const chainAnnotator: CellAnnotator = {
   id: 'chain-cell',
   describe(cellId, ctx) {
-    const match = getChains(ctx).find((chain) => chain.cells.includes(cellId));
+    const chains = getChains(ctx);
+    const index = chains.findIndex((chain) => chain.cells.includes(cellId));
 
-    if (!match) {
+    if (index === -1) {
       return null;
     }
 
-    return `in a chain of ${match.cells.length} cells, values must form a consecutive range`;
+    const total = chains.length;
+    const size = chains[index].cells.length;
+
+    if (total > 1) {
+      return `chain ${index + 1} of ${total}, ${size} cells`;
+    }
+
+    return `chain of ${size} cells`;
   },
 };

@@ -15,15 +15,15 @@ function ctx(): AnnotatorContext {
 }
 
 describe('asteriskAnnotator', () => {
-  it('should return "asterisk region" for r1c4', () => {
+  it('should return descriptive wording for r1c4', () => {
     expect(asteriskAnnotator.describe('r1c4', ctx())).toBe('asterisk region');
   });
 
-  it('should return "asterisk region" for r4c4 (center)', () => {
+  it('should return descriptive wording for r4c4 (center)', () => {
     expect(asteriskAnnotator.describe('r4c4', ctx())).toBe('asterisk region');
   });
 
-  it('should return "asterisk region" for r7c4', () => {
+  it('should return descriptive wording for r7c4', () => {
     expect(asteriskAnnotator.describe('r7c4', ctx())).toBe('asterisk region');
   });
 

@@ -1,13 +1,16 @@
 import type { CellAnnotator } from '@/game/gameTypes';
 import { WINDOKU_WINDOWS } from '@/variants/windoku';
 
-const windowCells = new Set(
-  WINDOKU_WINDOWS.flatMap((window) => window.map(([row, col]) => `r${row}c${col}`))
+const cellToWindowIndex = new Map<string, number>(
+  WINDOKU_WINDOWS.flatMap((window, index) =>
+    window.map(([row, col]) => [`r${row}c${col}`, index])
+  )
 );
 
 export const windokuAnnotator: CellAnnotator = {
   id: 'windoku',
   describe(cellId) {
-    return windowCells.has(cellId) ? 'shaded region' : null;
+    const index = cellToWindowIndex.get(cellId);
+    return index !== undefined ? `window ${index + 1} of 4` : null;
   },
 };
