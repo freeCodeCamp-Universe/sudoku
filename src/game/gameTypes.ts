@@ -49,6 +49,7 @@ export interface CellState {
   selected: boolean;
   conflict: boolean;
   correct?: boolean;
+  sameValue?: boolean;
 }
 
 export interface GridInteraction {

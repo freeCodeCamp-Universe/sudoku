@@ -70,6 +70,18 @@ describe('Cell', () => {
     expect(cell).not.toHaveAttribute('data-incorrect');
   });
 
+  it('should apply the same-value modifier when sameValue=true', () => {
+    render(<Cell {...baseProps} value={5} sameValue />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-same-value', 'true');
+  });
+
+  it('should not apply the same-value modifier by default', () => {
+    render(<Cell {...baseProps} value={5} />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-same-value');
+  });
+
   it('should render candidates as pencil marks when no value present', () => {
     render(<Cell {...baseProps} candidates={[1, 3, 7]} />);
 

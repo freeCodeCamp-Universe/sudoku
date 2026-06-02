@@ -550,6 +550,51 @@ describe('useSudokuGrid', () => {
     vi.useRealTimers();
   });
 
+  it('should mark cells sharing the selected cell value as sameValue', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([
+          ['r0c0', 5],
+          ['r3c3', 5],
+          ['r1c1', 2],
+        ]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.cellProps('r0c0').onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    });
+
+    expect(result.current.cellState('r0c0').sameValue).toBe(true);
+    expect(result.current.cellState('r3c3').sameValue).toBe(true);
+    expect(result.current.cellState('r1c1').sameValue).toBe(false);
+    expect(result.current.cellState('r2c2').sameValue).toBe(false);
+  });
+
+  it('should not mark any cell sameValue when the selected cell is empty', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([['r3c3', 5]]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.cellProps('r0c0').onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    });
+
+    expect(result.current.cellState('r3c3').sameValue).toBe(false);
+  });
+
   it('should announce a correct entry as correct even when it clashes with a wrong cell', async () => {
     vi.useFakeTimers();
     render(

@@ -93,6 +93,16 @@
   content: none;
 }
 
+/* Highlight every cell sharing the selected cell's value. Teal keeps it
+   distinct from correct (green), and conflict (red) still overrides it. */
+.cell[data-same-value] {
+  background: #1a4f4f;
+}
+
+:global(.light) .cell[data-same-value] {
+  background: #cdeaea;
+}
+
 .cell[data-conflict] {
   background: #2a1515;
 }

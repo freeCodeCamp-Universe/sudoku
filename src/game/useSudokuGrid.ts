@@ -121,6 +121,7 @@ export function useSudokuGrid({
         checkEnabled && !given && value !== undefined && solution.has(id)
           ? value === solution.get(id)
           : undefined;
+      const selectedValue = selectedId !== null ? values.get(selectedId) : undefined;
 
       return {
         value,
@@ -131,6 +132,7 @@ export function useSudokuGrid({
         // belongs to the wrong cell elsewhere in the house, not this one.
         conflict: conflictSet.has(id) && correct !== true,
         correct,
+        sameValue: selectedValue !== undefined && value === selectedValue,
       };
     },
     [candidates, checkEnabled, conflictSet, givens, revealed, selectedId, solution, values]

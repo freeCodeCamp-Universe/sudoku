@@ -289,6 +289,7 @@ export function Board({
                   selected={state.selected}
                   conflict={state.conflict}
                   correct={state.correct}
+                  sameValue={state.sameValue}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
                   boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}
