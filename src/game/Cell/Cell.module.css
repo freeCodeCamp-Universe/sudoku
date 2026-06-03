@@ -52,7 +52,7 @@
   background: #2c2c5a;
 }
 
-.cell[data-box-right]:not([data-overlay-borders])::after {
+.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
   content: '';
   position: absolute;
   top: -1px;
@@ -64,7 +64,7 @@
   pointer-events: none;
 }
 
-.cell[data-box-bottom]:not([data-overlay-borders])::before {
+.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::before {
   content: '';
   position: absolute;
   left: -1px;
@@ -83,14 +83,20 @@
 }
 
 .cell[data-selected] {
-  outline: 3px solid #4a90d9;
-  outline-offset: -3px;
   z-index: 1;
 }
 
-.cell[data-selected]::after,
 .cell[data-selected]::before {
   content: none;
+}
+
+.cell[data-selected]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid #4a90d9;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* Dim the selected cell's peers (its row, column, box, and any other house
@@ -194,8 +200,8 @@
   background: #f8dede;
 }
 
-:global(.light) .cell[data-box-right]::after,
-:global(.light) .cell[data-box-bottom]::before {
+:global(.light) .cell[data-box-right]:not([data-selected])::after,
+:global(.light) .cell[data-box-bottom]:not([data-selected])::before {
   background: #8080a8;
 }
 
