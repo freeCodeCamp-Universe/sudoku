@@ -38,7 +38,7 @@
 
 .cell[data-window],
 .cell[data-asterisk] {
-  background: #1a1b38;
+  background: #3b3b4f;
 }
 
 :global(.light) .cell[data-window],
@@ -123,6 +123,16 @@
 
 :global(.light) .cell[data-peer][data-butterfly] {
   background: #d0e4f8 !important;
+}
+
+/* Window cells keep a distinct, lighter peer shade so the selected cell's
+   window stays visible instead of dropping to the darker outer-cell peer. */
+.cell[data-peer][data-window] {
+  background: #2e2e44 !important;
+}
+
+:global(.light) .cell[data-peer][data-window] {
+  background: #d8d8f0 !important;
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
