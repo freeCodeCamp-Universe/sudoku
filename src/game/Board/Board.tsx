@@ -290,6 +290,7 @@ export function Board({
                   conflict={state.conflict}
                   correct={state.correct}
                   sameValue={state.sameValue}
+                  peer={state.peer}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
                   boxBoundaryRight={isBoxBoundary(variant, cell, 'col')}

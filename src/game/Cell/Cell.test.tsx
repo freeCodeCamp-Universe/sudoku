@@ -82,6 +82,18 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-same-value');
   });
 
+  it('should apply the peer modifier when peer=true', () => {
+    render(<Cell {...baseProps} peer />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-peer', 'true');
+  });
+
+  it('should not apply the peer modifier by default', () => {
+    render(<Cell {...baseProps} />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-peer');
+  });
+
   it('should render candidates as pencil marks when no value present', () => {
     render(<Cell {...baseProps} candidates={[1, 3, 7]} />);
 

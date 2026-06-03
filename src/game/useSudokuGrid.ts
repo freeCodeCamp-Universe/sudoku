@@ -113,6 +113,26 @@ export function useSudokuGrid({
     [checkEnabled, values, model]
   );
 
+  const peerIds = useMemo(() => {
+    const peers = new Set<CellId>();
+
+    if (selectedId === null) {
+      return peers;
+    }
+
+    for (const house of model.houses) {
+      if (house.cells.includes(selectedId)) {
+        for (const cellInHouse of house.cells) {
+          peers.add(cellInHouse);
+        }
+      }
+    }
+
+    peers.delete(selectedId);
+
+    return peers;
+  }, [selectedId, model.houses]);
+
   const getCellState = useCallback(
     (id: CellId): CellState => {
       const value = values.get(id);
@@ -133,9 +153,10 @@ export function useSudokuGrid({
         conflict: conflictSet.has(id) && correct !== true,
         correct,
         sameValue: selectedValue !== undefined && value === selectedValue,
+        peer: peerIds.has(id),
       };
     },
-    [candidates, checkEnabled, conflictSet, givens, revealed, selectedId, solution, values]
+    [candidates, checkEnabled, conflictSet, givens, peerIds, revealed, selectedId, solution, values]
   );
 
   const announce = useCallback((message: string) => {

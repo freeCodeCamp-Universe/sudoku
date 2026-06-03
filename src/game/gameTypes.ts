@@ -50,6 +50,7 @@ export interface CellState {
   conflict: boolean;
   correct?: boolean;
   sameValue?: boolean;
+  peer?: boolean;
 }
 
 export interface GridInteraction {

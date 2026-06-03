@@ -576,6 +576,44 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellState('r2c2').sameValue).toBe(false);
   });
 
+  it('should mark the selected cell row, column, and box peers', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.cellProps('r0c0').onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    });
+
+    expect(result.current.cellState('r0c0').peer).toBe(false); // the selected cell itself
+    expect(result.current.cellState('r0c5').peer).toBe(true); // same row
+    expect(result.current.cellState('r5c0').peer).toBe(true); // same column
+    expect(result.current.cellState('r1c1').peer).toBe(true); // same box
+    expect(result.current.cellState('r5c5').peer).toBe(false); // unrelated
+  });
+
+  it('should mark no peers when nothing is selected', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    expect(result.current.cellState('r0c5').peer).toBe(false);
+  });
+
   it('should not mark any cell sameValue when the selected cell is empty', () => {
     const { result } = renderHook(() =>
       useSudokuGrid({
