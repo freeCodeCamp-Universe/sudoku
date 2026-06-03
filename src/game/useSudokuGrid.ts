@@ -109,8 +109,8 @@ export function useSudokuGrid({
   }, [model.houses]);
 
   const conflictSet = useMemo(
-    () => (checkEnabled ? new Set(validate(values, model).flatMap((conflict) => conflict.cells)) : new Set<CellId>()),
-    [checkEnabled, values, model]
+    () => new Set(validate(values, model).flatMap((conflict) => conflict.cells)),
+    [values, model]
   );
 
   const peerIds = useMemo(() => {
@@ -147,10 +147,11 @@ export function useSudokuGrid({
         value,
         candidates: candidates.get(id) ?? [],
         given,
+        revealed: revealed.has(id),
         selected: selectedId === id,
-        // A provably-correct cell is never flagged as a conflict: the clash
-        // belongs to the wrong cell elsewhere in the house, not this one.
-        conflict: conflictSet.has(id) && correct !== true,
+        // Given/revealed cells are preset by the puzzle and cannot be wrong.
+        // A provably-correct cell is also never flagged as a conflict.
+        conflict: conflictSet.has(id) && !given && correct !== true,
         correct,
         sameValue: selectedValue !== undefined && value === selectedValue,
         peer: peerIds.has(id),
@@ -271,9 +272,12 @@ export function useSudokuGrid({
       }
 
       if (key === 'Backspace' || key === 'Delete' || key === '0') {
-        event.preventDefault();
-        onEnterValue(currentId, 0);
-        announce(`Row ${cell.row + 1}, column ${cell.col + 1}, empty`);
+        const isCorrectCell = checkEnabled && solution.has(currentId) && values.get(currentId) === solution.get(currentId);
+        if (!isCorrectCell) {
+          event.preventDefault();
+          onEnterValue(currentId, 0);
+          announce(`Row ${cell.row + 1}, column ${cell.col + 1}, empty`);
+        }
         return;
       }
 
@@ -290,6 +294,11 @@ export function useSudokuGrid({
       }
 
       event.preventDefault();
+
+      const isCorrectlyFilled = checkEnabled && solution.has(currentId) && values.get(currentId) === solution.get(currentId);
+      if (isCorrectlyFilled) {
+        return;
+      }
 
       if (candidateMode) {
         const current = candidates.get(currentId) ?? [];

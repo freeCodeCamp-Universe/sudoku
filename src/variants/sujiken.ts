@@ -1,5 +1,5 @@
-import { cellId, range } from '@/engine/grid';
-import type { BoardLayout, House, TriangularLayout, Variant } from '@/engine/types';
+import { cellId, range, shuffle } from '@/engine/grid';
+import type { BoardLayout, House, Solution, TriangularLayout, Values, Variant, VariantModel } from '@/engine/types';
 
 const layout: TriangularLayout = { kind: 'triangular', size: 9 };
 
@@ -41,6 +41,14 @@ export const sujiken: Variant = {
   ],
   popularity: 20,
   difficulty: 'advanced',
+  generateGivens(solution: Solution, model: VariantModel, _difficulty: string, rng = Math.random): Values {
+    const givens: Values = new Map(solution);
+    for (const id of shuffle([...givens.keys()], rng)) {
+      if (givens.size <= 17) break;
+      givens.delete(id);
+    }
+    return givens;
+  },
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

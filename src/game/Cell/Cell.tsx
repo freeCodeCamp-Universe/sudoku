@@ -8,6 +8,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   candidates: SymbolValue[];
   symbols: SymbolValue[];
   given: boolean;
+  revealed?: boolean;
   selected: boolean;
   conflict: boolean;
   correct?: boolean;
@@ -22,6 +23,8 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   overlap?: number;
   diagonal?: boolean;
   small?: boolean;
+  medium?: boolean;
+  butterfly?: boolean;
   window?: boolean;
   asterisk?: boolean;
   argyleD1?: boolean;
@@ -47,6 +50,7 @@ export function Cell({
   candidates,
   symbols,
   given,
+  revealed = false,
   selected,
   conflict,
   correct,
@@ -61,6 +65,8 @@ export function Cell({
   overlap = 0,
   diagonal = false,
   small = false,
+  medium = false,
+  butterfly: isButterfly = false,
   window: isWindow = false,
   asterisk = false,
   argyleD1 = false,
@@ -79,18 +85,22 @@ export function Cell({
       data-row={row >= 0 ? row : undefined}
       data-col={col >= 0 ? col : undefined}
       data-given={given || undefined}
+      data-revealed={revealed || undefined}
       data-selected={selected || undefined}
       data-conflict={conflict || undefined}
       data-correct={correct === true || undefined}
       data-incorrect={correct === false || undefined}
       data-same-value={sameValue || undefined}
       data-peer={peer || undefined}
+      data-symbol-kind={symbolKind !== 'digit' ? symbolKind : undefined}
       data-box-right={boxBoundaryRight || undefined}
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}
       data-overlap={overlapClass}
       data-diagonal={diagonal || undefined}
       data-small={small || undefined}
+      data-medium={medium || undefined}
+      data-butterfly={isButterfly || undefined}
       data-window={isWindow || undefined}
       data-asterisk={asterisk || undefined}
       data-argyle-d1={argyleD1 || undefined}

@@ -3,6 +3,7 @@ import type { LayoutStrategy, Rect } from '@/game/gameTypes';
 
 function getCellSize(gridSize: number): number {
   if (gridSize === 16) return 30;
+  if (gridSize === 4) return 80;
   return 52;
 }
 

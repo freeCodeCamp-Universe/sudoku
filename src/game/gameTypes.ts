@@ -46,6 +46,7 @@ export interface CellState {
   value?: SymbolValue;
   candidates: SymbolValue[];
   given: boolean;
+  revealed?: boolean;
   selected: boolean;
   conflict: boolean;
   correct?: boolean;

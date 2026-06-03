@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
@@ -36,12 +36,14 @@ interface GameInnerProps {
 
 function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
+  const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
+  const [winOpen, setWinOpen] = useState(false);
 
   const isBoardFull = state.values.size === solution.size;
   const effectiveSolved = state.solved && settings.checkEnabled;
-  const showCheckPrompt = isBoardFull && !settings.checkEnabled && !effectiveSolved;
+  const showCheckPrompt = isBoardFull && !settings.checkEnabled && !state.solved;
 
   const structure = useMemo(
     () => variant.deriveStructure?.(solution, baseModel),
@@ -170,6 +172,12 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     };
   }, [grid.announcerRef, effectiveSolved]);
 
+  useEffect(() => {
+    if (state.solved) {
+      setWinOpen(true);
+    }
+  }, [state.solved]);
+
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
   function handleReveal() {
@@ -187,7 +195,8 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   }
 
   function handleNewGame() {
-    if (hasProgress) {
+    setWinOpen(false);
+    if (hasProgress && !state.solved) {
       setNewGameConfirmOpen(true);
       return;
     }
@@ -201,6 +210,12 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   );
   const hasProgress =
     state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;
+
+  function formatElapsedSpaced(totalSeconds: number): string {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+  }
 
   return (
     <div className={styles.gamePage}>
@@ -294,9 +309,18 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           <NumberPad
             symbols={model.symbols}
             usedSymbols={usedSymbols}
-            columns={model.symbols.length === 16 ? 4 : undefined}
+            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : undefined}
             onEnter={(value) => {
               if (!selectedCellId) {
+                return;
+              }
+
+              const isCorrectlyFilled =
+                settings.checkEnabled &&
+                solution.has(selectedCellId) &&
+                state.values.get(selectedCellId) === solution.get(selectedCellId);
+
+              if (isCorrectlyFilled) {
                 return;
               }
 
@@ -337,6 +361,62 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
       <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
         New Game
       </button>
+      {winOpen ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Puzzle solved"
+          className={styles.confirmOverlay}
+        >
+          <div className={styles.modal}>
+            <button
+              type="button"
+              className={styles.winClose}
+              aria-label="Close"
+              onClick={() => setWinOpen(false)}
+            >
+              ×
+            </button>
+            <div className={styles.winEmoji} aria-hidden="true">🎉</div>
+            <div className={styles.winTitle}>Great job,<br />puzzle master!</div>
+            <div className={styles.winSub}>
+              {settings.timerEnabled
+                ? `You solved ${variant.name} in:`
+                : `You solved ${variant.name}`}
+            </div>
+            {settings.timerEnabled ? (
+              <div className={styles.winTimeBox}>{formatElapsedSpaced(state.elapsedSeconds)}</div>
+            ) : null}
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.primary}`}
+                onClick={() => {
+                  setWinOpen(false);
+                  onNewGame?.();
+                  dispatch({ type: 'newGame' });
+                }}
+              >
+                Play Again
+              </button>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.secondary}`}
+                onClick={() => setWinOpen(false)}
+              >
+                View Puzzle
+              </button>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.secondary}`}
+                onClick={() => navigate('/')}
+              >
+                Start Page
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       {newGameConfirmOpen ? (
         <div
           role="dialog"
@@ -384,11 +464,13 @@ export function GamePage() {
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
   const { settings, toggleCheck, toggleTimer } = usePersistence(variantId);
+  const [genKey, setGenKey] = useState(0);
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
     const puzzle = generate(builtModel, variant.difficulty);
     return { model: builtModel, givens: puzzle.givens, solution: puzzle.solution };
-  }, [variant]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variant, genKey]);
 
   return (
     <>
@@ -403,7 +485,7 @@ export function GamePage() {
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
-          <GameInner settings={settings} toggleCheck={toggleCheck} />
+          <GameInner settings={settings} toggleCheck={toggleCheck} onNewGame={() => setGenKey((k) => k + 1)} />
         </GameProvider>
       </main>
 

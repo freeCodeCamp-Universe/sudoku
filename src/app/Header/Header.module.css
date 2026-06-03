@@ -190,10 +190,22 @@
   color: var(--accent-green);
 }
 
+:global(.light) .on {
+  border-color: #90c090;
+  background: #d4ead4;
+  color: #2a6a2a;
+}
+
 .off {
   border-color: var(--border);
   background: var(--bg-secondary);
   color: var(--text-muted);
+}
+
+:global(.light) .off {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: #6a6a7a;
 }
 
 .helpBtn:focus-visible,

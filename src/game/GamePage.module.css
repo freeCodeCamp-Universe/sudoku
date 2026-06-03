@@ -132,12 +132,13 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 40px 48px;
+  position: relative;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  max-width: 340px;
+  max-width: 400px;
   width: 90%;
 }
 
@@ -157,6 +158,49 @@
 .primary { background: var(--accent-yellow); color: #0a0a23; border: none; }
 .secondary { background: none; color: var(--text-subtle); border: 1px solid var(--border); }
 .secondary:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+.winClose {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.winClose:hover { color: var(--text-bright); }
+.winClose:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.winEmoji { font-size: 3rem; line-height: 1; }
+
+.winTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-bright);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.winSub {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.winTimeBox {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  color: var(--text-bright);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 40px;
+}
 
 @media (max-width: 900px) {
   .gameLayout {

@@ -286,6 +286,7 @@ export function Board({
                   candidates={state.candidates}
                   symbols={variant.symbols}
                   given={state.given}
+                  revealed={state.revealed}
                   selected={state.selected}
                   conflict={state.conflict}
                   correct={state.correct}
@@ -303,6 +304,8 @@ export function Board({
                   argyleD1={variant.id === 'argyle' && argyleD1Set.has(cell.id)}
                   argyleD2={variant.id === 'argyle' && argyleD2Set.has(cell.id)}
                   small={rect.w <= 30}
+                  medium={rect.w > 30 && rect.w <= 44}
+                  butterfly={variant.id === 'butterfly'}
                   aria-colindex={cell.col + 1}
                   onClick={props.onClick ?? (() => {})}
                   {...props}
