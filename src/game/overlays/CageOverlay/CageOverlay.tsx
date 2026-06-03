@@ -151,7 +151,7 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
           <text
             key={`${cage.sum}-${index}`}
             x={rect.x + 3}
-            y={rect.y + 11}
+            y={rect.y + 5}
             className={styles.sumLabel}
             data-testid="cage-sum-label"
           >
