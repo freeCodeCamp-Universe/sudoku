@@ -39,6 +39,10 @@
   box-shadow: 0 4px 24px rgb(0 0 0 / 12%);
 }
 
+:global(.light) .multigrid {
+  box-shadow: none;
+}
+
 :global(.light) .samuraiEdge {
   background: #8080a8;
 }
