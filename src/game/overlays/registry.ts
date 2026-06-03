@@ -5,7 +5,6 @@ import { AsteriskOverlay } from './AsteriskOverlay';
 import { CageOverlay } from './CageOverlay';
 import { ChainOverlay } from './ChainOverlay';
 import { ConsecutiveOverlay } from './ConsecutiveOverlay';
-import { DiagonalOverlay } from './DiagonalOverlay';
 import { EvenOddOverlay } from './EvenOddOverlay';
 import { InequalityOverlay } from './InequalityOverlay';
 import { JigsawOverlay } from './JigsawOverlay';
@@ -18,7 +17,6 @@ export const overlayRegistry: Record<string, OverlayComponent> = {
   cage: CageOverlay,
   'chain-overlay': ChainOverlay,
   'consecutive-dots': ConsecutiveOverlay,
-  diagonal: DiagonalOverlay,
   'evenOdd-shading': EvenOddOverlay,
   inequality: InequalityOverlay,
   jigsaw: JigsawOverlay,
