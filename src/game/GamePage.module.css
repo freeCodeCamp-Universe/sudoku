@@ -72,6 +72,23 @@
   flex-shrink: 0;
 }
 
+.colorLegend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 260px;
+  margin-block-end: 20px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.colorSwatches {
+  display: flex;
+  gap: 5px;
+}
+
 .checkPrompt {
   font-size: 0.82rem;
   color: var(--accent-red);

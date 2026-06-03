@@ -229,8 +229,37 @@
 
 .colorChip {
   position: absolute;
-  inset: 0;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  width: 54%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   display: block;
+  pointer-events: none;
+}
+
+/* Given cells carry a small dot in the top-start corner so clue cells stay
+   distinguishable from player-filled ones once the value is shown as a plain
+   color circle. Revealed cells use the same mark in the hint's golden hue. */
+.givenDot,
+.revealedDot {
+  position: absolute;
+  inset-block-start: 5px;
+  inset-inline-start: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.givenDot {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.revealedDot {
+  background: rgba(241, 190, 50, 0.85);
 }
 
 .colorLabel {
@@ -283,4 +312,8 @@
 :global(.light) .colorLabel {
   color: rgba(0, 0, 0, 0.7);
   text-shadow: none;
+}
+
+:global(.light) .givenDot {
+  background: rgba(0, 0, 0, 0.25);
 }

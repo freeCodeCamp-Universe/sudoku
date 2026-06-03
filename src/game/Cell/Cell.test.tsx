@@ -146,6 +146,18 @@ describe('Cell', () => {
       expect(screen.getByTestId('cell-color-chip')).toHaveStyle({ background: '#d4a828' });
     });
 
+    it('should render a given dot when a color cell is given', () => {
+      render(<Cell {...colorProps} given />);
+
+      expect(screen.getByTestId('cell-given-dot')).toBeTruthy();
+    });
+
+    it('should not render a given dot when a color cell is not given', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.queryByTestId('cell-given-dot')).toBeNull();
+    });
+
     it('should not render a color chip for symbolKind digit', () => {
       render(
         <Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />

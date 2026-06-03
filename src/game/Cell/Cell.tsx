@@ -113,15 +113,27 @@ export function Cell({
     >
       {value !== undefined ? (
         symbolKind === 'color' ? (
-          <span
-            aria-hidden="true"
-            className={styles.colorChip}
-            data-color-chip
-            data-testid="cell-color-chip"
-            style={{ background: renderSymbol(value) }}
-          >
-            <span className={styles.colorLabel}>{value}</span>
-          </span>
+          <>
+            <span
+              aria-hidden="true"
+              className={styles.colorChip}
+              data-color-chip
+              data-testid="cell-color-chip"
+              style={{ background: renderSymbol(value) }}
+            />
+            <span aria-hidden="true" className={styles.colorLabel}>
+              {value}
+            </span>
+            {given ? (
+              <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
+            ) : revealed ? (
+              <span
+                aria-hidden="true"
+                className={styles.revealedDot}
+                data-testid="cell-revealed-dot"
+              />
+            ) : null}
+          </>
         ) : (
           <span aria-hidden="true" className={styles.value}>
             {renderSymbol(value)}
