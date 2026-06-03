@@ -17,7 +17,7 @@
 }
 
 .cell[data-diagonal] {
-  background: #1a1b38;
+  background: #3b3b4f;
 }
 
 :global(.light) .cell[data-diagonal] {
@@ -152,6 +152,16 @@
 
 :global(.light) .cell[data-peer][data-asterisk] {
   background: #c4a8ec !important;
+}
+
+/* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals
+   stay visible instead of dropping to the plain outer-cell peer. */
+.cell[data-peer][data-diagonal] {
+  background: #2e2e44 !important;
+}
+
+:global(.light) .cell[data-peer][data-diagonal] {
+  background: #d8d8f0 !important;
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
