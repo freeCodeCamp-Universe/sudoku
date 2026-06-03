@@ -87,10 +87,15 @@ describe('killer variant', () => {
     expect(validate(solution, modelWithStructure)).toEqual([]);
   });
 
-  it('should generate no givens for killer puzzles', () => {
+  it('should generate starting-clue givens that match the solution', () => {
     const model = buildModel(killer);
-    const { givens } = generate(model, killer.difficulty, seeded(65));
+    const { givens, solution } = generate(model, killer.difficulty, seeded(65));
 
-    expect(givens).toEqual(new Map());
+    expect(givens.size).toBeGreaterThan(0);
+    expect(givens.size).toBeLessThanOrEqual(16);
+
+    for (const [cellId, value] of givens) {
+      expect(value).toBe(solution.get(cellId));
+    }
   });
 });
