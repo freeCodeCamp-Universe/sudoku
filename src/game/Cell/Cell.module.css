@@ -36,14 +36,23 @@
   font-size: 0.82rem;
 }
 
-.cell[data-window],
-.cell[data-asterisk] {
+.cell[data-window] {
   background: #3b3b4f;
 }
 
-:global(.light) .cell[data-window],
-:global(.light) .cell[data-asterisk] {
+:global(.light) .cell[data-window] {
   background: #e8e8fa;
+}
+
+/* Asterisk cells carry a purple base in the overlay's own hue (like argyle and
+   windoku do for theirs), so a selected asterisk cell stays purple when it
+   lifts above the translucent overlay instead of dropping to a grey base. */
+.cell[data-asterisk] {
+  background: #3a1a6a;
+}
+
+:global(.light) .cell[data-asterisk] {
+  background: #dcc8f4;
 }
 
 .cell[data-argyle-d1] { background: #3d2c0c; }
@@ -133,6 +142,16 @@
 
 :global(.light) .cell[data-peer][data-window] {
   background: #d8d8f0 !important;
+}
+
+/* Asterisk peers lighten to a brighter purple so the selected cell's asterisk
+   house reads as highlighted instead of dropping to the darker outer peer. */
+.cell[data-peer][data-asterisk] {
+  background: #4a2480 !important;
+}
+
+:global(.light) .cell[data-peer][data-asterisk] {
+  background: #c4a8ec !important;
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
