@@ -72,16 +72,18 @@ export function Gallery() {
   return (
     <main id="main-content" tabIndex={-1} className={styles.main}>
       <header className={styles.header}>
+        <div className={styles.headerTopBar}>
+          <button
+            type="button"
+            className={styles.themeBtn}
+            aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+            onClick={toggleTheme}
+          >
+            {theme === 'light' ? '☽' : '☼'}
+          </button>
+        </div>
         <h1 className={styles.heading}>SUDOKU</h1>
         <p className={styles.subheading}>20 sudoku variants for every skill level</p>
-        <button
-          type="button"
-          className={styles.themeBtn}
-          aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
-          onClick={toggleTheme}
-        >
-          {theme === 'light' ? '☽' : '☼'}
-        </button>
       </header>
 
       <div className={styles.controls}>

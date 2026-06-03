@@ -31,9 +31,10 @@ type VariantWithColorNames = {
 interface GameInnerProps {
   settings: { checkEnabled: boolean; timerEnabled: boolean };
   toggleCheck: () => void;
+  onNewGame?: () => void;
 }
 
-function GameInner({ settings, toggleCheck }: GameInnerProps) {
+function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
@@ -190,6 +191,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
       setNewGameConfirmOpen(true);
       return;
     }
+    onNewGame?.();
     dispatch({ type: 'newGame' });
   }
 
@@ -220,18 +222,68 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
             grid={grid}
             renderSymbol={renderSymbol}
           />
+          {liveVariant.id === 'wordoku' ? (
+            <div className={styles.variantLegend} aria-label="Wordoku rule legend">
+              <span>There is a hidden word somewhere. Try to find it!</span>
+            </div>
+          ) : null}
+          {liveVariant.id === 'greater-than' ? (
+            <div className={styles.variantLegend} aria-label="Greater-than rule legend">
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
+                <polygon points="10,5 0,0 0,10" fill="#f1be32" />
+              </svg>
+              <span>Triangle points toward the smaller of the two adjacent digits.</span>
+            </div>
+          ) : null}
+          {liveVariant.id === 'consecutive' ? (
+            <div className={styles.variantLegend} aria-label="Consecutive rule legend">
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
+                <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
+              </svg>
+              <span>
+                A dot between two cells means those digits differ by exactly 1. Cells without a dot
+                must not differ by 1.
+              </span>
+            </div>
+          ) : null}
+          {liveVariant.id === 'even-odd' ? (
+            <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
+              <span
+                className={styles.legendSwatch}
+                style={{ background: 'rgba(58,128,224,0.35)' }}
+              />
+              <span>Even (2, 4, 6, 8)</span>
+              <span
+                className={styles.legendSwatch}
+                style={{ background: 'rgba(212,168,40,0.35)' }}
+              />
+              <span>Odd (1, 3, 5, 7, 9)</span>
+            </div>
+          ) : null}
           {liveVariant.id === 'arrow' ? (
             <div className={styles.variantLegend} aria-label="Arrow rule legend">
               <svg
-                width="100"
-                height="24"
-                viewBox="0 0 100 24"
+                width="44"
+                height="18"
+                viewBox="0 0 80 18"
                 aria-hidden="true"
                 className={styles.legendIcon}
               >
-                <circle cx="15" cy="12" r="8" className={styles.legendCircle} />
-                <line x1="23" y1="12" x2="81" y2="12" className={styles.legendLine} />
-                <polygon points="88,12 79,7 79,17" className={styles.legendHead} />
+                <circle cx="9" cy="9" r="8" fill="none" stroke="#9898b8" strokeWidth="1.5" />
+                <polyline points="17,9 66,9" fill="none" stroke="#9898b8" strokeWidth="1.5" />
+                <polygon points="73,9 65,5 65,13" fill="#9898b8" />
               </svg>
               <span>Digits along each arrow sum to the number in the circle.</span>
             </div>
@@ -301,6 +353,7 @@ function GameInner({ settings, toggleCheck }: GameInnerProps) {
                 className={`${styles.modalBtn} ${styles.primary}`}
                 onClick={() => {
                   setNewGameConfirmOpen(false);
+                  onNewGame?.();
                   dispatch({ type: 'newGame' });
                 }}
               >
@@ -334,12 +387,7 @@ export function GamePage() {
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
     const puzzle = generate(builtModel, variant.difficulty);
-
-    return {
-      model: builtModel,
-      givens: puzzle.givens,
-      solution: puzzle.solution,
-    };
+    return { model: builtModel, givens: puzzle.givens, solution: puzzle.solution };
   }, [variant]);
 
   return (

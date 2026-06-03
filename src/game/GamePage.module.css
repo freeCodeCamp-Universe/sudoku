@@ -28,13 +28,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 10px;
+  max-width: 416px;
   width: 100%;
-  margin-block-start: 16px;
-  color: #9898b8;
-  font-size: 0.95rem;
-  text-align: center;
+  margin-block-start: 4px;
+  margin-block-end: 20px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
 }
 
 .legendIcon {
@@ -64,6 +64,14 @@
   flex-shrink: 0;
 }
 
+.legendSwatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .checkPrompt {
   font-size: 0.82rem;
   color: var(--accent-red);
@@ -89,7 +97,7 @@
 .checkPromptBtn:hover { opacity: 0.7; }
 
 .newGameBtn {
-  margin-block-start: 24px;
+  margin-block-start: 40px;
   align-self: center;
   display: flex;
   justify-content: center;
