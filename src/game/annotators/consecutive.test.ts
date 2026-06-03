@@ -30,12 +30,11 @@ describe('consecutiveAnnotator', () => {
   it('should describe a cell that participates in marked consecutive pairs', () => {
     const marks: Mark[] = [
       { a: cellId(0, 0), b: cellId(0, 1) },
-      { a: cellId(0, 0), b: cellId(1, 0) },
+      { a: cellId(1, 0), b: cellId(0, 0) },
     ];
     const result = consecutiveAnnotator.describe(cellId(0, 0), makeCtx(marks));
 
-    expect(result).toContain('consecutive');
-    expect(result).toContain('2');
+    expect(result).toBe('consecutive with the cell to the right, the cell below');
   });
 
   it('should return null for a cell with no marked consecutive pairs', () => {

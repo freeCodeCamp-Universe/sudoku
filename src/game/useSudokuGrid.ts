@@ -11,6 +11,7 @@ interface UseSudokuGridOptions {
   candidates?: Map<CellId, SymbolValue[]>;
   givens: Set<CellId>;
   revealed?: Set<CellId>;
+  solution?: Values;
   onEnterValue: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate: (id: CellId, value: SymbolValue) => void;
   checkEnabled?: boolean;
@@ -22,16 +23,44 @@ interface UseSudokuGridOptions {
 
 function getCellLabel(
   cell: Cell,
+  boxNumber: number | undefined,
   value: SymbolValue | undefined,
+  candidates: SymbolValue[],
   extras: string[],
+  correct: boolean | undefined,
+  inConflict: boolean,
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
-  const base = value !== undefined
-    ? `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(value)}`
-    : `Row ${cell.row + 1}, column ${cell.col + 1}, empty`;
+  const location = `Row ${cell.row + 1}, column ${cell.col + 1}${
+    boxNumber !== undefined ? `, box ${boxNumber}` : ''
+  }`;
 
-  const flags = [...extras];
+  let base: string;
+
+  if (value !== undefined) {
+    base = `${location}, ${describeSymbol(value)}`;
+  } else if (candidates.length > 0) {
+    const candidateList = candidates.map((s) => describeSymbol(s)).join(', ');
+    const prefix = candidates.length === 1 ? 'candidate' : 'candidates';
+    base = `${location}, ${prefix} ${candidateList}`;
+  } else {
+    base = `${location}, empty`;
+  }
+
+  const flags: string[] = [];
+
+  if (correct === true) {
+    flags.push('correct');
+  } else if (correct === false) {
+    flags.push('incorrect');
+  }
+
+  if (inConflict) {
+    flags.push('in conflict');
+  }
+
+  flags.push(...extras);
 
   if (isReadonly) {
     flags.push('readonly');
@@ -47,6 +76,7 @@ export function useSudokuGrid({
   candidates = new Map(),
   givens,
   revealed = new Set(),
+  solution = new Map(),
   onEnterValue,
   onToggleCandidate,
   checkEnabled = false,
@@ -64,20 +94,69 @@ export function useSudokuGrid({
 
   const cellsById = useMemo(() => new Map(cells.map((cell) => [cell.id, cell])), [cells]);
 
+  const boxNumberByCell = useMemo(() => {
+    const map = new Map<CellId, number>();
+
+    model.houses
+      .filter((house) => /^box-\d+-\d+$/.test(house.id))
+      .forEach((house, index) => {
+        for (const id of house.cells) {
+          map.set(id, index + 1);
+        }
+      });
+
+    return map;
+  }, [model.houses]);
+
   const conflictSet = useMemo(
     () => (checkEnabled ? new Set(validate(values, model).flatMap((conflict) => conflict.cells)) : new Set<CellId>()),
     [checkEnabled, values, model]
   );
 
+  const peerIds = useMemo(() => {
+    const peers = new Set<CellId>();
+
+    if (selectedId === null) {
+      return peers;
+    }
+
+    for (const house of model.houses) {
+      if (house.cells.includes(selectedId)) {
+        for (const cellInHouse of house.cells) {
+          peers.add(cellInHouse);
+        }
+      }
+    }
+
+    peers.delete(selectedId);
+
+    return peers;
+  }, [selectedId, model.houses]);
+
   const getCellState = useCallback(
-    (id: CellId): CellState => ({
-      value: values.get(id),
-      candidates: candidates.get(id) ?? [],
-      given: givens.has(id) || revealed.has(id),
-      selected: selectedId === id,
-      conflict: conflictSet.has(id),
-    }),
-    [candidates, conflictSet, givens, revealed, selectedId, values]
+    (id: CellId): CellState => {
+      const value = values.get(id);
+      const given = givens.has(id) || revealed.has(id);
+      const correct =
+        checkEnabled && !given && value !== undefined && solution.has(id)
+          ? value === solution.get(id)
+          : undefined;
+      const selectedValue = selectedId !== null ? values.get(selectedId) : undefined;
+
+      return {
+        value,
+        candidates: candidates.get(id) ?? [],
+        given,
+        selected: selectedId === id,
+        // A provably-correct cell is never flagged as a conflict: the clash
+        // belongs to the wrong cell elsewhere in the house, not this one.
+        conflict: conflictSet.has(id) && correct !== true,
+        correct,
+        sameValue: selectedValue !== undefined && value === selectedValue,
+        peer: peerIds.has(id),
+      };
+    },
+    [candidates, checkEnabled, conflictSet, givens, peerIds, revealed, selectedId, solution, values]
   );
 
   const announce = useCallback((message: string) => {
@@ -104,13 +183,25 @@ export function useSudokuGrid({
       }
 
       const state = getCellState(id);
+      const sortedCandidates = model.symbols.filter((s) => state.candidates.includes(s));
+
       const extras = annotators
         .map((annotator) => annotator.describe(id, { values, model, cellState: getCellState }))
         .filter((message): message is string => message !== null);
 
-      return getCellLabel(cell, state.value, extras, state.given, describeSymbol);
+      return getCellLabel(
+        cell,
+        boxNumberByCell.get(id),
+        state.value,
+        sortedCandidates,
+        extras,
+        state.correct,
+        state.conflict,
+        state.given,
+        describeSymbol
+      );
     },
-    [annotators, cellsById, describeSymbol, getCellState, model, values]
+    [annotators, boxNumberByCell, cellsById, describeSymbol, getCellState, model, values]
   );
 
   const selectCell = useCallback(
@@ -201,14 +292,51 @@ export function useSudokuGrid({
       event.preventDefault();
 
       if (candidateMode) {
+        const current = candidates.get(currentId) ?? [];
+        const adding = !current.includes(digit as SymbolValue);
+
         onToggleCandidate(currentId, digit as SymbolValue);
+
+        const action = adding ? 'added' : 'removed';
+        announce(
+          `Row ${cell.row + 1}, column ${cell.col + 1}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
+        );
       } else {
         onEnterValue(currentId, digit as SymbolValue);
-      }
 
-      announce(`Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}`);
+        const nextValues = new Map(values);
+        nextValues.set(currentId, digit as SymbolValue);
+        const isCorrect = checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
+        const correctness =
+          checkEnabled && solution.has(currentId) ? (isCorrect ? ', correct' : ', incorrect') : '';
+        const inConflict =
+          !isCorrect &&
+          checkEnabled &&
+          validate(nextValues, model).some((c) => c.cells.includes(currentId));
+
+        announce(
+          `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${correctness}${inConflict ? ', in conflict' : ''}`
+        );
+      }
     },
-    [announce, candidateMode, cells, cellsById, describeSymbol, givens, model.symbols, onEnterValue, onToggleCandidate, renderSymbol, revealed, selectCell]
+    [
+      announce,
+      candidateMode,
+      candidates,
+      cells,
+      cellsById,
+      checkEnabled,
+      describeSymbol,
+      givens,
+      model,
+      onEnterValue,
+      onToggleCandidate,
+      renderSymbol,
+      revealed,
+      selectCell,
+      solution,
+      values,
+    ]
   );
 
   const firstCellId = cells[0]?.id ?? null;

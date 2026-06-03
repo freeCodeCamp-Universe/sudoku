@@ -15,20 +15,20 @@ function ctx(): AnnotatorContext {
 }
 
 describe('windokuAnnotator', () => {
-  it('should return "shaded region" for r1c1 (window-0)', () => {
-    expect(windokuAnnotator.describe('r1c1', ctx())).toBe('shaded region');
+  it('should return descriptive wording for r1c1 (window-0)', () => {
+    expect(windokuAnnotator.describe('r1c1', ctx())).toBe('window 1 of 4');
   });
 
-  it('should return "shaded region" for r1c5 (window-1)', () => {
-    expect(windokuAnnotator.describe('r1c5', ctx())).toBe('shaded region');
+  it('should return descriptive wording for r1c5 (window-1)', () => {
+    expect(windokuAnnotator.describe('r1c5', ctx())).toBe('window 2 of 4');
   });
 
-  it('should return "shaded region" for r5c1 (window-2)', () => {
-    expect(windokuAnnotator.describe('r5c1', ctx())).toBe('shaded region');
+  it('should return descriptive wording for r5c1 (window-2)', () => {
+    expect(windokuAnnotator.describe('r5c1', ctx())).toBe('window 3 of 4');
   });
 
-  it('should return "shaded region" for r7c7 (window-3)', () => {
-    expect(windokuAnnotator.describe('r7c7', ctx())).toBe('shaded region');
+  it('should return descriptive wording for r7c7 (window-3)', () => {
+    expect(windokuAnnotator.describe('r7c7', ctx())).toBe('window 4 of 4');
   });
 
   it('should return null for r0c0 (not in any window)', () => {

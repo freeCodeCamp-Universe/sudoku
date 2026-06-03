@@ -93,8 +93,36 @@
   content: none;
 }
 
+/* Dim the selected cell's peers (its row, column, box, and any other house
+   it shares). Subtler than the same-value highlight, which overrides it. */
+.cell[data-peer] {
+  background: #22243e;
+}
+
+:global(.light) .cell[data-peer] {
+  background: #ededf6;
+}
+
+/* Highlight every cell sharing the selected cell's value. Teal keeps it
+   distinct from correct (green), and conflict (red) still overrides it. */
+.cell[data-same-value] {
+  background: #1a4f4f;
+}
+
+:global(.light) .cell[data-same-value] {
+  background: #cdeaea;
+}
+
 .cell[data-conflict] {
   background: #2a1515;
+}
+
+.cell[data-correct] .value {
+  color: var(--accent-green);
+}
+
+.cell[data-incorrect] .value {
+  color: var(--accent-red);
 }
 
 .value {

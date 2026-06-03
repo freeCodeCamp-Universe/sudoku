@@ -1,5 +1,6 @@
 import type { Relation } from '@/engine/constraints/greaterThan';
 import type { CellAnnotator } from '@/game/gameTypes';
+import { neighborDescription } from './neighbor';
 
 function getRelations(ctx: Parameters<CellAnnotator['describe']>[1]): Relation[] {
   const structure = ctx.model.structure as { relations?: Relation[] } | undefined;
@@ -20,14 +21,12 @@ export const greaterThanAnnotator: CellAnnotator = {
 
     const parts: string[] = [];
 
-    if (greaterSides.length > 0) {
-      parts.push(
-        `greater than ${greaterSides.length} neighbor${greaterSides.length === 1 ? '' : 's'}`
-      );
+    for (const relation of greaterSides) {
+      parts.push(`greater than ${neighborDescription(cellId, relation.lesser)}`);
     }
 
-    if (lesserSides.length > 0) {
-      parts.push(`less than ${lesserSides.length} neighbor${lesserSides.length === 1 ? '' : 's'}`);
+    for (const relation of lesserSides) {
+      parts.push(`less than ${neighborDescription(cellId, relation.greater)}`);
     }
 
     return parts.join(', ');

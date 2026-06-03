@@ -9,6 +9,7 @@ export interface GutterCell {
   row?: number;
   col?: number;
   label: string;
+  description?: string;
 }
 
 export interface GutterSlots {
@@ -47,6 +48,9 @@ export interface CellState {
   given: boolean;
   selected: boolean;
   conflict: boolean;
+  correct?: boolean;
+  sameValue?: boolean;
+  peer?: boolean;
 }
 
 export interface GridInteraction {

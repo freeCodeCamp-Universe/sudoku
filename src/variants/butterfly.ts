@@ -90,6 +90,6 @@ export const butterfly: Variant = {
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
   overlayIds: [],
-  annotatorIds: [],
+  annotatorIds: ['overlap'],
   buildHouses: buildButterflyHouses,
 };

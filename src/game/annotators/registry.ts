@@ -8,6 +8,7 @@ import { consecutiveAnnotator } from './consecutive';
 import { evenCellAnnotator, oddCellAnnotator } from './evenOdd';
 import { greaterThanAnnotator } from './greaterThan';
 import { jigsawAnnotatorPlaceholder } from './jigsaw';
+import { overlapAnnotator } from './overlap';
 import { skyscraperClueAnnotator } from './skyscraper';
 import { sudokuXAnnotator } from './sudoku-x';
 import { windokuAnnotator } from './windoku';
@@ -24,6 +25,7 @@ export const annotatorRegistry: Record<string, CellAnnotator> = {
   [greaterThanAnnotator.id]: greaterThanAnnotator,
   [jigsawAnnotatorPlaceholder.id]: jigsawAnnotatorPlaceholder,
   [oddCellAnnotator.id]: oddCellAnnotator,
+  [overlapAnnotator.id]: overlapAnnotator,
   [skyscraperClueAnnotator.id]: skyscraperClueAnnotator,
   [sudokuXAnnotator.id]: sudokuXAnnotator,
   [windokuAnnotator.id]: windokuAnnotator,

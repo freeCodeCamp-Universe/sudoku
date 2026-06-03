@@ -31,6 +31,10 @@ const diagonalSet = new Set([...MAIN_DIAGONAL_CELLS, ...ANTI_DIAGONAL_CELLS]);
 export type { BoardProps };
 
 function buildGutterAriaLabel(side: keyof GutterSlots, cell: GutterCell): string {
+  if (cell.description) {
+    return cell.description;
+  }
+
   switch (side) {
     case 'top':
       return `Top clue for column ${(cell.col ?? 0) + 1}: ${cell.label}`;
@@ -284,6 +288,9 @@ export function Board({
                   given={state.given}
                   selected={state.selected}
                   conflict={state.conflict}
+                  correct={state.correct}
+                  sameValue={state.sameValue}
+                  peer={state.peer}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
                   boxBoundaryRight={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'col')}

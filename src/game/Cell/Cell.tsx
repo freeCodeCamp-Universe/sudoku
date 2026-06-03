@@ -10,6 +10,9 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   given: boolean;
   selected: boolean;
   conflict: boolean;
+  correct?: boolean;
+  sameValue?: boolean;
+  peer?: boolean;
   onClick: React.MouseEventHandler<HTMLDivElement>;
   renderSymbol: (value: SymbolValue) => string;
   symbolKind?: 'digit' | 'letter' | 'color';
@@ -46,6 +49,9 @@ export function Cell({
   given,
   selected,
   conflict,
+  correct,
+  sameValue = false,
+  peer = false,
   onClick,
   renderSymbol,
   symbolKind = 'digit',
@@ -75,6 +81,10 @@ export function Cell({
       data-given={given || undefined}
       data-selected={selected || undefined}
       data-conflict={conflict || undefined}
+      data-correct={correct === true || undefined}
+      data-incorrect={correct === false || undefined}
+      data-same-value={sameValue || undefined}
+      data-peer={peer || undefined}
       data-box-right={boxBoundaryRight || undefined}
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}

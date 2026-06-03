@@ -43,27 +43,35 @@ function computeClues(solution: Solution): EdgeClues {
   return { top, bottom, start, end };
 }
 
+function describeClue(value: number, place: string): string {
+  return `${value} building${value === 1 ? '' : 's'} visible from ${place}`;
+}
+
 export function buildGutters(clues: EdgeClues): GutterSlots {
   return {
     top: clues.top.map((value, index) => ({
       id: `sky-top-${index}`,
       col: index,
       label: String(value),
+      description: describeClue(value, `the top of column ${index + 1}`),
     })),
     bottom: clues.bottom.map((value, index) => ({
       id: `sky-bottom-${index}`,
       col: index,
       label: String(value),
+      description: describeClue(value, `the bottom of column ${index + 1}`),
     })),
     start: clues.start.map((value, index) => ({
       id: `sky-start-${index}`,
       row: index,
       label: String(value),
+      description: describeClue(value, `the start of row ${index + 1}`),
     })),
     end: clues.end.map((value, index) => ({
       id: `sky-end-${index}`,
       row: index,
       label: String(value),
+      description: describeClue(value, `the end of row ${index + 1}`),
     })),
   };
 }

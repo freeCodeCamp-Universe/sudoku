@@ -30,16 +30,27 @@ describe('greaterThanAnnotator', () => {
   it('should describe a cell that is the greater side of one relation', () => {
     const relations: Relation[] = [{ greater: cellId(0, 0), lesser: cellId(0, 1) }];
 
-    expect(greaterThanAnnotator.describe(cellId(0, 0), makeCtx(relations))).toContain(
-      'greater than'
+    expect(greaterThanAnnotator.describe(cellId(0, 0), makeCtx(relations))).toBe(
+      'greater than the cell to the right'
     );
   });
 
   it('should describe a cell that is the lesser side of one relation', () => {
     const relations: Relation[] = [{ greater: cellId(0, 0), lesser: cellId(0, 1) }];
 
-    expect(greaterThanAnnotator.describe(cellId(0, 1), makeCtx(relations))).toContain(
-      'less than'
+    expect(greaterThanAnnotator.describe(cellId(0, 1), makeCtx(relations))).toBe(
+      'less than the cell to the left'
+    );
+  });
+
+  it('should describe a cell with multiple relations', () => {
+    const relations: Relation[] = [
+      { greater: cellId(0, 0), lesser: cellId(0, 1) },
+      { greater: cellId(1, 0), lesser: cellId(0, 0) },
+    ];
+
+    expect(greaterThanAnnotator.describe(cellId(0, 0), makeCtx(relations))).toBe(
+      'greater than the cell to the right, less than the cell below'
     );
   });
 

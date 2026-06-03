@@ -12,7 +12,15 @@ export const arrowBulbAnnotator: CellAnnotator = {
       return null;
     }
 
-    return arrows.some((arrow) => arrow.bulb === cellId) ? 'arrow circle' : null;
+    const index = arrows.findIndex((arrow) => arrow.bulb === cellId);
+    if (index === -1) {
+      return null;
+    }
+
+    const arrow = arrows[index];
+    const n = arrow.path.length;
+    const label = arrows.length > 1 ? `arrow ${index + 1} circle` : 'arrow circle';
+    return `${label}, equals the sum of the ${n} ${n === 1 ? 'cell' : 'cells'} along its arrow`;
   },
 };
 
@@ -24,6 +32,12 @@ export const arrowPathAnnotator: CellAnnotator = {
       return null;
     }
 
-    return arrows.some((arrow) => arrow.path.includes(cellId)) ? 'arrow path' : null;
+    const index = arrows.findIndex((arrow) => arrow.path.includes(cellId));
+    if (index === -1) {
+      return null;
+    }
+
+    const label = arrows.length > 1 ? `arrow ${index + 1} path` : 'arrow path';
+    return `${label}, contributes to its circle's sum`;
   },
 };

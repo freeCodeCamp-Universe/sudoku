@@ -73,14 +73,14 @@ describe('GamePage - Classic integration', () => {
   it('should use color names in cell accessibility labels for the color variant', () => {
     renderGamePage('color');
 
-    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, Red, readonly/i })).toBeTruthy();
+    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, box 1, Red, readonly/i })).toBeTruthy();
   });
 
   it('should render skyscraper gutters from derived structure', () => {
     renderGamePage('skyscraper');
 
-    expect(screen.getAllByLabelText(/Top clue for column /i)).toHaveLength(9);
-    expect(screen.getAllByLabelText(/Start clue for row /i)).toHaveLength(9);
+    expect(screen.getAllByLabelText(/visible from the top of column /i)).toHaveLength(9);
+    expect(screen.getAllByLabelText(/visible from the start of row /i)).toHaveLength(9);
   });
 
   it('should render the arrow rule legend for arrow sudoku', () => {

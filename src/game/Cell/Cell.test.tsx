@@ -46,6 +46,54 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-conflict', 'true');
   });
 
+  it('should apply the correct modifier when correct=true', () => {
+    render(<Cell {...baseProps} value={5} correct />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-correct', 'true');
+    expect(cell).not.toHaveAttribute('data-incorrect');
+  });
+
+  it('should apply the incorrect modifier when correct=false', () => {
+    render(<Cell {...baseProps} value={5} correct={false} />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-incorrect', 'true');
+    expect(cell).not.toHaveAttribute('data-correct');
+  });
+
+  it('should apply neither correctness modifier when correct is undefined', () => {
+    render(<Cell {...baseProps} value={5} />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).not.toHaveAttribute('data-correct');
+    expect(cell).not.toHaveAttribute('data-incorrect');
+  });
+
+  it('should apply the same-value modifier when sameValue=true', () => {
+    render(<Cell {...baseProps} value={5} sameValue />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-same-value', 'true');
+  });
+
+  it('should not apply the same-value modifier by default', () => {
+    render(<Cell {...baseProps} value={5} />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-same-value');
+  });
+
+  it('should apply the peer modifier when peer=true', () => {
+    render(<Cell {...baseProps} peer />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-peer', 'true');
+  });
+
+  it('should not apply the peer modifier by default', () => {
+    render(<Cell {...baseProps} />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-peer');
+  });
+
   it('should render candidates as pencil marks when no value present', () => {
     render(<Cell {...baseProps} candidates={[1, 3, 7]} />);
 

@@ -132,4 +132,17 @@ describe('buildGutters', () => {
     expect(gutters.top?.[0]?.label).toBe('3');
     expect(gutters.start?.[0]?.label).toBe('5');
   });
+
+  it('should set a descriptive aria description explaining the visibility count', () => {
+    const clues: EdgeClues = {
+      top: [3, 0, 0, 0, 0, 0, 0, 0, 0],
+      bottom: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      start: [1, 0, 0, 0, 0, 0, 0, 0, 0],
+      end: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    };
+    const gutters = buildGutters(clues);
+
+    expect(gutters.top?.[0]?.description).toBe('3 buildings visible from the top of column 1');
+    expect(gutters.start?.[0]?.description).toBe('1 building visible from the start of row 1');
+  });
 });

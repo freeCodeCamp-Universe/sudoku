@@ -129,6 +129,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     candidates: state.candidates,
     givens: givensSet,
     revealed: state.revealed,
+    solution,
     onEnterValue,
     onToggleCandidate,
     checkEnabled: settings.checkEnabled,
@@ -228,7 +229,13 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           ) : null}
           {liveVariant.id === 'greater-than' ? (
             <div className={styles.variantLegend} aria-label="Greater-than rule legend">
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
                 <polygon points="10,5 0,0 0,10" fill="#f1be32" />
               </svg>
               <span>Triangle points toward the smaller of the two adjacent digits.</span>
@@ -236,17 +243,32 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           ) : null}
           {liveVariant.id === 'consecutive' ? (
             <div className={styles.variantLegend} aria-label="Consecutive rule legend">
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
                 <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
               </svg>
-              <span>A dot between two cells means those digits differ by exactly 1. Cells without a dot must not differ by 1.</span>
+              <span>
+                A dot between two cells means those digits differ by exactly 1. Cells without a dot
+                must not differ by 1.
+              </span>
             </div>
           ) : null}
           {liveVariant.id === 'even-odd' ? (
             <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
-              <span className={styles.legendSwatch} style={{ background: 'rgba(58,128,224,0.35)' }} />
+              <span
+                className={styles.legendSwatch}
+                style={{ background: 'rgba(58,128,224,0.35)' }}
+              />
               <span>Even (2, 4, 6, 8)</span>
-              <span className={styles.legendSwatch} style={{ background: 'rgba(212,168,40,0.35)' }} />
+              <span
+                className={styles.legendSwatch}
+                style={{ background: 'rgba(212,168,40,0.35)' }}
+              />
               <span>Odd (1, 3, 5, 7, 9)</span>
             </div>
           ) : null}
