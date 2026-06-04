@@ -1,5 +1,6 @@
 import type React from 'react';
 import type { SymbolValue } from '@/engine/types';
+import type { MarkerEdge } from '@/game/gameTypes';
 import styles from './Cell.module.css';
 
 interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
@@ -29,6 +30,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   asterisk?: boolean;
   argyleD1?: boolean;
   argyleD2?: boolean;
+  markerEdges?: MarkerEdge[];
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -71,6 +73,7 @@ export function Cell({
   asterisk = false,
   argyleD1 = false,
   argyleD2 = false,
+  markerEdges,
   className,
   ...rest
 }: CellProps) {
@@ -113,15 +116,27 @@ export function Cell({
     >
       {value !== undefined ? (
         symbolKind === 'color' ? (
-          <span
-            aria-hidden="true"
-            className={styles.colorChip}
-            data-color-chip
-            data-testid="cell-color-chip"
-            style={{ background: renderSymbol(value) }}
-          >
-            <span className={styles.colorLabel}>{value}</span>
-          </span>
+          <>
+            <span
+              aria-hidden="true"
+              className={styles.colorChip}
+              data-color-chip
+              data-testid="cell-color-chip"
+              style={{ background: renderSymbol(value) }}
+            />
+            <span aria-hidden="true" className={styles.colorLabel}>
+              {value}
+            </span>
+            {given ? (
+              <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
+            ) : revealed ? (
+              <span
+                aria-hidden="true"
+                className={styles.revealedDot}
+                data-testid="cell-revealed-dot"
+              />
+            ) : null}
+          </>
         ) : (
           <span aria-hidden="true" className={styles.value}>
             {renderSymbol(value)}
@@ -144,6 +159,15 @@ export function Cell({
           ))}
         </div>
       ) : null}
+      {markerEdges?.map((edge) => (
+        <span
+          key={edge}
+          aria-hidden="true"
+          data-testid="marker-gap"
+          data-edge={edge}
+          className={styles.markerGap}
+        />
+      ))}
     </div>
   );
 }

@@ -17,7 +17,7 @@
 }
 
 .cell[data-diagonal] {
-  background: #1a1b38;
+  background: #3b3b4f;
 }
 
 :global(.light) .cell[data-diagonal] {
@@ -36,14 +36,23 @@
   font-size: 0.82rem;
 }
 
-.cell[data-window],
-.cell[data-asterisk] {
-  background: #1a1b38;
+.cell[data-window] {
+  background: #3b3b4f;
 }
 
-:global(.light) .cell[data-window],
-:global(.light) .cell[data-asterisk] {
+:global(.light) .cell[data-window] {
   background: #e8e8fa;
+}
+
+/* Asterisk cells carry a purple base in the overlay's own hue (like argyle and
+   windoku do for theirs), so a selected asterisk cell stays purple when it
+   lifts above the translucent overlay instead of dropping to a grey base. */
+.cell[data-asterisk] {
+  background: #3a1a6a;
+}
+
+:global(.light) .cell[data-asterisk] {
+  background: #dcc8f4;
 }
 
 .cell[data-argyle-d1] { background: #3d2c0c; }
@@ -125,6 +134,36 @@
   background: #d0e4f8 !important;
 }
 
+/* Window cells keep a distinct, lighter peer shade so the selected cell's
+   window stays visible instead of dropping to the darker outer-cell peer. */
+.cell[data-peer][data-window] {
+  background: #2e2e44 !important;
+}
+
+:global(.light) .cell[data-peer][data-window] {
+  background: #d8d8f0 !important;
+}
+
+/* Asterisk peers lighten to a brighter purple so the selected cell's asterisk
+   house reads as highlighted instead of dropping to the darker outer peer. */
+.cell[data-peer][data-asterisk] {
+  background: #4a2480 !important;
+}
+
+:global(.light) .cell[data-peer][data-asterisk] {
+  background: #c4a8ec !important;
+}
+
+/* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals
+   stay visible instead of dropping to the plain outer-cell peer. */
+.cell[data-peer][data-diagonal] {
+  background: #2e2e44 !important;
+}
+
+:global(.light) .cell[data-peer][data-diagonal] {
+  background: #d8d8f0 !important;
+}
+
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
    distinct from correct (green), and conflict (red) still overrides it. */
 .cell[data-same-value],
@@ -160,6 +199,49 @@
   color: var(--accent-red);
 }
 
+/* Inter-cell markers (the greater-than triangle) sit on the shared border. Each
+   cell paints a small gap at the marked edge that inherits its own computed
+   background, so the grid border appears to stop for the marker. The cell only
+   covers its own half of the border, so two cells with different backgrounds
+   each stay correct. The yellow triangle (overlay layer) draws on top. The
+   z-index clears the 3px box border (z-index 1) drawn on box-boundary edges. */
+.markerGap {
+  position: absolute;
+  background-color: inherit;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.markerGap[data-edge='inline-end'],
+.markerGap[data-edge='inline-start'] {
+  inset-block-start: 34%;
+  block-size: 32%;
+  inline-size: 16%;
+}
+
+.markerGap[data-edge='block-start'],
+.markerGap[data-edge='block-end'] {
+  inset-inline-start: 34%;
+  inline-size: 32%;
+  block-size: 16%;
+}
+
+.markerGap[data-edge='inline-end'] {
+  inset-inline-end: -2px;
+}
+
+.markerGap[data-edge='inline-start'] {
+  inset-inline-start: -2px;
+}
+
+.markerGap[data-edge='block-end'] {
+  inset-block-end: -2px;
+}
+
+.markerGap[data-edge='block-start'] {
+  inset-block-start: -2px;
+}
+
 .value {
   display: flex;
   align-items: center;
@@ -190,8 +272,37 @@
 
 .colorChip {
   position: absolute;
-  inset: 0;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  width: 54%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   display: block;
+  pointer-events: none;
+}
+
+/* Given cells carry a small dot in the top-start corner so clue cells stay
+   distinguishable from player-filled ones once the value is shown as a plain
+   color circle. Revealed cells use the same mark in the hint's golden hue. */
+.givenDot,
+.revealedDot {
+  position: absolute;
+  inset-block-start: 5px;
+  inset-inline-start: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.givenDot {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.revealedDot {
+  background: rgba(241, 190, 50, 0.85);
 }
 
 .colorLabel {
@@ -244,4 +355,8 @@
 :global(.light) .colorLabel {
   color: rgba(0, 0, 0, 0.7);
   text-shadow: none;
+}
+
+:global(.light) .givenDot {
+  background: rgba(0, 0, 0, 0.25);
 }

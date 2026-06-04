@@ -119,6 +119,23 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-cell', 'r4c5');
   });
 
+  it('should not render any marker gap when markerEdges is absent', () => {
+    render(<Cell {...baseProps} />);
+
+    expect(screen.queryAllByTestId('marker-gap')).toHaveLength(0);
+  });
+
+  it('should render one marker gap per edge with the matching data-edge', () => {
+    render(<Cell {...baseProps} markerEdges={['inline-end', 'block-start']} />);
+
+    const gaps = screen.getAllByTestId('marker-gap');
+    expect(gaps).toHaveLength(2);
+    expect(gaps.map((gap) => gap.getAttribute('data-edge'))).toEqual([
+      'inline-end',
+      'block-start',
+    ]);
+  });
+
   describe('Cell with symbolKind color', () => {
     const colorProps = {
       ...baseProps,
@@ -144,6 +161,18 @@ describe('Cell', () => {
       render(<Cell {...colorProps} />);
 
       expect(screen.getByTestId('cell-color-chip')).toHaveStyle({ background: '#d4a828' });
+    });
+
+    it('should render a given dot when a color cell is given', () => {
+      render(<Cell {...colorProps} given />);
+
+      expect(screen.getByTestId('cell-given-dot')).toBeTruthy();
+    });
+
+    it('should not render a given dot when a color cell is not given', () => {
+      render(<Cell {...colorProps} />);
+
+      expect(screen.queryByTestId('cell-given-dot')).toBeNull();
     });
 
     it('should not render a color chip for symbolKind digit', () => {
