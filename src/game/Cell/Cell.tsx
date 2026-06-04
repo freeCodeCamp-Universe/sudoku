@@ -31,6 +31,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   argyleD1?: boolean;
   argyleD2?: boolean;
   markerEdges?: MarkerEdge[];
+  word?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -74,6 +75,7 @@ export function Cell({
   argyleD1 = false,
   argyleD2 = false,
   markerEdges,
+  word = false,
   className,
   ...rest
 }: CellProps) {
@@ -108,6 +110,7 @@ export function Cell({
       data-asterisk={asterisk || undefined}
       data-argyle-d1={argyleD1 || undefined}
       data-argyle-d2={argyleD2 || undefined}
+      data-word={word || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}

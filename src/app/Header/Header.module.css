@@ -215,6 +215,10 @@
 }
 
 @media (max-width: 520px) {
+  .keyboardBtn {
+    display: none;
+  }
+
   .topBar {
     gap: 8px;
     margin-block-end: 20px;

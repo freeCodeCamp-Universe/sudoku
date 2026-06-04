@@ -78,6 +78,7 @@ export interface BoardProps {
   grid: GridInteraction;
   renderSymbol: (value: SymbolValue) => string;
   markerGaps?: Map<CellId, MarkerEdge[]>;
+  wordCells?: Set<CellId>;
 }
 
 export interface AnnotatorContext {

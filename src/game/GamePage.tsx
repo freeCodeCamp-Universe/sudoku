@@ -14,6 +14,7 @@ import { Board } from './Board';
 import { findCompletedSymbols } from './completedSymbols';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
+import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
@@ -211,6 +212,25 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     () => findCompletedSymbols(state.values, model.symbols, model.cells.length),
     [model.cells.length, model.symbols, state.values]
   );
+
+  const wordCellIds = useMemo((): Set<CellId> => {
+    if (!state.solved || variant.id !== 'wordoku') return new Set();
+    for (let r = 0; r < 9; r++) {
+      if (Array.from({ length: 9 }, (_, c) => c).every(
+        (c) => solution.get(`r${r}c${c}` as CellId) === c + 1
+      )) {
+        return new Set(Array.from({ length: 9 }, (_, c) => `r${r}c${c}` as CellId));
+      }
+    }
+    for (let c = 0; c < 9; c++) {
+      if (Array.from({ length: 9 }, (_, r) => r).every(
+        (r) => solution.get(`r${r}c${c}` as CellId) === r + 1
+      )) {
+        return new Set(Array.from({ length: 9 }, (_, r) => `r${r}c${c}` as CellId));
+      }
+    }
+    return new Set();
+  }, [state.solved, variant.id, solution]);
   const hasProgress =
     state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;
 
@@ -240,6 +260,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
             grid={grid}
             renderSymbol={renderSymbol}
             markerGaps={markerGaps}
+            wordCells={wordCellIds}
           />
           {liveVariant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
@@ -321,7 +342,9 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           ) : null}
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
-            symbols={model.symbols}
+            symbols={liveVariant.symbolKind === 'letter'
+              ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
+              : model.symbols}
             usedSymbols={usedSymbols}
             columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : undefined}
             onEnter={(value) => {
@@ -471,6 +494,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
 export function GamePage() {
   const { variantId } = useParams<{ variantId: string }>();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -492,6 +516,7 @@ export function GamePage() {
         title={variant.name}
         backHref="/"
         onHelpOpen={() => setHelpOpen(true)}
+        onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
         onToggleCheck={toggleCheck}
@@ -508,6 +533,26 @@ export function GamePage() {
         onClose={() => setHelpOpen(false)}
         help={variant.help}
         description={variant.description}
+      />
+      <KeyboardShortcutsDialog
+        open={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+        shortcuts={[
+          ...(variant.id === 'super'
+            ? [
+                { keys: ['1–9'], description: 'Enter a digit' },
+                { keys: ['A–G'], description: 'Enter a letter' },
+              ]
+            : [
+                {
+                  keys: [variant.symbolKind === 'letter' ? 'A–Z' : `1–${variant.symbols.length}`],
+                  description: variant.symbolKind === 'letter' ? 'Enter a letter' : 'Enter a digit',
+                },
+              ]),
+          { keys: ['Backspace', 'Delete'], separator: 'or' as const, description: 'Erase' },
+          { keys: ['↑', '↓', '←', '→'], description: 'Move between cells' },
+          { keys: ['Escape'], description: 'Deselect cell' },
+        ]}
       />
     </>
   );

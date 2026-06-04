@@ -1,4 +1,8 @@
-import type { Solution, SymbolValue, Variant, VariantModel } from '@/engine/types';
+import { shuffle } from '@/engine/grid';
+import { assignValue, createSearchState, pickNextCell, unassignValue } from '@/engine/searchState';
+import type { CellId, Solution, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+
+const wordBySolution = new WeakMap<Solution, string>();
 
 export const WORDS = [
   'WONDERFUL',
@@ -29,17 +33,43 @@ export const WORDS = [
   'FILAMENTS',
 ];
 
-function selectWord(solution: Solution, model: VariantModel): string {
-  const checksum = model.cells.reduce(
-    (total, cell, index) => total + (solution.get(cell.id) ?? 0) * (index + 1),
-    0
-  );
+function generateWordokuSolution(model: VariantModel, rng: (() => number) | undefined = Math.random): Solution {
+  const safRng = rng ?? Math.random;
+  const word = shuffle([...WORDS], safRng)[0];
+  const rows = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8], safRng);
 
-  return WORDS[checksum % WORDS.length];
+  for (const wordRow of rows) {
+    const values: Values = new Map();
+    for (let c = 0; c < 9; c++) {
+      values.set(`r${wordRow}c${c}` as CellId, (c + 1) as SymbolValue);
+    }
+
+    const state = createSearchState(model, values);
+    const solved = (function backtrack(): boolean {
+      const { cellId: nextId, candidates } = pickNextCell(state, values, model, (cands) =>
+        shuffle(cands, safRng)
+      );
+      if (nextId === null) return values.size === model.cells.length;
+      for (const v of candidates) {
+        assignValue(state, values, nextId, v);
+        if (backtrack()) return true;
+        unassignValue(state, values, nextId, v);
+      }
+      return false;
+    })();
+
+    if (solved) {
+      wordBySolution.set(values, word);
+      return values;
+    }
+  }
+
+  throw new Error('Failed to generate wordoku solution');
 }
 
 export const wordoku: Variant = {
   id: 'wordoku',
+  generateSolution: generateWordokuSolution,
   name: 'Wordoku',
   description: 'Letters replace digits using a hidden nine-letter word. Find it reading across one row or down one column.',
   help: [
@@ -69,8 +99,8 @@ export const wordoku: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: [],
-  deriveStructure(solution, model): { word: string } {
-    return { word: selectWord(solution, model) };
+  deriveStructure(solution): { word: string } {
+    return { word: wordBySolution.get(solution) ?? WORDS[0] };
   },
   renderSymbol(value: SymbolValue, structure?: unknown): string {
     const word = (structure as { word?: string } | undefined)?.word;

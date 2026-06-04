@@ -271,7 +271,7 @@ export function useSudokuGrid({
         return;
       }
 
-      if (key === 'Backspace' || key === 'Delete' || key === '0') {
+      if (key === 'Backspace' || key === 'Delete') {
         const isCorrectCell = checkEnabled && solution.has(currentId) && values.get(currentId) === solution.get(currentId);
         if (!isCorrectCell) {
           event.preventDefault();

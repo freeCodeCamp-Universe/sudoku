@@ -49,7 +49,7 @@
 
 @media (max-width: 1280px) {
   .boardWrap {
-    width: 100%;
+    width: max-content;
     max-width: 100%;
     overflow-x: auto;
     overflow-y: visible;

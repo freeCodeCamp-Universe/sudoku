@@ -199,6 +199,10 @@
   color: var(--accent-red);
 }
 
+.cell[data-word] .value {
+  color: var(--accent-yellow);
+}
+
 /* Inter-cell markers (the greater-than triangle) sit on the shared border. Each
    cell paints a small gap at the marked edge that inherits its own computed
    background, so the grid border appears to stop for the marker. The cell only
