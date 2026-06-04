@@ -60,6 +60,14 @@ export interface GridInteraction {
   announcerRef: React.RefObject<HTMLDivElement | null>;
 }
 
+/**
+ * A cell edge that carries an inter-cell marker (e.g. a greater-than triangle).
+ * Cells with a marker edge paint a background-matched gap there so the grid
+ * border appears to stop for the marker. Named in logical terms so the gap
+ * tracks the column/row geometry under both writing directions.
+ */
+export type MarkerEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
+
 export interface BoardProps {
   variant: Variant;
   cells: Cell[];
@@ -69,6 +77,7 @@ export interface BoardProps {
   overlays?: React.ReactNode[];
   grid: GridInteraction;
   renderSymbol: (value: SymbolValue) => string;
+  markerGaps?: Map<CellId, MarkerEdge[]>;
 }
 
 export interface AnnotatorContext {

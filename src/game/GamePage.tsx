@@ -4,6 +4,7 @@ import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
+import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
 import { COLOR_PALETTE } from '@/variants/color';
 import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
@@ -109,6 +110,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
 
     return renderSymbol;
   }, [liveVariant, renderSymbol]);
+  const markerGaps = useMemo(() => buildMarkerGaps(structure), [structure]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
 
   const onEnterValue = useCallback(
@@ -237,6 +239,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
             overlays={overlays}
             grid={grid}
             renderSymbol={renderSymbol}
+            markerGaps={markerGaps}
           />
           {liveVariant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
