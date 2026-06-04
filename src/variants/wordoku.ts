@@ -1,6 +1,7 @@
 import { shuffle } from '@/engine/grid';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from '@/engine/searchState';
 import type { CellId, Solution, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 const wordBySolution = new WeakMap<Solution, string>();
 
@@ -92,6 +93,7 @@ export const wordoku: Variant = {
     },
   ],
   popularity: 14,
+  generateGivens: generateGivens9x9,
   difficulty: 'beginner',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

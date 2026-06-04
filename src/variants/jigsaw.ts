@@ -1,5 +1,6 @@
 import { cellId, range } from '@/engine/grid';
 import type { BoardLayout, House, Variant } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 const JIGSAW_SIZE = 9;
 
@@ -122,4 +123,7 @@ export function makeJigsawVariant(regions: number[][]): Variant {
   };
 }
 
-export const jigsaw: Variant = makeJigsawVariant(PRESET_LAYOUTS[0]);
+export const jigsaw: Variant = {
+  ...makeJigsawVariant(PRESET_LAYOUTS[0]),
+  generateGivens: generateGivens9x9,
+};

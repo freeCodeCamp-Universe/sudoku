@@ -1,4 +1,5 @@
 import { cellId, range } from '@/engine/grid';
+import { generateGivens9x9 } from './generateGivens9x9';
 import type { BoardLayout, House, Variant } from '@/engine/types';
 
 export const MAIN_DIAGONAL_CELLS = range(9).map((index) => cellId(index, index));
@@ -34,6 +35,7 @@ export const sudokuX: Variant = {
     },
   ],
   popularity: 4,
+  generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

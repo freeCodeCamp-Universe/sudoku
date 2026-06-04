@@ -1,6 +1,7 @@
 import { cellId, range } from '@/engine/grid';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
 import type { Relation } from '@/engine/constraints/greaterThan';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 function deriveStructure(solution: Solution, _model: VariantModel): { relations: Relation[] } {
   const relations: Relation[] = [];
@@ -69,6 +70,7 @@ export const greaterThanVariant: Variant = {
     },
   ],
   popularity: 10,
+  generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

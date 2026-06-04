@@ -1,5 +1,6 @@
 import { cellId, range } from '@/engine/grid';
 import type { BoardLayout, House, Variant } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 const ARGYLE_SIZE = 9;
 
@@ -76,6 +77,7 @@ export const argyle: Variant = {
     },
   ],
   popularity: 17,
+  generateGivens: generateGivens9x9,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

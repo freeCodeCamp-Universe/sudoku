@@ -1,6 +1,7 @@
 import { cellId, range } from '@/engine/grid';
 import type { CellId, Solution, Variant, VariantModel } from '@/engine/types';
 import type { Mark } from '@/engine/constraints/consecutive';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 function deriveStructure(solution: Solution, _model: VariantModel): { marks: Mark[] } {
   const marks: Mark[] = [];
@@ -53,6 +54,7 @@ export const consecutiveVariant: Variant = {
     },
   ],
   popularity: 9,
+  generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

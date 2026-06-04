@@ -1,3 +1,4 @@
+import { makeGenerateGivens } from './generateGivens9x9';
 import type { Variant } from '@/engine/types';
 
 export const mini: Variant = {
@@ -24,6 +25,7 @@ export const mini: Variant = {
     },
   ],
   popularity: 12,
+  generateGivens: makeGenerateGivens(4),
   difficulty: 'beginner',
   layout: { kind: 'grid', size: 4, box: { rows: 2, cols: 2 } },
   symbols: [1, 2, 3, 4],

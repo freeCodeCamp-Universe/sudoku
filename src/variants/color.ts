@@ -1,4 +1,5 @@
 import type { SymbolValue, Variant } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 export const COLOR_PALETTE = [
   '#e03535',
@@ -48,6 +49,7 @@ export const color: Variant & { colorNames: string[] } = {
     },
   ],
   popularity: 15,
+  generateGivens: generateGivens9x9,
   difficulty: 'beginner',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

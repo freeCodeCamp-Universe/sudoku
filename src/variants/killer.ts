@@ -1,5 +1,6 @@
 import { cellId, range, shuffle } from '@/engine/grid';
-import type { Solution, Values, Variant, VariantModel } from '@/engine/types';
+import type { Solution, Variant, VariantModel } from '@/engine/types';
+import { makeGenerateGivens } from './generateGivens9x9';
 import type { Cage } from '@/game/gameTypes';
 
 const N = 9;
@@ -85,24 +86,5 @@ export const killer: Variant = {
   overlayIds: ['cage'],
   annotatorIds: ['cage-sum'],
   deriveStructure: carveCages,
-  generateGivens(solution: Solution, _model: VariantModel, _difficulty: string, rng = Math.random): Values {
-    const givens: Values = new Map();
-    const N = 9;
-
-    for (let r = 0; r < N; r++) {
-      const cols = shuffle(range(N), rng);
-      const count = rng() < 0.5 ? 2 : 1;
-
-      for (let i = 0; i < count && givens.size < 16; i++) {
-        const id = cellId(r, cols[i]);
-        const val = solution.get(id);
-
-        if (val !== undefined) {
-          givens.set(id, val);
-        }
-      }
-    }
-
-    return givens;
-  },
+  generateGivens: makeGenerateGivens(15),
 };

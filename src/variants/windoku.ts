@@ -1,4 +1,5 @@
 import { cellId } from '@/engine/grid';
+import { generateGivens9x9 } from './generateGivens9x9';
 import type { BoardLayout, House, Variant } from '@/engine/types';
 
 export const WINDOKU_WINDOWS: [number, number][][] = [
@@ -54,6 +55,7 @@ export const windoku: Variant = {
     },
   ],
   popularity: 6,
+  generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

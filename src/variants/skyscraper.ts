@@ -1,6 +1,7 @@
 import { range } from '@/engine/grid';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
 import type { EdgeClues, GutterSlots } from '@/game/gameTypes';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 function cellId(row: number, col: number): string {
   return `r${row}c${col}`;
@@ -100,6 +101,7 @@ export const skyscraper: Variant = {
     },
   ],
   popularity: 11,
+  generateGivens: generateGivens9x9,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

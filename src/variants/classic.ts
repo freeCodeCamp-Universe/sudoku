@@ -1,3 +1,4 @@
+import { generateGivens9x9 } from './generateGivens9x9';
 import type { Variant } from '@/engine/types';
 
 export const classic: Variant = {
@@ -24,6 +25,7 @@ export const classic: Variant = {
       ],
     },
   ],
+  generateGivens: generateGivens9x9,
   popularity: 1,
   difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },

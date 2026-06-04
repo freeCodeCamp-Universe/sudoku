@@ -1,5 +1,6 @@
 import type { Arrow } from '@/game/gameTypes';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 const DIRECTIONS: Array<readonly [number, number]> = [
   [0, 1],
@@ -101,6 +102,7 @@ export const arrow: Variant = {
     },
   ],
   popularity: 7,
+  generateGivens: generateGivens9x9,
   difficulty: 'advanced',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

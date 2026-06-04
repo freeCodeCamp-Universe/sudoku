@@ -1,4 +1,5 @@
 import type { CellId, Solution, Variant, VariantModel } from '@/engine/types';
+import { generateGivens9x9 } from './generateGivens9x9';
 
 export const evenOdd: Variant = {
   id: 'even-odd',
@@ -23,6 +24,7 @@ export const evenOdd: Variant = {
     },
   ],
   popularity: 8,
+  generateGivens: generateGivens9x9,
   difficulty: 'beginner',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
