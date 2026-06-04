@@ -32,6 +32,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   argyleD2?: boolean;
   markerEdges?: MarkerEdge[];
   word?: boolean;
+  colorblind?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -76,6 +77,7 @@ export function Cell({
   argyleD2 = false,
   markerEdges,
   word = false,
+  colorblind = false,
   className,
   ...rest
 }: CellProps) {
@@ -111,6 +113,7 @@ export function Cell({
       data-argyle-d1={argyleD1 || undefined}
       data-argyle-d2={argyleD2 || undefined}
       data-word={word || undefined}
+      data-colorblind={colorblind && symbolKind === 'color' || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
@@ -127,9 +130,11 @@ export function Cell({
               data-testid="cell-color-chip"
               style={{ background: renderSymbol(value) }}
             />
-            <span aria-hidden="true" className={styles.colorLabel}>
-              {value}
-            </span>
+            {colorblind && (
+              <span aria-hidden="true" className={styles.colorLabel}>
+                {value}
+              </span>
+            )}
             {given ? (
               <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
             ) : revealed ? (

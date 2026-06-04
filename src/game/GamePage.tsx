@@ -32,7 +32,7 @@ type VariantWithColorNames = {
 };
 
 interface GameInnerProps {
-  settings: { checkEnabled: boolean; timerEnabled: boolean };
+  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean };
   toggleCheck: () => void;
   onNewGame?: () => void;
 }
@@ -261,6 +261,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
             renderSymbol={renderSymbol}
             markerGaps={markerGaps}
             wordCells={wordCellIds}
+            colorblindMode={settings.colorblindEnabled}
           />
           {liveVariant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
@@ -501,7 +502,7 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  const { settings, toggleCheck, toggleTimer } = usePersistence(variantId);
+  const { settings, toggleCheck, toggleTimer, toggleColorblind } = usePersistence(variantId);
   const [genKey, setGenKey] = useState(0);
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
@@ -519,8 +520,10 @@ export function GamePage() {
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
+        colorblindEnabled={settings.colorblindEnabled}
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
+        onToggleColorblind={variant.symbolKind === 'color' ? toggleColorblind : undefined}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
@@ -546,7 +549,7 @@ export function GamePage() {
             : [
                 {
                   keys: [variant.symbolKind === 'letter' ? 'A–Z' : `1–${variant.symbols.length}`],
-                  description: variant.symbolKind === 'letter' ? 'Enter a letter' : 'Enter a digit',
+                  description: variant.symbolKind === 'letter' ? 'Enter a letter' : variant.symbolKind === 'color' ? 'Enter a color' : 'Enter a digit',
                 },
               ]),
           { keys: ['Backspace', 'Delete'], separator: 'or' as const, description: 'Erase' },

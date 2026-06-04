@@ -315,12 +315,13 @@
   inset-inline-end: 3px;
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 7px;
-  font-weight: 700;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1;
   pointer-events: none;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
+
 
 :global(.light) .cell {
   background: #ffffff;

@@ -10,8 +10,10 @@ interface HeaderProps {
   onKeyboardShortcutsOpen?: () => void;
   checkEnabled?: boolean;
   timerEnabled?: boolean;
+  colorblindEnabled?: boolean;
   onToggleCheck?: () => void;
   onToggleTimer?: () => void;
+  onToggleColorblind?: () => void;
 }
 
 export function Header({
@@ -21,8 +23,10 @@ export function Header({
   onKeyboardShortcutsOpen,
   checkEnabled,
   timerEnabled,
+  colorblindEnabled,
   onToggleCheck,
   onToggleTimer,
+  onToggleColorblind,
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -46,7 +50,7 @@ export function Header({
     }
   };
 
-  const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined;
+  const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined || onToggleColorblind !== undefined;
 
   return (
     <header className={styles.topBar}>
@@ -117,6 +121,29 @@ export function Header({
                         className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
                       >
                         {timerEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
+                  </div>
+                ) : null}
+                {onToggleColorblind !== undefined ? (
+                  <div className={styles.dropdownRow}>
+                    <span id="settings-colorblind-label" className={styles.dropdownLabel}>
+                      Colorblind mode
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(colorblindEnabled)}
+                        aria-labelledby="settings-colorblind-label"
+                        onChange={onToggleColorblind}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${colorblindEnabled ? styles.on : styles.off}`}
+                      >
+                        {colorblindEnabled ? 'On' : 'Off'}
                       </span>
                     </span>
                   </div>

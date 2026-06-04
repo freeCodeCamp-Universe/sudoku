@@ -230,6 +230,7 @@ export function Board({
   renderSymbol,
   markerGaps,
   wordCells,
+  colorblindMode,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
@@ -310,6 +311,7 @@ export function Board({
                   butterfly={variant.id === 'butterfly'}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
+                  colorblind={colorblindMode}
                   aria-colindex={cell.col + 1}
                   onClick={props.onClick ?? (() => {})}
                   {...props}

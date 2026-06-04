@@ -79,6 +79,7 @@ export interface BoardProps {
   renderSymbol: (value: SymbolValue) => string;
   markerGaps?: Map<CellId, MarkerEdge[]>;
   wordCells?: Set<CellId>;
+  colorblindMode?: boolean;
 }
 
 export interface AnnotatorContext {
