@@ -1,6 +1,6 @@
 import { shuffle } from './grid';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from './searchState';
-import { hasUniqueSolution, solve } from './solve';
+import { findSolution, hasUniqueSolution, solve } from './solve';
 import type { Difficulty, Solution, Values, VariantModel } from './types';
 
 export function cluesFor(difficulty: Difficulty, totalCells: number): number {
@@ -21,6 +21,17 @@ export function generateSolution(
 ): Solution {
   if (model.generateSolution) {
     return model.generateSolution(model, rng);
+  }
+
+  // Uniqueness-only models solve a blank grid via constraint propagation, which
+  // prunes irregular regions (e.g. jigsaw) that the naive search below thrashes
+  // on. The naive backtracker stays as the fallback for models with extra
+  // constraints the propagation solver does not handle.
+  if (model.constraints.every((constraint) => constraint.id === 'uniqueness')) {
+    const solution = findSolution(model, new Map(), rng);
+    if (solution) {
+      return solution;
+    }
   }
 
   const values: Values = new Map();
