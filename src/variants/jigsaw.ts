@@ -1,6 +1,13 @@
-import { cellId, range } from '@/engine/grid';
-import type { BoardLayout, House, Variant } from '@/engine/types';
-import { generateGivens9x9 } from './generateGivens9x9';
+import { cellId, range, shuffle } from '@/engine/grid';
+import type {
+  BoardLayout,
+  Difficulty,
+  House,
+  Solution,
+  Values,
+  Variant,
+  VariantModel,
+} from '@/engine/types';
 
 const JIGSAW_SIZE = 9;
 
@@ -123,7 +130,37 @@ export function makeJigsawVariant(regions: number[][]): Variant {
   };
 }
 
-export const jigsaw: Variant = {
-  ...makeJigsawVariant(PRESET_LAYOUTS[0]),
-  generateGivens: generateGivens9x9,
-};
+// Matches the original jigsaw generator: blank a fixed number of cells from the
+// solved grid in a single pass, with no per-removal uniqueness search. Proving
+// uniqueness on irregular regions is expensive and heavy-tailed, which froze the
+// page; the original never verified uniqueness and so never paid that cost.
+const JIGSAW_GIVEN_COUNT = 31;
+
+function generateJigsawGivens(
+  solution: Solution,
+  _model: VariantModel,
+  _difficulty: Difficulty,
+  rng: (() => number) | undefined = Math.random
+): Values {
+  const safeRng = rng ?? Math.random;
+  const givens: Values = new Map(solution);
+
+  for (const id of shuffle([...givens.keys()], safeRng)) {
+    if (givens.size <= JIGSAW_GIVEN_COUNT) {
+      break;
+    }
+
+    givens.delete(id);
+  }
+
+  return givens;
+}
+
+export function makePlayableJigsawVariant(regions: number[][]): Variant {
+  return {
+    ...makeJigsawVariant(regions),
+    generateGivens: generateJigsawGivens,
+  };
+}
+
+export const jigsaw: Variant = makePlayableJigsawVariant(PRESET_LAYOUTS[0]);

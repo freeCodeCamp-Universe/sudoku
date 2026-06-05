@@ -7,7 +7,12 @@ import type { CellId, SymbolValue } from '@/engine/types';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
 import { COLOR_PALETTE } from '@/variants/color';
-import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
+import {
+  isJigsawStructure,
+  makeJigsawVariant,
+  makePlayableJigsawVariant,
+  PRESET_LAYOUTS,
+} from '@/variants/jigsaw';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
@@ -499,12 +504,25 @@ export function GamePage() {
   const variant = useMemo(() => getVariant(variantId), [variantId]);
   const { settings, toggleCheck, toggleTimer, toggleColorblind } = usePersistence(variantId);
   const [genKey, setGenKey] = useState(0);
-  const { model, givens, solution } = useMemo(() => {
-    const builtModel = buildModel(variant);
+  // Randomize which jigsaw region layout a session starts on; rotating by genKey
+  // then guarantees a different layout on every New Game.
+  const [jigsawLayoutStart] = useState(() => Math.floor(Math.random() * PRESET_LAYOUTS.length));
+  const { model, gameVariant, givens, solution } = useMemo(() => {
+    const activeVariant =
+      variant.id === 'jigsaw'
+        ? makePlayableJigsawVariant(
+            PRESET_LAYOUTS[(jigsawLayoutStart + genKey) % PRESET_LAYOUTS.length]
+          )
+        : variant;
+    const builtModel = buildModel(activeVariant);
     const puzzle = generate(builtModel, variant.difficulty);
-    return { model: builtModel, givens: puzzle.givens, solution: puzzle.solution };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variant, genKey]);
+    return {
+      model: builtModel,
+      gameVariant: activeVariant,
+      givens: puzzle.givens,
+      solution: puzzle.solution,
+    };
+  }, [variant, genKey, jigsawLayoutStart]);
 
   return (
     <>
@@ -521,7 +539,7 @@ export function GamePage() {
         onToggleColorblind={variant.symbolKind === 'color' ? toggleColorblind : undefined}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
-        <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
+        <GameProvider variant={gameVariant} model={model} givens={givens} solution={solution}>
           <GameInner settings={settings} toggleCheck={toggleCheck} onNewGame={() => setGenKey((k) => k + 1)} />
         </GameProvider>
       </main>
