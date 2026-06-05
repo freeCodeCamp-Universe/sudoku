@@ -13,6 +13,10 @@
   stroke-dasharray: 4 3;
 }
 
+:global(.light) .cageLine {
+  stroke: #5555aa;
+}
+
 .sumLabel {
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;

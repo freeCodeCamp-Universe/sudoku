@@ -8,7 +8,7 @@
   font-size: 1.4rem;
   font-weight: 400;
   color: var(--accent-blue);
-  border: 1px solid #2a2a3a;
+  border: 1px solid #4a4a5e;
   cursor: pointer;
   background: var(--bg-secondary);
   user-select: none;
@@ -76,7 +76,7 @@
   bottom: -1px;
   right: -1px;
   width: 3px;
-  background: #9898b8;
+  background: #4a4a5e;
   z-index: 1;
   pointer-events: none;
 }
@@ -88,7 +88,7 @@
   right: -1px;
   bottom: -1px;
   height: 3px;
-  background: #9898b8;
+  background: #4a4a5e;
   z-index: 1;
   pointer-events: none;
 }
@@ -350,7 +350,7 @@
 
 :global(.light) .cell[data-box-right]:not([data-selected])::after,
 :global(.light) .cell[data-box-bottom]:not([data-selected])::before {
-  background: #8080a8;
+  background: #b8b8cc;
 }
 
 :global(.light) .candidate {

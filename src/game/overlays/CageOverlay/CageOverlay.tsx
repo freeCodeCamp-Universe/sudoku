@@ -28,65 +28,76 @@ function getNeighborId(id: CellId, deltaRow: number, deltaCol: number): CellId |
   return `r${coords.row + deltaRow}c${coords.col + deltaCol}`;
 }
 
+const INSET = 2;
+
+/**
+ * Compute the start or end coordinate for one end of a cage boundary segment.
+ * sign = -1 for the "near" end (start of line), +1 for the "far" end.
+ *
+ * - Outer corner  (perpendicular neighbour outside cage): truncate inward  → base - INSET * sign
+ * - Inner corner  (diagonal neighbour inside cage):       extend outward   → base + INSET * sign
+ * - Straight-through (perpendicular neighbour in cage):   no change        → base
+ */
+function extent(
+  base: number,
+  sign: 1 | -1,
+  perpCage: number | undefined,
+  cageIndex: number,
+  diagCage: number | undefined
+): number {
+  if (perpCage !== cageIndex) return base - INSET * sign; // outer corner: truncate
+  if (diagCage === cageIndex) return base + INSET * sign; // inner corner: extend
+  return base;                                            // straight-through
+}
+
 function cageBorderEdges(cages: Cage[], rects: Map<CellId, Rect>): Edge[] {
   const cellToCage = new Map<CellId, number>();
-
-  cages.forEach((cage, index) => {
-    cage.cells.forEach((cellId) => {
-      cellToCage.set(cellId, index);
-    });
-  });
+  cages.forEach((cage, index) => cage.cells.forEach((id) => cellToCage.set(id, index)));
 
   const edges: Edge[] = [];
 
   for (const [cellId, rect] of rects) {
-    const cageIndex = cellToCage.get(cellId);
-    if (cageIndex === undefined) {
-      continue;
+    const ci = cellToCage.get(cellId);
+    if (ci === undefined) continue;
+
+    const { x, y, w, h } = rect;
+    const cage = (id: CellId | null) => (id ? cellToCage.get(id) : undefined);
+
+    const L = getNeighborId(cellId, 0, -1);
+    const R = getNeighborId(cellId, 0,  1);
+    const T = getNeighborId(cellId, -1, 0);
+    const B = getNeighborId(cellId,  1, 0);
+    const TL = getNeighborId(cellId, -1, -1);
+    const TR = getNeighborId(cellId, -1,  1);
+    const BL = getNeighborId(cellId,  1, -1);
+    const BR = getNeighborId(cellId,  1,  1);
+
+    // Right boundary
+    if (cage(R) !== ci) {
+      const y1 = extent(y,     -1, cage(T), ci, cage(TR));
+      const y2 = extent(y + h,  1, cage(B), ci, cage(BR));
+      edges.push({ x1: x + w - INSET, y1, x2: x + w - INSET, y2 });
     }
 
-    const rightId = getNeighborId(cellId, 0, 1);
-    const rightCageIndex = rightId ? cellToCage.get(rightId) : undefined;
-    if (rightCageIndex !== cageIndex) {
-      edges.push({
-        x1: rect.x + rect.w,
-        y1: rect.y,
-        x2: rect.x + rect.w,
-        y2: rect.y + rect.h,
-      });
+    // Bottom boundary
+    if (cage(B) !== ci) {
+      const x1 = extent(x,     -1, cage(L), ci, cage(BL));
+      const x2 = extent(x + w,  1, cage(R), ci, cage(BR));
+      edges.push({ x1, y1: y + h - INSET, x2, y2: y + h - INSET });
     }
 
-    const bottomId = getNeighborId(cellId, 1, 0);
-    const bottomCageIndex = bottomId ? cellToCage.get(bottomId) : undefined;
-    if (bottomCageIndex !== cageIndex) {
-      edges.push({
-        x1: rect.x,
-        y1: rect.y + rect.h,
-        x2: rect.x + rect.w,
-        y2: rect.y + rect.h,
-      });
+    // Left boundary
+    if (cage(L) !== ci) {
+      const y1 = extent(y,     -1, cage(T), ci, cage(TL));
+      const y2 = extent(y + h,  1, cage(B), ci, cage(BL));
+      edges.push({ x1: x + INSET, y1, x2: x + INSET, y2 });
     }
 
-    const leftId = getNeighborId(cellId, 0, -1);
-    const leftCageIndex = leftId ? cellToCage.get(leftId) : undefined;
-    if (leftCageIndex !== cageIndex) {
-      edges.push({
-        x1: rect.x,
-        y1: rect.y,
-        x2: rect.x,
-        y2: rect.y + rect.h,
-      });
-    }
-
-    const topId = getNeighborId(cellId, -1, 0);
-    const topCageIndex = topId ? cellToCage.get(topId) : undefined;
-    if (topCageIndex !== cageIndex) {
-      edges.push({
-        x1: rect.x,
-        y1: rect.y,
-        x2: rect.x + rect.w,
-        y2: rect.y,
-      });
+    // Top boundary
+    if (cage(T) !== ci) {
+      const x1 = extent(x,     -1, cage(L), ci, cage(TL));
+      const x2 = extent(x + w,  1, cage(R), ci, cage(TR));
+      edges.push({ x1, y1: y + INSET, x2, y2: y + INSET });
     }
   }
 
@@ -150,8 +161,8 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
         return (
           <text
             key={`${cage.sum}-${index}`}
-            x={rect.x + 3}
-            y={rect.y + 5}
+            x={rect.x + INSET + 1}
+            y={rect.y + INSET + 5}
             className={styles.sumLabel}
             data-testid="cage-sum-label"
           >
