@@ -64,7 +64,11 @@
 .candidate .numBtn:not(.erase) {
   font-size: 0.6rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #aaaacc;
+}
+
+:global(.light) .candidate .numBtn:not(.erase) {
+  color: #555570;
 }
 
 .numBtn:has(.colorChip) {

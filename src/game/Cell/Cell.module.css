@@ -138,11 +138,11 @@
 }
 
 .cell[data-peer][data-butterfly] {
-  background: #1e3d60 !important;
+  background: #2e2e44 !important;
 }
 
 :global(.light) .cell[data-peer][data-butterfly] {
-  background: #d0e4f8 !important;
+  background: #d8d8f0 !important;
 }
 
 /* Window cells keep a distinct, lighter peer shade so the selected cell's
@@ -279,7 +279,7 @@
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 7px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #aaaacc;
   line-height: 1;
 }
 
@@ -363,7 +363,7 @@
 }
 
 :global(.light) .candidate {
-  color: #8888aa;
+  color: #555570;
 }
 
 :global(.light) .colorLabel {
