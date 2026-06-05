@@ -80,6 +80,7 @@ export interface BoardProps {
   markerGaps?: Map<CellId, MarkerEdge[]>;
   wordCells?: Set<CellId>;
   colorblindMode?: boolean;
+  parityMap?: Map<CellId, 0 | 1>;
 }
 
 export interface AnnotatorContext {

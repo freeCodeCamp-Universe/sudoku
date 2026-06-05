@@ -43,7 +43,8 @@ export function EvenOddPreview({ variantId }: { variantId: string }) {
       {Array.from({ length: 81 }, (_, index) => {
         const row = Math.floor(index / 9);
         const col = index % 9;
-        const className = [getDividerClassName(row, col), (row + col) % 2 === 0 ? styles['cell-even'] : '']
+        const isEven = (row + col) % 2 === 0;
+        const className = [getDividerClassName(row, col), isEven ? styles['cell-even'] : styles['cell-odd']]
           .filter(Boolean)
           .join(' ');
 

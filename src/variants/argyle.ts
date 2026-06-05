@@ -4,8 +4,8 @@ import { generateGivens9x9 } from './generateGivens9x9';
 
 const ARGYLE_SIZE = 9;
 
-export const ARGYLE_D1_OFFSETS = [-3, 0, 3] as const;
-export const ARGYLE_D2_SUMS = [5, 8, 11] as const;
+export const ARGYLE_D1_OFFSETS = [-4, -1, 1, 4] as const;
+export const ARGYLE_D2_SUMS = [4, 7, 9, 12] as const;
 
 function buildD1Stripe(offset: number): string[] {
   return range(ARGYLE_SIZE)
@@ -57,22 +57,23 @@ export function isArgyleCell(cell: string): boolean {
 export const argyle: Variant = {
   id: 'argyle',
   name: 'Argyle Sudoku',
-  description: 'Six argyle diagonals, each must contain distinct digits alongside standard row, column, and box rules.',
+  description: 'The grid is overlaid with an argyle diamond pattern. Each marked diagonal stripe must contain distinct digits.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
         { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Argyle diagonals', text: 'Six diagonal lines are highlighted across the grid in an argyle pattern.' },
-        { term: 'Diagonal rule', text: 'No digit may repeat along any single highlighted diagonal.' },
+        { term: 'Argyle pattern', text: 'Diagonal lines are drawn across the grid forming an argyle diamond pattern. The marked cells belong to diagonal stripes.' },
+        { term: 'Diagonal rule', text: 'No digit may repeat within any single diagonal stripe.' },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Variable lengths', text: 'Diagonals vary in length, so not every diagonal needs all nine digits. Just no repeats within each one.' },
+        { term: 'Variable lengths', text: 'Stripes vary in length. Shorter ones near the corners need fewer digits, but repeats are still forbidden within each stripe.' },
+        { term: 'Empty diamonds', text: 'Cells inside the empty diamond shapes are not part of any diagonal stripe and only follow the standard row, column, and box rules.' },
       ],
     },
   ],
@@ -83,6 +84,7 @@ export const argyle: Variant = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
   extraHouses: argyleExtraHouses,
-  overlayIds: [],
+  peerHouseFilter: (house) => !house.id.startsWith('argyle-'),
+  overlayIds: ['argyle'],
   annotatorIds: ['argyle'],
 };

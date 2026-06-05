@@ -231,6 +231,7 @@ export function Board({
   markerGaps,
   wordCells,
   colorblindMode,
+  parityMap,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
@@ -312,6 +313,8 @@ export function Board({
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
                   colorblind={colorblindMode}
+                  even={parityMap?.get(cell.id) === 0}
+                  odd={parityMap?.get(cell.id) === 1}
                   aria-colindex={cell.col + 1}
                   onClick={props.onClick ?? (() => {})}
                   {...props}

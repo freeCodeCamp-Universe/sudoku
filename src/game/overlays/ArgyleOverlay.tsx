@@ -1,7 +1,6 @@
 import type { CellId } from '@/engine/types';
 import { range } from '@/engine/grid';
 import type { Rect } from '@/game/gameTypes';
-import { ARGYLE_D1_OFFSETS, ARGYLE_D2_SUMS } from '@/variants/argyle';
 import styles from './ArgyleOverlay.module.css';
 
 interface ArgyleOverlayProps {
@@ -9,37 +8,10 @@ interface ArgyleOverlayProps {
   structure: unknown;
 }
 
-function d1Cells(): [number, number][] {
-  const cells: [number, number][] = [];
-
-  for (const offset of ARGYLE_D1_OFFSETS) {
-    for (const row of range(9)) {
-      const col = row - offset;
-
-      if (col >= 0 && col < 9) {
-        cells.push([row, col]);
-      }
-    }
-  }
-
-  return cells;
-}
-
-function d2Cells(): [number, number][] {
-  const cells: [number, number][] = [];
-
-  for (const sum of ARGYLE_D2_SUMS) {
-    for (const row of range(9)) {
-      const col = sum - row;
-
-      if (col >= 0 && col < 9) {
-        cells.push([row, col]);
-      }
-    }
-  }
-
-  return cells;
-}
+// Display diagonals — every 3rd stripe in each direction, covering the full 9×9.
+// These are wider than the constraint houses; they produce the argyle diamond pattern.
+const D1_DISPLAY_OFFSETS = [-4, -1, 1, 4]; // col - row
+const D2_DISPLAY_SUMS    = [4, 7, 9, 12];  // row + col
 
 export function ArgyleOverlay({ rects }: ArgyleOverlayProps) {
   const firstRect = rects.get('r0c0');
@@ -51,6 +23,30 @@ export function ArgyleOverlay({ rects }: ArgyleOverlayProps) {
 
   const totalWidth = lastRect.x + lastRect.w;
   const totalHeight = lastRect.y + lastRect.h;
+  const lines: React.ReactNode[] = [];
+
+  for (const row of range(9)) {
+    for (const col of range(9)) {
+      const id = `r${row}c${col}`;
+      const rect = rects.get(id);
+      if (!rect) continue;
+
+      const { x, y, w, h } = rect;
+      const onD1 = D1_DISPLAY_OFFSETS.includes(col - row);
+      const onD2 = D2_DISPLAY_SUMS.includes(row + col);
+
+      if (onD1) {
+        lines.push(
+          <line key={`d1-${id}`} x1={x} y1={y} x2={x + w} y2={y + h} className={styles.line} />
+        );
+      }
+      if (onD2) {
+        lines.push(
+          <line key={`d2-${id}`} x1={x + w} y1={y} x2={x} y2={y + h} className={styles.line} />
+        );
+      }
+    }
+  }
 
   return (
     <svg
@@ -61,50 +57,7 @@ export function ArgyleOverlay({ rects }: ArgyleOverlayProps) {
       height={totalHeight}
       aria-hidden="true"
     >
-      <g>
-        {d1Cells().map(([row, col]) => {
-          const rect = rects.get(`r${row}c${col}`);
-
-          if (!rect) {
-            return null;
-          }
-
-          return (
-            <rect
-              key={`d1-r${row}c${col}`}
-              data-testid="argyle-d1-cell"
-              data-argyle-d1={`r${row}c${col}`}
-              x={rect.x}
-              y={rect.y}
-              width={rect.w}
-              height={rect.h}
-              className={styles.d1Cell}
-            />
-          );
-        })}
-      </g>
-      <g>
-        {d2Cells().map(([row, col]) => {
-          const rect = rects.get(`r${row}c${col}`);
-
-          if (!rect) {
-            return null;
-          }
-
-          return (
-            <rect
-              key={`d2-r${row}c${col}`}
-              data-testid="argyle-d2-cell"
-              data-argyle-d2={`r${row}c${col}`}
-              x={rect.x}
-              y={rect.y}
-              width={rect.w}
-              height={rect.h}
-              className={styles.d2Cell}
-            />
-          );
-        })}
-      </g>
+      {lines}
     </svg>
   );
 }

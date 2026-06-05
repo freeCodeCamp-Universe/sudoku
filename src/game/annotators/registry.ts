@@ -12,6 +12,7 @@ import { overlapAnnotator } from './overlap';
 import { skyscraperClueAnnotator } from './skyscraper';
 import { sudokuXAnnotator } from './sudoku-x';
 import { windokuAnnotator } from './windoku';
+import { wordokuAnnotator } from './wordoku';
 
 export const annotatorRegistry: Record<string, CellAnnotator> = {
   [arrowBulbAnnotator.id]: arrowBulbAnnotator,
@@ -29,6 +30,7 @@ export const annotatorRegistry: Record<string, CellAnnotator> = {
   [skyscraperClueAnnotator.id]: skyscraperClueAnnotator,
   [sudokuXAnnotator.id]: sudokuXAnnotator,
   [windokuAnnotator.id]: windokuAnnotator,
+  [wordokuAnnotator.id]: wordokuAnnotator,
 };
 
 export function resolveAnnotators(ids: string[] = []): CellAnnotator[] {

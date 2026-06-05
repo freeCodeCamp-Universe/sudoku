@@ -41,7 +41,7 @@ export const sujiken: Variant = {
   ],
   popularity: 20,
   difficulty: 'advanced',
-  generateGivens(solution: Solution, model: VariantModel, _difficulty: string, rng = Math.random): Values {
+  generateGivens(solution: Solution, _model: VariantModel, _difficulty: string, rng = Math.random): Values {
     const givens: Values = new Map(solution);
     for (const id of shuffle([...givens.keys()], rng)) {
       if (givens.size <= 17) break;

@@ -120,7 +120,11 @@ export function useSudokuGrid({
       return peers;
     }
 
-    for (const house of model.houses) {
+    const peerHouses = model.peerHouseFilter
+      ? model.houses.filter(model.peerHouseFilter)
+      : model.houses;
+
+    for (const house of peerHouses) {
       if (house.cells.includes(selectedId)) {
         for (const cellInHouse of house.cells) {
           peers.add(cellInHouse);

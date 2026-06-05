@@ -37,6 +37,7 @@ export interface VariantModel {
   constraints: Constraint[];
   symbols: SymbolValue[];
   structure?: unknown;
+  peerHouseFilter?: (house: House) => boolean;
   generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
   generateGivens?: (
     solution: Solution,
@@ -93,6 +94,7 @@ export interface Variant {
   extraHouses?: (layout: BoardLayout) => House[];
   overlayIds?: string[];
   annotatorIds?: string[];
+  peerHouseFilter?: (house: House) => boolean;
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
   deriveGutters?: (structure: unknown) => import('@/game/gameTypes').GutterSlots | undefined;
   renderSymbol?: (value: SymbolValue, structure?: unknown) => string;

@@ -262,6 +262,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
             markerGaps={markerGaps}
             wordCells={wordCellIds}
             colorblindMode={settings.colorblindEnabled}
+            parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
           />
           {liveVariant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
@@ -301,15 +302,9 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           ) : null}
           {liveVariant.id === 'even-odd' ? (
             <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
-              <span
-                className={styles.legendSwatch}
-                style={{ background: 'rgba(58,128,224,0.35)' }}
-              />
+              <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
               <span>Even (2, 4, 6, 8)</span>
-              <span
-                className={styles.legendSwatch}
-                style={{ background: 'rgba(212,168,40,0.35)' }}
-              />
+              <span className={`${styles.legendSwatch} ${styles.legendSwatchOdd}`} />
               <span>Odd (1, 3, 5, 7, 9)</span>
             </div>
           ) : null}

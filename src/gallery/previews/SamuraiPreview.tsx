@@ -10,8 +10,8 @@ export function SamuraiPreview() {
 
     const size = 44;
     const gridFill = isLight ? '#f5f5f0' : '#1b1b32';
-    const borderColor = isLight ? '#3060c0' : '#99c9ff';
-    const innerColor = isLight ? '#c8c8d8' : '#333';
+    const borderColor = isLight ? '#8080a8' : '#9898b8';
+    const innerColor = isLight ? '#b8b8cc' : '#4a4a5e';
     const centers: Array<[number, number]> = [
       [size / 2, size / 2],
       [width - size / 2, size / 2],

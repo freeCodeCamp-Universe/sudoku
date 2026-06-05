@@ -100,7 +100,7 @@ export const wordoku: Variant = {
   symbolKind: 'letter',
   constraintIds: ['uniqueness'],
   overlayIds: [],
-  annotatorIds: [],
+  annotatorIds: ['wordoku'],
   deriveStructure(solution): { word: string } {
     return { word: wordBySolution.get(solution) ?? WORDS[0] };
   },

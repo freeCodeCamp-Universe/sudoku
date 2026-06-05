@@ -108,11 +108,15 @@
 }
 
 .cell-shaded {
-  --preview-cell-background: #2a2414;
+  --preview-cell-background: #3b3b4f;
 }
 
 .cell-even {
-  --preview-cell-background: #0d2a1a;
+  --preview-cell-background: #3b3b4f;
+}
+
+.cell-odd {
+  --preview-cell-background: #12123a;
 }
 
 .cell-cage1 {
@@ -148,7 +152,7 @@
 }
 
 .cell-window {
-  --preview-cell-background: #1a1030;
+  --preview-cell-background: #3b3b4f;
 }
 
 .cell-color-r {
@@ -188,19 +192,27 @@
 }
 
 .cell-asterisk {
-  --preview-cell-background: #2a1540;
+  --preview-cell-background: #3b3b4f;
 }
 
-.cell-argyle1 {
-  --preview-cell-background: #28200c;
+.argyleWrapper {
+  position: relative;
+  display: inline-block;
 }
 
-.cell-argyle2 {
-  --preview-cell-background: #0c1e2c;
+.argyleSvg {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  inline-size: 117px;
+  block-size: 117px;
+  pointer-events: none;
 }
 
-.cell-argyle-x {
-  --preview-cell-background: #201820;
+.argyleSvg line {
+  stroke: #9898b8;
+  stroke-width: 2;
+  opacity: 0.8;
 }
 
 .jigsaw-region-0 {
@@ -309,11 +321,15 @@
 }
 
 :global(html.light) .cell-shaded {
-  --preview-cell-background: #e8ddb8;
+  --preview-cell-background: #e8e8fa;
 }
 
 :global(html.light) .cell-even {
-  --preview-cell-background: #b8ddb8;
+  --preview-cell-background: #e8e8fa;
+}
+
+:global(html.light) .cell-odd {
+  --preview-cell-background: #ffffff;
 }
 
 :global(html.light) .cell-cage1 {
@@ -341,7 +357,7 @@
 }
 
 :global(html.light) .cell-window {
-  --preview-cell-background: #d8c8f0;
+  --preview-cell-background: #e8e8fa;
 }
 
 :global(html.light) .cell-color-r {
@@ -381,19 +397,12 @@
 }
 
 :global(html.light) .cell-asterisk {
-  --preview-cell-background: #dcc8f4;
+  --preview-cell-background: #e8e8fa;
 }
 
-:global(html.light) .cell-argyle1 {
-  --preview-cell-background: #f0e4b8;
-}
-
-:global(html.light) .cell-argyle2 {
-  --preview-cell-background: #b8d4f0;
-}
-
-:global(html.light) .cell-argyle-x {
-  --preview-cell-background: #d4ccdc;
+:global(html.light) .argyleSvg line {
+  stroke: #8080a8;
+  opacity: 0.9;
 }
 
 :global(html.light) .jigsaw-region-0 {

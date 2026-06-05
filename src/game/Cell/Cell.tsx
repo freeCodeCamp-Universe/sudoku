@@ -33,6 +33,8 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   markerEdges?: MarkerEdge[];
   word?: boolean;
   colorblind?: boolean;
+  even?: boolean;
+  odd?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -78,6 +80,8 @@ export function Cell({
   markerEdges,
   word = false,
   colorblind = false,
+  even = false,
+  odd = false,
   className,
   ...rest
 }: CellProps) {
@@ -113,6 +117,8 @@ export function Cell({
       data-argyle-d1={argyleD1 || undefined}
       data-argyle-d2={argyleD2 || undefined}
       data-word={word || undefined}
+      data-even={even || undefined}
+      data-odd={odd || undefined}
       data-colorblind={colorblind && symbolKind === 'color' || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}

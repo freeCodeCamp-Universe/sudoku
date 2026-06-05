@@ -12,7 +12,7 @@ export const argyleAnnotator: CellAnnotator = {
     const row = parseInt(match[1], 10);
     const col = parseInt(match[2], 10);
 
-    const onD1 = ARGYLE_D1_OFFSETS.some((n) => n === row - col);
+    const onD1 = ARGYLE_D1_OFFSETS.some((n) => n === col - row);
     const onD2 = ARGYLE_D2_SUMS.some((n) => n === row + col);
 
     const count = (onD1 ? 1 : 0) + (onD2 ? 1 : 0);

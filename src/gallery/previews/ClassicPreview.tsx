@@ -26,11 +26,14 @@ export function ClassicPreview() {
   return (
     <div className={`${styles.sg} ${styles.g9}`}>
       {Array.from({ length: 81 }, (_, index) => {
-        const className = [getDividerClassName(Math.floor(index / 9), index % 9), DIGITS[index] ? styles['cell-filled'] : '']
+        const className = [
+          getDividerClassName(Math.floor(index / 9), index % 9),
+          GIVENS.has(index) && DIGITS[index] ? styles.jigsawDigit : '',
+        ]
           .filter(Boolean)
           .join(' ');
 
-        return <span key={index} className={className}>{GIVENS.has(index) ? DIGITS[index] || '' : ''}</span>;
+        return <span key={index} className={className}>{DIGITS[index] || ''}</span>;
       })}
     </div>
   );

@@ -36,6 +36,22 @@
   font-size: 0.82rem;
 }
 
+.cell[data-even] { background: #3b3b4f; }
+.cell[data-odd]  { background: #12123a; }
+
+:global(.light) .cell[data-even] { background: #e8e8fa; }
+:global(.light) .cell[data-odd]  { background: #ffffff; }
+
+.cell[data-peer][data-even],
+.cell[data-peer][data-odd] {
+  background: #2e2e44 !important;
+}
+
+:global(.light) .cell[data-peer][data-even],
+:global(.light) .cell[data-peer][data-odd] {
+  background: #d8d8f0 !important;
+}
+
 .cell[data-window] {
   background: #3b3b4f;
 }
@@ -48,18 +64,13 @@
    windoku do for theirs), so a selected asterisk cell stays purple when it
    lifts above the translucent overlay instead of dropping to a grey base. */
 .cell[data-asterisk] {
-  background: #3a1a6a;
+  background: #3b3b4f;
 }
 
 :global(.light) .cell[data-asterisk] {
-  background: #dcc8f4;
+  background: #e8e8fa;
 }
 
-.cell[data-argyle-d1] { background: #3d2c0c; }
-.cell[data-argyle-d2] { background: #0c2848; }
-
-:global(.light) .cell[data-argyle-d1] { background: #fef0d2; }
-:global(.light) .cell[data-argyle-d2] { background: #d8eaff; }
 
 .cell[data-overlap='two'] {
   background: #222248;
@@ -144,14 +155,12 @@
   background: #d8d8f0 !important;
 }
 
-/* Asterisk peers lighten to a brighter purple so the selected cell's asterisk
-   house reads as highlighted instead of dropping to the darker outer peer. */
 .cell[data-peer][data-asterisk] {
-  background: #4a2480 !important;
+  background: #2e2e44 !important;
 }
 
 :global(.light) .cell[data-peer][data-asterisk] {
-  background: #c4a8ec !important;
+  background: #d8d8f0 !important;
 }
 
 /* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals

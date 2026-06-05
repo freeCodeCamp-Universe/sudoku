@@ -138,6 +138,7 @@ export function buildModel(variant: Variant): VariantModel {
     houses,
     constraints: resolveConstraints(variant.constraintIds),
     symbols: variant.symbols,
+    peerHouseFilter: variant.peerHouseFilter,
     generateSolution: variant.generateSolution,
     generateGivens: variant.generateGivens,
     minimumClues: variant.minimumClues,

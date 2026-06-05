@@ -69,8 +69,15 @@
   width: 14px;
   height: 14px;
   border-radius: 2px;
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
+
+.legendSwatchEven { background: #3b3b4f; }
+.legendSwatchOdd  { background: #12123a; }
+
+:global(.light) .legendSwatchEven { background: #e8e8fa; }
+:global(.light) .legendSwatchOdd  { background: #ffffff; }
 
 .colorLegend {
   display: flex;
