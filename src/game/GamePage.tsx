@@ -33,20 +33,25 @@ type VariantWithColorNames = {
 
 interface GameInnerProps {
   settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean; highlightPeers: boolean };
-  toggleCheck: () => void;
   onNewGame?: () => void;
 }
 
-function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
+function GameInner({ settings, onNewGame }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
+  const [verifyMode, setVerifyMode] = useState(false);
 
+  useEffect(() => {
+    setVerifyMode(false);
+  }, [solution]);
+
+  const checkEnabled = settings.checkEnabled || verifyMode;
   const isBoardFull = state.values.size === solution.size;
-  const effectiveSolved = state.solved && settings.checkEnabled;
-  const showCheckPrompt = isBoardFull && !settings.checkEnabled && !state.solved;
+  const effectiveSolved = state.solved && checkEnabled;
+  const showCheckPrompt = isBoardFull && !checkEnabled;
 
   const structure = useMemo(
     () => variant.deriveStructure?.(solution, baseModel),
@@ -138,7 +143,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     solution,
     onEnterValue,
     onToggleCandidate,
-    checkEnabled: settings.checkEnabled,
+    checkEnabled,
     highlightPeers: settings.highlightPeers,
     candidateMode,
     annotators,
@@ -178,10 +183,10 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   }, [grid.announcerRef, effectiveSolved]);
 
   useEffect(() => {
-    if (state.solved) {
+    if (effectiveSolved) {
       setWinOpen(true);
     }
-  }, [state.solved]);
+  }, [effectiveSolved]);
 
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
@@ -350,7 +355,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
               }
 
               const isCorrectlyFilled =
-                settings.checkEnabled &&
+                checkEnabled &&
                 solution.has(selectedCellId) &&
                 state.values.get(selectedCellId) === solution.get(selectedCellId);
 
@@ -380,15 +385,13 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
       </div>
       {showCheckPrompt ? (
         <div className={styles.checkPrompt}>
-          All cells filled.
+          Looks like you&apos;re done!
           <button
             type="button"
             className={styles.checkPromptBtn}
-            onClick={() => {
-              toggleCheck();
-            }}
+            onClick={() => setVerifyMode(true)}
           >
-            Check answers
+            Check your answers
           </button>
         </div>
       ) : null}
@@ -525,7 +528,7 @@ export function GamePage() {
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
-          <GameInner settings={settings} toggleCheck={toggleCheck} onNewGame={() => setGenKey((k) => k + 1)} />
+          <GameInner settings={settings} onNewGame={() => setGenKey((k) => k + 1)} />
         </GameProvider>
       </main>
 
