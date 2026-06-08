@@ -42,14 +42,20 @@
 :global(.light) .cell[data-even] { background: #e8e8fa; }
 :global(.light) .cell[data-odd]  { background: #ffffff; }
 
-.cell[data-peer][data-even],
-.cell[data-peer][data-odd] {
-  background: #2e2e44 !important;
+.cell[data-peer][data-even] {
+  background: #2c2c4c !important;
 }
 
-:global(.light) .cell[data-peer][data-even],
-:global(.light) .cell[data-peer][data-odd] {
+.cell[data-peer][data-odd] {
+  background: #1a1a40 !important;
+}
+
+:global(.light) .cell[data-peer][data-even] {
   background: #d8d8f0 !important;
+}
+
+:global(.light) .cell[data-peer][data-odd] {
+  background: #ededf6 !important;
 }
 
 .cell[data-window] {
@@ -130,7 +136,7 @@
 /* Dim the selected cell's peers (its row, column, box, and any other house
    it shares). Subtler than the same-value highlight, which overrides it. */
 .cell[data-peer] {
-  background: #22243e !important;
+  background: #272948 !important;
 }
 
 :global(.light) .cell[data-peer] {
@@ -174,7 +180,7 @@
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
-   distinct from correct (green), and conflict (red) still overrides it. */
+   distinct from correct (green). */
 .cell[data-same-value],
 .cell[data-same-value][data-butterfly],
 .cell[data-same-value][data-overlap='two'],
@@ -189,12 +195,6 @@
   background: #cdeaea !important;
 }
 
-.cell[data-conflict],
-.cell[data-conflict][data-butterfly],
-.cell[data-conflict][data-overlap='two'],
-.cell[data-conflict][data-overlap='four'] {
-  background: #2a1515 !important;
-}
 
 .cell[data-revealed] .value {
   color: var(--accent-yellow);
@@ -204,8 +204,14 @@
   color: var(--accent-green);
 }
 
-.cell[data-incorrect] .value {
-  color: var(--accent-red);
+.incorrectIcon {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  width: 0.38em;
+  height: 0.38em;
+  fill: var(--accent-red);
+  pointer-events: none;
 }
 
 .cell[data-word] .value {
@@ -350,12 +356,6 @@
   color: #0a0a23;
 }
 
-:global(.light) .cell[data-conflict],
-:global(.light) .cell[data-conflict][data-butterfly],
-:global(.light) .cell[data-conflict][data-overlap='two'],
-:global(.light) .cell[data-conflict][data-overlap='four'] {
-  background: #f8dede !important;
-}
 
 :global(.light) .cell[data-box-right]:not([data-selected])::after,
 :global(.light) .cell[data-box-bottom]:not([data-selected])::before {

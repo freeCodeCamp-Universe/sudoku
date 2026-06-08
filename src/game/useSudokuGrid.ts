@@ -155,9 +155,8 @@ export function useSudokuGrid({
         given,
         revealed: revealed.has(id),
         selected: selectedId === id,
-        // Given/revealed cells are preset by the puzzle and cannot be wrong.
-        // A provably-correct cell is also never flagged as a conflict.
-        conflict: conflictSet.has(id) && !given && correct !== true,
+        // A provably-correct cell is never flagged as a conflict.
+        conflict: conflictSet.has(id) && correct !== true,
         correct,
         sameValue: selectedValue !== undefined && value === selectedValue,
         peer: peerIds.has(id),
