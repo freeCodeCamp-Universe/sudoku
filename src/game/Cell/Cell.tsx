@@ -26,8 +26,12 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   small?: boolean;
   medium?: boolean;
   butterfly?: boolean;
+  cross?: boolean;
+  flower?: boolean;
   window?: boolean;
   asterisk?: boolean;
+  centerDot?: boolean;
+  girandola?: boolean;
   argyleD1?: boolean;
   argyleD2?: boolean;
   markerEdges?: MarkerEdge[];
@@ -73,8 +77,12 @@ export function Cell({
   small = false,
   medium = false,
   butterfly: isButterfly = false,
+  cross: isCross = false,
+  flower: isFlower = false,
   window: isWindow = false,
   asterisk = false,
+  centerDot = false,
+  girandola = false,
   argyleD1 = false,
   argyleD2 = false,
   markerEdges,
@@ -87,7 +95,7 @@ export function Cell({
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
   const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
-  const overlapClass = overlap === 4 ? 'four' : overlap === 2 ? 'two' : undefined;
+  const overlapClass = overlap === 5 ? 'five' : overlap === 4 ? 'four' : overlap === 3 ? 'three' : overlap === 2 ? 'two' : undefined;
 
   return (
     <div
@@ -112,8 +120,12 @@ export function Cell({
       data-small={small || undefined}
       data-medium={medium || undefined}
       data-butterfly={isButterfly || undefined}
+      data-cross={isCross || undefined}
+      data-flower={isFlower || undefined}
       data-window={isWindow || undefined}
       data-asterisk={asterisk || undefined}
+      data-center-dot={centerDot || undefined}
+      data-girandola={girandola || undefined}
       data-argyle-d1={argyleD1 || undefined}
       data-argyle-d2={argyleD2 || undefined}
       data-word={word || undefined}

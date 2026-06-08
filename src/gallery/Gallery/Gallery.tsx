@@ -83,7 +83,7 @@ export function Gallery() {
           </button>
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
-        <p className={styles.subheading}>20 sudoku variants for every skill level</p>
+        <p className={styles.subheading}>24 sudoku variants for every skill level</p>
       </header>
 
       <div className={styles.controls}>

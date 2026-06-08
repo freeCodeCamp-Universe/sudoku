@@ -1,8 +1,12 @@
 import { arrow } from './arrow';
 import { argyle } from './argyle';
 import { asterisk } from './asterisk';
+import { centerDot } from './centerDot';
+import { girandola } from './girandola';
 import type { Variant } from '@/engine/types';
 import { butterfly } from './butterfly';
+import { cross } from './cross';
+import { flower } from './flower';
 import { chainVariant } from './chain';
 import { classic } from './classic';
 import { color } from './color';
@@ -24,7 +28,11 @@ export const variantRegistry: Record<string, Variant> = {
   [arrow.id]: arrow,
   [argyle.id]: argyle,
   [asterisk.id]: asterisk,
+  [centerDot.id]: centerDot,
+  [girandola.id]: girandola,
   [butterfly.id]: butterfly,
+  [cross.id]: cross,
+  [flower.id]: flower,
   [chainVariant.id]: chainVariant,
   [classic.id]: classic,
   [color.id]: color,

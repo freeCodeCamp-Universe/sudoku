@@ -89,7 +89,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 120px;
+  min-height: 160px;
 }
 
 .cardDesc {

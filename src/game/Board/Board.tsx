@@ -5,6 +5,8 @@ import type { BoardProps } from '@/game/gameTypes';
 import { ANTI_DIAGONAL_CELLS, MAIN_DIAGONAL_CELLS } from '@/variants/sudoku-x';
 import { WINDOKU_WINDOWS } from '@/variants/windoku';
 import { ASTERISK_CELLS } from '@/variants/asterisk';
+import { CENTER_DOT_CELLS } from '@/variants/centerDot';
+import { GIRANDOLA_CELLS } from '@/variants/girandola';
 import { ARGYLE_D1_OFFSETS, ARGYLE_D2_SUMS } from '@/variants/argyle';
 
 const argyleD1Set = new Set(
@@ -24,6 +26,8 @@ const argyleD2Set = new Set(
 
 const windokuWindowSet = new Set(WINDOKU_WINDOWS.flat().map(([r, c]) => `r${r}c${c}`));
 const asteriskCellSet = new Set(ASTERISK_CELLS.map(([r, c]) => `r${r}c${c}`));
+const centerDotCellSet = new Set(CENTER_DOT_CELLS.map(([r, c]) => `r${r}c${c}`));
+const girandolaCellSet = new Set(GIRANDOLA_CELLS.map(([r, c]) => `r${r}c${c}`));
 import styles from './Board.module.css';
 
 const diagonalSet = new Set([...MAIN_DIAGONAL_CELLS, ...ANTI_DIAGONAL_CELLS]);
@@ -305,11 +309,15 @@ export function Board({
                   diagonal={variant.id === 'sudoku-x' && diagonalSet.has(cell.id)}
                   window={variant.id === 'windoku' && windokuWindowSet.has(cell.id)}
                   asterisk={variant.id === 'asterisk' && asteriskCellSet.has(cell.id)}
+                  centerDot={variant.id === 'center-dot' && centerDotCellSet.has(cell.id)}
+                  girandola={variant.id === 'girandola' && girandolaCellSet.has(cell.id)}
                   argyleD1={variant.id === 'argyle' && argyleD1Set.has(cell.id)}
                   argyleD2={variant.id === 'argyle' && argyleD2Set.has(cell.id)}
                   small={rect.w <= 30}
                   medium={rect.w > 30 && rect.w <= 44}
                   butterfly={variant.id === 'butterfly'}
+                  cross={variant.id === 'cross'}
+                  flower={variant.id === 'flower'}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
                   colorblind={colorblindMode}

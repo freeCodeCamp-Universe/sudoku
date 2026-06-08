@@ -4,20 +4,23 @@ import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 const SUB_GRIDS = [
-  { originRow: 0, originCol: 0 },
-  { originRow: 0, originCol: 12 },
-  { originRow: 6, originCol: 6 },
-  { originRow: 12, originCol: 0 },
-  { originRow: 12, originCol: 12 },
+  { originRow: 0, originCol: 3 },
+  { originRow: 3, originCol: 0 },
+  { originRow: 3, originCol: 3 },
+  { originRow: 3, originCol: 6 },
+  { originRow: 6, originCol: 3 },
 ];
 
-export function SamuraiPreview() {
+export function FlowerPreview() {
   const { theme } = useTheme();
   const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
-    const cells = 21;
+    const cells = 15;
     const cell = width / cells;
     const isLight = theme === 'light';
-    const fillOverlap2 = isLight ? '#e8e8f8' : '#1f1f3a';
+    const fillOverlap5 = isLight ? '#dfdff2' : '#313163';
+    const fillOverlap4 = isLight ? '#e4e4f4' : '#2c2c5a';
+    const fillOverlap3 = isLight ? '#e9e9f6' : '#272751';
+    const fillOverlap2 = isLight ? '#eeeef8' : '#222248';
     const fillSingle = isLight ? '#f5f5f0' : '#1b1b32';
     const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
     const boxLine = isLight ? '#a0a0c0' : '#3b3b4f';
@@ -30,7 +33,12 @@ export function SamuraiPreview() {
         ).length;
 
         if (count === 0) continue;
-        ctx.fillStyle = count >= 2 ? fillOverlap2 : fillSingle;
+        ctx.fillStyle =
+          count === 5 ? fillOverlap5 :
+          count === 4 ? fillOverlap4 :
+          count === 3 ? fillOverlap3 :
+          count === 2 ? fillOverlap2 :
+          fillSingle;
         ctx.fillRect(col * cell, row * cell, cell, cell);
       }
     }

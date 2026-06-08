@@ -11,6 +11,7 @@ function getBaseCellSize(variant: Variant): number {
   if (kind === 'multigrid') {
     const cols = (variant.layout as { canvasCols: number }).canvasCols;
     if (cols === 21) return 30;
+    if (cols === 15) return 30;
     if (cols === 12) return 40;
     return Math.floor(400 / cols);
   }

@@ -4,19 +4,20 @@ import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
 const SUB_GRIDS = [
-  { originRow: 0, originCol: 0 },
-  { originRow: 0, originCol: 12 },
+  { originRow: 0, originCol: 6 },
   { originRow: 6, originCol: 6 },
-  { originRow: 12, originCol: 0 },
-  { originRow: 12, originCol: 12 },
+  { originRow: 6, originCol: 0 },
+  { originRow: 6, originCol: 12 },
+  { originRow: 12, originCol: 6 },
 ];
 
-export function SamuraiPreview() {
+export function CrossPreview() {
   const { theme } = useTheme();
   const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const cells = 21;
     const cell = width / cells;
     const isLight = theme === 'light';
+    const fillOverlap3 = isLight ? '#d8d8ec' : '#252538';
     const fillOverlap2 = isLight ? '#e8e8f8' : '#1f1f3a';
     const fillSingle = isLight ? '#f5f5f0' : '#1b1b32';
     const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
@@ -30,7 +31,7 @@ export function SamuraiPreview() {
         ).length;
 
         if (count === 0) continue;
-        ctx.fillStyle = count >= 2 ? fillOverlap2 : fillSingle;
+        ctx.fillStyle = count === 3 ? fillOverlap3 : count === 2 ? fillOverlap2 : fillSingle;
         ctx.fillRect(col * cell, row * cell, cell, cell);
       }
     }

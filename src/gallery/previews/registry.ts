@@ -2,7 +2,11 @@ import type { ComponentType } from 'react';
 import { ArgylePreview } from './ArgylePreview';
 import { ArrowPreview } from './ArrowPreview';
 import { AsteriskPreview } from './AsteriskPreview';
+import { CenterDotPreview } from './CenterDotPreview';
+import { GirandolaPreview } from './GirandolaPreview';
 import { ButterflyPreview } from './ButterflyPreview';
+import { CrossPreview } from './CrossPreview';
+import { FlowerPreview } from './FlowerPreview';
 import { ChainPreview } from './ChainPreview';
 import { ClassicPreview } from './ClassicPreview';
 import { ColorPreview } from './ColorPreview';
@@ -39,8 +43,12 @@ export const previewRegistry: Record<string, PreviewComponent> = {
   wordoku: WordokuPreview,
   color: ColorPreview,
   asterisk: AsteriskPreview,
+  'center-dot': CenterDotPreview,
+  girandola: GirandolaPreview,
   argyle: ArgylePreview,
   butterfly: ButterflyPreview,
+  cross: CrossPreview,
+  flower: FlowerPreview,
   chain: ChainPreview,
   sujiken: SujikenPreview,
 };

@@ -14,7 +14,7 @@ const CHAIN_COLORS = [
   '#ff88aa', '#88ddff', '#ffcc55', '#dd88cc', '#88ccaa', '#ffaa66',
 ];
 
-// Ties chains to the specific solution object — no timing/race issues
+// Ties chains to the specific solution object; no timing/race issues
 const chainsBySolution = new WeakMap<Solution, ChainType[]>();
 
 function deriveStructure(solution: Solution, _model: VariantModel): { chains: ChainType[] } {
