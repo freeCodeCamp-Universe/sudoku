@@ -11,9 +11,11 @@ interface HeaderProps {
   checkEnabled?: boolean;
   timerEnabled?: boolean;
   colorblindEnabled?: boolean;
+  highlightPeersEnabled?: boolean;
   onToggleCheck?: () => void;
   onToggleTimer?: () => void;
   onToggleColorblind?: () => void;
+  onToggleHighlightPeers?: () => void;
 }
 
 export function Header({
@@ -24,9 +26,11 @@ export function Header({
   checkEnabled,
   timerEnabled,
   colorblindEnabled,
+  highlightPeersEnabled,
   onToggleCheck,
   onToggleTimer,
   onToggleColorblind,
+  onToggleHighlightPeers,
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -50,7 +54,7 @@ export function Header({
     }
   };
 
-  const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined || onToggleColorblind !== undefined;
+  const hasSettings = onToggleCheck !== undefined || onToggleTimer !== undefined || onToggleColorblind !== undefined || onToggleHighlightPeers !== undefined;
 
   return (
     <header className={styles.topBar}>
@@ -144,6 +148,29 @@ export function Header({
                         className={`${styles.toggleBtn} ${colorblindEnabled ? styles.on : styles.off}`}
                       >
                         {colorblindEnabled ? 'On' : 'Off'}
+                      </span>
+                    </span>
+                  </div>
+                ) : null}
+                {onToggleHighlightPeers !== undefined ? (
+                  <div className={styles.dropdownRow}>
+                    <span id="settings-highlight-peers-label" className={styles.dropdownLabel}>
+                      Highlight peers
+                    </span>
+                    <span className={styles.toggleControl}>
+                      <input
+                        type="checkbox"
+                        role="switch"
+                        className={styles.toggleInput}
+                        checked={Boolean(highlightPeersEnabled)}
+                        aria-labelledby="settings-highlight-peers-label"
+                        onChange={onToggleHighlightPeers}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`${styles.toggleBtn} ${highlightPeersEnabled ? styles.on : styles.off}`}
+                      >
+                        {highlightPeersEnabled ? 'On' : 'Off'}
                       </span>
                     </span>
                   </div>

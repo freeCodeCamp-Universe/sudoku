@@ -32,7 +32,7 @@ type VariantWithColorNames = {
 };
 
 interface GameInnerProps {
-  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean };
+  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean; highlightPeers: boolean };
   toggleCheck: () => void;
   onNewGame?: () => void;
 }
@@ -139,6 +139,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     onEnterValue,
     onToggleCandidate,
     checkEnabled: settings.checkEnabled,
+    highlightPeers: settings.highlightPeers,
     candidateMode,
     annotators,
     renderSymbol,
@@ -497,7 +498,7 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  const { settings, toggleCheck, toggleTimer, toggleColorblind } = usePersistence(variantId);
+  const { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers } = usePersistence(variantId);
   const [genKey, setGenKey] = useState(0);
   const { model, givens, solution } = useMemo(() => {
     const builtModel = buildModel(variant);
@@ -516,9 +517,11 @@ export function GamePage() {
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
         colorblindEnabled={settings.colorblindEnabled}
+        highlightPeersEnabled={settings.highlightPeers}
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
         onToggleColorblind={variant.symbolKind === 'color' ? toggleColorblind : undefined}
+        onToggleHighlightPeers={toggleHighlightPeers}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={variant} model={model} givens={givens} solution={solution}>
