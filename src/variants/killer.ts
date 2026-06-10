@@ -63,7 +63,7 @@ export const killer: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Cages', text: 'Cells are grouped into dashed cages, each with a small target number in its corner.' },
         { term: 'Sum rule', text: 'The digits inside each dashed cage must add up to that target exactly.' },
       ],

@@ -8,15 +8,15 @@ const layout: MultiGridLayout = {
   canvasRows: 21,
   canvasCols: 21,
   subGrids: [
-    { originRow: 0, originCol: 0 },
-    { originRow: 0, originCol: 12 },
+    { originRow: 0, originCol: 3 },
+    { originRow: 3, originCol: 12 },
     { originRow: 6, originCol: 6 },
-    { originRow: 12, originCol: 0 },
-    { originRow: 12, originCol: 12 },
+    { originRow: 9, originCol: 0 },
+    { originRow: 12, originCol: 9 },
   ],
 };
 
-function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
+function buildKazagurumaHouses(boardLayout: BoardLayout): House[] {
   if (boardLayout.kind !== 'multigrid') {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
@@ -61,16 +61,16 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
   return houses;
 }
 
-export const samurai: Variant = {
-  id: 'samurai',
-  name: 'Samurai Sudoku',
-  description: 'Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.',
+export const kazaguruma: Variant = {
+  id: 'kazaguruma',
+  name: 'Kazaguruma Sudoku',
+  description: 'Five overlapping 9×9 grids arranged in a windmill pattern, each outer grid sharing two boxes with the center in a pinwheel arrangement.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.' },
+        { term: 'Five grids', text: 'One center grid and four outer grids, each extending outward in a rotating windmill pattern.' },
         { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
       ],
@@ -79,12 +79,12 @@ export const samurai: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.' },
-        { term: 'Solve as one', text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.' },
+        { term: 'Shared regions', text: 'Each outer grid overlaps the center through two 3×3 boxes. Those cells must satisfy the rules of both grids simultaneously.' },
+        { term: 'Solve as one', text: 'All five grids are linked through their shared regions, so they must all be solved together.' },
       ],
     },
   ],
-  popularity: 3,
+  popularity: 15,
   difficulty: 'advanced',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -92,5 +92,5 @@ export const samurai: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: ['overlap'],
-  buildHouses: buildSamuraiHouses,
+  buildHouses: buildKazagurumaHouses,
 };

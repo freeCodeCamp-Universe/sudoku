@@ -64,7 +64,7 @@ export const super16: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1–9 and letters A–G.' },
+        { term: 'The grid', text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1-9 and letters A-G.' },
         { term: 'Rows and columns', text: 'Every row and column must contain all 16 symbols exactly once.' },
         { term: 'Boxes', text: 'Each 4×4 box must also hold all 16 symbols exactly once.' },
       ],

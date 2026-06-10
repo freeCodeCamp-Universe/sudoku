@@ -123,7 +123,7 @@ export const chainVariant: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Chains', text: 'Groups of connected cells are linked by a colored chain running through the grid.' },
         { term: 'Chain rule', text: 'The digits within a chain must be consecutive, forming an unbroken sequence of numbers in any order.' },
       ],
@@ -139,7 +139,7 @@ export const chainVariant: Variant = {
   ],
   popularity: 19,
   generateGivens: generateGivens9x9,
-  difficulty: 'advanced',
+  difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

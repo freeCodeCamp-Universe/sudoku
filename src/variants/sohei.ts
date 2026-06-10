@@ -8,15 +8,14 @@ const layout: MultiGridLayout = {
   canvasRows: 21,
   canvasCols: 21,
   subGrids: [
-    { originRow: 0, originCol: 0 },
-    { originRow: 0, originCol: 12 },
-    { originRow: 6, originCol: 6 },
-    { originRow: 12, originCol: 0 },
-    { originRow: 12, originCol: 12 },
+    { originRow: 0,  originCol: 6  },  // top
+    { originRow: 6,  originCol: 0  },  // left
+    { originRow: 6,  originCol: 12 },  // right
+    { originRow: 12, originCol: 6  },  // bottom
   ],
 };
 
-function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
+function buildSoheiHouses(boardLayout: BoardLayout): House[] {
   if (boardLayout.kind !== 'multigrid') {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
@@ -61,30 +60,30 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
   return houses;
 }
 
-export const samurai: Variant = {
-  id: 'samurai',
-  name: 'Samurai Sudoku',
-  description: 'Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.',
+export const sohei: Variant = {
+  id: 'sohei',
+  name: 'Sohei Sudoku',
+  description: 'Four 9×9 grids arranged in a diamond ring (top, left, right, and bottom), each sharing one 3×3 corner box with its two neighbours.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.' },
+        { term: 'Four grids', text: 'Four 9×9 grids are placed in a diamond pattern, with each arm touching its two neighbours at a corner.' },
         { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.' },
-        { term: 'Solve as one', text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.' },
+        { term: 'Shared corners', text: 'Each pair of neighbouring grids shares exactly one 3×3 box, which must satisfy the rules of both grids simultaneously.' },
+        { term: 'Solve as one', text: 'The four shared corners link all grids into one puzzle; none can be solved without the others.' },
       ],
     },
   ],
-  popularity: 3,
+  popularity: 10,
   difficulty: 'advanced',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -92,5 +91,5 @@ export const samurai: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: ['overlap'],
-  buildHouses: buildSamuraiHouses,
+  buildHouses: buildSoheiHouses,
 };

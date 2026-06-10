@@ -3,7 +3,10 @@ import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
-export function SkyscraperPreview() {
+const ROW_CLUES = [3, 0, 7, 14, 20, 8];
+const COL_CLUES = [17, 2, 0, 5, 25, 11];
+
+export function SandwichPreview() {
   const { theme } = useTheme();
   const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const isLight = theme === 'light';
@@ -12,26 +15,30 @@ export function SkyscraperPreview() {
     const gridColor = isLight ? '#c8c8d8' : '#2a2a3a';
     const clueColor = isLight ? '#5060a0' : '#9898b8';
     const fillColor = isLight ? '#dcdcf8' : '#28284c';
+
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.7;
-
-    for (let row = 0; row < 6; row += 1) {
-      for (let col = 0; col < 6; col += 1) {
-        ctx.strokeRect(offset + col * cell, offset + row * cell, cell, cell);
+    for (let r = 0; r < 6; r += 1) {
+      for (let c = 0; c < 6; c += 1) {
+        ctx.strokeRect(offset + c * cell, offset + r * cell, cell, cell);
       }
     }
+
+    ctx.fillStyle = fillColor;
+    [[0, 4], [1, 1], [2, 3], [3, 0], [4, 5], [5, 2]].forEach(([r, c]) => {
+      ctx.fillRect(offset + c * cell + 1, offset + r * cell + 1, cell - 2, cell - 2);
+    });
 
     ctx.fillStyle = clueColor;
     ctx.font = 'bold 9px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    [2, 3, 1, 4, 2, 3].forEach((value, index) => ctx.fillText(String(value), offset + index * cell + cell / 2, offset / 2));
-    [3, 2, 4, 1, 3, 2].forEach((value, index) => ctx.fillText(String(value), offset + index * cell + cell / 2, offset + 6 * cell + offset / 2));
-    [2, 4, 1, 3, 2, 3].forEach((value, index) => ctx.fillText(String(value), offset / 2, offset + index * cell + cell / 2));
-    [3, 1, 4, 2, 3, 2].forEach((value, index) => ctx.fillText(String(value), offset + 6 * cell + offset / 2, offset + index * cell + cell / 2));
-    ctx.fillStyle = fillColor;
-    [[0, 0], [1, 3], [2, 5], [3, 2], [4, 1], [5, 4]].forEach(([row, col]) => {
-      ctx.fillRect(offset + col * cell + 1, offset + row * cell + 1, cell - 2, cell - 2);
+
+    ROW_CLUES.forEach((value, index) => {
+      ctx.fillText(String(value), offset + 6 * cell + offset / 2, offset + index * cell + cell / 2);
+    });
+    COL_CLUES.forEach((value, index) => {
+      ctx.fillText(String(value), offset + index * cell + cell / 2, offset + 6 * cell + offset / 2);
     });
   }, [theme]));
 

@@ -155,15 +155,25 @@
   background: #ededf6 !important;
 }
 
+.cell[data-peer][data-overlay-borders],
 .cell[data-peer][data-butterfly],
 .cell[data-peer][data-cross],
-.cell[data-peer][data-flower] {
+.cell[data-peer][data-flower],
+.cell[data-peer][data-overlap='two'],
+.cell[data-peer][data-overlap='three'],
+.cell[data-peer][data-overlap='four'],
+.cell[data-peer][data-overlap='five'] {
   background: #2e2e44 !important;
 }
 
+:global(.light) .cell[data-peer][data-overlay-borders],
 :global(.light) .cell[data-peer][data-butterfly],
 :global(.light) .cell[data-peer][data-cross],
-:global(.light) .cell[data-peer][data-flower] {
+:global(.light) .cell[data-peer][data-flower],
+:global(.light) .cell[data-peer][data-overlap='two'],
+:global(.light) .cell[data-peer][data-overlap='three'],
+:global(.light) .cell[data-peer][data-overlap='four'],
+:global(.light) .cell[data-peer][data-overlap='five'] {
   background: #d8d8f0 !important;
 }
 

@@ -7,6 +7,9 @@ import { GirandolaPreview } from './GirandolaPreview';
 import { ButterflyPreview } from './ButterflyPreview';
 import { CrossPreview } from './CrossPreview';
 import { FlowerPreview } from './FlowerPreview';
+import { KazagurumaPreview } from './KazagurumaPreview';
+import { TwodokuPreview } from './TwodokuPreview';
+import { SoheiPreview } from './SoheiPreview';
 import { ChainPreview } from './ChainPreview';
 import { ClassicPreview } from './ClassicPreview';
 import { ColorPreview } from './ColorPreview';
@@ -17,6 +20,7 @@ import { JigsawPreview } from './JigsawPreview';
 import { KillerPreview } from './KillerPreview';
 import { MiniSudokuPreview } from './MiniSudokuPreview';
 import { SamuraiPreview } from './SamuraiPreview';
+import { SandwichPreview } from './SandwichPreview';
 import { SkyscraperPreview } from './SkyscraperPreview';
 import { SujikenPreview } from './SujikenPreview';
 import { SudokuXPreview } from './SudokuXPreview';
@@ -49,6 +53,10 @@ export const previewRegistry: Record<string, PreviewComponent> = {
   butterfly: ButterflyPreview,
   cross: CrossPreview,
   flower: FlowerPreview,
+  kazaguruma: KazagurumaPreview,
+  twodoku: TwodokuPreview,
+  sohei: SoheiPreview,
   chain: ChainPreview,
+  sandwich: SandwichPreview,
   sujiken: SujikenPreview,
 };

@@ -70,7 +70,7 @@ export const butterfly: Variant = {
       tone: 'basic',
       rules: [
         { term: 'The layout', text: 'Four 9×9 grids are placed on a 12×12 board, overlapping at the corners to create a butterfly shape.' },
-        { term: 'Fill with 1–9', text: 'Every cell within each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Fill with 1-9', text: 'Every cell within each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
       ],
     },

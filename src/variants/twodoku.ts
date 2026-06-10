@@ -5,18 +5,15 @@ const layout: MultiGridLayout = {
   kind: 'multigrid',
   subGridSize: 9,
   box: { rows: 3, cols: 3 },
-  canvasRows: 21,
-  canvasCols: 21,
+  canvasRows: 15,
+  canvasCols: 15,
   subGrids: [
     { originRow: 0, originCol: 0 },
-    { originRow: 0, originCol: 12 },
     { originRow: 6, originCol: 6 },
-    { originRow: 12, originCol: 0 },
-    { originRow: 12, originCol: 12 },
   ],
 };
 
-function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
+function buildTwodokuHouses(boardLayout: BoardLayout): House[] {
   if (boardLayout.kind !== 'multigrid') {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
@@ -61,36 +58,36 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
   return houses;
 }
 
-export const samurai: Variant = {
-  id: 'samurai',
-  name: 'Samurai Sudoku',
-  description: 'Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.',
+export const twodoku: Variant = {
+  id: 'twodoku',
+  name: 'Twodoku',
+  description: 'Two 9×9 grids sharing a single 3×3 corner box, linked through their overlapping region.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.' },
+        { term: 'Two grids', text: 'Two standard 9×9 sudoku grids are placed diagonally, overlapping at one corner.' },
         { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.' },
-        { term: 'Solve as one', text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.' },
+        { term: 'Shared corner', text: 'The overlapping 3×3 box belongs to both grids and must satisfy the rules of each simultaneously.' },
+        { term: 'Solve together', text: 'The shared box links the two grids, so neither can be solved in isolation.' },
       ],
     },
   ],
-  popularity: 3,
-  difficulty: 'advanced',
+  popularity: 22,
+  difficulty: 'intermediate',
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: ['overlap'],
-  buildHouses: buildSamuraiHouses,
+  buildHouses: buildTwodokuHouses,
 };

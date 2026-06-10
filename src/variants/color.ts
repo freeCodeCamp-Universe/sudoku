@@ -34,7 +34,7 @@ export const color: Variant & { colorNames: string[] } = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 9×9 board where nine colors replace the digits 1–9. The logic is identical to classic sudoku.' },
+        { term: 'The grid', text: 'A 9×9 board where nine colors replace the digits 1-9. The logic is identical to classic sudoku.' },
         { term: 'Rows and columns', text: 'Each row and column must contain every color exactly once.' },
         { term: 'Boxes', text: 'Each 3×3 box must also hold every color exactly once.' },
       ],

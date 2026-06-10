@@ -96,7 +96,7 @@ export function makeJigsawVariant(regions: number[][]): Variant {
         tone: 'basic',
         rules: [
           { term: 'The grid', text: 'A 9×9 board where the nine regions are irregular jigsaw shapes instead of standard 3×3 boxes.' },
-          { term: 'Fill with 1–9', text: 'Every cell must contain a digit from 1 to 9.' },
+          { term: 'Fill with 1-9', text: 'Every cell must contain a digit from 1 to 9.' },
           { term: 'No repeats', text: 'Each row, column, and colored jigsaw region must hold every digit exactly once.' },
         ],
       },

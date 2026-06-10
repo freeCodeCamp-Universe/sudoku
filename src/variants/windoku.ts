@@ -41,9 +41,9 @@ export const windoku: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Four windows', text: 'Four extra shaded 3×3 regions are overlaid on the grid.' },
-        { term: 'Window rule', text: 'Each window must also contain digits 1–9 without any repeats.' },
+        { term: 'Window rule', text: 'Each window must also contain digits 1-9 without any repeats.' },
       ],
     },
     {

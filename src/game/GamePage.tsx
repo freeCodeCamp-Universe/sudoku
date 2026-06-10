@@ -544,12 +544,12 @@ export function GamePage() {
         shortcuts={[
           ...(variant.id === 'super'
             ? [
-                { keys: ['1–9'], description: 'Enter a digit' },
-                { keys: ['A–G'], description: 'Enter a letter' },
+                { keys: ['1-9'], description: 'Enter a digit' },
+                { keys: ['A-G'], description: 'Enter a letter' },
               ]
             : [
                 {
-                  keys: [variant.symbolKind === 'letter' ? 'A–Z' : `1–${variant.symbols.length}`],
+                  keys: [variant.symbolKind === 'letter' ? 'A-Z' : `1-${variant.symbols.length}`],
                   description: variant.symbolKind === 'letter' ? 'Enter a letter' : variant.symbolKind === 'color' ? 'Enter a color' : 'Enter a digit',
                 },
               ]),

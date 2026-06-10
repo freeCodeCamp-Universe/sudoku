@@ -86,7 +86,7 @@ export const skyscraper: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Building heights', text: 'Think of each digit as a building, where 1 is the shortest and 9 is the tallest.' },
         { term: 'Clues', text: 'Numbers around the edge tell you how many buildings are visible looking into that row or column. A taller building hides all shorter ones behind it.' },
       ],

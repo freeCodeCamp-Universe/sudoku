@@ -63,7 +63,7 @@ export const argyle: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Argyle pattern', text: 'Diagonal lines are drawn across the grid forming an argyle diamond pattern. The marked cells belong to diagonal stripes.' },
         { term: 'Diagonal rule', text: 'No digit may repeat within any single diagonal stripe.' },
       ],

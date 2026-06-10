@@ -8,7 +8,7 @@ interface ArgyleOverlayProps {
   structure: unknown;
 }
 
-// Display diagonals — every 3rd stripe in each direction, covering the full 9×9.
+// Display diagonals - every 3rd stripe in each direction, covering the full 9×9.
 // These are wider than the constraint houses; they produce the argyle diamond pattern.
 const D1_DISPLAY_OFFSETS = [-4, -1, 1, 4]; // col - row
 const D2_DISPLAY_SUMS    = [4, 7, 9, 12];  // row + col

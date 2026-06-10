@@ -87,7 +87,7 @@ export const arrow: Variant = {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
         { term: 'Arrows', text: 'Each arrow has a circled bulb at its base and a line passing through one or more cells.' },
         { term: 'Sum rule', text: 'The digit in the bulb must equal the sum of all digits along the arrow\'s line.' },
       ],
@@ -103,7 +103,7 @@ export const arrow: Variant = {
   ],
   popularity: 7,
   generateGivens: generateGivens9x9,
-  difficulty: 'advanced',
+  difficulty: 'intermediate',
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

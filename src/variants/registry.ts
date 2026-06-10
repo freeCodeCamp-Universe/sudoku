@@ -7,6 +7,9 @@ import type { Variant } from '@/engine/types';
 import { butterfly } from './butterfly';
 import { cross } from './cross';
 import { flower } from './flower';
+import { kazaguruma } from './kazaguruma';
+import { twodoku } from './twodoku';
+import { sohei } from './sohei';
 import { chainVariant } from './chain';
 import { classic } from './classic';
 import { color } from './color';
@@ -17,6 +20,7 @@ import { jigsaw } from './jigsaw';
 import { killer } from './killer';
 import { mini } from './mini';
 import { samurai } from './samurai';
+import { sandwich } from './sandwich';
 import { skyscraper } from './skyscraper';
 import { super16 } from './super16';
 import { sujiken } from './sujiken';
@@ -33,6 +37,9 @@ export const variantRegistry: Record<string, Variant> = {
   [butterfly.id]: butterfly,
   [cross.id]: cross,
   [flower.id]: flower,
+  [kazaguruma.id]: kazaguruma,
+  [twodoku.id]: twodoku,
+  [sohei.id]: sohei,
   [chainVariant.id]: chainVariant,
   [classic.id]: classic,
   [color.id]: color,
@@ -43,6 +50,7 @@ export const variantRegistry: Record<string, Variant> = {
   [killer.id]: killer,
   [mini.id]: mini,
   [samurai.id]: samurai,
+  [sandwich.id]: sandwich,
   [skyscraper.id]: skyscraper,
   [super16.id]: super16,
   [sujiken.id]: sujiken,
