@@ -93,4 +93,21 @@ describe('Gallery', () => {
 
     expect(screen.getByText(/No puzzles match your search\./i)).toBeTruthy();
   });
+
+  it('should label the theme button with the target theme', () => {
+    renderGallery();
+
+    expect(screen.getByRole('button', { name: /switch to light theme/i })).toBeTruthy();
+  });
+
+  it('should update the theme button label and announce the new theme after toggling', async () => {
+    const user = userEvent.setup();
+
+    renderGallery();
+
+    await user.click(screen.getByRole('button', { name: /switch to light theme/i }));
+
+    expect(screen.getByRole('button', { name: /switch to dark theme/i })).toBeTruthy();
+    expect(screen.getByRole('status')).toHaveTextContent('Light theme');
+  });
 });

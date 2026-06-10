@@ -58,7 +58,7 @@ describe('Header', () => {
     expect(onHelpOpen).toHaveBeenCalledTimes(1);
   });
 
-  it('should render a theme toggle button', () => {
+  it('should render a theme toggle button labelled with the target theme', () => {
     render(
       <MemoryRouter>
         <ThemeProvider>
@@ -67,7 +67,24 @@ describe('Header', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('button', { name: /theme/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /switch to light theme/i })).toBeTruthy();
+  });
+
+  it('should update the theme button label and announce the new theme after toggling', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <Header title="Classic Sudoku" backHref="/" />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: /switch to light theme/i }));
+
+    expect(screen.getByRole('button', { name: /switch to dark theme/i })).toBeTruthy();
+    expect(screen.getByRole('status')).toHaveTextContent('Light theme');
   });
 
   describe('settings', () => {

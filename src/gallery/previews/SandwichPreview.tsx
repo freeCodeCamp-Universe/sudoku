@@ -40,6 +40,11 @@ export function SandwichPreview() {
     COL_CLUES.forEach((value, index) => {
       ctx.fillText(String(value), offset + index * cell + cell / 2, offset + 6 * cell + offset / 2);
     });
+
+    const lw = 1.5;
+    ctx.strokeStyle = clueColor;
+    ctx.lineWidth = lw;
+    ctx.strokeRect(offset + lw / 2, offset + lw / 2, 6 * cell - lw, 6 * cell - lw);
   }, [theme]));
 
   return (

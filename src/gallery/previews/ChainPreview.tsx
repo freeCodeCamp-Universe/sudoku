@@ -39,8 +39,14 @@ export function ChainPreview() {
     const isLight = theme === 'light';
     const n = 9;
     const cell = width / n;
-    const gridColor = isLight ? '#2a2a3a' : '#2a2a3a';
-    const boxColor = isLight ? '#3b3b4f' : '#3b3b4f';
+    const gridColor = isLight ? '#c8c8d8' : '#2a2a3a';
+    const boxColor  = isLight ? '#8080a8' : '#3b3b4f';
+
+    if (isLight) {
+      ctx.fillStyle = '#f5f5f0';
+      ctx.fillRect(0, 0, width, width);
+    }
+
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.5;
 
@@ -82,6 +88,11 @@ export function ChainPreview() {
       ctx.stroke();
     });
     ctx.globalAlpha = 1;
+    const lw = 1.5;
+    ctx.strokeStyle = isLight ? '#5060a0' : '#9898b8';
+    ctx.lineWidth = lw;
+    ctx.lineCap = 'butt';
+    ctx.strokeRect(lw / 2, lw / 2, n * cell - lw, n * cell - lw);
   }, [theme]));
 
   return (

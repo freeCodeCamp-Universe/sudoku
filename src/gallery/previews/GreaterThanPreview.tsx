@@ -8,18 +8,29 @@ export function GreaterThanPreview() {
   const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const isLight = theme === 'light';
     const n = 5;
-    const cell = width / (n + 1);
-    const offset = cell / 2;
-    const gridColor = isLight ? '#333' : '#333';
-    const symbolColor = isLight ? '#e08860' : '#e08860';
+    const cell = width / n;
+    const gridColor   = isLight ? '#c8c8d8' : '#2a2a3a';
+    const borderColor = isLight ? '#5060a0' : '#9898b8';
+    const symbolColor = '#e08860';
+
+    if (isLight) {
+      ctx.fillStyle = '#f5f5f0';
+      ctx.fillRect(0, 0, width, width);
+    }
+
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.7;
-
-    for (let row = 0; row < n; row += 1) {
-      for (let col = 0; col < n; col += 1) {
-        ctx.strokeRect(offset + col * cell, offset + row * cell, cell, cell);
-      }
+    ctx.beginPath();
+    for (let i = 1; i < n; i += 1) {
+      ctx.moveTo(i * cell, 0);       ctx.lineTo(i * cell, n * cell);
+      ctx.moveTo(0,        i * cell); ctx.lineTo(n * cell, i * cell);
     }
+    ctx.stroke();
+
+    const lw = 1.5;
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = lw;
+    ctx.strokeRect(lw / 2, lw / 2, n * cell - lw, n * cell - lw);
 
     ctx.fillStyle = symbolColor;
     ctx.font = 'bold 11px sans-serif';
@@ -36,9 +47,9 @@ export function GreaterThanPreview() {
 
     markers.forEach(([row, col, direction, symbol]) => {
       if (direction === 'h') {
-        ctx.fillText(String(symbol), offset + col * cell + cell, offset + row * cell + cell / 2);
+        ctx.fillText(String(symbol), col * cell + cell, row * cell + cell / 2);
       } else {
-        ctx.fillText(String(symbol), offset + col * cell + cell / 2, offset + row * cell + cell);
+        ctx.fillText(String(symbol), col * cell + cell / 2, row * cell + cell);
       }
     });
   }, [theme]));
