@@ -136,12 +136,12 @@ describe('jigsaw all presets', () => {
     const model = buildModel(makeJigsawVariant(PRESET_LAYOUTS[2]));
     const regionHouses = model.houses.filter((house) => house.id.startsWith('region-'));
     const conflicts = validate(new Map([
-      ['r0c3', 7],
-      ['r1c2', 7],
+      ['r0c2', 7],
+      ['r1c3', 7],
     ]), model);
 
     expect(regionHouses).toHaveLength(9);
     expect(regionHouses.every((house) => house.cells.length === 9)).toBe(true);
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c3') && conflict.cells.includes('r1c2'))).toBe(true);
+    expect(conflicts.some((conflict) => conflict.cells.includes('r0c2') && conflict.cells.includes('r1c3'))).toBe(true);
   });
 });

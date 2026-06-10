@@ -32,14 +32,20 @@ export function hasUniqueSolution(
 export function findSolution(
   model: VariantModel,
   given: Values,
-  rng?: () => number
+  opts: { rng?: () => number; nodeBudget?: number } = {}
 ): Solution | null {
   if (model.constraints.some((constraint) => constraint.conflicts(given, model).length > 0)) {
     return null;
   }
 
-  const result = searchCore(model, new Map(given), { max: 1, rng });
+  const result = searchCore(model, new Map(given), {
+    max: 1,
+    rng: opts.rng,
+    nodeBudget: opts.nodeBudget,
+  });
 
+  // A budget-aborted search returns no solution; callers that pass a nodeBudget
+  // (e.g. blank-grid generation with restarts) treat null as "retry", not "unsolvable".
   return result.solutions[0] ?? null;
 }
 
