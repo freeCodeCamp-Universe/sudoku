@@ -57,13 +57,13 @@ export function isArgyleCell(cell: string): boolean {
 export const argyle: Variant = {
   id: 'argyle',
   name: 'Argyle Sudoku',
-  description: 'The grid is overlaid with an argyle diamond pattern. Each marked diagonal stripe must contain distinct digits.',
+  description: 'The grid is overlaid with an argyle diamond. Each marked diagonal stripe must contain distinct digits.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
         { term: 'Argyle pattern', text: 'Diagonal lines are drawn across the grid forming an argyle diamond pattern. The marked cells belong to diagonal stripes.' },
         { term: 'Diagonal rule', text: 'No digit may repeat within any single diagonal stripe.' },
       ],
@@ -80,6 +80,7 @@ export const argyle: Variant = {
   popularity: 17,
   generateGivens: generateGivens9x9,
   difficulty: 'advanced',
+  difficultyRank: 4,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],

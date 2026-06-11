@@ -63,14 +63,14 @@ function buildSoheiHouses(boardLayout: BoardLayout): House[] {
 export const sohei: Variant = {
   id: 'sohei',
   name: 'Sohei Sudoku',
-  description: 'Four 9×9 grids arranged in a diamond ring (top, left, right, and bottom), each sharing one 3×3 corner box with its two neighbours.',
+  description: 'Four 9×9 grids form a diamond ring, each sharing one 3×3 corner box with its two neighboring grids.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Four grids', text: 'Four 9×9 grids are placed in a diamond pattern, with each arm touching its two neighbours at a corner.' },
-        { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Four grids', text: 'Four 9×9 grids are placed in a diamond pattern, with each arm touching its two neighbors at a corner.' },
+        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
       ],
     },
@@ -78,13 +78,15 @@ export const sohei: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Each pair of neighbouring grids shares exactly one 3×3 box, which must satisfy the rules of both grids simultaneously.' },
+        { term: 'Shared corners', text: 'Each pair of neighboring grids shares exactly one 3×3 box, which must satisfy the rules of both grids simultaneously.' },
         { term: 'Solve as one', text: 'The four shared corners link all grids into one puzzle; none can be solved without the others.' },
       ],
     },
   ],
   popularity: 10,
   difficulty: 'advanced',
+  difficultyRank: 6,
+  tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

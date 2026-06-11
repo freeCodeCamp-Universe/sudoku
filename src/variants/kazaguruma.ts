@@ -64,14 +64,14 @@ function buildKazagurumaHouses(boardLayout: BoardLayout): House[] {
 export const kazaguruma: Variant = {
   id: 'kazaguruma',
   name: 'Kazaguruma Sudoku',
-  description: 'Five overlapping 9×9 grids arranged in a windmill pattern, each outer grid sharing two boxes with the center in a pinwheel arrangement.',
+  description: 'Five 9×9 grids in a windmill pattern, with each outer grid sharing two corner boxes with the center.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
         { term: 'Five grids', text: 'One center grid and four outer grids, each extending outward in a rotating windmill pattern.' },
-        { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
       ],
     },
@@ -86,6 +86,8 @@ export const kazaguruma: Variant = {
   ],
   popularity: 15,
   difficulty: 'advanced',
+  difficultyRank: 10,
+  tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

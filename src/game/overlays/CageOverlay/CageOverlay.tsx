@@ -34,9 +34,9 @@ const INSET = 2;
  * Compute the start or end coordinate for one end of a cage boundary segment.
  * sign = -1 for the "near" end (start of line), +1 for the "far" end.
  *
- * - Outer corner  (perpendicular neighbour outside cage): truncate inward  → base - INSET * sign
- * - Inner corner  (diagonal neighbour inside cage):       extend outward   → base + INSET * sign
- * - Straight-through (perpendicular neighbour in cage):   no change        → base
+ * - Outer corner  (perpendicular neighbor outside cage): truncate inward  → base - INSET * sign
+ * - Inner corner  (diagonal neighbor inside cage):       extend outward   → base + INSET * sign
+ * - Straight-through (perpendicular neighbor in cage):   no change        → base
  */
 function extent(
   base: number,

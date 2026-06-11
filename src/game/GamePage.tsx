@@ -4,6 +4,7 @@ import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
+import { validate } from '@/engine/validate';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
 import { COLOR_PALETTE } from '@/variants/color';
@@ -43,10 +44,19 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const [verifyMode, setVerifyMode] = useState(false);
+  const [isVisible, setIsVisible] = useState(!document.hidden);
 
   useEffect(() => {
     setVerifyMode(false);
   }, [solution]);
+
+  useEffect(() => {
+    function handleVisibilityChange() {
+      setIsVisible(!document.hidden);
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   const checkEnabled = settings.checkEnabled || verifyMode;
   const isBoardFull = state.values.size === solution.size;
@@ -152,7 +162,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
   });
 
   useEffect(() => {
-    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved) {
+    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved || !isVisible) {
       return undefined;
     }
 
@@ -163,7 +173,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, effectiveSolved, settings.timerEnabled, state.timerStarted]);
+  }, [dispatch, effectiveSolved, isVisible, settings.timerEnabled, state.timerStarted]);
 
   useEffect(() => {
     if (!effectiveSolved || !grid.announcerRef.current) {
@@ -201,7 +211,15 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
       return;
     }
 
+    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+
     dispatch({ type: 'reveal', cellId: selectedCellId, solutionValue });
+
+    if (selectedCell) {
+      grid.announce(
+        `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}, ${describeSymbol(solutionValue)}, revealed`
+      );
+    }
   }
 
   function handleNewGame() {
@@ -306,6 +324,18 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               </span>
             </div>
           ) : null}
+          {liveVariant.id === 'kropki' ? (
+            <div className={styles.variantLegend} aria-label="Kropki rule legend">
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+                <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
+              </svg>
+              <span>Consecutive (differ by 1)</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+                <circle cx="5" cy="5" r="4" fill="#5060a0" />
+              </svg>
+              <span>One is double the other</span>
+            </div>
+          ) : null}
           {liveVariant.id === 'even-odd' ? (
             <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
               <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
@@ -348,7 +378,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
               : model.symbols}
             usedSymbols={usedSymbols}
-            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : undefined}
+            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : model.symbols.length === 6 ? 3 : undefined}
             onEnter={(value) => {
               if (!selectedCellId) {
                 return;
@@ -363,17 +393,51 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
                 return;
               }
 
+              const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+              const loc = selectedCell
+                ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
+                : null;
+
               if (value === 0) {
                 dispatch({ type: 'erase', cellId: selectedCellId });
+                if (loc) grid.announce(`${loc}, empty`);
                 return;
               }
 
               if (candidateMode) {
+                const current = state.candidates.get(selectedCellId) ?? [];
+                const adding = !current.includes(value);
                 onToggleCandidate(selectedCellId, value);
+                if (loc) {
+                  grid.announce(
+                    `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
+                  );
+                }
                 return;
               }
 
               onEnterValue(selectedCellId, value);
+              if (loc) {
+                const nextValues = new Map(state.values);
+                nextValues.set(selectedCellId, value);
+                const isCorrect =
+                  checkEnabled &&
+                  solution.has(selectedCellId) &&
+                  value === solution.get(selectedCellId);
+                const correctness =
+                  checkEnabled && solution.has(selectedCellId)
+                    ? isCorrect
+                      ? ', correct'
+                      : ', incorrect'
+                    : '';
+                const inConflict =
+                  !isCorrect &&
+                  checkEnabled &&
+                  validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+                grid.announce(
+                  `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+                );
+              }
             }}
             candidateMode={candidateMode}
             renderSymbol={renderSymbol}
@@ -389,7 +453,10 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           <button
             type="button"
             className={styles.checkPromptBtn}
-            onClick={() => setVerifyMode(true)}
+            onClick={() => {
+              setVerifyMode(true);
+              grid.announce('Answers checked');
+            }}
           >
             Check your answers
           </button>

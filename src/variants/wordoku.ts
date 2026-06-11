@@ -72,7 +72,7 @@ export const wordoku: Variant = {
   id: 'wordoku',
   generateSolution: generateWordokuSolution,
   name: 'Wordoku',
-  description: 'Letters replace digits using a hidden nine-letter word. Find it reading across one row or down one column.',
+  description: 'Letters replace digits. A hidden nine-letter word runs across one complete row or down one column.',
   help: [
     {
       label: 'Basic Rules',
@@ -95,6 +95,7 @@ export const wordoku: Variant = {
   popularity: 14,
   generateGivens: generateGivens9x9,
   difficulty: 'beginner',
+  difficultyRank: 7,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'letter',

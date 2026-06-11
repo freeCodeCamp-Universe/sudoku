@@ -86,6 +86,8 @@ export interface Variant {
   help?: HelpSection[];
   popularity: number;
   difficulty: Difficulty;
+  difficultyRank?: number;
+  tags?: string[];
   layout: BoardLayout;
   symbols: SymbolValue[];
   symbolKind?: 'digit' | 'letter' | 'color';

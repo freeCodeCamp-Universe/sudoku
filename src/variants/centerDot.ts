@@ -20,13 +20,13 @@ function centerDotExtraHouse(_layout: BoardLayout): House[] {
 export const centerDot: Variant = {
   id: 'center-dot',
   name: 'Center Dot Sudoku',
-  description: 'The center cell of each 3×3 box must together contain each digit 1-9 exactly once.',
+  description: 'All nine center cells, one per 3×3 box, must together contain each of the digits 1–9 once.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
         { term: 'Center cells', text: 'The nine center cells (one per box) are highlighted.' },
         { term: 'Center rule', text: 'The nine highlighted cells must together contain each digit from 1 to 9 exactly once.' },
       ],
@@ -42,6 +42,7 @@ export const centerDot: Variant = {
   popularity: 12,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
+  difficultyRank: 6,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

@@ -8,15 +8,13 @@ const layout: MultiGridLayout = {
   canvasRows: 15,
   canvasCols: 15,
   subGrids: [
-    { originRow: 0, originCol: 3 },
-    { originRow: 3, originCol: 0 },
-    { originRow: 3, originCol: 3 },
-    { originRow: 3, originCol: 6 },
-    { originRow: 6, originCol: 3 },
+    { originRow: 0, originCol: 3 },  // top-center
+    { originRow: 6, originCol: 0 },  // bottom-left
+    { originRow: 3, originCol: 6 },  // right
   ],
 };
 
-function buildFlowerHouses(boardLayout: BoardLayout): House[] {
+function buildGattai3Houses(boardLayout: BoardLayout): House[] {
   if (boardLayout.kind !== 'multigrid') {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
@@ -61,16 +59,16 @@ function buildFlowerHouses(boardLayout: BoardLayout): House[] {
   return houses;
 }
 
-export const flower: Variant = {
-  id: 'flower',
-  name: 'Flower Sudoku',
-  description: 'Five 9×9 grids in a plus shape, each outer grid sharing two full boxes of overlap with the center.',
+export const gattai3: Variant = {
+  id: 'gattai-3',
+  name: 'Gattai-3',
+  description: 'Three 9×9 grids arranged in a triangular cluster, all meeting at a shared central 3×3 box.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'Five 9×9 grids are arranged in a plus shape, with one in the center and one on each side, each sharing two box-widths with the center.' },
+        { term: 'Three grids', text: 'Three 9×9 sudoku grids are arranged in a triangular cluster, with a central region where they all meet.' },
         { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
       ],
@@ -79,14 +77,14 @@ export const flower: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared regions', text: 'Cells in the overlap belong to multiple grids simultaneously and must satisfy the rules of each one.' },
-        { term: 'Solve as one', text: 'All five grids are linked through their shared cells, so they must all be solved together.' },
+        { term: 'Shared regions', text: 'Each pair of grids shares a 3×3 border region, and all three grids share one central 3×3 box that belongs to every grid simultaneously.' },
+        { term: 'Solve as one', text: 'The extensive shared regions tightly link all three grids; progress in any one immediately constrains the others.' },
       ],
     },
   ],
-  popularity: 13,
+  popularity: 20,
   difficulty: 'advanced',
-  difficultyRank: 9,
+  difficultyRank: 11,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -94,5 +92,5 @@ export const flower: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: ['overlap'],
-  buildHouses: buildFlowerHouses,
+  buildHouses: buildGattai3Houses,
 };

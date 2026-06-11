@@ -68,7 +68,7 @@ export const twodoku: Variant = {
       tone: 'basic',
       rules: [
         { term: 'Two grids', text: 'Two standard 9×9 sudoku grids are placed diagonally, overlapping at one corner.' },
-        { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
       ],
     },
@@ -83,6 +83,8 @@ export const twodoku: Variant = {
   ],
   popularity: 22,
   difficulty: 'intermediate',
+  difficultyRank: 4,
+  tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

@@ -22,13 +22,13 @@ function girandolaExtraHouse(_layout: BoardLayout): House[] {
 export const girandola: Variant = {
   id: 'girandola',
   name: 'Girandola Sudoku',
-  description: 'Nine cells forming a pinwheel pattern must contain each digit 1-9 exactly once.',
+  description: 'A pinwheel-shaped extra region of nine cells must contain each of the digits 1–9 exactly once.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9x9 sudoku. Fill every row, column, and 3x3 box with digits 1-9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
         { term: 'The girandola', text: 'Nine specific cells form a pinwheel shape across the grid, marked by highlighting.' },
         { term: 'Girandola rule', text: 'The nine highlighted cells must together contain each digit from 1 to 9 exactly once.' },
       ],
@@ -44,6 +44,7 @@ export const girandola: Variant = {
   popularity: 12,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
+  difficultyRank: 7,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

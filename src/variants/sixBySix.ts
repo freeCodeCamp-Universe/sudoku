@@ -1,18 +1,18 @@
 import { makeGenerateGivens } from './generateGivens9x9';
 import type { Variant } from '@/engine/types';
 
-export const mini: Variant = {
-  id: 'mini',
-  name: '4×4 Sudoku',
-  description: 'A 4×4 grid split into four 2×2 boxes. Fill every row, column, and box with the digits 1–4.',
+export const sixBySix: Variant = {
+  id: 'six-by-six',
+  name: '6×6 Sudoku',
+  description: 'A 6×6 grid split into 2×3 boxes. Fill every row, column, and box with each digit from 1–6.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 4×4 board split into four 2×2 boxes. Fill every cell with a digit from 1 to 4.' },
+        { term: 'The grid', text: 'A 6×6 board split into six 2×3 boxes. Fill every cell with a digit from 1 to 6.' },
         { term: 'Rows and columns', text: 'Every row and every column must contain each digit exactly once.' },
-        { term: 'Boxes', text: 'Each 2×2 box must also hold every digit exactly once.' },
+        { term: 'Boxes', text: 'Each 2×3 box must also hold every digit exactly once.' },
       ],
     },
     {
@@ -24,12 +24,12 @@ export const mini: Variant = {
       ],
     },
   ],
-  popularity: 12,
-  generateGivens: makeGenerateGivens(4),
+  popularity: 11,
+  generateGivens: makeGenerateGivens(12),
   difficulty: 'beginner',
-  difficultyRank: 1,
-  layout: { kind: 'grid', size: 4, box: { rows: 2, cols: 2 } },
-  symbols: [1, 2, 3, 4],
+  difficultyRank: 2,
+  layout: { kind: 'grid', size: 6, box: { rows: 2, cols: 3 } },
+  symbols: [1, 2, 3, 4, 5, 6],
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
   overlayIds: [],

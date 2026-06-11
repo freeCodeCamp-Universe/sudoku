@@ -25,7 +25,8 @@ function filterVariants(variants: Variant[], query: string): Variant[] {
     (variant) =>
       variant.name.toLowerCase().includes(normalizedQuery) ||
       variant.description.toLowerCase().includes(normalizedQuery) ||
-      variant.difficulty.toLowerCase().includes(normalizedQuery)
+      variant.difficulty.toLowerCase().includes(normalizedQuery) ||
+      variant.tags?.some((tag) => tag.toLowerCase().includes(normalizedQuery))
   );
 }
 
@@ -53,7 +54,9 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
         return difficultyDiff;
       }
 
-      return left.name.localeCompare(right.name);
+      const leftRank = left.difficultyRank ?? left.popularity ?? 99;
+      const rightRank = right.difficultyRank ?? right.popularity ?? 99;
+      return leftRank - rightRank;
     });
   }
 
@@ -85,7 +88,7 @@ export function Gallery() {
           </button>
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
-        <p className={styles.subheading}>28 sudoku variants for every skill level</p>
+        <p className={styles.subheading}>32 sudoku variants for every skill level</p>
       </header>
 
       <div className={styles.controls}>

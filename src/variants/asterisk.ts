@@ -20,13 +20,13 @@ function asteriskExtraHouses(_layout: BoardLayout): House[] {
 export const asterisk: Variant = {
   id: 'asterisk',
   name: 'Asterisk Sudoku',
-  description: 'Nine cells forming a star must contain each digit 1-9, on top of standard sudoku rules.',
+  description: 'Nine cells in a star pattern form an extra region that must contain each of the digits 1–9.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
         { term: 'The asterisk', text: 'Nine specific cells form a star shape across the grid, marked by highlighting.' },
         { term: 'Star rule', text: 'The nine asterisk cells must together contain each digit from 1 to 9 exactly once.' },
       ],
@@ -42,6 +42,7 @@ export const asterisk: Variant = {
   popularity: 16,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
+  difficultyRank: 8,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],

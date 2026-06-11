@@ -28,13 +28,13 @@ const COLOR_NAMES = [
 export const color: Variant & { colorNames: string[] } = {
   id: 'color',
   name: 'Color Sudoku',
-  description: 'Nine colors replace the digits 1-9. Each color must appear exactly once in every row, column, and 3x3 box.',
+  description: 'Nine colors replace the digits 1–9. Each color appears once in every row, column, and 3×3 box.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 9×9 board where nine colors replace the digits 1-9. The logic is identical to classic sudoku.' },
+        { term: 'The grid', text: 'A 9×9 board where nine colors replace the digits 1–9. The logic is identical to classic sudoku.' },
         { term: 'Rows and columns', text: 'Each row and column must contain every color exactly once.' },
         { term: 'Boxes', text: 'Each 3×3 box must also hold every color exactly once.' },
       ],
@@ -51,6 +51,7 @@ export const color: Variant & { colorNames: string[] } = {
   popularity: 15,
   generateGivens: generateGivens9x9,
   difficulty: 'beginner',
+  difficultyRank: 8,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'color',

@@ -9,8 +9,12 @@ import { cross } from './cross';
 import { flower } from './flower';
 import { kazaguruma } from './kazaguruma';
 import { twodoku } from './twodoku';
+import { tripledoku } from './tripledoku';
 import { sohei } from './sohei';
 import { chainVariant } from './chain';
+import { gattai3 } from './gattai3';
+import { sixBySix } from './sixBySix';
+import { kropki } from './kropki';
 import { classic } from './classic';
 import { color } from './color';
 import { consecutiveVariant } from './consecutive';
@@ -39,8 +43,12 @@ export const variantRegistry: Record<string, Variant> = {
   [flower.id]: flower,
   [kazaguruma.id]: kazaguruma,
   [twodoku.id]: twodoku,
+  [tripledoku.id]: tripledoku,
   [sohei.id]: sohei,
   [chainVariant.id]: chainVariant,
+  [gattai3.id]: gattai3,
+  [sixBySix.id]: sixBySix,
+  [kropki.id]: kropki,
   [classic.id]: classic,
   [color.id]: color,
   [consecutiveVariant.id]: consecutiveVariant,

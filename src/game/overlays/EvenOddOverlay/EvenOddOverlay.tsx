@@ -6,7 +6,7 @@ interface EvenOddOverlayProps {
   structure: unknown;
 }
 
-// Even/odd cell colours are applied directly via data-even / data-odd on Cell elements.
+// Even/odd cell colors are applied directly via data-even / data-odd on Cell elements.
 // This overlay is kept to satisfy the overlay registry but renders nothing.
 export function EvenOddOverlay(_props: EvenOddOverlayProps) {
   return null;

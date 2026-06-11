@@ -7,6 +7,7 @@ import { girandolaAnnotator } from './girandola';
 import { cageSumAnnotator } from './cage';
 import { chainAnnotator } from './chain';
 import { consecutiveAnnotator } from './consecutive';
+import { kropkiAnnotator } from './kropki';
 import { evenCellAnnotator, oddCellAnnotator } from './evenOdd';
 import { greaterThanAnnotator } from './greaterThan';
 import { jigsawAnnotatorPlaceholder } from './jigsaw';
@@ -26,6 +27,7 @@ export const annotatorRegistry: Record<string, CellAnnotator> = {
   [cageSumAnnotator.id]: cageSumAnnotator,
   [chainAnnotator.id]: chainAnnotator,
   [consecutiveAnnotator.id]: consecutiveAnnotator,
+  [kropkiAnnotator.id]: kropkiAnnotator,
   [evenCellAnnotator.id]: evenCellAnnotator,
   [greaterThanAnnotator.id]: greaterThanAnnotator,
   [jigsawAnnotatorPlaceholder.id]: jigsawAnnotatorPlaceholder,

@@ -35,15 +35,15 @@ function windokuExtraHouses(_layout: BoardLayout): House[] {
 export const windoku: Variant = {
   id: 'windoku',
   name: 'Windoku',
-  description: 'Four extra shaded 3x3 window regions must each contain digits 1-9, on top of the normal rules.',
+  description: 'Four extra shaded 3×3 window regions must each contain digits 1–9, on top of the normal rules.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1-9.' },
+        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
         { term: 'Four windows', text: 'Four extra shaded 3×3 regions are overlaid on the grid.' },
-        { term: 'Window rule', text: 'Each window must also contain digits 1-9 without any repeats.' },
+        { term: 'Window rule', text: 'Each window must also contain digits 1–9 without any repeats.' },
       ],
     },
     {
@@ -57,6 +57,7 @@ export const windoku: Variant = {
   popularity: 6,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
+  difficultyRank: 9,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],

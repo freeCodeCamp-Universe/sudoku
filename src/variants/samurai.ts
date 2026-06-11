@@ -64,14 +64,14 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
 export const samurai: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
-  description: 'Five overlapping 9x9 grids sharing corner boxes. All five must be solved simultaneously.',
+  description: 'Five 9×9 grids sharing corner boxes with a central grid. All five puzzles must be solved together.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
         { term: 'Five grids', text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.' },
-        { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
       ],
     },
@@ -86,6 +86,8 @@ export const samurai: Variant = {
   ],
   popularity: 3,
   difficulty: 'advanced',
+  difficultyRank: 1,
+  tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

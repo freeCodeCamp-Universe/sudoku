@@ -71,7 +71,7 @@ export const cross: Variant = {
       tone: 'basic',
       rules: [
         { term: 'Five grids', text: 'A center grid sits in the middle with four more extending outward in a cross pattern.' },
-        { term: 'Fill with 1-9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
+        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
         { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
       ],
     },
@@ -86,6 +86,8 @@ export const cross: Variant = {
   ],
   popularity: 14,
   difficulty: 'advanced',
+  difficultyRank: 8,
+  tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

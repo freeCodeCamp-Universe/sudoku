@@ -9,8 +9,12 @@ import { CrossPreview } from './CrossPreview';
 import { FlowerPreview } from './FlowerPreview';
 import { KazagurumaPreview } from './KazagurumaPreview';
 import { TwodokuPreview } from './TwodokuPreview';
+import { TripledokuPreview } from './TripledokuPreview';
 import { SoheiPreview } from './SoheiPreview';
 import { ChainPreview } from './ChainPreview';
+import { Gattai3Preview } from './Gattai3Preview';
+import { SixBySixPreview } from './SixBySixPreview';
+import { KropkiPreview } from './KropkiPreview';
 import { ClassicPreview } from './ClassicPreview';
 import { ColorPreview } from './ColorPreview';
 import { ConsecutivePreview } from './ConsecutivePreview';
@@ -55,8 +59,12 @@ export const previewRegistry: Record<string, PreviewComponent> = {
   flower: FlowerPreview,
   kazaguruma: KazagurumaPreview,
   twodoku: TwodokuPreview,
+  tripledoku: TripledokuPreview,
   sohei: SoheiPreview,
   chain: ChainPreview,
+  'gattai-3': Gattai3Preview,
+  'six-by-six': SixBySixPreview,
+  kropki: KropkiPreview,
   sandwich: SandwichPreview,
   sujiken: SujikenPreview,
 };

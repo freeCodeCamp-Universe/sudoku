@@ -3,6 +3,7 @@ import { arrowSum } from './arrowSum';
 import { chain } from './chain';
 import { cageSum } from './cageSum';
 import { consecutive } from './consecutive';
+import { kropki } from './kropki';
 import { evenOdd } from './evenOdd';
 import { greaterThan } from './greaterThan';
 import { sandwichSum } from './sandwichSum';
@@ -14,6 +15,7 @@ export const constraintRegistry: Record<string, Constraint> = {
   [chain.id]: chain,
   [cageSum.id]: cageSum,
   [consecutive.id]: consecutive,
+  [kropki.id]: kropki,
   [evenOdd.id]: evenOdd,
   [greaterThan.id]: greaterThan,
   [sandwichSum.id]: sandwichSum,

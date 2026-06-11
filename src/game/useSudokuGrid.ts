@@ -388,5 +388,6 @@ export function useSudokuGrid({
     cellState: getCellState,
     cellProps,
     announcerRef,
+    announce,
   };
 }

@@ -58,7 +58,7 @@ describe('Header', () => {
     expect(onHelpOpen).toHaveBeenCalledTimes(1);
   });
 
-  it('should render a theme toggle button labelled with the target theme', () => {
+  it('should render a theme toggle button labeled with the target theme', () => {
     render(
       <MemoryRouter>
         <ThemeProvider>
