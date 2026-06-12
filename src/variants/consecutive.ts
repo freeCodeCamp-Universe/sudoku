@@ -41,7 +41,7 @@ export const consecutiveVariant: Variant = {
       tone: 'basic',
       rules: [
         { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'White dots', text: 'A dot between two adjacent cells means those digits differ by exactly 1 (e.g. 4 and 5).' },
+        { term: 'Dots', text: 'A dot between two adjacent cells means those digits differ by exactly 1 (e.g. 4 and 5).' },
         { term: 'No dot', text: 'When two adjacent cells have no dot, their digits must not differ by exactly 1.' },
       ],
     },

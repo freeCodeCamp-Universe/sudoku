@@ -64,7 +64,7 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
 export const samurai: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
-  description: 'Five 9×9 grids sharing corner boxes with a central grid. All five puzzles must be solved together.',
+  description: 'Four 9×9 grids sharing corner boxes with a central grid. All five puzzles must be solved together.',
   help: [
     {
       label: 'Basic Rules',

@@ -132,7 +132,7 @@ export const chainVariant: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Sequence length', text: 'A chain of three cells holds three consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
+        { term: 'Sequence length', text: 'A chain of cells holds consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
         { term: 'Sudoku still applies', text: 'Every chain cell must also satisfy its row, column, and box.' },
       ],
     },

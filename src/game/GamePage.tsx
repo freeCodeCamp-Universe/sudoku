@@ -7,7 +7,6 @@ import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
-import { COLOR_PALETTE } from '@/variants/color';
 import { isJigsawStructure, makeJigsawVariant } from '@/variants/jigsaw';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
@@ -362,16 +361,6 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           ) : null}
         </div>
         <div className={styles.gameRight}>
-          {liveVariant.id === 'color' ? (
-            <div className={styles.colorLegend} aria-label="Color sudoku rule legend">
-              <div className={styles.colorSwatches} aria-hidden="true">
-                {COLOR_PALETTE.map((swatch) => (
-                  <span key={swatch} className={styles.legendSwatch} style={{ background: swatch }} />
-                ))}
-              </div>
-              <span>Each color appears exactly once per row, column, and 3×3 box.</span>
-            </div>
-          ) : null}
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={liveVariant.symbolKind === 'letter'

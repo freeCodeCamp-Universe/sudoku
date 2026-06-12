@@ -11,8 +11,8 @@ export const evenOdd: Variant = {
       tone: 'basic',
       rules: [
         { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Blue cells', text: 'Shaded cells must contain an even digit (2, 4, 6, or 8).' },
-        { term: 'Yellow cells', text: 'Unshaded cells must contain an odd digit (1, 3, 5, 7, or 9).' },
+        { term: 'Shaded cells', text: 'Shaded cells must contain an even digit (2, 4, 6, or 8).' },
+        { term: 'Unshaded cells', text: 'Unshaded cells must contain an odd digit (1, 3, 5, 7, or 9).' },
       ],
     },
     {

@@ -86,7 +86,7 @@ export const kazaguruma: Variant = {
   ],
   popularity: 15,
   difficulty: 'advanced',
-  difficultyRank: 10,
+  difficultyRank: 11,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

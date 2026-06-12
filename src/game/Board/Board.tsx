@@ -204,24 +204,6 @@ function buildMultigridLines(
   return edges;
 }
 
-function subgridOverlap(
-  variant: BoardProps['variant'],
-  cell: BoardProps['cells'][number]
-): number {
-  if (variant.layout.kind !== 'multigrid' || variant.id === 'samurai') {
-    return 0;
-  }
-
-  const { subGrids, subGridSize } = variant.layout;
-
-  return subGrids.filter(
-    ({ originRow, originCol }) =>
-      cell.row >= originRow &&
-      cell.row < originRow + subGridSize &&
-      cell.col >= originCol &&
-      cell.col < originCol + subGridSize
-  ).length;
-}
 
 export function Board({
   variant,
@@ -305,7 +287,6 @@ export function Board({
                   boxBoundaryRight={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'col')}
                   boxBoundaryBottom={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'row')}
                   overlayBorders={variant.layout.kind === 'multigrid'}
-                  overlap={subgridOverlap(variant, cell)}
                   diagonal={variant.id === 'sudoku-x' && diagonalSet.has(cell.id)}
                   window={variant.id === 'windoku' && windokuWindowSet.has(cell.id)}
                   asterisk={variant.id === 'asterisk' && asteriskCellSet.has(cell.id)}

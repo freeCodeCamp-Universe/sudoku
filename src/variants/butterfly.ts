@@ -78,7 +78,7 @@ export const butterfly: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Where two grids overlap, the shared 3×3 box must satisfy the rules of both grids at the same time.' },
+        { term: 'Shared corners', text: 'Where grids overlap, shared boxes must satisfy the rules of all grids at the same time.' },
         { term: 'Solve together', text: 'The four grids are linked through their overlapping corners. None can be solved in isolation.' },
       ],
     },

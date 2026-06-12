@@ -97,14 +97,14 @@ export function makeJigsawVariant(regions: number[][]): Variant {
         rules: [
           { term: 'The grid', text: 'A 9×9 board where the nine regions are irregular jigsaw shapes instead of standard 3×3 boxes.' },
           { term: 'Fill with 1–9', text: 'Every cell must contain a digit from 1 to 9.' },
-          { term: 'No repeats', text: 'Each row, column, and colored jigsaw region must hold every digit exactly once.' },
+          { term: 'No repeats', text: 'Each row, column, and jigsaw region must hold every digit exactly once.' },
         ],
       },
       {
         label: 'Additional Rules',
         tone: 'extra',
         rules: [
-          { term: 'Region shapes', text: 'Each region contains exactly 9 cells but can be any shape. Follow the color boundaries.' },
+          { term: 'Region shapes', text: 'Each region contains exactly 9 cells but can be any shape. Region boundaries are marked by thick borders.' },
           { term: 'Given digits', text: 'Pre-filled cells are fixed. Fill in the rest to complete the puzzle.' },
         ],
       },
