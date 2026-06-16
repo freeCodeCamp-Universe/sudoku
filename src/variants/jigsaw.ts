@@ -1,6 +1,13 @@
-import { cellId, range } from '@/engine/grid';
-import type { BoardLayout, House, Variant } from '@/engine/types';
-import { generateGivens9x9 } from './generateGivens9x9';
+import { cellId, range, shuffle } from '@/engine/grid';
+import type {
+  BoardLayout,
+  Difficulty,
+  House,
+  Solution,
+  Values,
+  Variant,
+  VariantModel,
+} from '@/engine/types';
 
 const JIGSAW_SIZE = 9;
 
@@ -8,6 +15,10 @@ export interface JigsawStructure {
   regions: number[][];
 }
 
+// Every layout must admit a valid filling and solve quickly from a blank grid;
+// an unsolvable or near-unsolvable partition freezes generation. Layouts 1 and 2
+// are rotations/reflections of layout 0, which preserve both solvability and the
+// nine-cell region shapes while giving the board a visibly different look.
 export const PRESET_LAYOUTS: number[][][] = [
   [
     [0, 0, 0, 1, 1, 1, 2, 2, 2],
@@ -21,26 +32,26 @@ export const PRESET_LAYOUTS: number[][][] = [
     [7, 7, 7, 7, 8, 8, 8, 8, 8],
   ],
   [
-    [0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [0, 2, 2, 2, 2, 2, 2, 2, 1],
-    [0, 3, 3, 3, 3, 3, 3, 2, 1],
-    [0, 4, 4, 4, 4, 3, 3, 2, 1],
-    [0, 5, 5, 5, 4, 4, 3, 6, 1],
-    [0, 5, 5, 5, 4, 4, 4, 6, 6],
-    [7, 5, 5, 5, 6, 6, 6, 6, 6],
-    [7, 7, 7, 7, 8, 8, 8, 8, 6],
-    [7, 7, 7, 7, 8, 8, 8, 8, 8],
+    [2, 2, 3, 3, 3, 3, 3, 8, 8],
+    [2, 2, 3, 3, 3, 3, 5, 8, 8],
+    [2, 2, 2, 5, 5, 5, 5, 8, 8],
+    [1, 2, 2, 5, 5, 5, 5, 8, 8],
+    [1, 1, 1, 4, 4, 4, 6, 7, 8],
+    [1, 1, 1, 4, 4, 6, 6, 7, 7],
+    [0, 1, 0, 4, 4, 6, 6, 7, 7],
+    [0, 1, 0, 4, 4, 6, 6, 7, 7],
+    [0, 0, 0, 0, 0, 6, 6, 7, 7],
   ],
   [
-    [0, 0, 0, 1, 1, 1, 1, 2, 2],
-    [0, 0, 1, 1, 1, 1, 1, 2, 2],
-    [0, 3, 3, 3, 3, 3, 3, 2, 2],
-    [0, 4, 4, 4, 4, 3, 3, 3, 2],
-    [0, 4, 4, 4, 4, 4, 5, 5, 2],
-    [0, 6, 6, 6, 6, 5, 5, 5, 2],
-    [6, 6, 6, 6, 6, 5, 5, 5, 5],
-    [7, 7, 7, 7, 7, 8, 8, 8, 8],
-    [7, 7, 7, 7, 8, 8, 8, 8, 8],
+    [8, 8, 3, 3, 3, 3, 3, 2, 2],
+    [8, 8, 5, 3, 3, 3, 3, 2, 2],
+    [8, 8, 5, 5, 5, 5, 2, 2, 2],
+    [8, 8, 5, 5, 5, 5, 2, 2, 1],
+    [8, 7, 6, 4, 4, 4, 1, 1, 1],
+    [7, 7, 6, 6, 4, 4, 1, 1, 1],
+    [7, 7, 6, 6, 4, 4, 0, 1, 0],
+    [7, 7, 6, 6, 4, 4, 0, 1, 0],
+    [7, 7, 6, 6, 0, 0, 0, 0, 0],
   ],
 ];
 
@@ -124,7 +135,37 @@ export function makeJigsawVariant(regions: number[][]): Variant {
   };
 }
 
-export const jigsaw: Variant = {
-  ...makeJigsawVariant(PRESET_LAYOUTS[0]),
-  generateGivens: generateGivens9x9,
-};
+// Matches the original jigsaw generator: blank a fixed number of cells from the
+// solved grid in a single pass, with no per-removal uniqueness search. Proving
+// uniqueness on irregular regions is expensive and heavy-tailed, which froze the
+// page; the original never verified uniqueness and so never paid that cost.
+const JIGSAW_GIVEN_COUNT = 31;
+
+function generateJigsawGivens(
+  solution: Solution,
+  _model: VariantModel,
+  _difficulty: Difficulty,
+  rng: (() => number) | undefined = Math.random
+): Values {
+  const safeRng = rng ?? Math.random;
+  const givens: Values = new Map(solution);
+
+  for (const id of shuffle([...givens.keys()], safeRng)) {
+    if (givens.size <= JIGSAW_GIVEN_COUNT) {
+      break;
+    }
+
+    givens.delete(id);
+  }
+
+  return givens;
+}
+
+export function makePlayableJigsawVariant(regions: number[][]): Variant {
+  return {
+    ...makeJigsawVariant(regions),
+    generateGivens: generateJigsawGivens,
+  };
+}
+
+export const jigsaw: Variant = makePlayableJigsawVariant(PRESET_LAYOUTS[0]);

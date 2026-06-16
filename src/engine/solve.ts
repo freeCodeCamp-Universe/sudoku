@@ -1,3 +1,4 @@
+import { shuffle } from './grid';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from './searchState';
 import type { CellId, Solution, SymbolValue, Values, VariantModel } from './types';
 
@@ -28,9 +29,30 @@ export function hasUniqueSolution(
   return !result.aborted && result.solutions.length === 1;
 }
 
+export function findSolution(
+  model: VariantModel,
+  given: Values,
+  opts: { rng?: () => number; nodeBudget?: number } = {}
+): Solution | null {
+  if (model.constraints.some((constraint) => constraint.conflicts(given, model).length > 0)) {
+    return null;
+  }
+
+  const result = searchCore(model, new Map(given), {
+    max: 1,
+    rng: opts.rng,
+    nodeBudget: opts.nodeBudget,
+  });
+
+  // A budget-aborted search returns no solution; callers that pass a nodeBudget
+  // (e.g. blank-grid generation with restarts) treat null as "retry", not "unsolvable".
+  return result.solutions[0] ?? null;
+}
+
 interface SearchCoreOptions {
   max: number;
   nodeBudget?: number;
+  rng?: () => number;
 }
 
 interface SearchCoreResult {
@@ -149,11 +171,20 @@ function searchWithUniquenessPropagation(
       return;
     }
 
+    const branchBits: number[] = [];
     let branchMask = currentCandidates[nextCellIndex];
     while (branchMask !== 0) {
       const bit = branchMask & -branchMask;
       branchMask &= branchMask - 1;
+      branchBits.push(bit);
+    }
 
+    // Without an rng the bits stay in ascending order, keeping solve/uniqueness
+    // results deterministic. With one, the branch order is shuffled so blank-grid
+    // solving yields a varied solution per seed (used for puzzle generation).
+    const orderedBits = opts.rng ? shuffle(branchBits, opts.rng) : branchBits;
+
+    for (const bit of orderedBits) {
       const nextCandidates = currentCandidates.slice();
       if (!assignCandidate(nextCandidates, nextCellIndex, bit, propagation)) {
         continue;

@@ -31,6 +31,35 @@ describe('generateSolution', () => {
   });
 });
 
+describe('generateSolution propagation fast path', () => {
+  it('should fill an irregular (jigsaw) grid quickly and conflict-free', () => {
+    const jigsawModel = buildModel(getVariant('jigsaw'));
+    const maxGenerationMs = 1_000;
+
+    for (let run = 0; run < 5; run += 1) {
+      const start = Date.now();
+      const solution = generateSolution(jigsawModel, seeded(200 + run));
+      const elapsed = Date.now() - start;
+
+      expect(elapsed).toBeLessThan(maxGenerationMs);
+      expect(solution.size).toBe(jigsawModel.cells.length);
+      for (const constraint of jigsawModel.constraints) {
+        expect(constraint.conflicts(solution, jigsawModel)).toEqual([]);
+      }
+    }
+  });
+
+  it('should be deterministic per seed and vary across seeds', () => {
+    const jigsawModel = buildModel(getVariant('jigsaw'));
+    const first = generateSolution(jigsawModel, seeded(7));
+    const sameSeed = generateSolution(jigsawModel, seeded(7));
+    const otherSeed = generateSolution(jigsawModel, seeded(8));
+
+    expect([...first.entries()]).toEqual([...sameSeed.entries()]);
+    expect([...first.entries()]).not.toEqual([...otherSeed.entries()]);
+  });
+});
+
 describe('generate', () => {
   it('should produce givens with exactly one solution', () => {
     const { givens } = generate(model, 'intermediate', seeded(2));
