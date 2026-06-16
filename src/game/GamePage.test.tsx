@@ -1,5 +1,5 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
@@ -119,5 +119,71 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
     expect(screen.getByText('Shared corners:')).toBeTruthy();
     expect(screen.getByText('Solve as one:')).toBeTruthy();
+  });
+
+  it('should announce the entered value when a numpad button is clicked', () => {
+    vi.useFakeTimers();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(screen.getByRole('button', { name: '5' }));
+
+    // Advance just enough to fire the setTimeout(0) in announce() without
+    // triggering the 1-second game clock interval.
+    act(() => { vi.advanceTimersByTime(10); });
+
+    const gridAnnouncer = screen.getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    expect(gridAnnouncer.textContent).toContain('5');
+    vi.useRealTimers();
+  });
+
+  it('should announce "empty" when the Erase numpad button is clicked', () => {
+    vi.useFakeTimers();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(screen.getByRole('button', { name: 'Erase' }));
+
+    act(() => { vi.advanceTimersByTime(10); });
+
+    const gridAnnouncer = screen.getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    expect(gridAnnouncer.textContent).toContain('empty');
+    vi.useRealTimers();
+  });
+
+  it('should announce the color name when a color numpad button is clicked', () => {
+    vi.useFakeTimers();
+    renderGamePage('color');
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(screen.getByRole('button', { name: 'Red' }));
+
+    act(() => { vi.advanceTimersByTime(10); });
+
+    const gridAnnouncer = screen.getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    expect(gridAnnouncer.textContent).toContain('Red');
+    vi.useRealTimers();
+  });
+
+  it('should announce the revealed value when the Reveal Cell button is clicked', () => {
+    vi.useFakeTimers();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(screen.getByRole('button', { name: /reveal/i }));
+
+    act(() => { vi.advanceTimersByTime(10); });
+
+    const gridAnnouncer = screen.getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    expect(gridAnnouncer.textContent).toContain('revealed');
+    vi.useRealTimers();
   });
 });

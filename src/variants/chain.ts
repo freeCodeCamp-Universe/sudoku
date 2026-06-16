@@ -14,7 +14,7 @@ const CHAIN_COLORS = [
   '#ff88aa', '#88ddff', '#ffcc55', '#dd88cc', '#88ccaa', '#ffaa66',
 ];
 
-// Ties chains to the specific solution object — no timing/race issues
+// Ties chains to the specific solution object; no timing/race issues
 const chainsBySolution = new WeakMap<Solution, ChainType[]>();
 
 function deriveStructure(solution: Solution, _model: VariantModel): { chains: ChainType[] } {
@@ -117,7 +117,7 @@ export const chainVariant: Variant = {
   id: 'chain',
   generateSolution: generateChainSolution,
   name: 'Chain Sudoku',
-  description: 'Colored chains of cells must each contain a set of consecutive digits, in any order.',
+  description: 'Colored chains of cells must each hold a complete set of consecutive digits in any order.',
   help: [
     {
       label: 'Basic Rules',
@@ -132,14 +132,15 @@ export const chainVariant: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Sequence length', text: 'A chain of three cells holds three consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
+        { term: 'Sequence length', text: 'A chain of cells holds consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
         { term: 'Sudoku still applies', text: 'Every chain cell must also satisfy its row, column, and box.' },
       ],
     },
   ],
   popularity: 19,
   generateGivens: generateGivens9x9,
-  difficulty: 'advanced',
+  difficulty: 'intermediate',
+  difficultyRank: 1,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

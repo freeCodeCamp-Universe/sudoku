@@ -15,6 +15,7 @@ interface UseSudokuGridOptions {
   onEnterValue: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate: (id: CellId, value: SymbolValue) => void;
   checkEnabled?: boolean;
+  highlightPeers?: boolean;
   candidateMode?: boolean;
   annotators?: CellAnnotator[];
   renderSymbol?: (value: SymbolValue) => string;
@@ -80,6 +81,7 @@ export function useSudokuGrid({
   onEnterValue,
   onToggleCandidate,
   checkEnabled = false,
+  highlightPeers = true,
   candidateMode = false,
   annotators = [],
   renderSymbol = (value) => String(value),
@@ -116,7 +118,7 @@ export function useSudokuGrid({
   const peerIds = useMemo(() => {
     const peers = new Set<CellId>();
 
-    if (selectedId === null) {
+    if (selectedId === null || !highlightPeers) {
       return peers;
     }
 
@@ -135,7 +137,7 @@ export function useSudokuGrid({
     peers.delete(selectedId);
 
     return peers;
-  }, [selectedId, model.houses]);
+  }, [selectedId, highlightPeers, model.houses]);
 
   const getCellState = useCallback(
     (id: CellId): CellState => {
@@ -153,9 +155,8 @@ export function useSudokuGrid({
         given,
         revealed: revealed.has(id),
         selected: selectedId === id,
-        // Given/revealed cells are preset by the puzzle and cannot be wrong.
-        // A provably-correct cell is also never flagged as a conflict.
-        conflict: conflictSet.has(id) && !given && correct !== true,
+        // A provably-correct cell is never flagged as a conflict.
+        conflict: conflictSet.has(id) && correct !== true,
         correct,
         sameValue: selectedValue !== undefined && value === selectedValue,
         peer: peerIds.has(id),
@@ -387,5 +388,6 @@ export function useSudokuGrid({
     cellState: getCellState,
     cellProps,
     announcerRef,
+    announce,
   };
 }

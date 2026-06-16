@@ -15,7 +15,7 @@ function diagonalHouses(_layout: BoardLayout): House[] {
 export const sudokuX: Variant = {
   id: 'sudoku-x',
   name: 'Sudoku X',
-  description: 'The two main diagonals must also each contain digits 1-9 without repeats.',
+  description: 'Standard sudoku with an extra rule: both main diagonals must also contain each digit from 1–9.',
   help: [
     {
       label: 'Basic Rules',
@@ -37,6 +37,7 @@ export const sudokuX: Variant = {
   popularity: 4,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
+  difficultyRank: 5,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],

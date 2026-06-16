@@ -7,6 +7,10 @@ function getCellSize(canvasCols: number): number {
     return 30;
   }
 
+  if (canvasCols === 15) {
+    return 30;
+  }
+
   if (canvasCols === 12) {
     return 40;
   }

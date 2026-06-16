@@ -34,14 +34,14 @@ function deriveStructure(solution: Solution, _model: VariantModel): { marks: Mar
 export const consecutiveVariant: Variant = {
   id: 'consecutive',
   name: 'Consecutive Sudoku',
-  description: 'White dots mark adjacent pairs that differ by exactly 1. Pairs without a dot must not be consecutive.',
+  description: 'Dots mark adjacent pairs that differ by exactly 1. Pairs without a dot must not be consecutive.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
         { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'White dots', text: 'A dot between two adjacent cells means those digits differ by exactly 1 (e.g. 4 and 5).' },
+        { term: 'Dots', text: 'A dot between two adjacent cells means those digits differ by exactly 1 (e.g. 4 and 5).' },
         { term: 'No dot', text: 'When two adjacent cells have no dot, their digits must not differ by exactly 1.' },
       ],
     },
@@ -55,7 +55,8 @@ export const consecutiveVariant: Variant = {
   ],
   popularity: 9,
   generateGivens: generateGivens9x9,
-  difficulty: 'intermediate',
+  difficulty: 'beginner',
+  difficultyRank: 4,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

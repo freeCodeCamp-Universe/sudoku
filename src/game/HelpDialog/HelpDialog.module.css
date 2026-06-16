@@ -31,7 +31,11 @@
 .sectionGroup {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
+}
+
+.sectionGroup + .sectionGroup {
+  margin-block-start: 8px;
 }
 
 .badge {
@@ -73,12 +77,10 @@
 }
 
 .rules {
-  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  gap: 4px;
+  list-style: none;
   margin-block: 0;
   margin-inline: 0;
   padding-block: 0;
@@ -88,6 +90,8 @@
 .rules li {
   position: relative;
   padding-inline-start: 16px;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: var(--text-subtle);
 }
 

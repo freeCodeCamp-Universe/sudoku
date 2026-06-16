@@ -1,44 +1,33 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
-import styles from './Preview.module.css';
-import { hashVariantId, seeded } from './seeded';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import styles from './Preview.module.css';
 
-export function SujikenPreview({ variantId }: { variantId: string }) {
+const DIGITS: Array<[number, number, number]> = [
+  [1, 0, 3],
+  [3, 2, 7],
+  [5, 4, 2],
+  [7, 1, 5],
+  [8, 6, 9],
+];
+
+export function SujikenPreview() {
   const { theme } = useTheme();
-  const filledCells = useMemo(() => {
-    const random = seeded(hashVariantId(variantId));
-    const cells = new Set<string>();
-
-    for (let row = 0; row < 9; row += 1) {
-      for (let col = 0; col <= row; col += 1) {
-        if (random() < 0.22) {
-          cells.add(`${row},${col}`);
-        }
-      }
-    }
-
-    return cells;
-  }, [variantId]);
   const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
     const n = 9;
     const size = width / (n + 1);
     const offset = size * 0.4;
     const isLight = theme === 'light';
-    const gridColor = isLight ? '#c8c8d8' : '#3b3b4f';
-    const fillColor = isLight ? '#d0d0ec' : '#2a2a50';
+    const gridColor     = isLight ? '#c8c8d8' : '#3b3b4f';
     const diagonalColor = isLight ? '#6060a0' : '#9898b8';
+    const textColor     = isLight ? '#2a2a40' : '#d0d0d5';
+
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 0.6;
 
     for (let row = 0; row < n; row += 1) {
       for (let col = 0; col <= row; col += 1) {
         ctx.strokeRect(offset + col * size, offset + row * size, size, size);
-
-        if (filledCells.has(`${row},${col}`)) {
-          ctx.fillStyle = fillColor;
-          ctx.fillRect(offset + col * size + 0.5, offset + row * size + 0.5, size - 1, size - 1);
-        }
       }
     }
 
@@ -48,7 +37,15 @@ export function SujikenPreview({ variantId }: { variantId: string }) {
     for (let diagonal = 0; diagonal < n; diagonal += 1) {
       ctx.strokeRect(offset + diagonal * size, offset + diagonal * size, size, size);
     }
-  }, [filledCells, theme]));
+
+    ctx.fillStyle = textColor;
+    ctx.font = `600 ${Math.round(size * 0.55)}px 'Fira Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const [row, col, digit] of DIGITS) {
+      ctx.fillText(String(digit), offset + col * size + size / 2, offset + row * size + size / 2);
+    }
+  }, [theme]));
 
   return (
     <canvas

@@ -5,7 +5,7 @@ import type { Cage } from '@/game/gameTypes';
 
 const N = 9;
 
-function neighbours(r: number, c: number): [number, number][] {
+function neighbors(r: number, c: number): [number, number][] {
   return ([[-1,0],[1,0],[0,-1],[0,1]] as [number,number][])
     .map(([dr,dc]): [number,number] => [r+dr, c+dc])
     .filter(([nr,nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N);
@@ -35,7 +35,7 @@ function carveCages(solution: Solution, _model: VariantModel): { cages: Cage[] }
         if (!m) continue;
         const r = Number(m[1]);
         const c = Number(m[2]);
-        for (const [nr, nc] of neighbours(r, c)) {
+        for (const [nr, nc] of neighbors(r, c)) {
           const nid = cellId(nr, nc);
           if (!assigned.has(nid)) candidates.push(nid);
         }
@@ -57,7 +57,7 @@ function carveCages(solution: Solution, _model: VariantModel): { cages: Cage[] }
 export const killer: Variant = {
   id: 'killer',
   name: 'Killer Sudoku',
-  description: 'Cells are grouped into dashed cages with target sums. Digits in each cage must add up to the total without repeating.',
+  description: 'Cells are grouped into cages, each with a target sum. No digit may repeat within a cage.',
   help: [
     {
       label: 'Basic Rules',
@@ -78,7 +78,8 @@ export const killer: Variant = {
     },
   ],
   popularity: 2,
-  difficulty: 'advanced',
+  difficulty: 'intermediate',
+  difficultyRank: 11,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

@@ -81,7 +81,7 @@ function carveArrows(solution: Solution, _model: VariantModel): { arrows: Arrow[
 export const arrow: Variant = {
   id: 'arrow',
   name: 'Arrow Sudoku',
-  description: 'Digits along an arrow sum to the circled number at the arrow base.',
+  description: 'Digits along each arrow sum to the number shown in the circle at the base of that arrow.',
   help: [
     {
       label: 'Basic Rules',
@@ -103,7 +103,8 @@ export const arrow: Variant = {
   ],
   popularity: 7,
   generateGivens: generateGivens9x9,
-  difficulty: 'advanced',
+  difficulty: 'intermediate',
+  difficultyRank: 2,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',

@@ -41,6 +41,7 @@ describe('Butterfly Board renders correct cell count', () => {
           }),
           cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
           announcerRef: { current: null },
+          announce: () => {},
         }}
         renderSymbol={(value) => String(value)}
       />
@@ -69,6 +70,7 @@ describe('Butterfly Board renders correct cell count', () => {
           }),
           cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
           announcerRef: { current: null },
+          announce: () => {},
         }}
         renderSymbol={(value) => String(value)}
       />
@@ -87,7 +89,7 @@ describe('Butterfly Board renders correct cell count', () => {
     shouldAssert.equal(noBottomAtEdge.hasAttribute('data-box-bottom'), false);
   });
 
-  it('should mark overlap regions for multigrid shading', () => {
+  it('should not apply overlap shading to any multigrid cells', () => {
     const model = buildModel(butterfly);
     const rects = multigridLayout.cellRects(butterfly);
     const size = multigridLayout.canvasSize(butterfly);
@@ -107,15 +109,16 @@ describe('Butterfly Board renders correct cell count', () => {
           }),
           cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
           announcerRef: { current: null },
+          announce: () => {},
         }}
         renderSymbol={(value) => String(value)}
       />
     );
 
-    expect(getCell('r4c4')).toHaveAttribute('data-overlap', 'four');
-    shouldAssert.equal(getCell('r4c4').getAttribute('data-overlap'), 'four');
-    shouldAssert.equal(getCell('r0c4').getAttribute('data-overlap'), 'two');
-    shouldAssert.equal(getCell('r4c0').getAttribute('data-overlap'), 'two');
+    expect(getCell('r4c4')).not.toHaveAttribute('data-overlap');
+    shouldAssert.equal(getCell('r4c4').hasAttribute('data-overlap'), false);
+    shouldAssert.equal(getCell('r0c4').hasAttribute('data-overlap'), false);
+    shouldAssert.equal(getCell('r4c0').hasAttribute('data-overlap'), false);
     shouldAssert.equal(getCell('r0c0').hasAttribute('data-overlap'), false);
     shouldAssert.equal(getCell('r11c11').hasAttribute('data-overlap'), false);
   });

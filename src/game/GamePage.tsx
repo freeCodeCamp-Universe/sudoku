@@ -4,9 +4,9 @@ import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
+import { validate } from '@/engine/validate';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
-import { COLOR_PALETTE } from '@/variants/color';
 import {
   isJigsawStructure,
   makeJigsawVariant,
@@ -37,21 +37,35 @@ type VariantWithColorNames = {
 };
 
 interface GameInnerProps {
-  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean };
-  toggleCheck: () => void;
+  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean; highlightPeers: boolean };
   onNewGame?: () => void;
 }
 
-function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
+function GameInner({ settings, onNewGame }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
+  const [verifyMode, setVerifyMode] = useState(false);
+  const [isVisible, setIsVisible] = useState(!document.hidden);
 
+  useEffect(() => {
+    setVerifyMode(false);
+  }, [solution]);
+
+  useEffect(() => {
+    function handleVisibilityChange() {
+      setIsVisible(!document.hidden);
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  const checkEnabled = settings.checkEnabled || verifyMode;
   const isBoardFull = state.values.size === solution.size;
-  const effectiveSolved = state.solved && settings.checkEnabled;
-  const showCheckPrompt = isBoardFull && !settings.checkEnabled && !state.solved;
+  const effectiveSolved = state.solved && checkEnabled;
+  const showCheckPrompt = isBoardFull && !checkEnabled;
 
   const structure = useMemo(
     () => variant.deriveStructure?.(solution, baseModel),
@@ -143,7 +157,8 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     solution,
     onEnterValue,
     onToggleCandidate,
-    checkEnabled: settings.checkEnabled,
+    checkEnabled,
+    highlightPeers: settings.highlightPeers,
     candidateMode,
     annotators,
     renderSymbol,
@@ -151,7 +166,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   });
 
   useEffect(() => {
-    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved) {
+    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved || !isVisible) {
       return undefined;
     }
 
@@ -162,7 +177,7 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, effectiveSolved, settings.timerEnabled, state.timerStarted]);
+  }, [dispatch, effectiveSolved, isVisible, settings.timerEnabled, state.timerStarted]);
 
   useEffect(() => {
     if (!effectiveSolved || !grid.announcerRef.current) {
@@ -182,10 +197,10 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
   }, [grid.announcerRef, effectiveSolved]);
 
   useEffect(() => {
-    if (state.solved) {
+    if (effectiveSolved) {
       setWinOpen(true);
     }
-  }, [state.solved]);
+  }, [effectiveSolved]);
 
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
@@ -200,7 +215,15 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
       return;
     }
 
+    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+
     dispatch({ type: 'reveal', cellId: selectedCellId, solutionValue });
+
+    if (selectedCell) {
+      grid.announce(
+        `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}, ${describeSymbol(solutionValue)}, revealed`
+      );
+    }
   }
 
   function handleNewGame() {
@@ -305,6 +328,18 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
               </span>
             </div>
           ) : null}
+          {liveVariant.id === 'kropki' ? (
+            <div className={styles.variantLegend} aria-label="Kropki rule legend">
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+                <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
+              </svg>
+              <span>Consecutive (differ by 1)</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+                <circle cx="5" cy="5" r="4" fill="#5060a0" />
+              </svg>
+              <span>One is double the other</span>
+            </div>
+          ) : null}
           {liveVariant.id === 'even-odd' ? (
             <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
               <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
@@ -331,30 +366,20 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
           ) : null}
         </div>
         <div className={styles.gameRight}>
-          {liveVariant.id === 'color' ? (
-            <div className={styles.colorLegend} aria-label="Color sudoku rule legend">
-              <div className={styles.colorSwatches} aria-hidden="true">
-                {COLOR_PALETTE.map((swatch) => (
-                  <span key={swatch} className={styles.legendSwatch} style={{ background: swatch }} />
-                ))}
-              </div>
-              <span>Each color appears exactly once per row, column, and 3×3 box.</span>
-            </div>
-          ) : null}
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={liveVariant.symbolKind === 'letter'
               ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
               : model.symbols}
             usedSymbols={usedSymbols}
-            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : undefined}
+            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : model.symbols.length === 6 ? 3 : undefined}
             onEnter={(value) => {
               if (!selectedCellId) {
                 return;
               }
 
               const isCorrectlyFilled =
-                settings.checkEnabled &&
+                checkEnabled &&
                 solution.has(selectedCellId) &&
                 state.values.get(selectedCellId) === solution.get(selectedCellId);
 
@@ -362,17 +387,51 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
                 return;
               }
 
+              const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+              const loc = selectedCell
+                ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
+                : null;
+
               if (value === 0) {
                 dispatch({ type: 'erase', cellId: selectedCellId });
+                if (loc) grid.announce(`${loc}, empty`);
                 return;
               }
 
               if (candidateMode) {
+                const current = state.candidates.get(selectedCellId) ?? [];
+                const adding = !current.includes(value);
                 onToggleCandidate(selectedCellId, value);
+                if (loc) {
+                  grid.announce(
+                    `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
+                  );
+                }
                 return;
               }
 
               onEnterValue(selectedCellId, value);
+              if (loc) {
+                const nextValues = new Map(state.values);
+                nextValues.set(selectedCellId, value);
+                const isCorrect =
+                  checkEnabled &&
+                  solution.has(selectedCellId) &&
+                  value === solution.get(selectedCellId);
+                const correctness =
+                  checkEnabled && solution.has(selectedCellId)
+                    ? isCorrect
+                      ? ', correct'
+                      : ', incorrect'
+                    : '';
+                const inConflict =
+                  !isCorrect &&
+                  checkEnabled &&
+                  validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+                grid.announce(
+                  `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+                );
+              }
             }}
             candidateMode={candidateMode}
             renderSymbol={renderSymbol}
@@ -384,15 +443,16 @@ function GameInner({ settings, toggleCheck, onNewGame }: GameInnerProps) {
       </div>
       {showCheckPrompt ? (
         <div className={styles.checkPrompt}>
-          All cells filled.
+          Looks like you&apos;re done!
           <button
             type="button"
             className={styles.checkPromptBtn}
             onClick={() => {
-              toggleCheck();
+              setVerifyMode(true);
+              grid.announce('Answers checked');
             }}
           >
-            Check answers
+            Check your answers
           </button>
         </div>
       ) : null}
@@ -502,7 +562,7 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  const { settings, toggleCheck, toggleTimer, toggleColorblind } = usePersistence(variantId);
+  const { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers } = usePersistence(variantId);
   const [genKey, setGenKey] = useState(0);
   // Randomize which jigsaw region layout a session starts on; rotating by genKey
   // then guarantees a different layout on every New Game.
@@ -534,13 +594,15 @@ export function GamePage() {
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
         colorblindEnabled={settings.colorblindEnabled}
+        highlightPeersEnabled={settings.highlightPeers}
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
         onToggleColorblind={variant.symbolKind === 'color' ? toggleColorblind : undefined}
+        onToggleHighlightPeers={toggleHighlightPeers}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={gameVariant} model={model} givens={givens} solution={solution}>
-          <GameInner settings={settings} toggleCheck={toggleCheck} onNewGame={() => setGenKey((k) => k + 1)} />
+          <GameInner settings={settings} onNewGame={() => setGenKey((k) => k + 1)} />
         </GameProvider>
       </main>
 
@@ -556,12 +618,12 @@ export function GamePage() {
         shortcuts={[
           ...(variant.id === 'super'
             ? [
-                { keys: ['1–9'], description: 'Enter a digit' },
-                { keys: ['A–G'], description: 'Enter a letter' },
+                { keys: ['1-9'], description: 'Enter a digit' },
+                { keys: ['A-G'], description: 'Enter a letter' },
               ]
             : [
                 {
-                  keys: [variant.symbolKind === 'letter' ? 'A–Z' : `1–${variant.symbols.length}`],
+                  keys: [variant.symbolKind === 'letter' ? 'A-Z' : `1-${variant.symbols.length}`],
                   description: variant.symbolKind === 'letter' ? 'Enter a letter' : variant.symbolKind === 'color' ? 'Enter a color' : 'Enter a digit',
                 },
               ]),

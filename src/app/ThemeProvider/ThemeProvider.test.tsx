@@ -73,4 +73,43 @@ describe('ThemeProvider', () => {
 
     expect(document.documentElement.classList.contains('light')).toBe(true);
   });
+
+  it('should not announce theme on initial render', () => {
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('');
+  });
+
+  it('should announce "Light theme" after toggling to light', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Light theme');
+  });
+
+  it('should announce "Dark theme" after toggling back to dark', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Dark theme');
+  });
 });

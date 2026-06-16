@@ -131,7 +131,7 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellState('r0c0').selected).toBe(false);
   });
 
-  it('should mark conflict cells when checking is enabled', () => {
+  it('should mark conflict cells regardless of the check setting', () => {
     const conflictValues: Values = new Map([
       ['r0c0', 5],
       ['r0c4', 5],
@@ -144,7 +144,7 @@ describe('useSudokuGrid', () => {
         givens: new Set(),
         onEnterValue: noop,
         onToggleCandidate: noop,
-        checkEnabled: true,
+        checkEnabled: false,
       })
     );
 
@@ -333,7 +333,7 @@ describe('useSudokuGrid', () => {
     vi.useRealTimers();
   });
 
-  it('should include "in conflict" in the cell label when checkEnabled is true and there is a conflict', () => {
+  it('should include "in conflict" in the cell label when there is a conflict', () => {
     const values: Values = new Map([
       ['r0c0', 5],
       ['r0c4', 5],
@@ -346,7 +346,6 @@ describe('useSudokuGrid', () => {
         givens: new Set(),
         onEnterValue: noop,
         onToggleCandidate: noop,
-        checkEnabled: true,
       })
     );
 
@@ -355,7 +354,7 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, box 1, empty');
   });
 
-  it('should not include "in conflict" in the cell label when checkEnabled is false', () => {
+  it('should include "in conflict" in the cell label even when checkEnabled is false', () => {
     const values: Values = new Map([
       ['r0c0', 5],
       ['r0c4', 5],
@@ -372,7 +371,26 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict');
+  });
+
+  it('should include "in conflict" in the label for a given cell that a user entry conflicts with', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([
+          ['r0c0', 5],
+          ['r0c4', 5],
+        ]),
+        givens: new Set(['r0c0']),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict, readonly');
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, box 2, 5, in conflict');
   });
 
   it('should announce conflict immediately when a value entry creates one', async () => {
@@ -597,6 +615,28 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellState('r5c0').peer).toBe(true); // same column
     expect(result.current.cellState('r1c1').peer).toBe(true); // same box
     expect(result.current.cellState('r5c5').peer).toBe(false); // unrelated
+  });
+
+  it('should mark no peers when highlightPeers is false', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        highlightPeers: false,
+      })
+    );
+
+    act(() => {
+      result.current.cellProps('r0c0').onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    });
+
+    expect(result.current.cellState('r0c5').peer).toBe(false);
+    expect(result.current.cellState('r5c0').peer).toBe(false);
+    expect(result.current.cellState('r1c1').peer).toBe(false);
   });
 
   it('should mark no peers when nothing is selected', () => {

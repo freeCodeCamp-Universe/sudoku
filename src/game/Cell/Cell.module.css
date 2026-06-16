@@ -42,14 +42,20 @@
 :global(.light) .cell[data-even] { background: #e8e8fa; }
 :global(.light) .cell[data-odd]  { background: #ffffff; }
 
-.cell[data-peer][data-even],
-.cell[data-peer][data-odd] {
-  background: #2e2e44 !important;
+.cell[data-peer][data-even] {
+  background: #2c2c4c !important;
 }
 
-:global(.light) .cell[data-peer][data-even],
-:global(.light) .cell[data-peer][data-odd] {
+.cell[data-peer][data-odd] {
+  background: #1a1a40 !important;
+}
+
+:global(.light) .cell[data-peer][data-even] {
   background: #d8d8f0 !important;
+}
+
+:global(.light) .cell[data-peer][data-odd] {
+  background: #ededf6 !important;
 }
 
 .cell[data-window] {
@@ -60,14 +66,18 @@
   background: #e8e8fa;
 }
 
-/* Asterisk cells carry a purple base in the overlay's own hue (like argyle and
-   windoku do for theirs), so a selected asterisk cell stays purple when it
-   lifts above the translucent overlay instead of dropping to a grey base. */
-.cell[data-asterisk] {
+/* Asterisk and center-dot cells carry a purple base in the overlay's own hue
+   so a selected cell stays purple when it lifts above the translucent overlay
+   instead of dropping to a grey base. */
+.cell[data-asterisk],
+.cell[data-center-dot],
+.cell[data-girandola] {
   background: #3b3b4f;
 }
 
-:global(.light) .cell[data-asterisk] {
+:global(.light) .cell[data-asterisk],
+:global(.light) .cell[data-center-dot],
+:global(.light) .cell[data-girandola] {
   background: #e8e8fa;
 }
 
@@ -76,8 +86,16 @@
   background: #222248;
 }
 
+.cell[data-overlap='three'] {
+  background: #272751;
+}
+
 .cell[data-overlap='four'] {
   background: #2c2c5a;
+}
+
+.cell[data-overlap='five'] {
+  background: #313163;
 }
 
 .cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
@@ -130,18 +148,32 @@
 /* Dim the selected cell's peers (its row, column, box, and any other house
    it shares). Subtler than the same-value highlight, which overrides it. */
 .cell[data-peer] {
-  background: #22243e !important;
+  background: #272948 !important;
 }
 
 :global(.light) .cell[data-peer] {
   background: #ededf6 !important;
 }
 
-.cell[data-peer][data-butterfly] {
+.cell[data-peer][data-overlay-borders],
+.cell[data-peer][data-butterfly],
+.cell[data-peer][data-cross],
+.cell[data-peer][data-flower],
+.cell[data-peer][data-overlap='two'],
+.cell[data-peer][data-overlap='three'],
+.cell[data-peer][data-overlap='four'],
+.cell[data-peer][data-overlap='five'] {
   background: #2e2e44 !important;
 }
 
-:global(.light) .cell[data-peer][data-butterfly] {
+:global(.light) .cell[data-peer][data-overlay-borders],
+:global(.light) .cell[data-peer][data-butterfly],
+:global(.light) .cell[data-peer][data-cross],
+:global(.light) .cell[data-peer][data-flower],
+:global(.light) .cell[data-peer][data-overlap='two'],
+:global(.light) .cell[data-peer][data-overlap='three'],
+:global(.light) .cell[data-peer][data-overlap='four'],
+:global(.light) .cell[data-peer][data-overlap='five'] {
   background: #d8d8f0 !important;
 }
 
@@ -155,11 +187,15 @@
   background: #d8d8f0 !important;
 }
 
-.cell[data-peer][data-asterisk] {
+.cell[data-peer][data-asterisk],
+.cell[data-peer][data-center-dot],
+.cell[data-peer][data-girandola] {
   background: #2e2e44 !important;
 }
 
-:global(.light) .cell[data-peer][data-asterisk] {
+:global(.light) .cell[data-peer][data-asterisk],
+:global(.light) .cell[data-peer][data-center-dot],
+:global(.light) .cell[data-peer][data-girandola] {
   background: #d8d8f0 !important;
 }
 
@@ -174,27 +210,29 @@
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
-   distinct from correct (green), and conflict (red) still overrides it. */
+   distinct from correct (green). */
 .cell[data-same-value],
 .cell[data-same-value][data-butterfly],
+.cell[data-same-value][data-cross],
+.cell[data-same-value][data-flower],
 .cell[data-same-value][data-overlap='two'],
-.cell[data-same-value][data-overlap='four'] {
+.cell[data-same-value][data-overlap='three'],
+.cell[data-same-value][data-overlap='four'],
+.cell[data-same-value][data-overlap='five'] {
   background: #1a4f4f !important;
 }
 
 :global(.light) .cell[data-same-value],
 :global(.light) .cell[data-same-value][data-butterfly],
+:global(.light) .cell[data-same-value][data-cross],
+:global(.light) .cell[data-same-value][data-flower],
 :global(.light) .cell[data-same-value][data-overlap='two'],
-:global(.light) .cell[data-same-value][data-overlap='four'] {
+:global(.light) .cell[data-same-value][data-overlap='three'],
+:global(.light) .cell[data-same-value][data-overlap='four'],
+:global(.light) .cell[data-same-value][data-overlap='five'] {
   background: #cdeaea !important;
 }
 
-.cell[data-conflict],
-.cell[data-conflict][data-butterfly],
-.cell[data-conflict][data-overlap='two'],
-.cell[data-conflict][data-overlap='four'] {
-  background: #2a1515 !important;
-}
 
 .cell[data-revealed] .value {
   color: var(--accent-yellow);
@@ -204,8 +242,14 @@
   color: var(--accent-green);
 }
 
-.cell[data-incorrect] .value {
-  color: var(--accent-red);
+.incorrectIcon {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  width: 0.38em;
+  height: 0.38em;
+  fill: var(--accent-red);
+  pointer-events: none;
 }
 
 .cell[data-word] .value {
@@ -323,7 +367,7 @@
   inset-block-end: 2px;
   inset-inline-end: 3px;
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1;
@@ -342,20 +386,22 @@
   background: #eeeef8;
 }
 
+:global(.light) .cell[data-overlap='three'] {
+  background: #e9e9f6;
+}
+
 :global(.light) .cell[data-overlap='four'] {
   background: #e4e4f4;
+}
+
+:global(.light) .cell[data-overlap='five'] {
+  background: #dfdff2;
 }
 
 :global(.light) .cell[data-given] {
   color: #0a0a23;
 }
 
-:global(.light) .cell[data-conflict],
-:global(.light) .cell[data-conflict][data-butterfly],
-:global(.light) .cell[data-conflict][data-overlap='two'],
-:global(.light) .cell[data-conflict][data-overlap='four'] {
-  background: #f8dede !important;
-}
 
 :global(.light) .cell[data-box-right]:not([data-selected])::after,
 :global(.light) .cell[data-box-bottom]:not([data-selected])::before {

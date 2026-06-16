@@ -2,8 +2,19 @@ import type { ComponentType } from 'react';
 import { ArgylePreview } from './ArgylePreview';
 import { ArrowPreview } from './ArrowPreview';
 import { AsteriskPreview } from './AsteriskPreview';
+import { CenterDotPreview } from './CenterDotPreview';
+import { GirandolaPreview } from './GirandolaPreview';
 import { ButterflyPreview } from './ButterflyPreview';
+import { CrossPreview } from './CrossPreview';
+import { FlowerPreview } from './FlowerPreview';
+import { KazagurumaPreview } from './KazagurumaPreview';
+import { TwodokuPreview } from './TwodokuPreview';
+import { TripledokuPreview } from './TripledokuPreview';
+import { SoheiPreview } from './SoheiPreview';
 import { ChainPreview } from './ChainPreview';
+import { Gattai3Preview } from './Gattai3Preview';
+import { SixBySixPreview } from './SixBySixPreview';
+import { KropkiPreview } from './KropkiPreview';
 import { ClassicPreview } from './ClassicPreview';
 import { ColorPreview } from './ColorPreview';
 import { ConsecutivePreview } from './ConsecutivePreview';
@@ -13,6 +24,7 @@ import { JigsawPreview } from './JigsawPreview';
 import { KillerPreview } from './KillerPreview';
 import { MiniSudokuPreview } from './MiniSudokuPreview';
 import { SamuraiPreview } from './SamuraiPreview';
+import { SandwichPreview } from './SandwichPreview';
 import { SkyscraperPreview } from './SkyscraperPreview';
 import { SujikenPreview } from './SujikenPreview';
 import { SudokuXPreview } from './SudokuXPreview';
@@ -39,8 +51,20 @@ export const previewRegistry: Record<string, PreviewComponent> = {
   wordoku: WordokuPreview,
   color: ColorPreview,
   asterisk: AsteriskPreview,
+  'center-dot': CenterDotPreview,
+  girandola: GirandolaPreview,
   argyle: ArgylePreview,
   butterfly: ButterflyPreview,
+  cross: CrossPreview,
+  flower: FlowerPreview,
+  kazaguruma: KazagurumaPreview,
+  twodoku: TwodokuPreview,
+  tripledoku: TripledokuPreview,
+  sohei: SoheiPreview,
   chain: ChainPreview,
+  'gattai-3': Gattai3Preview,
+  'six-by-six': SixBySixPreview,
+  kropki: KropkiPreview,
+  sandwich: SandwichPreview,
   sujiken: SujikenPreview,
 };

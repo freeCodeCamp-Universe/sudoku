@@ -25,7 +25,8 @@ function filterVariants(variants: Variant[], query: string): Variant[] {
     (variant) =>
       variant.name.toLowerCase().includes(normalizedQuery) ||
       variant.description.toLowerCase().includes(normalizedQuery) ||
-      variant.difficulty.toLowerCase().includes(normalizedQuery)
+      variant.difficulty.toLowerCase().includes(normalizedQuery) ||
+      variant.tags?.some((tag) => tag.toLowerCase().includes(normalizedQuery))
   );
 }
 
@@ -53,7 +54,9 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
         return difficultyDiff;
       }
 
-      return left.name.localeCompare(right.name);
+      const leftRank = left.difficultyRank ?? left.popularity ?? 99;
+      const rightRank = right.difficultyRank ?? right.popularity ?? 99;
+      return leftRank - rightRank;
     });
   }
 
@@ -62,7 +65,9 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
 
 export function Gallery() {
   const [query, setQuery] = useState('');
-  const [sortMode, setSortMode] = useState<SortMode>('popularity');
+  const [sortMode, setSortMode] = useState<SortMode>(
+    () => (localStorage.getItem('sudoku-sort') as SortMode | null) ?? 'popularity'
+  );
   const { theme, toggleTheme } = useTheme();
   const visibleVariants = useMemo(
     () => sortVariants(filterVariants(ALL_VARIANTS, query), sortMode),
@@ -83,7 +88,7 @@ export function Gallery() {
           </button>
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
-        <p className={styles.subheading}>20 sudoku variants for every skill level</p>
+        <p className={styles.subheading}>32 sudoku variants for every skill level</p>
       </header>
 
       <div className={styles.controls}>
@@ -109,7 +114,11 @@ export function Gallery() {
             className={styles.sortSelect}
             aria-label="Sort puzzles by"
             value={sortMode}
-            onChange={(event) => setSortMode(event.target.value as SortMode)}
+            onChange={(event) => {
+              const mode = event.target.value as SortMode;
+              localStorage.setItem('sudoku-sort', mode);
+              setSortMode(mode);
+            }}
           >
             <option value="popularity">Popularity</option>
             <option value="alpha">A-Z</option>

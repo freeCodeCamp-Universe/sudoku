@@ -41,6 +41,7 @@ export const sujiken: Variant = {
   ],
   popularity: 20,
   difficulty: 'advanced',
+  difficultyRank: 12,
   generateGivens(solution: Solution, _model: VariantModel, _difficulty: string, rng = Math.random): Values {
     const givens: Values = new Map(solution);
     for (const id of shuffle([...givens.keys()], rng)) {

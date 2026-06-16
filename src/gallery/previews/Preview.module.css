@@ -195,6 +195,14 @@
   --preview-cell-background: #3b3b4f;
 }
 
+.cell-center-dot {
+  --preview-cell-background: #3b3b4f;
+}
+
+.cell-girandola {
+  --preview-cell-background: #3b3b4f;
+}
+
 .argyleWrapper {
   position: relative;
   display: inline-block;
@@ -397,6 +405,14 @@
 }
 
 :global(html.light) .cell-asterisk {
+  --preview-cell-background: #e8e8fa;
+}
+
+:global(html.light) .cell-center-dot {
+  --preview-cell-background: #e8e8fa;
+}
+
+:global(html.light) .cell-girandola {
   --preview-cell-background: #e8e8fa;
 }
 

@@ -2,9 +2,12 @@ import type { CellAnnotator } from '@/game/gameTypes';
 import { arrowBulbAnnotator, arrowPathAnnotator } from './arrow';
 import { argyleAnnotator } from './argyle';
 import { asteriskAnnotator } from './asterisk';
+import { centerDotAnnotator } from './centerDot';
+import { girandolaAnnotator } from './girandola';
 import { cageSumAnnotator } from './cage';
 import { chainAnnotator } from './chain';
 import { consecutiveAnnotator } from './consecutive';
+import { kropkiAnnotator } from './kropki';
 import { evenCellAnnotator, oddCellAnnotator } from './evenOdd';
 import { greaterThanAnnotator } from './greaterThan';
 import { jigsawAnnotatorPlaceholder } from './jigsaw';
@@ -19,9 +22,12 @@ export const annotatorRegistry: Record<string, CellAnnotator> = {
   [arrowPathAnnotator.id]: arrowPathAnnotator,
   [argyleAnnotator.id]: argyleAnnotator,
   [asteriskAnnotator.id]: asteriskAnnotator,
+  [centerDotAnnotator.id]: centerDotAnnotator,
+  [girandolaAnnotator.id]: girandolaAnnotator,
   [cageSumAnnotator.id]: cageSumAnnotator,
   [chainAnnotator.id]: chainAnnotator,
   [consecutiveAnnotator.id]: consecutiveAnnotator,
+  [kropkiAnnotator.id]: kropkiAnnotator,
   [evenCellAnnotator.id]: evenCellAnnotator,
   [greaterThanAnnotator.id]: greaterThanAnnotator,
   [jigsawAnnotatorPlaceholder.id]: jigsawAnnotatorPlaceholder,

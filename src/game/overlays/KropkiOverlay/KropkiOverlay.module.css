@@ -1,0 +1,20 @@
+.overlay {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+.dotWhite {
+  fill: #f8f8ff;
+  stroke: #5060a0;
+  stroke-width: 1.5px;
+}
+
+.dotBlack {
+  fill: #4050a0;
+  stroke: #f8f8ff;
+  stroke-width: 1px;
+}

@@ -42,7 +42,7 @@ describe('killer variant', () => {
     expect(covered.size).toBe(81);
   });
 
-  it('should derive cages with size 2–4', () => {
+  it('should derive cages with size 2-4', () => {
     const model = buildModel(killer);
     const solution = generateSolution(model, seeded(61));
     const structure = killer.deriveStructure?.(solution, model) as { cages: Cage[] };

@@ -100,7 +100,7 @@ export function makeJigsawVariant(regions: number[][]): Variant {
   return {
     id: 'jigsaw',
     name: 'Jigsaw Sudoku',
-    description: 'Nine irregular, interlocking regions replace the standard 3x3 boxes. Same rules, new shapes.',
+    description: 'Nine irregular, interlocking regions replace the standard 3×3 boxes. Same rules, new shapes.',
     help: [
       {
         label: 'Basic Rules',
@@ -108,20 +108,21 @@ export function makeJigsawVariant(regions: number[][]): Variant {
         rules: [
           { term: 'The grid', text: 'A 9×9 board where the nine regions are irregular jigsaw shapes instead of standard 3×3 boxes.' },
           { term: 'Fill with 1–9', text: 'Every cell must contain a digit from 1 to 9.' },
-          { term: 'No repeats', text: 'Each row, column, and colored jigsaw region must hold every digit exactly once.' },
+          { term: 'No repeats', text: 'Each row, column, and jigsaw region must hold every digit exactly once.' },
         ],
       },
       {
         label: 'Additional Rules',
         tone: 'extra',
         rules: [
-          { term: 'Region shapes', text: 'Each region contains exactly 9 cells but can be any shape. Follow the color boundaries.' },
+          { term: 'Region shapes', text: 'Each region contains exactly 9 cells but can be any shape. Region boundaries are marked by thick borders.' },
           { term: 'Given digits', text: 'Pre-filled cells are fixed. Fill in the rest to complete the puzzle.' },
         ],
       },
     ],
     popularity: 5,
     difficulty: 'intermediate',
+    difficultyRank: 10,
     layout: { kind: 'grid', size: JIGSAW_SIZE, box: { rows: 3, cols: 3 } },
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     constraintIds: ['uniqueness'],

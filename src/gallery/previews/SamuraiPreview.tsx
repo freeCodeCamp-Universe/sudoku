@@ -3,46 +3,72 @@ import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
+const SUB_GRIDS = [
+  { originRow: 0, originCol: 0 },
+  { originRow: 0, originCol: 12 },
+  { originRow: 6, originCol: 6 },
+  { originRow: 12, originCol: 0 },
+  { originRow: 12, originCol: 12 },
+];
+
 export function SamuraiPreview() {
   const { theme } = useTheme();
-  const canvasRef = usePreviewCanvas(useCallback((ctx, { width, height }) => {
+  const canvasRef = usePreviewCanvas(useCallback((ctx, { width }) => {
+    const cells = 21;
+    const cell = width / cells;
     const isLight = theme === 'light';
+    const fillOverlap2 = isLight ? '#e8e8f8' : '#1f1f3a';
+    const fillSingle = isLight ? '#f5f5f0' : '#1b1b32';
+    const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
+    const boxLine = isLight ? '#a0a0c0' : '#3b3b4f';
+    const borderColor = isLight ? '#5060a0' : '#9898b8';
 
-    const size = 44;
-    const gridFill = isLight ? '#f5f5f0' : '#1b1b32';
-    const borderColor = isLight ? '#8080a8' : '#9898b8';
-    const innerColor = isLight ? '#b8b8cc' : '#4a4a5e';
-    const centers: Array<[number, number]> = [
-      [size / 2, size / 2],
-      [width - size / 2, size / 2],
-      [width / 2, height / 2],
-      [size / 2, height - size / 2],
-      [width - size / 2, height - size / 2],
-    ];
+    for (let row = 0; row < cells; row += 1) {
+      for (let col = 0; col < cells; col += 1) {
+        const count = SUB_GRIDS.filter(({ originRow, originCol }) =>
+          row >= originRow && row < originRow + 9 && col >= originCol && col < originCol + 9
+        ).length;
 
-    centers.forEach(([centerX, centerY]) => {
-      const x = centerX - size / 2;
-      const y = centerY - size / 2;
+        if (count === 0) continue;
+        ctx.fillStyle = count >= 2 ? fillOverlap2 : fillSingle;
+        ctx.fillRect(col * cell, row * cell, cell, cell);
+      }
+    }
 
-      ctx.fillStyle = gridFill;
-      ctx.fillRect(x, y, size, size);
-      ctx.strokeStyle = innerColor;
-      ctx.lineWidth = 0.5;
-
-      for (let index = 1; index < 3; index += 1) {
+    ctx.strokeStyle = cellLine;
+    ctx.lineWidth = 0.4;
+    SUB_GRIDS.forEach(({ originRow, originCol }) => {
+      for (let i = 1; i < 9; i += 1) {
         ctx.beginPath();
-        ctx.moveTo(x + (index * size) / 3, y);
-        ctx.lineTo(x + (index * size) / 3, y + size);
+        ctx.moveTo((originCol + i) * cell, originRow * cell);
+        ctx.lineTo((originCol + i) * cell, (originRow + 9) * cell);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(x, y + (index * size) / 3);
-        ctx.lineTo(x + size, y + (index * size) / 3);
+        ctx.moveTo(originCol * cell, (originRow + i) * cell);
+        ctx.lineTo((originCol + 9) * cell, (originRow + i) * cell);
         ctx.stroke();
       }
+    });
 
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(x, y, size, size);
+    ctx.strokeStyle = boxLine;
+    ctx.lineWidth = 1.2;
+    SUB_GRIDS.forEach(({ originRow, originCol }) => {
+      [3, 6].forEach((offset) => {
+        ctx.beginPath();
+        ctx.moveTo((originCol + offset) * cell, originRow * cell);
+        ctx.lineTo((originCol + offset) * cell, (originRow + 9) * cell);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(originCol * cell, (originRow + offset) * cell);
+        ctx.lineTo((originCol + 9) * cell, (originRow + offset) * cell);
+        ctx.stroke();
+      });
+    });
+
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 1.5;
+    SUB_GRIDS.forEach(({ originRow, originCol }) => {
+      ctx.strokeRect(originCol * cell + 0.75, originRow * cell + 0.75, 9 * cell - 1.5, 9 * cell - 1.5);
     });
   }, [theme]));
 

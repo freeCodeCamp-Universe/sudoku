@@ -58,6 +58,7 @@ export interface GridInteraction {
   cellState(id: CellId): CellState;
   cellProps(id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId };
   announcerRef: React.RefObject<HTMLDivElement | null>;
+  announce: (message: string) => void;
 }
 
 /**
