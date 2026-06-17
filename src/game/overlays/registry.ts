@@ -7,7 +7,6 @@ import { CageOverlay } from './CageOverlay';
 import { ChainOverlay } from './ChainOverlay';
 import { ConsecutiveOverlay } from './ConsecutiveOverlay';
 import { KropkiOverlay } from './KropkiOverlay';
-import { EvenOddOverlay } from './EvenOddOverlay';
 import { InequalityOverlay } from './InequalityOverlay';
 import { JigsawOverlay } from './JigsawOverlay';
 import { WindokuOverlay } from './WindokuOverlay';
@@ -21,7 +20,6 @@ export const overlayRegistry: Record<string, OverlayComponent> = {
   'chain-overlay': ChainOverlay,
   'consecutive-dots': ConsecutiveOverlay,
   'kropki-dots': KropkiOverlay,
-  'evenOdd-shading': EvenOddOverlay,
   inequality: InequalityOverlay,
   jigsaw: JigsawOverlay,
   windoku: WindokuOverlay,

@@ -26,10 +26,6 @@ describe('evenOdd variant', () => {
     expect(evenOdd.constraintIds).toContain('evenOdd');
   });
 
-  it('should include the evenOdd-shading overlay id', () => {
-    expect(evenOdd.overlayIds).toContain('evenOdd-shading');
-  });
-
   it('should include even-cell and odd-cell annotator ids', () => {
     expect(evenOdd.annotatorIds).toContain('even-cell');
     expect(evenOdd.annotatorIds).toContain('odd-cell');

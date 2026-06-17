@@ -88,6 +88,18 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-peer', 'true');
   });
 
+  it('should apply the even modifier when even=true', () => {
+    render(<Cell {...baseProps} even />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-even', 'true');
+  });
+
+  it('should apply the odd modifier when odd=true', () => {
+    render(<Cell {...baseProps} odd />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-odd', 'true');
+  });
+
   it('should not apply the peer modifier by default', () => {
     render(<Cell {...baseProps} />);
 
@@ -130,10 +142,7 @@ describe('Cell', () => {
 
     const gaps = screen.getAllByTestId('marker-gap');
     expect(gaps).toHaveLength(2);
-    expect(gaps.map((gap) => gap.getAttribute('data-edge'))).toEqual([
-      'inline-end',
-      'block-start',
-    ]);
+    expect(gaps.map((gap) => gap.getAttribute('data-edge'))).toEqual(['inline-end', 'block-start']);
   });
 
   describe('Cell with symbolKind color', () => {
@@ -177,9 +186,7 @@ describe('Cell', () => {
     });
 
     it('should not render a color chip for symbolKind digit', () => {
-      render(
-        <Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />
-      );
+      render(<Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />);
 
       expect(screen.queryByTestId('cell-color-chip')).toBeNull();
     });
