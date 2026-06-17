@@ -8,6 +8,8 @@ function buildDiagonalExtra(boardLayout: BoardLayout): House[] {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
 
+  const size = boardLayout.size;
+
   const regionHouses: House[] = [];
 
   for (let blockRow = 0; blockRow < 3; blockRow += 1) {
@@ -32,12 +34,50 @@ function buildDiagonalExtra(boardLayout: BoardLayout): House[] {
     }
   }
 
+  const backwardDiagonals: House[] = [];
+
+  for (let k = 1; k <= size - 2; k += 1) {
+    const cells: CellId[] = [];
+
+    for (let row = k; row < size; row += 1) {
+      cells.push(cellId(row, row - k));
+    }
+
+    backwardDiagonals.push({
+      id: `tri-bdiag-${k}`,
+      cells,
+    });
+  }
+
+  const forwardDiagonals: House[] = [];
+
+  for (let s = 2; s <= 2 * (size - 1); s += 1) {
+    const cells: CellId[] = [];
+
+    for (let row = 0; row < size; row += 1) {
+      const col = s - row;
+
+      if (col >= 0 && col <= row && col < size) {
+        cells.push(cellId(row, col));
+      }
+    }
+
+    if (cells.length >= 2) {
+      forwardDiagonals.push({
+        id: `tri-fdiag-${s}`,
+        cells,
+      });
+    }
+  }
+
   return [
     {
       id: 'tri-diagonal',
       cells: range(boardLayout.size).map((index) => cellId(index, index)),
     },
     ...regionHouses,
+    ...backwardDiagonals,
+    ...forwardDiagonals,
   ];
 }
 
@@ -67,8 +107,8 @@ export const sujiken: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'The diagonal',
-          text: 'The main diagonal (the longest line of cells) must contain each digit from 1 to 9 exactly once.',
+          term: 'All diagonals',
+          text: 'No digit may repeat along any diagonal in either direction, including lines parallel to the long diagonal and the crossing anti-diagonals.',
         },
         {
           term: 'Variable range',
