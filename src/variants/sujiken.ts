@@ -1,5 +1,5 @@
-import { cellId, range, shuffle } from '@/engine/grid';
-import type { BoardLayout, House, Solution, TriangularLayout, Values, Variant, VariantModel } from '@/engine/types';
+import { cellId, range } from '@/engine/grid';
+import type { BoardLayout, House, TriangularLayout, Variant } from '@/engine/types';
 
 const layout: TriangularLayout = { kind: 'triangular', size: 9 };
 
@@ -19,37 +19,42 @@ function buildDiagonalExtra(boardLayout: BoardLayout): House[] {
 export const sujiken: Variant = {
   id: 'sujiken',
   name: 'Sujiken',
-  description: 'A triangular sudoku where rows, columns, and the main diagonal must each contain distinct digits.',
+  description:
+    'A triangular sudoku where rows, columns, and the main diagonal must each contain distinct digits.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The shape', text: 'A triangular grid built from the upper-left corner of a 9×9 board. Only the cells above and on the main diagonal are used.' },
+        {
+          term: 'The shape',
+          text: 'A triangular grid built from the upper-left corner of a 9×9 board. Only the cells above and on the main diagonal are used.',
+        },
         { term: 'Rows', text: 'Each row must contain distinct digits with no repetition.' },
-        { term: 'Columns', text: 'Each column, counting downward from the diagonal, must also contain distinct digits.' },
+        {
+          term: 'Columns',
+          text: 'Each column, counting downward from the diagonal, must also contain distinct digits.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'The diagonal', text: 'The main diagonal (the longest line of cells) must contain each digit from 1 to 9 exactly once.' },
-        { term: 'Variable range', text: 'Shorter rows and columns hold fewer cells, so not every line needs all nine digits. Just no repeats within each.' },
+        {
+          term: 'The diagonal',
+          text: 'The main diagonal (the longest line of cells) must contain each digit from 1 to 9 exactly once.',
+        },
+        {
+          term: 'Variable range',
+          text: 'Shorter rows and columns hold fewer cells, so not every line needs all nine digits. Just no repeats within each.',
+        },
       ],
     },
   ],
   popularity: 20,
   difficulty: 'advanced',
   difficultyRank: 12,
-  generateGivens(solution: Solution, _model: VariantModel, _difficulty: string, rng = Math.random): Values {
-    const givens: Values = new Map(solution);
-    for (const id of shuffle([...givens.keys()], rng)) {
-      if (givens.size <= 17) break;
-      givens.delete(id);
-    }
-    return givens;
-  },
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
