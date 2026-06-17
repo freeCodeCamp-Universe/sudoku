@@ -32,6 +32,27 @@ export function SujikenPreview() {
     }
 
     ctx.strokeStyle = diagonalColor;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+
+    for (const boundary of [2, 5]) {
+      const y = offset + (boundary + 1) * size;
+
+      ctx.moveTo(offset, y);
+      ctx.lineTo(offset + (boundary + 1) * size, y);
+    }
+
+    for (const boundary of [2, 5]) {
+      const x = offset + (boundary + 1) * size;
+      const yStart = offset + (boundary + 1) * size;
+
+      ctx.moveTo(x, yStart);
+      ctx.lineTo(x, offset + n * size);
+    }
+
+    ctx.stroke();
+
+    ctx.strokeStyle = diagonalColor;
     ctx.lineWidth = 1.2;
 
     for (let diagonal = 0; diagonal < n; diagonal += 1) {

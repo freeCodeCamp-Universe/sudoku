@@ -1,5 +1,5 @@
 import { cellId, range } from '@/engine/grid';
-import type { BoardLayout, House, TriangularLayout, Variant } from '@/engine/types';
+import type { BoardLayout, CellId, House, TriangularLayout, Variant } from '@/engine/types';
 
 const layout: TriangularLayout = { kind: 'triangular', size: 9 };
 
@@ -8,11 +8,36 @@ function buildDiagonalExtra(boardLayout: BoardLayout): House[] {
     throw new Error(`Unsupported layout kind: ${boardLayout.kind}`);
   }
 
+  const regionHouses: House[] = [];
+
+  for (let blockRow = 0; blockRow < 3; blockRow += 1) {
+    for (let blockCol = 0; blockCol <= blockRow; blockCol += 1) {
+      const cells: CellId[] = [];
+
+      for (let localRow = 0; localRow < 3; localRow += 1) {
+        for (let localCol = 0; localCol < 3; localCol += 1) {
+          const row = blockRow * 3 + localRow;
+          const col = blockCol * 3 + localCol;
+
+          if (col <= row) {
+            cells.push(cellId(row, col));
+          }
+        }
+      }
+
+      regionHouses.push({
+        id: `tri-region-${blockRow}-${blockCol}`,
+        cells,
+      });
+    }
+  }
+
   return [
     {
       id: 'tri-diagonal',
       cells: range(boardLayout.size).map((index) => cellId(index, index)),
     },
+    ...regionHouses,
   ];
 }
 
@@ -48,6 +73,14 @@ export const sujiken: Variant = {
         {
           term: 'Variable range',
           text: 'Shorter rows and columns hold fewer cells, so not every line needs all nine digits. Just no repeats within each.',
+        },
+        {
+          term: 'Three square regions',
+          text: 'The three full 3×3 square regions marked by thick borders must not repeat any digit.',
+        },
+        {
+          term: 'Three triangular regions',
+          text: 'The three 3×3 triangular regions along the diagonal, also marked by thick borders, must not repeat any digit.',
         },
       ],
     },

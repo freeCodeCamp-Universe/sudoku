@@ -22,7 +22,7 @@ describe('sujiken variant - model structure', () => {
   });
 
   it('should have 19 houses', () => {
-    expect(model.houses).toHaveLength(19);
+    expect(model.houses).toHaveLength(25);
   });
 
   it('should include a diagonal house containing all 9 diagonal cells', () => {
@@ -32,6 +32,21 @@ describe('sujiken variant - model structure', () => {
     expect(diagonal?.cells).toHaveLength(9);
     expect(diagonal?.cells).toContain('r0c0');
     expect(diagonal?.cells).toContain('r8c8');
+  });
+
+  it('should have square region tri-region-1-0 with 9 cells', () => {
+    const region = model.houses.find((house) => house.id === 'tri-region-1-0');
+
+    expect(region).toBeDefined();
+    expect(region?.cells).toHaveLength(9);
+  });
+
+  it('should have triangular region tri-region-0-0 with 6 cells containing r0c0', () => {
+    const region = model.houses.find((house) => house.id === 'tri-region-0-0');
+
+    expect(region).toBeDefined();
+    expect(region?.cells).toHaveLength(6);
+    expect(region?.cells).toContain('r0c0');
   });
 
   it('should have row-0 with 1 cell and row-8 with 9 cells', () => {

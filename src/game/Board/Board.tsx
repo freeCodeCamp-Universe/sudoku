@@ -66,6 +66,12 @@ function isBoxBoundary(
 
       return (value + 1) % step === 0 && value < size - 1;
     }
+    case 'triangular': {
+      const size = variant.layout.size;
+      const value = axis === 'row' ? cell.row : cell.col;
+
+      return (value + 1) % 3 === 0 && value < size - 1;
+    }
     case 'multigrid': {
       const { subGrids, subGridSize, box, canvasCols, canvasRows } = variant.layout;
       const step = axis === 'row' ? box.rows : box.cols;
