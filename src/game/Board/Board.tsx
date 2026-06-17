@@ -8,6 +8,7 @@ import { ASTERISK_CELLS } from '@/variants/asterisk';
 import { CENTER_DOT_CELLS } from '@/variants/centerDot';
 import { GIRANDOLA_CELLS } from '@/variants/girandola';
 import { ARGYLE_D1_OFFSETS, ARGYLE_D2_SUMS } from '@/variants/argyle';
+import { isBoxBoundary } from './boxBoundary';
 
 const argyleD1Set = new Set(
   ARGYLE_D1_OFFSETS.flatMap((offset) =>
@@ -50,53 +51,6 @@ function buildGutterAriaLabel(side: keyof GutterSlots, cell: GutterCell): string
       return `End clue for row ${(cell.row ?? 0) + 1}: ${cell.label}`;
     default:
       return cell.label;
-  }
-}
-
-function isBoxBoundary(
-  variant: BoardProps['variant'],
-  cell: BoardProps['cells'][number],
-  axis: 'row' | 'col'
-): boolean {
-  switch (variant.layout.kind) {
-    case 'grid': {
-      const size = variant.layout.size;
-      const step = axis === 'row' ? variant.layout.box.rows : variant.layout.box.cols;
-      const value = axis === 'row' ? cell.row : cell.col;
-
-      return (value + 1) % step === 0 && value < size - 1;
-    }
-    case 'triangular': {
-      const size = variant.layout.size;
-      const value = axis === 'row' ? cell.row : cell.col;
-
-      return (value + 1) % 3 === 0 && value < size - 1;
-    }
-    case 'multigrid': {
-      const { subGrids, subGridSize, box, canvasCols, canvasRows } = variant.layout;
-      const step = axis === 'row' ? box.rows : box.cols;
-      const value = axis === 'row' ? cell.row : cell.col;
-      const canvasMax = axis === 'row' ? canvasRows : canvasCols;
-      const isLocalBoundary = subGrids.some(({ originRow, originCol }) => {
-        const inGrid =
-          cell.row >= originRow &&
-          cell.row < originRow + subGridSize &&
-          cell.col >= originCol &&
-          cell.col < originCol + subGridSize;
-
-        if (!inGrid) {
-          return false;
-        }
-
-        const local = axis === 'row' ? cell.row - originRow : cell.col - originCol;
-
-        return (local + 1) % step === 0 && local < subGridSize - 1;
-      });
-
-      return isLocalBoundary && value < canvasMax - 1;
-    }
-    default:
-      return false;
   }
 }
 
@@ -209,7 +163,6 @@ function buildMultigridLines(
 
   return edges;
 }
-
 
 export function Board({
   variant,
@@ -354,7 +307,11 @@ export function Board({
             <div className={styles.gutterCorner} />
             <div data-gutter="top" className={styles.gutterTrack}>
               {gutters.top.map((cell) => (
-                <div key={cell.id} className={styles.gutterCell} aria-label={buildGutterAriaLabel('top', cell)}>
+                <div
+                  key={cell.id}
+                  className={styles.gutterCell}
+                  aria-label={buildGutterAriaLabel('top', cell)}
+                >
                   {cell.label}
                 </div>
               ))}
@@ -382,7 +339,11 @@ export function Board({
           {gutters.end ? (
             <div data-gutter="end" className={styles.gutterCol}>
               {gutters.end.map((cell) => (
-                <div key={cell.id} className={styles.gutterCell} aria-label={buildGutterAriaLabel('end', cell)}>
+                <div
+                  key={cell.id}
+                  className={styles.gutterCell}
+                  aria-label={buildGutterAriaLabel('end', cell)}
+                >
                   {cell.label}
                 </div>
               ))}

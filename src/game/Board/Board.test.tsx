@@ -10,6 +10,7 @@ import { multigridLayout } from '@/game/layouts/multigrid';
 import { butterfly } from '@/variants/butterfly';
 import { samurai } from '@/variants/samurai';
 import { Board } from './Board';
+import { isBoxBoundary } from './boxBoundary';
 
 const shouldAssert = should();
 const classicVariant = {
@@ -60,7 +61,9 @@ function makeClassicBoardProps(overrides: Partial<BoardProps> = {}): BoardProps 
 }
 
 function getRenderedCell(id: CellId): HTMLElement {
-  const cell = screen.getAllByRole('gridcell').find((gridCell) => gridCell.getAttribute('data-cell') === id);
+  const cell = screen
+    .getAllByRole('gridcell')
+    .find((gridCell) => gridCell.getAttribute('data-cell') === id);
 
   shouldAssert.exist(cell);
 
@@ -114,7 +117,15 @@ describe('Board', () => {
 
   it('should render overlay nodes when provided', () => {
     render(
-      <Board {...makeClassicBoardProps({ overlays: [<div key="overlay" data-testid="overlay">overlay</div>] })} />
+      <Board
+        {...makeClassicBoardProps({
+          overlays: [
+            <div key="overlay" data-testid="overlay">
+              overlay
+            </div>,
+          ],
+        })}
+      />
     );
 
     expect(screen.getByTestId('overlay')).toBeTruthy();
@@ -218,5 +229,20 @@ describe('Board gutter slots', () => {
     render(<Board {...makeClassicBoardProps()} />);
 
     expect(screen.queryByLabelText(/clue for /i)).toBeNull();
+  });
+});
+
+describe('isBoxBoundary', () => {
+  it('should suppress triangular right divider on diagonal cells while keeping row divider', () => {
+    const triangularVariant: BoardProps['variant'] = {
+      ...classicVariant,
+      id: 'triangular-test',
+      layout: { kind: 'triangular', size: 9 },
+    };
+
+    expect(isBoxBoundary(triangularVariant, { id: 'r2c2', row: 2, col: 2 }, 'col')).toBe(false);
+    expect(isBoxBoundary(triangularVariant, { id: 'r2c2', row: 2, col: 2 }, 'row')).toBe(true);
+    expect(isBoxBoundary(triangularVariant, { id: 'r5c2', row: 5, col: 2 }, 'col')).toBe(true);
+    expect(isBoxBoundary(triangularVariant, { id: 'r5c5', row: 5, col: 5 }, 'col')).toBe(false);
   });
 });
