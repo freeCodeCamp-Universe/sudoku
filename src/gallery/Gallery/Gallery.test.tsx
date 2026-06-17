@@ -7,11 +7,9 @@ import { variantRegistry } from '@/variants/registry';
 import { Gallery } from './Gallery';
 
 vi.mock('@/gallery/VariantCard', () => ({
-  VariantCard: ({
-    variant,
-  }: {
-    variant: { id: string; name: string; difficulty: string };
-  }) => <a href={`/${variant.id}`}>{`${variant.name} (${variant.difficulty})`}</a>,
+  VariantCard: ({ variant }: { variant: { id: string; name: string; difficulty: string } }) => (
+    <a href={`/${variant.id}`}>{`${variant.name} (${variant.difficulty})`}</a>
+  ),
 }));
 
 function renderGallery() {
@@ -81,7 +79,7 @@ describe('Gallery', () => {
 
     await user.selectOptions(screen.getByRole('combobox', { name: /sort puzzles by/i }), 'alpha');
 
-    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/Argyle Sudoku/i);
+    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/4×4 Sudoku/i);
   });
 
   it('should show a no-results message when nothing matches', async () => {
