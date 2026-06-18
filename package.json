@@ -1,6 +1,7 @@
 {
   "name": "sudoku",
   "private": true,
+  "packageManager": "pnpm@10.33.3",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
