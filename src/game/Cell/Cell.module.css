@@ -89,22 +89,6 @@
   background: #e8e8fa;
 }
 
-.cell[data-overlap='two'] {
-  background: #222248;
-}
-
-.cell[data-overlap='three'] {
-  background: #272751;
-}
-
-.cell[data-overlap='four'] {
-  background: #2c2c5a;
-}
-
-.cell[data-overlap='five'] {
-  background: #313163;
-}
-
 .cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
   content: '';
   position: absolute;
@@ -165,22 +149,14 @@
 .cell[data-peer][data-overlay-borders],
 .cell[data-peer][data-butterfly],
 .cell[data-peer][data-cross],
-.cell[data-peer][data-flower],
-.cell[data-peer][data-overlap='two'],
-.cell[data-peer][data-overlap='three'],
-.cell[data-peer][data-overlap='four'],
-.cell[data-peer][data-overlap='five'] {
+.cell[data-peer][data-flower] {
   background: #2e2e44 !important;
 }
 
 :global(.light) .cell[data-peer][data-overlay-borders],
 :global(.light) .cell[data-peer][data-butterfly],
 :global(.light) .cell[data-peer][data-cross],
-:global(.light) .cell[data-peer][data-flower],
-:global(.light) .cell[data-peer][data-overlap='two'],
-:global(.light) .cell[data-peer][data-overlap='three'],
-:global(.light) .cell[data-peer][data-overlap='four'],
-:global(.light) .cell[data-peer][data-overlap='five'] {
+:global(.light) .cell[data-peer][data-flower] {
   background: #d8d8f0 !important;
 }
 
@@ -221,22 +197,14 @@
 .cell[data-same-value],
 .cell[data-same-value][data-butterfly],
 .cell[data-same-value][data-cross],
-.cell[data-same-value][data-flower],
-.cell[data-same-value][data-overlap='two'],
-.cell[data-same-value][data-overlap='three'],
-.cell[data-same-value][data-overlap='four'],
-.cell[data-same-value][data-overlap='five'] {
+.cell[data-same-value][data-flower] {
   background: #1a4f4f !important;
 }
 
 :global(.light) .cell[data-same-value],
 :global(.light) .cell[data-same-value][data-butterfly],
 :global(.light) .cell[data-same-value][data-cross],
-:global(.light) .cell[data-same-value][data-flower],
-:global(.light) .cell[data-same-value][data-overlap='two'],
-:global(.light) .cell[data-same-value][data-overlap='three'],
-:global(.light) .cell[data-same-value][data-overlap='four'],
-:global(.light) .cell[data-same-value][data-overlap='five'] {
+:global(.light) .cell[data-same-value][data-flower] {
   background: #cdeaea !important;
 }
 
@@ -385,22 +353,6 @@
   background: #ffffff;
   color: #2c5f8a;
   border-color: #d8d8e8;
-}
-
-:global(.light) .cell[data-overlap='two'] {
-  background: #eeeef8;
-}
-
-:global(.light) .cell[data-overlap='three'] {
-  background: #e9e9f6;
-}
-
-:global(.light) .cell[data-overlap='four'] {
-  background: #e4e4f4;
-}
-
-:global(.light) .cell[data-overlap='five'] {
-  background: #dfdff2;
 }
 
 :global(.light) .cell[data-given] {
