@@ -6,16 +6,18 @@ This file provides guidance to AI coding agents (Claude Code, Copilot, etc.) whe
 
 Package manager is **pnpm**.
 
-| Task | Command |
-| --- | --- |
-| Install | `pnpm install` |
-| Dev server | `pnpm dev` |
-| Production build | `pnpm build` (runs `tsc --noEmit` then `vite build`) |
-| Preview built output | `pnpm preview` |
-| Tests (single run, no watch) | `pnpm test` (alias for `vitest run`) |
-| Lint | `pnpm lint` (`eslint .`) |
-| Run one test file | `pnpm exec vitest run path/to/file.test.ts` |
-| Run tests by name | `pnpm exec vitest run -t "<partial name>"` |
+| Task                           | Command                                              |
+| ------------------------------ | ---------------------------------------------------- |
+| Install                        | `pnpm install`                                       |
+| Dev server                     | `pnpm dev`                                           |
+| Production build               | `pnpm build` (runs `tsc --noEmit` then `vite build`) |
+| Preview built output           | `pnpm preview`                                       |
+| Tests (single run, no watch)   | `pnpm test` (alias for `vitest run`)                 |
+| Typecheck                      | `pnpm typecheck`                                     |
+| Lint (eslint + prettier check) | `pnpm lint`                                          |
+| Autofix lint + format          | `pnpm lint:fix`                                      |
+| Run one test file              | `pnpm exec vitest run path/to/file.test.ts`          |
+| Run tests by name              | `pnpm exec vitest run -t "<partial name>"`           |
 
 ## Verify before finishing — do not skip
 
