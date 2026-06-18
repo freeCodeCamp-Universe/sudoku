@@ -95,7 +95,16 @@ export function Cell({
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
   const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
-  const overlapClass = overlap === 5 ? 'five' : overlap === 4 ? 'four' : overlap === 3 ? 'three' : overlap === 2 ? 'two' : undefined;
+  const overlapClass =
+    overlap === 5
+      ? 'five'
+      : overlap === 4
+        ? 'four'
+        : overlap === 3
+          ? 'three'
+          : overlap === 2
+            ? 'two'
+            : undefined;
 
   return (
     <div
@@ -131,7 +140,7 @@ export function Cell({
       data-word={word || undefined}
       data-even={even || undefined}
       data-odd={odd || undefined}
-      data-colorblind={colorblind && symbolKind === 'color' || undefined}
+      data-colorblind={(colorblind && symbolKind === 'color') || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
@@ -194,9 +203,10 @@ export function Cell({
           className={styles.markerGap}
         />
       ))}
-      {(conflict || correct === false) ? (
+      {conflict || correct === false ? (
         <svg
           aria-hidden="true"
+          data-testid="cell-warning-icon"
           className={styles.incorrectIcon}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"

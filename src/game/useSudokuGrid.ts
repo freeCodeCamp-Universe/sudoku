@@ -137,7 +137,7 @@ export function useSudokuGrid({
     peers.delete(selectedId);
 
     return peers;
-  }, [selectedId, highlightPeers, model.houses]);
+  }, [selectedId, highlightPeers, model.houses, model.peerHouseFilter]);
 
   const getCellState = useCallback(
     (id: CellId): CellState => {
@@ -277,7 +277,10 @@ export function useSudokuGrid({
       }
 
       if (key === 'Backspace' || key === 'Delete') {
-        const isCorrectCell = checkEnabled && solution.has(currentId) && values.get(currentId) === solution.get(currentId);
+        const isCorrectCell =
+          checkEnabled &&
+          solution.has(currentId) &&
+          values.get(currentId) === solution.get(currentId);
         if (!isCorrectCell) {
           event.preventDefault();
           onEnterValue(currentId, 0);
@@ -300,7 +303,10 @@ export function useSudokuGrid({
 
       event.preventDefault();
 
-      const isCorrectlyFilled = checkEnabled && solution.has(currentId) && values.get(currentId) === solution.get(currentId);
+      const isCorrectlyFilled =
+        checkEnabled &&
+        solution.has(currentId) &&
+        values.get(currentId) === solution.get(currentId);
       if (isCorrectlyFilled) {
         return;
       }
@@ -320,7 +326,8 @@ export function useSudokuGrid({
 
         const nextValues = new Map(values);
         nextValues.set(currentId, digit as SymbolValue);
-        const isCorrect = checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
+        const isCorrect =
+          checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
         const correctness =
           checkEnabled && solution.has(currentId) ? (isCorrect ? ', correct' : ', incorrect') : '';
         const inConflict =
@@ -364,10 +371,9 @@ export function useSudokuGrid({
         mouseDownSelectionRef.current = { active: true, selectedId };
       },
       onClick() {
-        const wasSelected =
-          mouseDownSelectionRef.current.active
-            ? mouseDownSelectionRef.current.selectedId === id
-            : selectedId === id;
+        const wasSelected = mouseDownSelectionRef.current.active
+          ? mouseDownSelectionRef.current.selectedId === id
+          : selectedId === id;
 
         mouseDownSelectionRef.current = { active: false, selectedId: null };
         selectCell(wasSelected ? null : id);
