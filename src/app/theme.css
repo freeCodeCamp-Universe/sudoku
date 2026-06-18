@@ -12,6 +12,26 @@
   --accent-green: #acd157;
   --accent-red: #ffadad;
   --focus-ring: #198eee;
+  --cell-border: #4a4a5e;
+  --cell-bg-light: #ffffff;
+  --cell-text-light: #2c5f8a;
+  --box-boundary: #4a4a5e;
+  --cell-diagonal-bg: #3b3b4f;
+  --cell-window-bg: #3b3b4f;
+  --cell-special-bg: #3b3b4f;
+  --cell-even-bg: #3b3b4f;
+  --cell-odd-bg: #12123a;
+  --cell-peer-even-bg: #2c2c4c;
+  --cell-peer-odd-bg: #1a1a40;
+  --cell-overlap-2-bg: #222248;
+  --cell-overlap-3-bg: #272751;
+  --cell-overlap-4-bg: #2c2c5a;
+  --cell-overlap-5-bg: #313163;
+  --cell-selected-border: #4a90d9;
+  --cell-peer-bg: #272948;
+  --cell-peer-structural-bg: #2e2e44;
+  --cell-same-value-bg: #1a4f4f;
+  --candidate-text: #aaaacc;
 }
 
 .light {
@@ -25,6 +45,23 @@
   --text-bright: #0a0a23;
   --accent-green: #00471b;
   --accent-red: #850000;
+  --cell-border: #d8d8e8;
+  --box-boundary: #b8b8cc;
+  --cell-diagonal-bg: #e8e8fa;
+  --cell-window-bg: #e8e8fa;
+  --cell-special-bg: #e8e8fa;
+  --cell-even-bg: #e8e8fa;
+  --cell-odd-bg: #ffffff;
+  --cell-peer-even-bg: #d8d8f0;
+  --cell-peer-odd-bg: #ededf6;
+  --cell-overlap-2-bg: #eeeef8;
+  --cell-overlap-3-bg: #e9e9f6;
+  --cell-overlap-4-bg: #e4e4f4;
+  --cell-overlap-5-bg: #dfdff2;
+  --cell-peer-bg: #ededf6;
+  --cell-peer-structural-bg: #d8d8f0;
+  --cell-same-value-bg: #cdeaea;
+  --candidate-text: #555570;
 }
 
 * {
