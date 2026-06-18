@@ -1,1 +1,0 @@
-export { ArgyleOverlay } from './ArgyleOverlay';

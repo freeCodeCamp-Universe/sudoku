@@ -11,7 +11,7 @@ interface ArgyleOverlayProps {
 // Display diagonals - every 3rd stripe in each direction, covering the full 9×9.
 // These are wider than the constraint houses; they produce the argyle diamond pattern.
 const D1_DISPLAY_OFFSETS = [-4, -1, 1, 4]; // col - row
-const D2_DISPLAY_SUMS    = [4, 7, 9, 12];  // row + col
+const D2_DISPLAY_SUMS = [4, 7, 9, 12]; // row + col
 
 export function ArgyleOverlay({ rects }: ArgyleOverlayProps) {
   const firstRect = rects.get('r0c0');
@@ -37,12 +37,28 @@ export function ArgyleOverlay({ rects }: ArgyleOverlayProps) {
 
       if (onD1) {
         lines.push(
-          <line key={`d1-${id}`} x1={x} y1={y} x2={x + w} y2={y + h} className={styles.line} />
+          <line
+            key={`d1-${id}`}
+            data-testid="argyle-d1-line"
+            x1={x}
+            y1={y}
+            x2={x + w}
+            y2={y + h}
+            className={styles.line}
+          />
         );
       }
       if (onD2) {
         lines.push(
-          <line key={`d2-${id}`} x1={x + w} y1={y} x2={x} y2={y + h} className={styles.line} />
+          <line
+            key={`d2-${id}`}
+            data-testid="argyle-d2-line"
+            x1={x + w}
+            y1={y}
+            x2={x}
+            y2={y + h}
+            className={styles.line}
+          />
         );
       }
     }
