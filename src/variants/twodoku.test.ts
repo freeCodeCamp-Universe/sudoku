@@ -37,14 +37,10 @@ describe('twodoku variant - model structure', () => {
 });
 
 describe('twodoku variant - generate + solve', () => {
-  it(
-    'should generate a uniquely solvable puzzle from the registry',
-    { timeout: 60_000 },
-    () => {
-      const model = buildModel(getVariant('twodoku'));
-      const { givens } = generate(model, 'intermediate', seeded(42));
+  it('should generate a uniquely solvable puzzle from the registry', { timeout: 60_000 }, () => {
+    const model = buildModel(getVariant('twodoku'));
+    const { givens } = generate(model, 'intermediate', seeded(42));
 
-      expect(solve(model, givens, { max: 2 })).toHaveLength(1);
-    }
-  );
+    expect(solve(model, givens, { max: 2 })).toHaveLength(1);
+  });
 });

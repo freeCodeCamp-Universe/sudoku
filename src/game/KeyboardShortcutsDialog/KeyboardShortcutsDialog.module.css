@@ -81,7 +81,9 @@
   font-size: 0.82rem;
   padding: 6px 24px;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .closeBtn:hover {

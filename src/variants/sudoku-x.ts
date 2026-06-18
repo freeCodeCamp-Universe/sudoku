@@ -15,22 +15,35 @@ function diagonalHouses(_layout: BoardLayout): House[] {
 export const sudokuX: Variant = {
   id: 'sudoku-x',
   name: 'Sudoku X',
-  description: 'Standard sudoku with an extra rule: both main diagonals must also contain each digit from 1–9.',
+  description:
+    'Standard sudoku with an extra rule: both main diagonals must also contain each digit from 1–9.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Two diagonals', text: 'The two main diagonals, each running from one corner of the grid to the opposite, are highlighted.' },
-        { term: 'Diagonal rule', text: 'Each diagonal must also contain every digit from 1 to 9 exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'Two diagonals',
+          text: 'The two main diagonals, each running from one corner of the grid to the opposite, are highlighted.',
+        },
+        {
+          term: 'Diagonal rule',
+          text: 'Each diagonal must also contain every digit from 1 to 9 exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Center cell', text: 'The very center cell belongs to both diagonals at once, making it one of the most constrained cells on the board.' },
+        {
+          term: 'Center cell',
+          text: 'The very center cell belongs to both diagonals at once, making it one of the most constrained cells on the board.',
+        },
       ],
     },
   ],

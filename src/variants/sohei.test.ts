@@ -37,14 +37,10 @@ describe('sohei variant - model structure', () => {
 });
 
 describe('sohei variant - generate + solve', () => {
-  it(
-    'should generate a uniquely solvable puzzle from the registry',
-    { timeout: 120_000 },
-    () => {
-      const model = buildModel(getVariant('sohei'));
-      const { givens } = generate(model, 'intermediate', seeded(42));
+  it('should generate a uniquely solvable puzzle from the registry', { timeout: 120_000 }, () => {
+    const model = buildModel(getVariant('sohei'));
+    const { givens } = generate(model, 'intermediate', seeded(42));
 
-      expect(solve(model, givens, { max: 2 })).toHaveLength(1);
-    }
-  );
+    expect(solve(model, givens, { max: 2 })).toHaveLength(1);
+  });
 });

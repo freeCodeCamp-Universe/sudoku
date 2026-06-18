@@ -64,7 +64,11 @@ describe('sudoku-x validate', () => {
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r1c1'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r1c1')
+      )
+    ).toBe(true);
   });
 });
 

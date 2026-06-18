@@ -8,10 +8,10 @@ const layout: MultiGridLayout = {
   canvasRows: 21,
   canvasCols: 21,
   subGrids: [
-    { originRow: 0,  originCol: 6  },  // top
-    { originRow: 6,  originCol: 0  },  // left
-    { originRow: 6,  originCol: 12 },  // right
-    { originRow: 12, originCol: 6  },  // bottom
+    { originRow: 0, originCol: 6 }, // top
+    { originRow: 6, originCol: 0 }, // left
+    { originRow: 6, originCol: 12 }, // right
+    { originRow: 12, originCol: 6 }, // bottom
   ],
 };
 
@@ -63,23 +63,39 @@ function buildSoheiHouses(boardLayout: BoardLayout): House[] {
 export const sohei: Variant = {
   id: 'sohei',
   name: 'Sohei Sudoku',
-  description: 'Four 9×9 grids form a diamond ring, each sharing one 3×3 corner box with its two neighboring grids.',
+  description:
+    'Four 9×9 grids form a diamond ring, each sharing one 3×3 corner box with its two neighboring grids.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Four grids', text: 'Four 9×9 grids are placed in a diamond pattern, with each arm touching its two neighbors at a corner.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.' },
+        {
+          term: 'Four grids',
+          text: 'Four 9×9 grids are placed in a diamond pattern, with each arm touching its two neighbors at a corner.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Each pair of neighboring grids shares exactly one 3×3 box, which must satisfy the rules of both grids simultaneously.' },
-        { term: 'Solve as one', text: 'The four shared corners link all grids into one puzzle; none can be solved without the others.' },
+        {
+          term: 'Shared corners',
+          text: 'Each pair of neighboring grids shares exactly one 3×3 box, which must satisfy the rules of both grids simultaneously.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'The four shared corners link all grids into one puzzle; none can be solved without the others.',
+        },
       ],
     },
   ],

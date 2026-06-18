@@ -26,7 +26,9 @@ describe('greaterThanVariant', () => {
   it('should derive relations from the solution covering all adjacent pairs', () => {
     const model = buildModel(greaterThanVariant);
     const { solution } = generate(model, 'intermediate', seeded(10));
-    const structure = greaterThanVariant.deriveStructure?.(solution, model) as { relations: Relation[] };
+    const structure = greaterThanVariant.deriveStructure?.(solution, model) as {
+      relations: Relation[];
+    };
 
     expect(structure.relations).toHaveLength(144);
   });
@@ -34,7 +36,9 @@ describe('greaterThanVariant', () => {
   it('should derive relations where the greater cell truly has a higher value', () => {
     const model = buildModel(greaterThanVariant);
     const { solution } = generate(model, 'intermediate', seeded(11));
-    const structure = greaterThanVariant.deriveStructure?.(solution, model) as { relations: Relation[] };
+    const structure = greaterThanVariant.deriveStructure?.(solution, model) as {
+      relations: Relation[];
+    };
 
     for (const { greater, lesser } of structure.relations) {
       expect(solution.get(greater)).toBeGreaterThan(solution.get(lesser) ?? 0);
@@ -53,7 +57,9 @@ describe('greaterThanVariant', () => {
   it('should detect a known violation via validate', () => {
     const model = buildModel(greaterThanVariant);
     const { solution } = generate(model, 'intermediate', seeded(13));
-    const structure = greaterThanVariant.deriveStructure?.(solution, model) as { relations: Relation[] };
+    const structure = greaterThanVariant.deriveStructure?.(solution, model) as {
+      relations: Relation[];
+    };
     const relation = structure.relations[0];
     const brokenValues = new Map(solution);
     const greaterValue = solution.get(relation.greater);
@@ -63,6 +69,10 @@ describe('greaterThanVariant', () => {
     brokenValues.set(relation.greater, lesserValue ?? 0);
     brokenValues.set(relation.lesser, greaterValue ?? 0);
 
-    expect(validate(brokenValues, modelWithStructure).some((conflict) => conflict.constraintId === 'greaterThan')).toBe(true);
+    expect(
+      validate(brokenValues, modelWithStructure).some(
+        (conflict) => conflict.constraintId === 'greaterThan'
+      )
+    ).toBe(true);
   });
 });

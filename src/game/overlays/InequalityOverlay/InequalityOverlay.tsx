@@ -92,12 +92,7 @@ export function InequalityOverlay({ rects, structure }: InequalityOverlayProps) 
             key={`${greater}-${lesser}-${index}`}
             data-testid="inequality-marker"
             className={styles.triangle}
-            points={triPoints(
-              topRect.x + topRect.w / 2,
-              topRect.y + topRect.h,
-              size,
-              direction
-            )}
+            points={triPoints(topRect.x + topRect.w / 2, topRect.y + topRect.h, size, direction)}
           />
         );
       })}

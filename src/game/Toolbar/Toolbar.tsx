@@ -25,7 +25,6 @@ export function Toolbar({ onClearAll, onReveal }: ToolbarProps) {
         </button>
       </div>
 
-
       {clearConfirmOpen ? (
         <div
           role="dialog"
@@ -40,7 +39,10 @@ export function Toolbar({ onClearAll, onReveal }: ToolbarProps) {
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={() => { setClearConfirmOpen(false); onClearAll(); }}
+                onClick={() => {
+                  setClearConfirmOpen(false);
+                  onClearAll();
+                }}
               >
                 Clear All
               </button>
@@ -55,7 +57,6 @@ export function Toolbar({ onClearAll, onReveal }: ToolbarProps) {
           </div>
         </div>
       ) : null}
-
     </>
   );
 }

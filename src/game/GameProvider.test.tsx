@@ -27,7 +27,9 @@ const model: VariantModel = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 };
 
-const solution: Values = new Map(gridCells(9).map((cell) => [cell.id, ((cell.row * 9 + cell.col) % 9) + 1]));
+const solution: Values = new Map(
+  gridCells(9).map((cell) => [cell.id, ((cell.row * 9 + cell.col) % 9) + 1])
+);
 
 function StateDisplay() {
   const context = useContext(GameContext);
@@ -40,7 +42,10 @@ function StateDisplay() {
     <div>
       <span data-testid="value-r0c0">{context.state.values.get('r0c0') ?? 'empty'}</span>
       <span data-testid="history-len">{context.state.history.length}</span>
-      <button type="button" onClick={() => context.dispatch({ type: 'enterValue', cellId: 'r0c0', value: 5 })}>
+      <button
+        type="button"
+        onClick={() => context.dispatch({ type: 'enterValue', cellId: 'r0c0', value: 5 })}
+      >
         enter 5
       </button>
       <button type="button" onClick={() => context.dispatch({ type: 'undo' })}>

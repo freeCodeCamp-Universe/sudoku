@@ -8,7 +8,12 @@ import type { Values } from '@/engine/types';
 import { GamePage } from './GamePage';
 
 function makeSolution(): Values {
-  return new Map(gridCells(9).map((cell) => [cell.id, ((cell.row * 3 + Math.floor(cell.row / 3) + cell.col) % 9) + 1]));
+  return new Map(
+    gridCells(9).map((cell) => [
+      cell.id,
+      ((cell.row * 3 + Math.floor(cell.row / 3) + cell.col) % 9) + 1,
+    ])
+  );
 }
 
 vi.mock('@/engine/generate', () => {
@@ -73,7 +78,9 @@ describe('GamePage - Classic integration', () => {
   it('should use color names in cell accessibility labels for the color variant', () => {
     renderGamePage('color');
 
-    expect(screen.getByRole('gridcell', { name: /Row 1, column 1, box 1, Red, readonly/i })).toBeTruthy();
+    expect(
+      screen.getByRole('gridcell', { name: /Row 1, column 1, box 1, Red, readonly/i })
+    ).toBeTruthy();
   });
 
   it('should render skyscraper gutters from derived structure', () => {
@@ -86,14 +93,18 @@ describe('GamePage - Classic integration', () => {
   it('should render the arrow rule legend for arrow sudoku', () => {
     renderGamePage('arrow');
 
-    expect(screen.getByText('Digits along each arrow sum to the number in the circle.')).toBeTruthy();
+    expect(
+      screen.getByText('Digits along each arrow sum to the number in the circle.')
+    ).toBeTruthy();
     expect(screen.getByLabelText('Arrow rule legend')).toBeTruthy();
   });
 
   it('should not render the arrow rule legend for non-arrow variants', () => {
     renderGamePage('classic');
 
-    expect(screen.queryByText('Digits along each arrow sum to the number in the circle.')).toBeNull();
+    expect(
+      screen.queryByText('Digits along each arrow sum to the number in the circle.')
+    ).toBeNull();
   });
 
   it('should open the help dialog with the current variant help rules', async () => {
@@ -105,7 +116,11 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Basic Rules', level: 3 })).toBeTruthy();
     expect(screen.getByText('The grid:')).toBeTruthy();
-    expect(screen.getByText('A 9×9 board divided into nine 3×3 boxes. Fill every cell with a digit from 1 to 9.')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a digit from 1 to 9.'
+      )
+    ).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
     expect(screen.getByText('Given digits:')).toBeTruthy();
   });
@@ -131,9 +146,12 @@ describe('GamePage - Classic integration', () => {
 
     // Advance just enough to fire the setTimeout(0) in announce() without
     // triggering the 1-second game clock interval.
-    act(() => { vi.advanceTimersByTime(10); });
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
 
-    const gridAnnouncer = screen.getAllByRole('status')
+    const gridAnnouncer = screen
+      .getAllByRole('status')
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('5');
     vi.useRealTimers();
@@ -147,9 +165,12 @@ describe('GamePage - Classic integration', () => {
     fireEvent.click(emptyCell);
     fireEvent.click(screen.getByRole('button', { name: 'Erase' }));
 
-    act(() => { vi.advanceTimersByTime(10); });
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
 
-    const gridAnnouncer = screen.getAllByRole('status')
+    const gridAnnouncer = screen
+      .getAllByRole('status')
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('empty');
     vi.useRealTimers();
@@ -163,9 +184,12 @@ describe('GamePage - Classic integration', () => {
     fireEvent.click(emptyCell);
     fireEvent.click(screen.getByRole('button', { name: 'Red' }));
 
-    act(() => { vi.advanceTimersByTime(10); });
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
 
-    const gridAnnouncer = screen.getAllByRole('status')
+    const gridAnnouncer = screen
+      .getAllByRole('status')
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('Red');
     vi.useRealTimers();
@@ -179,9 +203,12 @@ describe('GamePage - Classic integration', () => {
     fireEvent.click(emptyCell);
     fireEvent.click(screen.getByRole('button', { name: /reveal/i }));
 
-    act(() => { vi.advanceTimersByTime(10); });
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
 
-    const gridAnnouncer = screen.getAllByRole('status')
+    const gridAnnouncer = screen
+      .getAllByRole('status')
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('revealed');
     vi.useRealTimers();

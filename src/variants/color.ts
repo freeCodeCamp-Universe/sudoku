@@ -28,14 +28,21 @@ const COLOR_NAMES = [
 export const color: Variant & { colorNames: string[] } = {
   id: 'color',
   name: 'Color Sudoku',
-  description: 'Nine colors replace the digits 1–9. Each color appears once in every row, column, and 3×3 box.',
+  description:
+    'Nine colors replace the digits 1–9. Each color appears once in every row, column, and 3×3 box.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 9×9 board where nine colors replace the digits 1–9. The logic is identical to classic sudoku.' },
-        { term: 'Rows and columns', text: 'Each row and column must contain every color exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A 9×9 board where nine colors replace the digits 1–9. The logic is identical to classic sudoku.',
+        },
+        {
+          term: 'Rows and columns',
+          text: 'Each row and column must contain every color exactly once.',
+        },
         { term: 'Boxes', text: 'Each 3×3 box must also hold every color exactly once.' },
       ],
     },
@@ -43,8 +50,14 @@ export const color: Variant & { colorNames: string[] } = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Filling cells', text: 'Click a color in the palette, then click a cell to paint it. Click the same color on a filled cell to erase it.' },
-        { term: 'Given colors', text: 'Cells with a small dot are pre-filled and cannot be changed.' },
+        {
+          term: 'Filling cells',
+          text: 'Click a color in the palette, then click a cell to paint it. Click the same color on a filled cell to erase it.',
+        },
+        {
+          term: 'Given colors',
+          text: 'Cells with a small dot are pre-filled and cannot be changed.',
+        },
       ],
     },
   ],

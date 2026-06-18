@@ -34,7 +34,10 @@ export const WORDS = [
   'LIFEGUARD',
 ];
 
-function generateWordokuSolution(model: VariantModel, rng: (() => number) | undefined = Math.random): Solution {
+function generateWordokuSolution(
+  model: VariantModel,
+  rng: (() => number) | undefined = Math.random
+): Solution {
   const safRng = rng ?? Math.random;
   const word = shuffle([...WORDS], safRng)[0];
   const rows = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8], safRng);
@@ -72,23 +75,39 @@ export const wordoku: Variant = {
   id: 'wordoku',
   generateSolution: generateWordokuSolution,
   name: 'Wordoku',
-  description: 'Letters replace digits. A hidden nine-letter word runs across one complete row or down one column.',
+  description:
+    'Letters replace digits. A hidden nine-letter word runs across one complete row or down one column.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku grid. Fill every row, column, and 3×3 box with each of nine letters exactly once.' },
-        { term: 'The letters', text: 'All nine letters come from a hidden word shown below the grid.' },
-        { term: 'Same logic', text: 'Placement rules are identical to classic sudoku, just with letters instead of digits.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku grid. Fill every row, column, and 3×3 box with each of nine letters exactly once.',
+        },
+        {
+          term: 'The letters',
+          text: 'All nine letters come from a hidden word shown below the grid.',
+        },
+        {
+          term: 'Same logic',
+          text: 'Placement rules are identical to classic sudoku, just with letters instead of digits.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Find the word', text: 'Once solved, one complete row or column spells out the hidden word in order. See if you can spot it.' },
-        { term: 'Entering letters', text: 'Use the letter buttons on screen or type the letters directly on your keyboard.' },
+        {
+          term: 'Find the word',
+          text: 'Once solved, one complete row or column spells out the hidden word in order. See if you can spot it.',
+        },
+        {
+          term: 'Entering letters',
+          text: 'Use the letter buttons on screen or type the letters directly on your keyboard.',
+        },
       ],
     },
   ],

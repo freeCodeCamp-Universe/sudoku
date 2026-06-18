@@ -14,7 +14,10 @@ function center(rect: Rect): { x: number; y: number } {
   };
 }
 
-function direction(from: { x: number; y: number }, to: { x: number; y: number }): { x: number; y: number } | null {
+function direction(
+  from: { x: number; y: number },
+  to: { x: number; y: number }
+): { x: number; y: number } | null {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const length = Math.hypot(dx, dy);
@@ -119,7 +122,11 @@ export function ArrowOverlay({ rects, structure }: ArrowOverlayProps) {
               className={styles.arrowLine}
               data-testid="arrow-path-line"
             />
-            <polygon points={arrowheadPoints} className={styles.arrowhead} data-testid="arrowhead" />
+            <polygon
+              points={arrowheadPoints}
+              className={styles.arrowhead}
+              data-testid="arrowhead"
+            />
           </g>
         );
       })}

@@ -11,9 +11,7 @@ interface GameProviderProps {
 }
 
 function cloneCandidates(candidates: Map<CellId, SymbolValue[]>): Map<CellId, SymbolValue[]> {
-  return new Map(
-    [...candidates.entries()].map(([cellId, values]) => [cellId, [...values]])
-  );
+  return new Map([...candidates.entries()].map(([cellId, values]) => [cellId, [...values]]));
 }
 
 function snapshotState(state: GameState): HistoryEntry {
@@ -202,7 +200,9 @@ function createReducer(initialGivens: Values, solution: Values) {
 
 export function GameProvider({ variant, model, givens, solution, children }: GameProviderProps) {
   const reducer = useMemo(() => createReducer(givens, solution), [givens, solution]);
-  const [state, dispatch] = useReducer(reducer, undefined, () => createInitialState(givens, solution));
+  const [state, dispatch] = useReducer(reducer, undefined, () =>
+    createInitialState(givens, solution)
+  );
 
   return (
     <GameContext.Provider value={{ state, dispatch, variant, model, givens, solution }}>

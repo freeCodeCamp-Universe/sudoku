@@ -99,8 +99,20 @@ export const sandwichSum: Constraint = {
     const c = parseInt(match[2], 10);
 
     return (
-      checkLine(values, id, value, range(9).map((col) => cellId(r, col)), clues.rows[r]) &&
-      checkLine(values, id, value, range(9).map((row) => cellId(row, c)), clues.cols[c])
+      checkLine(
+        values,
+        id,
+        value,
+        range(9).map((col) => cellId(r, col)),
+        clues.rows[r]
+      ) &&
+      checkLine(
+        values,
+        id,
+        value,
+        range(9).map((row) => cellId(row, c)),
+        clues.cols[c]
+      )
     );
   },
 };

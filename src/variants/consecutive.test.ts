@@ -53,16 +53,18 @@ describe('consecutiveVariant', () => {
 
     brokenValues.set(mark.a, peerValue <= 7 ? peerValue + 2 : peerValue - 2);
 
-    expect(validate(brokenValues, modelWithStructure).some((conflict) => conflict.constraintId === 'consecutive')).toBe(true);
+    expect(
+      validate(brokenValues, modelWithStructure).some(
+        (conflict) => conflict.constraintId === 'consecutive'
+      )
+    ).toBe(true);
   });
 
   it('should detect a known violation via validate for an unmarked adjacent pair', () => {
     const model = buildModel(consecutiveVariant);
     const { solution } = generate(model, 'intermediate', seeded(23));
     const structure = consecutiveVariant.deriveStructure?.(solution, model) as { marks: Mark[] };
-    const markedPairs = new Set(
-      structure.marks.map(({ a, b }) => [a, b].sort().join('|'))
-    );
+    const markedPairs = new Set(structure.marks.map(({ a, b }) => [a, b].sort().join('|')));
     const modelWithStructure = { ...model, structure };
     let foundViolation = false;
 
@@ -79,7 +81,11 @@ describe('consecutiveVariant', () => {
         brokenValues.set(left, 3);
         brokenValues.set(right, 4);
 
-        if (validate(brokenValues, modelWithStructure).some((conflict) => conflict.constraintId === 'consecutive')) {
+        if (
+          validate(brokenValues, modelWithStructure).some(
+            (conflict) => conflict.constraintId === 'consecutive'
+          )
+        ) {
           foundViolation = true;
           break;
         }

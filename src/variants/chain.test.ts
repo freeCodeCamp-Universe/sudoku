@@ -22,7 +22,9 @@ describe('chainVariant', () => {
       ['r0c2', 6],
     ]);
 
-    expect(validate(brokenValues, modelWithStructure).some((c) => c.constraintId === 'chain')).toBe(true);
+    expect(validate(brokenValues, modelWithStructure).some((c) => c.constraintId === 'chain')).toBe(
+      true
+    );
   });
 
   it('should accept a valid consecutive chain', () => {
@@ -35,6 +37,8 @@ describe('chainVariant', () => {
       ['r2c0', 5],
     ]);
 
-    expect(validate(values, modelWithStructure).filter((c) => c.constraintId === 'chain')).toHaveLength(0);
+    expect(
+      validate(values, modelWithStructure).filter((c) => c.constraintId === 'chain')
+    ).toHaveLength(0);
   });
 });

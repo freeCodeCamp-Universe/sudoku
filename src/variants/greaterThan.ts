@@ -18,9 +18,7 @@ function deriveStructure(solution: Solution, _model: VariantModel): { relations:
       }
 
       relations.push(
-        leftValue > rightValue
-          ? { greater: left, lesser: right }
-          : { greater: right, lesser: left }
+        leftValue > rightValue ? { greater: left, lesser: right } : { greater: right, lesser: left }
       );
     }
   }
@@ -37,9 +35,7 @@ function deriveStructure(solution: Solution, _model: VariantModel): { relations:
       }
 
       relations.push(
-        topValue > bottomValue
-          ? { greater: top, lesser: bottom }
-          : { greater: bottom, lesser: top }
+        topValue > bottomValue ? { greater: top, lesser: bottom } : { greater: bottom, lesser: top }
       );
     }
   }
@@ -50,22 +46,35 @@ function deriveStructure(solution: Solution, _model: VariantModel): { relations:
 export const greaterThanVariant: Variant = {
   id: 'greater-than',
   name: 'Greater-Than Sudoku',
-  description: 'Triangles between every pair of adjacent cells point toward the smaller of the two digits.',
+  description:
+    'Triangles between every pair of adjacent cells point toward the smaller of the two digits.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Triangles', text: 'A small triangle appears between every pair of adjacent cells across the entire grid.' },
-        { term: 'Direction', text: 'Each triangle points toward the smaller digit. The wide base faces the larger one.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'Triangles',
+          text: 'A small triangle appears between every pair of adjacent cells across the entire grid.',
+        },
+        {
+          term: 'Direction',
+          text: 'Each triangle points toward the smaller digit. The wide base faces the larger one.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'All pairs covered', text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.' },
+        {
+          term: 'All pairs covered',
+          text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.',
+        },
       ],
     },
   ],

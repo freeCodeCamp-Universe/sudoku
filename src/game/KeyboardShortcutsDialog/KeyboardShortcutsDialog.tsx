@@ -13,7 +13,11 @@ interface KeyboardShortcutsDialogProps {
   shortcuts: ShortcutEntry[];
 }
 
-export function KeyboardShortcutsDialog({ open, onClose, shortcuts }: KeyboardShortcutsDialogProps) {
+export function KeyboardShortcutsDialog({
+  open,
+  onClose,
+  shortcuts,
+}: KeyboardShortcutsDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
@@ -30,10 +34,14 @@ export function KeyboardShortcutsDialog({ open, onClose, shortcuts }: KeyboardSh
       className={styles.dialog}
       aria-labelledby={titleId}
       onClose={onClose}
-      onClick={(e) => { if (e.target === dialogRef.current) onClose(); }}
+      onClick={(e) => {
+        if (e.target === dialogRef.current) onClose();
+      }}
     >
       <div className={styles.content}>
-        <h2 id={titleId} className={styles.title}>Keyboard Shortcuts</h2>
+        <h2 id={titleId} className={styles.title}>
+          Keyboard Shortcuts
+        </h2>
         <table className={styles.table}>
           <tbody>
             {shortcuts.map((s) => (
@@ -51,7 +59,9 @@ export function KeyboardShortcutsDialog({ open, onClose, shortcuts }: KeyboardSh
             ))}
           </tbody>
         </table>
-        <button type="button" className={styles.closeBtn} onClick={onClose}>Got it</button>
+        <button type="button" className={styles.closeBtn} onClick={onClose}>
+          Got it
+        </button>
       </div>
     </dialog>
   );

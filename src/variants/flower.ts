@@ -64,23 +64,39 @@ function buildFlowerHouses(boardLayout: BoardLayout): House[] {
 export const flower: Variant = {
   id: 'flower',
   name: 'Flower Sudoku',
-  description: 'Five 9×9 grids in a plus shape, each outer grid sharing two full boxes of overlap with the center.',
+  description:
+    'Five 9×9 grids in a plus shape, each outer grid sharing two full boxes of overlap with the center.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'Five 9×9 grids are arranged in a plus shape, with one in the center and one on each side, each sharing two box-widths with the center.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Five grids',
+          text: 'Five 9×9 grids are arranged in a plus shape, with one in the center and one on each side, each sharing two box-widths with the center.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared regions', text: 'Cells in the overlap belong to multiple grids simultaneously and must satisfy the rules of each one.' },
-        { term: 'Solve as one', text: 'All five grids are linked through their shared cells, so they must all be solved together.' },
+        {
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple grids simultaneously and must satisfy the rules of each one.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'All five grids are linked through their shared cells, so they must all be solved together.',
+        },
       ],
     },
   ],

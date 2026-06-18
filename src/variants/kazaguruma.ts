@@ -64,23 +64,39 @@ function buildKazagurumaHouses(boardLayout: BoardLayout): House[] {
 export const kazaguruma: Variant = {
   id: 'kazaguruma',
   name: 'Kazaguruma Sudoku',
-  description: 'Five 9×9 grids in a windmill pattern, with each outer grid sharing two corner boxes with the center.',
+  description:
+    'Five 9×9 grids in a windmill pattern, with each outer grid sharing two corner boxes with the center.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'One center grid and four outer grids, each extending outward in a rotating windmill pattern.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Five grids',
+          text: 'One center grid and four outer grids, each extending outward in a rotating windmill pattern.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared regions', text: 'Each outer grid overlaps the center through two 3×3 boxes. Those cells must satisfy the rules of both grids simultaneously.' },
-        { term: 'Solve as one', text: 'All five grids are linked through their shared regions, so they must all be solved together.' },
+        {
+          term: 'Shared regions',
+          text: 'Each outer grid overlaps the center through two 3×3 boxes. Those cells must satisfy the rules of both grids simultaneously.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'All five grids are linked through their shared regions, so they must all be solved together.',
+        },
       ],
     },
   ],

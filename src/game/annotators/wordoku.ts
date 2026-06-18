@@ -16,15 +16,17 @@ export const wordokuAnnotator: CellAnnotator = {
     if (value === undefined) return null;
 
     if (value === col + 1) {
-      const rowSpellsWord = Array.from({ length: 9 }, (_, c) =>
-        ctx.values.get(`r${row}c${c}` as CellId) === c + 1
+      const rowSpellsWord = Array.from(
+        { length: 9 },
+        (_, c) => ctx.values.get(`r${row}c${c}` as CellId) === c + 1
       ).every(Boolean);
       if (rowSpellsWord) return 'word row';
     }
 
     if (value === row + 1) {
-      const colSpellsWord = Array.from({ length: 9 }, (_, r) =>
-        ctx.values.get(`r${r}c${col}` as CellId) === r + 1
+      const colSpellsWord = Array.from(
+        { length: 9 },
+        (_, r) => ctx.values.get(`r${r}c${col}` as CellId) === r + 1
       ).every(Boolean);
       if (colSpellsWord) return 'word column';
     }

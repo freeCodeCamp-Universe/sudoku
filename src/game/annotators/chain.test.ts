@@ -47,9 +47,7 @@ describe('chainAnnotator', () => {
   });
 
   it('should return null for a cell not in any chain', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 1), cellId(1, 1)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 1), cellId(1, 1)], color: '#99c9ff' }];
 
     expect(chainAnnotator.describe(cellId(5, 5), makeCtx(chains))).toBeNull();
   });

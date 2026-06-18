@@ -81,23 +81,39 @@ function carveArrows(solution: Solution, _model: VariantModel): { arrows: Arrow[
 export const arrow: Variant = {
   id: 'arrow',
   name: 'Arrow Sudoku',
-  description: 'Digits along each arrow sum to the number shown in the circle at the base of that arrow.',
+  description:
+    'Digits along each arrow sum to the number shown in the circle at the base of that arrow.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Arrows', text: 'Each arrow has a circled bulb at its base and a line passing through one or more cells.' },
-        { term: 'Sum rule', text: 'The digit in the bulb must equal the sum of all digits along the arrow\'s line.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'Arrows',
+          text: 'Each arrow has a circled bulb at its base and a line passing through one or more cells.',
+        },
+        {
+          term: 'Sum rule',
+          text: "The digit in the bulb must equal the sum of all digits along the arrow's line.",
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Sudoku still applies', text: 'Every cell (bulb or shaft) must still satisfy its row, column, and box.' },
-        { term: 'Bulbs can repeat shafts', text: 'The bulb digit is not part of the sum. Only the cells along the shaft count.' },
+        {
+          term: 'Sudoku still applies',
+          text: 'Every cell (bulb or shaft) must still satisfy its row, column, and box.',
+        },
+        {
+          term: 'Bulbs can repeat shafts',
+          text: 'The bulb digit is not part of the sum. Only the cells along the shaft count.',
+        },
       ],
     },
   ],

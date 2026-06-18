@@ -13,9 +13,7 @@
   font-weight: 600;
   line-height: 1;
   color: var(--text-subtle);
-  border:
-    var(--preview-border-width, 0.5px)
-    var(--preview-border-style, solid)
+  border: var(--preview-border-width, 0.5px) var(--preview-border-style, solid)
     var(--preview-border-color, #2a2a3a);
   background: var(--preview-cell-background, var(--preview-default-cell-background, transparent));
 }
@@ -93,11 +91,14 @@
   border-block-end: 2px solid #3b3b4f;
 }
 
-.rt {}
+.rt {
+}
 
-.rb {}
+.rb {
+}
 
-.rtr {}
+.rtr {
+}
 
 .cell-filled {
   --preview-cell-background: #2a2a50;

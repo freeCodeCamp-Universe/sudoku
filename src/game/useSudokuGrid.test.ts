@@ -239,7 +239,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidates 2, 5, 7');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, candidates 2, 5, 7'
+    );
   });
 
   it('should use singular "candidate" for exactly one candidate', () => {
@@ -255,7 +257,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidate 4');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, candidate 4'
+    );
   });
 
   it('should render candidates through describeSymbol', () => {
@@ -272,7 +276,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, candidates Red, Yellow');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, candidates Red, Yellow'
+    );
   });
 
   it('should ignore candidates if a value is present', () => {
@@ -296,7 +302,9 @@ describe('useSudokuGrid', () => {
     vi.useFakeTimers();
     const onToggleCandidate = vi.fn();
 
-    const { rerender } = render(React.createElement(TestBoard, { candidateMode: true, onToggleCandidate }));
+    const { rerender } = render(
+      React.createElement(TestBoard, { candidateMode: true, onToggleCandidate })
+    );
 
     const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');
@@ -320,7 +328,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    const cellWithCandidate = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, candidate 5' });
+    const cellWithCandidate = screen.getByRole('gridcell', {
+      name: 'Row 1, column 1, box 1, candidate 5',
+    });
 
     fireEvent.focus(cellWithCandidate);
     fireEvent.keyDown(cellWithCandidate, { key: '5' });
@@ -349,8 +359,12 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict');
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, box 2, 5, in conflict');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, in conflict'
+    );
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
+      'Row 1, column 5, box 2, 5, in conflict'
+    );
     expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, box 1, empty');
   });
 
@@ -371,7 +385,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, in conflict'
+    );
   });
 
   it('should include "in conflict" in the label for a given cell that a user entry conflicts with', () => {
@@ -389,8 +405,12 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, in conflict, readonly');
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe('Row 1, column 5, box 2, 5, in conflict');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, in conflict, readonly'
+    );
+    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
+      'Row 1, column 5, box 2, 5, in conflict'
+    );
   });
 
   it('should announce conflict immediately when a value entry creates one', async () => {
@@ -445,7 +465,9 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBe(true);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, correct');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, correct'
+    );
   });
 
   it('should mark a filled cell incorrect when it does not match the solution', () => {
@@ -463,7 +485,9 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBe(false);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 3, incorrect');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 3, incorrect'
+    );
   });
 
   it('should not mark correctness when checking is off', () => {
@@ -499,7 +523,9 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBeUndefined();
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, readonly');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, readonly'
+    );
   });
 
   it('should not flag a correct cell as in conflict, but should flag the wrong cell it clashes with', () => {
@@ -524,7 +550,9 @@ describe('useSudokuGrid', () => {
 
     // r0c0 holds the correct 5; the clash is the wrong 5 in r0c4, so r0c0 is not flagged.
     expect(result.current.cellState('r0c0').conflict).toBe(false);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 5, correct');
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+      'Row 1, column 1, box 1, 5, correct'
+    );
 
     expect(result.current.cellState('r0c4').conflict).toBe(true);
     expect(result.current.cellProps('r0c4')['aria-label']).toBe(
@@ -534,7 +562,9 @@ describe('useSudokuGrid', () => {
 
   it('should announce correctness immediately when a value entry matches the solution', async () => {
     vi.useFakeTimers();
-    render(React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) }));
+    render(
+      React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) })
+    );
 
     const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');
@@ -552,7 +582,9 @@ describe('useSudokuGrid', () => {
 
   it('should announce incorrect immediately when a value entry does not match the solution', async () => {
     vi.useFakeTimers();
-    render(React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) }));
+    render(
+      React.createElement(TestBoard, { checkEnabled: true, solution: new Map([['r0c0', 5]]) })
+    );
 
     const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
     const getAnnouncer = () => screen.getByRole('status');

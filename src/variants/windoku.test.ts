@@ -25,9 +25,15 @@ describe('windoku buildModel', () => {
     const model = buildModel(windoku);
 
     expect(model.houses.find((house) => house.id === 'window-0')?.cells).toEqual([
-      'r1c1', 'r1c2', 'r1c3',
-      'r2c1', 'r2c2', 'r2c3',
-      'r3c1', 'r3c2', 'r3c3',
+      'r1c1',
+      'r1c2',
+      'r1c3',
+      'r2c1',
+      'r2c2',
+      'r2c3',
+      'r3c1',
+      'r3c2',
+      'r3c3',
     ]);
   });
 
@@ -35,9 +41,15 @@ describe('windoku buildModel', () => {
     const model = buildModel(windoku);
 
     expect(model.houses.find((house) => house.id === 'window-3')?.cells).toEqual([
-      'r5c5', 'r5c6', 'r5c7',
-      'r6c5', 'r6c6', 'r6c7',
-      'r7c5', 'r7c6', 'r7c7',
+      'r5c5',
+      'r5c6',
+      'r5c7',
+      'r6c5',
+      'r6c6',
+      'r6c7',
+      'r7c5',
+      'r7c6',
+      'r7c7',
     ]);
   });
 });
@@ -52,7 +64,11 @@ describe('windoku validate', () => {
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r1c1') && conflict.cells.includes('r2c2'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r1c1') && conflict.cells.includes('r2c2')
+      )
+    ).toBe(true);
   });
 });
 

@@ -23,10 +23,7 @@ const UNIQUENESS_NODE_BUDGET = 50_000;
 const SOLUTION_NODE_BUDGET = 20_000;
 const SOLUTION_RESTART_ATTEMPTS = 200;
 
-export function generateSolution(
-  model: VariantModel,
-  rng: () => number = Math.random
-): Solution {
+export function generateSolution(model: VariantModel, rng: () => number = Math.random): Solution {
   if (model.generateSolution) {
     return model.generateSolution(model, rng);
   }

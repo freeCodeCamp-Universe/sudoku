@@ -85,23 +85,19 @@ describe('skyscraper variant', () => {
     };
 
     const conflicts = validate(solution, modelWithStructure);
-    expect(
-      conflicts.some((conflict) => conflict.constraintId === 'skyscraperVisibility')
-    ).toBe(true);
+    expect(conflicts.some((conflict) => conflict.constraintId === 'skyscraperVisibility')).toBe(
+      true
+    );
   });
 
-  it(
-    'should generate a uniquely solvable puzzle',
-    () => {
-      const model = buildModel(skyscraper);
-      const { givens, solution } = generate(model, 'intermediate', seeded(84));
-      const structure = skyscraper.deriveStructure?.(solution, model);
-      const modelWithStructure: VariantModel = { ...model, structure };
+  it('should generate a uniquely solvable puzzle', () => {
+    const model = buildModel(skyscraper);
+    const { givens, solution } = generate(model, 'intermediate', seeded(84));
+    const structure = skyscraper.deriveStructure?.(solution, model);
+    const modelWithStructure: VariantModel = { ...model, structure };
 
-      expect(solve(modelWithStructure, givens, { max: 2 })).toHaveLength(1);
-    },
-    30_000
-  );
+    expect(solve(modelWithStructure, givens, { max: 2 })).toHaveLength(1);
+  }, 30_000);
 });
 
 describe('buildGutters', () => {

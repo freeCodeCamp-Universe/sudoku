@@ -8,9 +8,9 @@ const layout: MultiGridLayout = {
   canvasRows: 15,
   canvasCols: 15,
   subGrids: [
-    { originRow: 0, originCol: 3 },  // top-center
-    { originRow: 6, originCol: 0 },  // bottom-left
-    { originRow: 3, originCol: 6 },  // right
+    { originRow: 0, originCol: 3 }, // top-center
+    { originRow: 6, originCol: 0 }, // bottom-left
+    { originRow: 3, originCol: 6 }, // right
   ],
 };
 
@@ -62,23 +62,39 @@ function buildGattai3Houses(boardLayout: BoardLayout): House[] {
 export const gattai3: Variant = {
   id: 'gattai-3',
   name: 'Gattai-3',
-  description: 'Three 9×9 grids arranged in a triangular cluster, all meeting at a shared central 3×3 box.',
+  description:
+    'Three 9×9 grids arranged in a triangular cluster, all meeting at a shared central 3×3 box.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Three grids', text: 'Three 9×9 sudoku grids are arranged in a triangular cluster, with a central region where they all meet.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Three grids',
+          text: 'Three 9×9 sudoku grids are arranged in a triangular cluster, with a central region where they all meet.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared regions', text: 'Where any grids overlap, those cells must satisfy the rules of all grids simultaneously.' },
-        { term: 'Solve as one', text: 'The extensive shared regions tightly link all grids; progress in any one immediately constrains the others.' },
+        {
+          term: 'Shared regions',
+          text: 'Where any grids overlap, those cells must satisfy the rules of all grids simultaneously.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'The extensive shared regions tightly link all grids; progress in any one immediately constrains the others.',
+        },
       ],
     },
   ],

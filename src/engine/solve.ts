@@ -60,7 +60,11 @@ interface SearchCoreResult {
   aborted: boolean;
 }
 
-function searchCore(model: VariantModel, values: Values, opts: SearchCoreOptions): SearchCoreResult {
+function searchCore(
+  model: VariantModel,
+  values: Values,
+  opts: SearchCoreOptions
+): SearchCoreResult {
   if (model.constraints.every((constraint) => constraint.id === 'uniqueness')) {
     return searchWithUniquenessPropagation(model, values, opts);
   }

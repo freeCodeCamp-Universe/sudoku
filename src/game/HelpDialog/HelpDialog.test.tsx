@@ -18,7 +18,9 @@ describe('HelpDialog', () => {
     {
       label: 'Additional Rules',
       tone: 'extra',
-      rules: [{ term: 'Diagonals', text: 'Both main diagonals also use 1 through 9 exactly once.' }],
+      rules: [
+        { term: 'Diagonals', text: 'Both main diagonals also use 1 through 9 exactly once.' },
+      ],
     },
   ];
 

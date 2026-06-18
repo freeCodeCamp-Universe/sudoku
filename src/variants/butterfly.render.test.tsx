@@ -9,7 +9,9 @@ import { butterfly } from './butterfly';
 const shouldAssert = should();
 
 function getCell(id: CellId): HTMLElement {
-  const cell = screen.getAllByRole('gridcell').find((gridCell) => gridCell.getAttribute('data-cell') === id);
+  const cell = screen
+    .getAllByRole('gridcell')
+    .find((gridCell) => gridCell.getAttribute('data-cell') === id);
 
   shouldAssert.exist(cell);
 

@@ -64,23 +64,39 @@ function buildCrossHouses(boardLayout: BoardLayout): House[] {
 export const cross: Variant = {
   id: 'cross',
   name: 'Cross Sudoku',
-  description: 'Five overlapping 9×9 grids arranged in a cross, sharing boxes where the arms meet the center.',
+  description:
+    'Five overlapping 9×9 grids arranged in a cross, sharing boxes where the arms meet the center.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'A center grid sits in the middle with four more extending outward in a cross pattern.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Five grids',
+          text: 'A center grid sits in the middle with four more extending outward in a cross pattern.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared boxes', text: 'Where an arm grid meets the center, those 3×3 boxes belong to both grids and must satisfy both sets of rules.' },
-        { term: 'Solve as one', text: 'The five grids are linked through their shared boxes, so all of them must be solved at the same time.' },
+        {
+          term: 'Shared boxes',
+          text: 'Where an arm grid meets the center, those 3×3 boxes belong to both grids and must satisfy both sets of rules.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'The five grids are linked through their shared boxes, so all of them must be solved at the same time.',
+        },
       ],
     },
   ],

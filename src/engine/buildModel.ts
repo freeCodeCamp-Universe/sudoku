@@ -86,10 +86,7 @@ function defaultHouses(layout: BoardLayout): House[] {
             for (let row = 0; row < box.rows; row += 1) {
               for (let col = 0; col < box.cols; col += 1) {
                 cells.push(
-                  cellId(
-                    originRow + boxRow * box.rows + row,
-                    originCol + boxCol * box.cols + col
-                  )
+                  cellId(originRow + boxRow * box.rows + row, originCol + boxCol * box.cols + col)
                 );
               }
             }

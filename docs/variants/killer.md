@@ -54,7 +54,7 @@ them only with a reason that overrides the one recorded here.
   therefore rejects any cage whose solution digits are not all distinct, both when
   growing a cage and when merging an orphan into one.
 - **Starting clues are provided, and intentionally kept plentiful (~24).**
-  Traditional Killer Sudoku starts with *no* given digits and is solved purely from
+  Traditional Killer Sudoku starts with _no_ given digits and is solved purely from
   cage sums. This implementation pre-fills roughly a quarter of the board. That is a
   deliberate difficulty choice: a clue-free Killer is hard and intimidating, and this
   variant is labeled intermediate for a broad audience, so the extra givens make it

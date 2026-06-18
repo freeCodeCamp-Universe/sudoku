@@ -64,23 +64,39 @@ function buildSamuraiHouses(boardLayout: BoardLayout): House[] {
 export const samurai: Variant = {
   id: 'samurai',
   name: 'Samurai Sudoku',
-  description: 'Four 9×9 grids sharing corner boxes with a central grid. All five puzzles must be solved together.',
+  description:
+    'Four 9×9 grids sharing corner boxes with a central grid. All five puzzles must be solved together.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Five grids', text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Five grids',
+          text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared corners', text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.' },
-        { term: 'Solve as one', text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.' },
+        {
+          term: 'Shared corners',
+          text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.',
+        },
+        {
+          term: 'Solve as one',
+          text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.',
+        },
       ],
     },
   ],

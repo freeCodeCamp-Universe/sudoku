@@ -21,12 +21,8 @@ function sumBetween(vals: number[]): number {
 
 export function computeSandwichClues(solution: Solution): SandwichClues {
   return {
-    rows: range(9).map((r) =>
-      sumBetween(range(9).map((c) => solution.get(cellId(r, c)) ?? 0))
-    ),
-    cols: range(9).map((c) =>
-      sumBetween(range(9).map((r) => solution.get(cellId(r, c)) ?? 0))
-    ),
+    rows: range(9).map((r) => sumBetween(range(9).map((c) => solution.get(cellId(r, c)) ?? 0))),
+    cols: range(9).map((c) => sumBetween(range(9).map((r) => solution.get(cellId(r, c)) ?? 0))),
   };
 }
 
@@ -50,23 +46,39 @@ function buildGutters(clues: SandwichClues): GutterSlots {
 export const sandwich: Variant = {
   id: 'sandwich',
   name: 'Sandwich Sudoku',
-  description: 'Edge clues give the sum of all digits sandwiched between the 1 and 9 in each row and column.',
+  description:
+    'Edge clues give the sum of all digits sandwiched between the 1 and 9 in each row and column.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Sandwich clues', text: 'Numbers on the right and bottom tell you the sum of all digits that sit between the 1 and the 9 in that row or column.' },
-        { term: 'The bread', text: 'The 1 and 9 act as the two slices of bread. Every digit placed between them must add up to the clue.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'Sandwich clues',
+          text: 'Numbers on the right and bottom tell you the sum of all digits that sit between the 1 and the 9 in that row or column.',
+        },
+        {
+          term: 'The bread',
+          text: 'The 1 and 9 act as the two slices of bread. Every digit placed between them must add up to the clue.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Zero is valid', text: 'A clue of 0 means the 1 and the 9 are adjacent with no digits between them.' },
-        { term: 'Any order', text: 'The digits between the 1 and 9 can appear in any order, but they must sum to the clue.' },
+        {
+          term: 'Zero is valid',
+          text: 'A clue of 0 means the 1 and the 9 are adjacent with no digits between them.',
+        },
+        {
+          term: 'Any order',
+          text: 'The digits between the 1 and 9 can appear in any order, but they must sum to the clue.',
+        },
       ],
     },
   ],

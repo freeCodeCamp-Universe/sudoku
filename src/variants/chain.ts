@@ -2,16 +2,21 @@ import { cellId, shuffle } from '@/engine/grid';
 import type { CellId, Solution, Values, Variant, VariantModel } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
 import type { Chain as ChainType } from '@/engine/constraints/chain';
-import {
-  assignValue,
-  createSearchState,
-  pickNextCell,
-  unassignValue,
-} from '@/engine/searchState';
+import { assignValue, createSearchState, pickNextCell, unassignValue } from '@/engine/searchState';
 
 const CHAIN_COLORS = [
-  '#99c9ff', '#acd157', '#f1be32', '#ff9966', '#cc88ff', '#55ddbb',
-  '#ff88aa', '#88ddff', '#ffcc55', '#dd88cc', '#88ccaa', '#ffaa66',
+  '#99c9ff',
+  '#acd157',
+  '#f1be32',
+  '#ff9966',
+  '#cc88ff',
+  '#55ddbb',
+  '#ff88aa',
+  '#88ddff',
+  '#ffcc55',
+  '#dd88cc',
+  '#88ccaa',
+  '#ffaa66',
 ];
 
 // Ties chains to the specific solution object; no timing/race issues
@@ -24,12 +29,20 @@ function deriveStructure(solution: Solution, _model: VariantModel): { chains: Ch
 /** Generate chains FROM a completed solution: walk adjacency graph of consecutive values. */
 function extractChainsFromSolution(solution: Values, rng: () => number): ChainType[] {
   const SIZE = 9;
-  const DIRS: Array<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  const DIRS: Array<[number, number]> = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
   const used = new Set<string>();
   const chains: ChainType[] = [];
 
   const allCells = shuffle(
-    Array.from({ length: SIZE * SIZE }, (_, i) => [Math.floor(i / SIZE), i % SIZE] as [number, number]),
+    Array.from(
+      { length: SIZE * SIZE },
+      (_, i) => [Math.floor(i / SIZE), i % SIZE] as [number, number]
+    ),
     rng
   );
 
@@ -43,7 +56,8 @@ function extractChainsFromSolution(solution: Values, rng: () => number): ChainTy
     const targetLen = rng() < 0.5 ? 3 : 4;
     const path: Array<[number, number]> = [[sr, sc]];
     const pathSet = new Set([startId]);
-    let r = sr, c = sc;
+    let r = sr,
+      c = sc;
 
     while (path.length < targetLen) {
       const curVal = solution.get(`r${r}c${c}` as CellId)!;
@@ -77,7 +91,10 @@ function extractChainsFromSolution(solution: Values, rng: () => number): ChainTy
   return chains;
 }
 
-function generateChainSolution(model: VariantModel, rng: (() => number) | undefined = Math.random): Solution {
+function generateChainSolution(
+  model: VariantModel,
+  rng: (() => number) | undefined = Math.random
+): Solution {
   const safRng = rng ?? Math.random;
 
   // Generate a standard sudoku solution first, then extract chains from it
@@ -89,8 +106,11 @@ function generateChainSolution(model: VariantModel, rng: (() => number) | undefi
     const state = createSearchState(baseModel as VariantModel, values);
 
     const solved = (function backtrack(): boolean {
-      const { cellId: nextId, candidates } = pickNextCell(state, values, baseModel as VariantModel, (c) =>
-        shuffle(c, safRng)
+      const { cellId: nextId, candidates } = pickNextCell(
+        state,
+        values,
+        baseModel as VariantModel,
+        (c) => shuffle(c, safRng)
       );
       if (nextId === null) return values.size === model.cells.length;
       for (const v of candidates) {
@@ -117,23 +137,39 @@ export const chainVariant: Variant = {
   id: 'chain',
   generateSolution: generateChainSolution,
   name: 'Chain Sudoku',
-  description: 'Colored chains of cells must each hold a complete set of consecutive digits in any order.',
+  description:
+    'Colored chains of cells must each hold a complete set of consecutive digits in any order.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'Chains', text: 'Groups of connected cells are linked by a colored chain running through the grid.' },
-        { term: 'Chain rule', text: 'The digits within a chain must be consecutive, forming an unbroken sequence of numbers in any order.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'Chains',
+          text: 'Groups of connected cells are linked by a colored chain running through the grid.',
+        },
+        {
+          term: 'Chain rule',
+          text: 'The digits within a chain must be consecutive, forming an unbroken sequence of numbers in any order.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Sequence length', text: 'A chain of cells holds consecutive digits, such as 4, 5, and 6. The order within the chain doesn\'t matter.' },
-        { term: 'Sudoku still applies', text: 'Every chain cell must also satisfy its row, column, and box.' },
+        {
+          term: 'Sequence length',
+          text: "A chain of cells holds consecutive digits, such as 4, 5, and 6. The order within the chain doesn't matter.",
+        },
+        {
+          term: 'Sudoku still applies',
+          text: 'Every chain cell must also satisfy its row, column, and box.',
+        },
       ],
     },
   ],

@@ -37,16 +37,16 @@ The stripes are addressed by the diagonal they sit on:
 - **D1 (top-left to bottom-right)**, identified by `offset = row - col`.
 - **D2 (top-right to bottom-left)**, identified by `sum = row + col`.
 
-| Group | Count | House IDs | Length | Cells |
-| --- | --- | --- | --- | --- |
-| D1 | 1 | `argyle-d1-m4` | 5 | `r0c4 r1c5 r2c6 r3c7 r4c8` |
-| D1 | 1 | `argyle-d1-m1` | 8 | `r0c1 r1c2 r2c3 r3c4 r4c5 r5c6 r6c7 r7c8` |
-| D1 | 1 | `argyle-d1-1` | 8 | `r1c0 r2c1 r3c2 r4c3 r5c4 r6c5 r7c6 r8c7` |
-| D1 | 1 | `argyle-d1-4` | 5 | `r4c0 r5c1 r6c2 r7c3 r8c4` |
-| D2 | 1 | `argyle-d2-4` | 5 | `r0c4 r1c3 r2c2 r3c1 r4c0` |
-| D2 | 1 | `argyle-d2-7` | 8 | `r0c7 r1c6 r2c5 r3c4 r4c3 r5c2 r6c1 r7c0` |
-| D2 | 1 | `argyle-d2-9` | 8 | `r1c8 r2c7 r3c6 r4c5 r5c4 r6c3 r7c2 r8c1` |
-| D2 | 1 | `argyle-d2-12` | 5 | `r4c8 r5c7 r6c6 r7c5 r8c4` |
+| Group | Count | House IDs      | Length | Cells                                     |
+| ----- | ----- | -------------- | ------ | ----------------------------------------- |
+| D1    | 1     | `argyle-d1-m4` | 5      | `r0c4 r1c5 r2c6 r3c7 r4c8`                |
+| D1    | 1     | `argyle-d1-m1` | 8      | `r0c1 r1c2 r2c3 r3c4 r4c5 r5c6 r6c7 r7c8` |
+| D1    | 1     | `argyle-d1-1`  | 8      | `r1c0 r2c1 r3c2 r4c3 r5c4 r6c5 r7c6 r8c7` |
+| D1    | 1     | `argyle-d1-4`  | 5      | `r4c0 r5c1 r6c2 r7c3 r8c4`                |
+| D2    | 1     | `argyle-d2-4`  | 5      | `r0c4 r1c3 r2c2 r3c1 r4c0`                |
+| D2    | 1     | `argyle-d2-7`  | 8      | `r0c7 r1c6 r2c5 r3c4 r4c3 r5c2 r6c1 r7c0` |
+| D2    | 1     | `argyle-d2-9`  | 8      | `r1c8 r2c7 r3c6 r4c5 r5c4 r6c3 r7c2 r8c1` |
+| D2    | 1     | `argyle-d2-12` | 5      | `r4c8 r5c7 r6c6 r7c5 r8c4`                |
 
 The negative D1 offsets use an `m` prefix in the house id (`-4` -> `m4`).
 
@@ -71,7 +71,7 @@ them only with a reason that overrides the one recorded here.
   is the canonical one.
 - **Eight stripes, lengths 5 and 8.** The four `±4` / `4,12` stripes hold 5 cells and
   the four `±1` / `7,9` stripes hold 8 cells, matching the source's "4 of 5, 4 of 8."
-  None spans the full diagonal, so each stripe is a *partial* house (it cannot contain
+  None spans the full diagonal, so each stripe is a _partial_ house (it cannot contain
   all of 1-9) and supplies elimination logic rather than a full permutation.
 - **Empty-diamond center.** The grid center `r4c4` (`offset = 0`, `sum = 8`) lies on
   neither set and belongs to no stripe. It sits inside an empty diamond and follows

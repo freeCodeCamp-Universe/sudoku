@@ -30,10 +30,16 @@ function shuffleInPlace<T>(items: T[], rng: () => number): T[] {
 }
 
 function shuffledBlocks(blockSize: number, blockCount: number, rng: () => number): number[] {
-  const blockOrder = shuffleInPlace(Array.from({ length: blockCount }, (_, index) => index), rng);
+  const blockOrder = shuffleInPlace(
+    Array.from({ length: blockCount }, (_, index) => index),
+    rng
+  );
 
   return blockOrder.flatMap((block) =>
-    shuffleInPlace(Array.from({ length: blockSize }, (_, index) => block * blockSize + index), rng)
+    shuffleInPlace(
+      Array.from({ length: blockSize }, (_, index) => block * blockSize + index),
+      rng
+    )
   );
 }
 
@@ -47,7 +53,9 @@ function generateSuper16Solution(model: VariantModel, rng: () => number = Math.r
 
   for (let row = 0; row < size; row += 1) {
     for (let col = 0; col < size; col += 1) {
-      const baseValue = ((rowOrder[row] * bandSize + Math.floor(rowOrder[row] / bandSize) + colOrder[col]) % size) + 1;
+      const baseValue =
+        ((rowOrder[row] * bandSize + Math.floor(rowOrder[row] / bandSize) + colOrder[col]) % size) +
+        1;
       solution.set(cellId(row, col), symbolOrder[baseValue - 1]);
     }
   }
@@ -58,14 +66,21 @@ function generateSuper16Solution(model: VariantModel, rng: () => number = Math.r
 export const super16: Variant = {
   id: 'super',
   name: 'Super Sudoku',
-  description: 'A 16×16 grid using digits 1–9 and letters A–G. Every row, column, and 4×4 box must be complete.',
+  description:
+    'A 16×16 grid using digits 1–9 and letters A–G. Every row, column, and 4×4 box must be complete.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1–9 and letters A–G.' },
-        { term: 'Rows and columns', text: 'Every row and column must contain all 16 symbols exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1–9 and letters A–G.',
+        },
+        {
+          term: 'Rows and columns',
+          text: 'Every row and column must contain all 16 symbols exactly once.',
+        },
         { term: 'Boxes', text: 'Each 4×4 box must also hold all 16 symbols exactly once.' },
       ],
     },
@@ -73,7 +88,10 @@ export const super16: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Given symbols', text: 'Pre-filled cells are fixed. Build your solution around them.' },
+        {
+          term: 'Given symbols',
+          text: 'Pre-filled cells are fixed. Build your solution around them.',
+        },
         { term: 'Entering symbols', text: 'Use the on-screen pad to enter digits or letters.' },
       ],
     },

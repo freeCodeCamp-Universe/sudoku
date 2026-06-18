@@ -62,23 +62,39 @@ function buildTripledokuHouses(boardLayout: BoardLayout): House[] {
 export const tripledoku: Variant = {
   id: 'tripledoku',
   name: 'Tripledoku',
-  description: 'Three 9×9 grids in a diagonal chain, each overlapping the next across four shared 3×3 boxes.',
+  description:
+    'Three 9×9 grids in a diagonal chain, each overlapping the next across four shared 3×3 boxes.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'Three grids', text: 'Three 9×9 sudoku grids are arranged diagonally, with each consecutive pair overlapping across four 3×3 boxes.' },
-        { term: 'Fill with 1–9', text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.' },
-        { term: 'Standard sudoku', text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.' },
+        {
+          term: 'Three grids',
+          text: 'Three 9×9 sudoku grids are arranged diagonally, with each consecutive pair overlapping across four 3×3 boxes.',
+        },
+        {
+          term: 'Fill with 1–9',
+          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
+        },
+        {
+          term: 'Standard sudoku',
+          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Shared region', text: 'The first and second grids share four 3×3 boxes; the second and third share another four. Both grids\' rules apply to all shared cells.' },
-        { term: 'Solve as one', text: 'The overlapping boxes chain all three grids together, so progress in any grid can unlock cells in the others.' },
+        {
+          term: 'Shared region',
+          text: "The first and second grids share four 3×3 boxes; the second and third share another four. Both grids' rules apply to all shared cells.",
+        },
+        {
+          term: 'Solve as one',
+          text: 'The overlapping boxes chain all three grids together, so progress in any grid can unlock cells in the others.',
+        },
       ],
     },
   ],

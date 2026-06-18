@@ -3,12 +3,7 @@ import type { KropkiMark } from '@/engine/constraints/kropki';
 import type { CellId, Solution, Variant, VariantModel } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
 
-function addMark(
-  solution: Solution,
-  a: CellId,
-  b: CellId,
-  marks: KropkiMark[],
-): void {
+function addMark(solution: Solution, a: CellId, b: CellId, marks: KropkiMark[]): void {
   const va = solution.get(a);
   const vb = solution.get(b);
 
@@ -21,10 +16,7 @@ function addMark(
   }
 }
 
-function deriveStructure(
-  solution: Solution,
-  _model: VariantModel,
-): { kropkiMarks: KropkiMark[] } {
+function deriveStructure(solution: Solution, _model: VariantModel): { kropkiMarks: KropkiMark[] } {
   const marks: KropkiMark[] = [];
 
   for (const row of range(9)) {
@@ -45,23 +37,39 @@ function deriveStructure(
 export const kropki: Variant = {
   id: 'kropki',
   name: 'Kropki Sudoku',
-  description: 'White dots mean consecutive digits, filled dots mean a 1:2 ratio, and no dot means neither applies.',
+  description:
+    'White dots mean consecutive digits, filled dots mean a 1:2 ratio, and no dot means neither applies.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'White dot', text: 'A white dot between two cells means their digits are consecutive, differing by exactly 1 (e.g. 4 and 5).' },
-        { term: 'Filled dot', text: 'A filled dot means one digit is exactly double the other (e.g. 2 and 4, or 3 and 6).' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'White dot',
+          text: 'A white dot between two cells means their digits are consecutive, differing by exactly 1 (e.g. 4 and 5).',
+        },
+        {
+          term: 'Filled dot',
+          text: 'A filled dot means one digit is exactly double the other (e.g. 2 and 4, or 3 and 6).',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'No dot', text: 'When two adjacent cells have no dot, their digits must be neither consecutive nor in a 1:2 ratio.' },
-        { term: 'Special case', text: 'The pair 1 and 2 satisfies both relationships, so it always receives a filled dot.' },
+        {
+          term: 'No dot',
+          text: 'When two adjacent cells have no dot, their digits must be neither consecutive nor in a 1:2 ratio.',
+        },
+        {
+          term: 'Special case',
+          text: 'The pair 1 and 2 satisfies both relationships, so it always receives a filled dot.',
+        },
       ],
     },
   ],

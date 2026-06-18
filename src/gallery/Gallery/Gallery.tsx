@@ -47,8 +47,7 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
     });
   } else if (sortMode === 'difficulty') {
     sortedVariants.sort((left, right) => {
-      const difficultyDiff =
-        DIFFICULTY_ORDER[left.difficulty] - DIFFICULTY_ORDER[right.difficulty];
+      const difficultyDiff = DIFFICULTY_ORDER[left.difficulty] - DIFFICULTY_ORDER[right.difficulty];
 
       if (difficultyDiff !== 0) {
         return difficultyDiff;

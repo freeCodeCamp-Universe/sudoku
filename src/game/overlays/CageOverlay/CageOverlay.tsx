@@ -47,7 +47,7 @@ function extent(
 ): number {
   if (perpCage !== cageIndex) return base - INSET * sign; // outer corner: truncate
   if (diagCage === cageIndex) return base + INSET * sign; // inner corner: extend
-  return base;                                            // straight-through
+  return base; // straight-through
 }
 
 function cageBorderEdges(cages: Cage[], rects: Map<CellId, Rect>): Edge[] {
@@ -64,39 +64,39 @@ function cageBorderEdges(cages: Cage[], rects: Map<CellId, Rect>): Edge[] {
     const cage = (id: CellId | null) => (id ? cellToCage.get(id) : undefined);
 
     const L = getNeighborId(cellId, 0, -1);
-    const R = getNeighborId(cellId, 0,  1);
+    const R = getNeighborId(cellId, 0, 1);
     const T = getNeighborId(cellId, -1, 0);
-    const B = getNeighborId(cellId,  1, 0);
+    const B = getNeighborId(cellId, 1, 0);
     const TL = getNeighborId(cellId, -1, -1);
-    const TR = getNeighborId(cellId, -1,  1);
-    const BL = getNeighborId(cellId,  1, -1);
-    const BR = getNeighborId(cellId,  1,  1);
+    const TR = getNeighborId(cellId, -1, 1);
+    const BL = getNeighborId(cellId, 1, -1);
+    const BR = getNeighborId(cellId, 1, 1);
 
     // Right boundary
     if (cage(R) !== ci) {
-      const y1 = extent(y,     -1, cage(T), ci, cage(TR));
-      const y2 = extent(y + h,  1, cage(B), ci, cage(BR));
+      const y1 = extent(y, -1, cage(T), ci, cage(TR));
+      const y2 = extent(y + h, 1, cage(B), ci, cage(BR));
       edges.push({ x1: x + w - INSET, y1, x2: x + w - INSET, y2 });
     }
 
     // Bottom boundary
     if (cage(B) !== ci) {
-      const x1 = extent(x,     -1, cage(L), ci, cage(BL));
-      const x2 = extent(x + w,  1, cage(R), ci, cage(BR));
+      const x1 = extent(x, -1, cage(L), ci, cage(BL));
+      const x2 = extent(x + w, 1, cage(R), ci, cage(BR));
       edges.push({ x1, y1: y + h - INSET, x2, y2: y + h - INSET });
     }
 
     // Left boundary
     if (cage(L) !== ci) {
-      const y1 = extent(y,     -1, cage(T), ci, cage(TL));
-      const y2 = extent(y + h,  1, cage(B), ci, cage(BL));
+      const y1 = extent(y, -1, cage(T), ci, cage(TL));
+      const y2 = extent(y + h, 1, cage(B), ci, cage(BL));
       edges.push({ x1: x + INSET, y1, x2: x + INSET, y2 });
     }
 
     // Top boundary
     if (cage(T) !== ci) {
-      const x1 = extent(x,     -1, cage(L), ci, cage(TL));
-      const x2 = extent(x + w,  1, cage(R), ci, cage(TR));
+      const x1 = extent(x, -1, cage(L), ci, cage(TL));
+      const x2 = extent(x + w, 1, cage(R), ci, cage(TR));
       edges.push({ x1, y1: y + INSET, x2, y2: y + INSET });
     }
   }

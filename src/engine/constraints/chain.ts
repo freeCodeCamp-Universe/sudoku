@@ -1,10 +1,4 @@
-import type {
-  CellId,
-  Conflict,
-  Constraint,
-  SymbolValue,
-  VariantModel,
-} from '../types';
+import type { CellId, Conflict, Constraint, SymbolValue, VariantModel } from '../types';
 
 export interface Chain {
   cells: CellId[];

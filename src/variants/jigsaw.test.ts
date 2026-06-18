@@ -46,7 +46,11 @@ describe('jigsaw validate', () => {
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r1c0'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r1c0')
+      )
+    ).toBe(true);
   });
 });
 
@@ -122,26 +126,40 @@ describe('jigsaw all presets', () => {
   it('should build irregular region houses for preset B', () => {
     const model = buildModel(makeJigsawVariant(PRESET_LAYOUTS[1]));
     const regionHouses = model.houses.filter((house) => house.id.startsWith('region-'));
-    const conflicts = validate(new Map([
-      ['r0c1', 4],
-      ['r1c0', 4],
-    ]), model);
+    const conflicts = validate(
+      new Map([
+        ['r0c1', 4],
+        ['r1c0', 4],
+      ]),
+      model
+    );
 
     expect(regionHouses).toHaveLength(9);
     expect(regionHouses.every((house) => house.cells.length === 9)).toBe(true);
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c1') && conflict.cells.includes('r1c0'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c1') && conflict.cells.includes('r1c0')
+      )
+    ).toBe(true);
   });
 
   it('should build irregular region houses for preset C', () => {
     const model = buildModel(makeJigsawVariant(PRESET_LAYOUTS[2]));
     const regionHouses = model.houses.filter((house) => house.id.startsWith('region-'));
-    const conflicts = validate(new Map([
-      ['r0c2', 7],
-      ['r1c3', 7],
-    ]), model);
+    const conflicts = validate(
+      new Map([
+        ['r0c2', 7],
+        ['r1c3', 7],
+      ]),
+      model
+    );
 
     expect(regionHouses).toHaveLength(9);
     expect(regionHouses.every((house) => house.cells.length === 9)).toBe(true);
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c2') && conflict.cells.includes('r1c3'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c2') && conflict.cells.includes('r1c3')
+      )
+    ).toBe(true);
   });
 });

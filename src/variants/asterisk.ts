@@ -3,9 +3,15 @@ import type { BoardLayout, House, Variant } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
 
 export const ASTERISK_CELLS: [number, number][] = [
-  [1, 4], [2, 2], [2, 6],
-  [4, 1], [4, 4], [4, 7],
-  [6, 2], [6, 6], [7, 4],
+  [1, 4],
+  [2, 2],
+  [2, 6],
+  [4, 1],
+  [4, 4],
+  [4, 7],
+  [6, 2],
+  [6, 6],
+  [7, 4],
 ];
 
 function asteriskExtraHouses(_layout: BoardLayout): House[] {
@@ -20,22 +26,35 @@ function asteriskExtraHouses(_layout: BoardLayout): House[] {
 export const asterisk: Variant = {
   id: 'asterisk',
   name: 'Asterisk Sudoku',
-  description: 'Nine cells in a star pattern form an extra region that must contain each of the digits 1–9.',
+  description:
+    'Nine cells in a star pattern form an extra region that must contain each of the digits 1–9.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.' },
-        { term: 'The asterisk', text: 'Nine specific cells form a star shape across the grid, marked by highlighting.' },
-        { term: 'Star rule', text: 'The nine asterisk cells must together contain each digit from 1 to 9 exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
+        },
+        {
+          term: 'The asterisk',
+          text: 'Nine specific cells form a star shape across the grid, marked by highlighting.',
+        },
+        {
+          term: 'Star rule',
+          text: 'The nine asterisk cells must together contain each digit from 1 to 9 exactly once.',
+        },
       ],
     },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Double duty', text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.' },
+        {
+          term: 'Double duty',
+          text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.',
+        },
       ],
     },
   ],

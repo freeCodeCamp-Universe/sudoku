@@ -20,7 +20,9 @@ describe('uniqueness constraint', () => {
     const conflicts = uniqueness.conflicts(values, model);
 
     expect(
-      conflicts.some((conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r0c4'))
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r0c4')
+      )
     ).toBe(true);
   });
 

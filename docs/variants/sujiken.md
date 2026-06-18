@@ -28,15 +28,15 @@ regions marked by thick borders."
 
 A digit may not repeat within any of these houses. There are **45 houses** total.
 
-| Group | Count | House IDs | Notes |
-| --- | --- | --- | --- |
-| Rows | 9 | `tri-row-0` .. `tri-row-8` | Row `r` holds columns `0..r`. |
-| Columns | 9 | `tri-col-0` .. `tri-col-8` | Column `c` runs downward from the diagonal. |
-| Main diagonal | 1 | `tri-diagonal` | The hypotenuse, cells `(i, i)`. |
-| Square regions | 3 | `tri-region-1-0`, `tri-region-2-0`, `tri-region-2-1` | Full 3x3 blocks (9 cells each), entirely below the diagonal. |
-| Triangular regions | 3 | `tri-region-0-0`, `tri-region-1-1`, `tri-region-2-2` | 3x3 blocks straddling the diagonal (6 cells each). |
-| Backward diagonals | 7 | `tri-bdiag-1` .. `tri-bdiag-7` | Lines parallel to the hypotenuse (`row - col = k`), length 8 down to 2. |
-| Forward diagonals | 13 | `tri-fdiag-2` .. `tri-fdiag-14` | Anti-diagonals (`row + col = s`), length >= 2. |
+| Group              | Count | House IDs                                            | Notes                                                                   |
+| ------------------ | ----- | ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| Rows               | 9     | `tri-row-0` .. `tri-row-8`                           | Row `r` holds columns `0..r`.                                           |
+| Columns            | 9     | `tri-col-0` .. `tri-col-8`                           | Column `c` runs downward from the diagonal.                             |
+| Main diagonal      | 1     | `tri-diagonal`                                       | The hypotenuse, cells `(i, i)`.                                         |
+| Square regions     | 3     | `tri-region-1-0`, `tri-region-2-0`, `tri-region-2-1` | Full 3x3 blocks (9 cells each), entirely below the diagonal.            |
+| Triangular regions | 3     | `tri-region-0-0`, `tri-region-1-1`, `tri-region-2-2` | 3x3 blocks straddling the diagonal (6 cells each).                      |
+| Backward diagonals | 7     | `tri-bdiag-1` .. `tri-bdiag-7`                       | Lines parallel to the hypotenuse (`row - col = k`), length 8 down to 2. |
+| Forward diagonals  | 13    | `tri-fdiag-2` .. `tri-fdiag-14`                      | Anti-diagonals (`row + col = s`), length >= 2.                          |
 
 The six regions overlay the standard 3x3 block grid onto the triangle and cover all
 45 cells exactly once.

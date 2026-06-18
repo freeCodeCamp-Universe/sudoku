@@ -1,10 +1,4 @@
-import type {
-  Cell,
-  CellId,
-  Conflict,
-  Constraint,
-  VariantModel,
-} from '../types';
+import type { Cell, CellId, Conflict, Constraint, VariantModel } from '../types';
 
 export interface Mark {
   a: CellId;

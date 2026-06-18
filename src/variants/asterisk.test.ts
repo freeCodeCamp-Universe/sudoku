@@ -25,9 +25,15 @@ describe('asterisk buildModel', () => {
     const model = buildModel(asterisk);
 
     expect(model.houses.find((house) => house.id === 'asterisk')?.cells).toEqual([
-      'r1c4', 'r2c2', 'r2c6',
-      'r4c1', 'r4c4', 'r4c7',
-      'r6c2', 'r6c6', 'r7c4',
+      'r1c4',
+      'r2c2',
+      'r2c6',
+      'r4c1',
+      'r4c4',
+      'r4c7',
+      'r6c2',
+      'r6c6',
+      'r7c4',
     ]);
   });
 });
@@ -42,7 +48,11 @@ describe('asterisk validate', () => {
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r1c4') && conflict.cells.includes('r4c4'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r1c4') && conflict.cells.includes('r4c4')
+      )
+    ).toBe(true);
   });
 });
 

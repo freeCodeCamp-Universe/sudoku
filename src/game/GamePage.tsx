@@ -37,7 +37,12 @@ type VariantWithColorNames = {
 };
 
 interface GameInnerProps {
-  settings: { checkEnabled: boolean; timerEnabled: boolean; colorblindEnabled: boolean; highlightPeers: boolean };
+  settings: {
+    checkEnabled: boolean;
+    timerEnabled: boolean;
+    colorblindEnabled: boolean;
+    highlightPeers: boolean;
+  };
   onNewGame?: () => void;
 }
 
@@ -244,16 +249,20 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
   const wordCellIds = useMemo((): Set<CellId> => {
     if (!state.solved || variant.id !== 'wordoku') return new Set();
     for (let r = 0; r < 9; r++) {
-      if (Array.from({ length: 9 }, (_, c) => c).every(
-        (c) => solution.get(`r${r}c${c}` as CellId) === c + 1
-      )) {
+      if (
+        Array.from({ length: 9 }, (_, c) => c).every(
+          (c) => solution.get(`r${r}c${c}` as CellId) === c + 1
+        )
+      ) {
         return new Set(Array.from({ length: 9 }, (_, c) => `r${r}c${c}` as CellId));
       }
     }
     for (let c = 0; c < 9; c++) {
-      if (Array.from({ length: 9 }, (_, r) => r).every(
-        (r) => solution.get(`r${r}c${c}` as CellId) === r + 1
-      )) {
+      if (
+        Array.from({ length: 9 }, (_, r) => r).every(
+          (r) => solution.get(`r${r}c${c}` as CellId) === r + 1
+        )
+      ) {
         return new Set(Array.from({ length: 9 }, (_, r) => `r${r}c${c}` as CellId));
       }
     }
@@ -330,11 +339,23 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           ) : null}
           {liveVariant.id === 'kropki' ? (
             <div className={styles.variantLegend} aria-label="Kropki rule legend">
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
                 <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
               </svg>
               <span>Consecutive (differ by 1)</span>
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                aria-hidden="true"
+                style={{ flexShrink: 0 }}
+              >
                 <circle cx="5" cy="5" r="4" fill="#5060a0" />
               </svg>
               <span>One is double the other</span>
@@ -368,11 +389,21 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
         <div className={styles.gameRight}>
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
-            symbols={liveVariant.symbolKind === 'letter'
-              ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
-              : model.symbols}
+            symbols={
+              liveVariant.symbolKind === 'letter'
+                ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
+                : model.symbols
+            }
             usedSymbols={usedSymbols}
-            columns={model.symbols.length === 16 ? 4 : model.symbols.length === 4 ? 4 : model.symbols.length === 6 ? 3 : undefined}
+            columns={
+              model.symbols.length === 16
+                ? 4
+                : model.symbols.length === 4
+                  ? 4
+                  : model.symbols.length === 6
+                    ? 3
+                    : undefined
+            }
             onEnter={(value) => {
               if (!selectedCellId) {
                 return;
@@ -475,8 +506,14 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             >
               ×
             </button>
-            <div className={styles.winEmoji} aria-hidden="true">🎉</div>
-            <div className={styles.winTitle}>Great job,<br />puzzle master!</div>
+            <div className={styles.winEmoji} aria-hidden="true">
+              🎉
+            </div>
+            <div className={styles.winTitle}>
+              Great job,
+              <br />
+              puzzle master!
+            </div>
             <div className={styles.winSub}>
               {settings.timerEnabled
                 ? `You solved ${variant.name} in:`
@@ -562,7 +599,8 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  const { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers } = usePersistence(variantId);
+  const { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers } =
+    usePersistence(variantId);
   const [genKey, setGenKey] = useState(0);
   // Randomize which jigsaw region layout a session starts on; rotating by genKey
   // then guarantees a different layout on every New Game.
@@ -624,7 +662,12 @@ export function GamePage() {
             : [
                 {
                   keys: [variant.symbolKind === 'letter' ? 'A-Z' : `1-${variant.symbols.length}`],
-                  description: variant.symbolKind === 'letter' ? 'Enter a letter' : variant.symbolKind === 'color' ? 'Enter a color' : 'Enter a digit',
+                  description:
+                    variant.symbolKind === 'letter'
+                      ? 'Enter a letter'
+                      : variant.symbolKind === 'color'
+                        ? 'Enter a color'
+                        : 'Enter a digit',
                 },
               ]),
           { keys: ['Backspace', 'Delete'], separator: 'or' as const, description: 'Erase' },

@@ -8,14 +8,20 @@ describe('ModeSwitcher', () => {
     render(<ModeSwitcher candidateMode={false} onToggle={() => {}} />);
 
     expect(screen.getByRole('button', { name: 'Normal' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'Candidate' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Candidate' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
   });
 
   it('should expose pressed states for Candidate mode', () => {
     render(<ModeSwitcher candidateMode onToggle={() => {}} />);
 
     expect(screen.getByRole('button', { name: 'Normal' })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('button', { name: 'Candidate' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Candidate' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
   });
 
   it('should call onToggle when Candidate is clicked from Normal mode', async () => {

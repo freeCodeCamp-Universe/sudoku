@@ -36,11 +36,19 @@
   font-size: 0.82rem;
 }
 
-.cell[data-even] { background: #3b3b4f; }
-.cell[data-odd]  { background: #12123a; }
+.cell[data-even] {
+  background: #3b3b4f;
+}
+.cell[data-odd] {
+  background: #12123a;
+}
 
-:global(.light) .cell[data-even] { background: #e8e8fa; }
-:global(.light) .cell[data-odd]  { background: #ffffff; }
+:global(.light) .cell[data-even] {
+  background: #e8e8fa;
+}
+:global(.light) .cell[data-odd] {
+  background: #ffffff;
+}
 
 .cell[data-peer][data-even] {
   background: #2c2c4c !important;
@@ -80,7 +88,6 @@
 :global(.light) .cell[data-girandola] {
   background: #e8e8fa;
 }
-
 
 .cell[data-overlap='two'] {
   background: #222248;
@@ -233,7 +240,6 @@
   background: #cdeaea !important;
 }
 
-
 .cell[data-revealed] .value {
   color: var(--accent-yellow);
 }
@@ -375,7 +381,6 @@
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
-
 :global(.light) .cell {
   background: #ffffff;
   color: #2c5f8a;
@@ -401,7 +406,6 @@
 :global(.light) .cell[data-given] {
   color: #0a0a23;
 }
-
 
 :global(.light) .cell[data-box-right]:not([data-selected])::after,
 :global(.light) .cell[data-box-bottom]:not([data-selected])::before {

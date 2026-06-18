@@ -1,9 +1,4 @@
-import type {
-  CellId,
-  Conflict,
-  Constraint,
-  VariantModel,
-} from '../types';
+import type { CellId, Conflict, Constraint, VariantModel } from '../types';
 
 export interface Relation {
   greater: CellId;

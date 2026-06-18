@@ -4,14 +4,21 @@ import type { Variant } from '@/engine/types';
 export const mini: Variant = {
   id: 'mini',
   name: '4×4 Sudoku',
-  description: 'A 4×4 grid split into four 2×2 boxes. Fill every row, column, and box with the digits 1–4.',
+  description:
+    'A 4×4 grid split into four 2×2 boxes. Fill every row, column, and box with the digits 1–4.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 4×4 board split into four 2×2 boxes. Fill every cell with a digit from 1 to 4.' },
-        { term: 'Rows and columns', text: 'Every row and every column must contain each digit exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A 4×4 board split into four 2×2 boxes. Fill every cell with a digit from 1 to 4.',
+        },
+        {
+          term: 'Rows and columns',
+          text: 'Every row and every column must contain each digit exactly once.',
+        },
         { term: 'Boxes', text: 'Each 2×2 box must also hold every digit exactly once.' },
       ],
     },
@@ -19,8 +26,14 @@ export const mini: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Given digits', text: 'Pre-filled cells are fixed. Only the empty ones can be changed.' },
-        { term: 'Entering digits', text: 'Click a cell to select it, then press a digit key or tap the numpad.' },
+        {
+          term: 'Given digits',
+          text: 'Pre-filled cells are fixed. Only the empty ones can be changed.',
+        },
+        {
+          term: 'Entering digits',
+          text: 'Click a cell to select it, then press a digit key or tap the numpad.',
+        },
       ],
     },
   ],

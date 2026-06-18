@@ -32,10 +32,9 @@ export function usePreviewCanvas(draw: PreviewCanvasDraw) {
       return;
     }
 
-    const size = nextSize ?? roundCanvasSize(
-      canvas.getBoundingClientRect().width,
-      canvas.getBoundingClientRect().height
-    );
+    const size =
+      nextSize ??
+      roundCanvasSize(canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().height);
 
     if (size.width <= 0 || size.height <= 0) {
       return;

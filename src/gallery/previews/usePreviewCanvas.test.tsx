@@ -63,7 +63,9 @@ describe('usePreviewCanvas', () => {
       value: 3,
     });
 
-    vi.spyOn(HTMLCanvasElement.prototype, 'getBoundingClientRect').mockReturnValue(createRect(90.4, 91.6));
+    vi.spyOn(HTMLCanvasElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      createRect(90.4, 91.6)
+    );
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
       clearRect,
       setTransform,
@@ -186,7 +188,10 @@ describe('usePreviewCanvas', () => {
 
     const { unmount } = render(<TestCanvas draw={draw} />);
 
-    shouldAssert.equal(addEventListener.mock.calls.some(([eventName]) => eventName === 'resize'), true);
+    shouldAssert.equal(
+      addEventListener.mock.calls.some(([eventName]) => eventName === 'resize'),
+      true
+    );
     expect(draw.mock.calls[0]?.[1]).toEqual({ width: 50, height: 50 });
 
     rect.width = 80.2;

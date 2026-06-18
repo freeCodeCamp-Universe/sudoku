@@ -12,7 +12,5 @@ export function findCompletedSymbols(
     counts.set(value, (counts.get(value) ?? 0) + 1);
   }
 
-  return new Set(
-    symbols.filter((symbol) => (counts.get(symbol) ?? 0) >= requiredCount)
-  );
+  return new Set(symbols.filter((symbol) => (counts.get(symbol) ?? 0) >= requiredCount));
 }

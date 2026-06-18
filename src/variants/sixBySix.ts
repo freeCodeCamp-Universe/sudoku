@@ -4,14 +4,21 @@ import type { Variant } from '@/engine/types';
 export const sixBySix: Variant = {
   id: 'six-by-six',
   name: '6×6 Sudoku',
-  description: 'A 6×6 grid split into 2×3 boxes. Fill every row, column, and box with each digit from 1–6.',
+  description:
+    'A 6×6 grid split into 2×3 boxes. Fill every row, column, and box with each digit from 1–6.',
   help: [
     {
       label: 'Basic Rules',
       tone: 'basic',
       rules: [
-        { term: 'The grid', text: 'A 6×6 board split into six 2×3 boxes. Fill every cell with a digit from 1 to 6.' },
-        { term: 'Rows and columns', text: 'Every row and every column must contain each digit exactly once.' },
+        {
+          term: 'The grid',
+          text: 'A 6×6 board split into six 2×3 boxes. Fill every cell with a digit from 1 to 6.',
+        },
+        {
+          term: 'Rows and columns',
+          text: 'Every row and every column must contain each digit exactly once.',
+        },
         { term: 'Boxes', text: 'Each 2×3 box must also hold every digit exactly once.' },
       ],
     },
@@ -19,8 +26,14 @@ export const sixBySix: Variant = {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
-        { term: 'Given digits', text: 'Pre-filled cells are fixed. Only the empty ones can be changed.' },
-        { term: 'Entering digits', text: 'Click a cell to select it, then press a digit key or tap the numpad.' },
+        {
+          term: 'Given digits',
+          text: 'Pre-filled cells are fixed. Only the empty ones can be changed.',
+        },
+        {
+          term: 'Entering digits',
+          text: 'Click a cell to select it, then press a digit key or tap the numpad.',
+        },
       ],
     },
   ],
