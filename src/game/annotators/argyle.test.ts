@@ -15,19 +15,19 @@ function ctx(): AnnotatorContext {
 }
 
 describe('argyleAnnotator', () => {
-  it('should return descriptive wording for r0c0 (D1 main diagonal)', () => {
-    expect(argyleAnnotator.describe('r0c0', ctx())).toBe('argyle diagonal');
+  it('should return descriptive wording for r0c1 (D1 only, offset -1)', () => {
+    expect(argyleAnnotator.describe('r0c1', ctx())).toBe('argyle diagonal');
   });
 
-  it('should return descriptive wording for r0c5 (D2 stripe r+c=5)', () => {
-    expect(argyleAnnotator.describe('r0c5', ctx())).toBe('argyle diagonal');
+  it('should return descriptive wording for r0c7 (D2 only, sum 7)', () => {
+    expect(argyleAnnotator.describe('r0c7', ctx())).toBe('argyle diagonal');
   });
 
-  it('should return descriptive wording for r4c4 (on both D1 and D2)', () => {
-    expect(argyleAnnotator.describe('r4c4', ctx())).toBe('two argyle diagonals');
+  it('should return descriptive wording for r0c4 (D1 offset -4 and D2 sum 4)', () => {
+    expect(argyleAnnotator.describe('r0c4', ctx())).toBe('two argyle diagonals');
   });
 
-  it('should return null for r0c1 (not on any argyle stripe)', () => {
-    expect(argyleAnnotator.describe('r0c1', ctx())).toBeNull();
+  it('should return null for r4c4 (center, on no stripe)', () => {
+    expect(argyleAnnotator.describe('r4c4', ctx())).toBeNull();
   });
 });

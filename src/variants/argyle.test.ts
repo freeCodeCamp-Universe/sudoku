@@ -15,57 +15,117 @@ function seeded(seed: number): () => number {
 }
 
 describe('argyle buildModel', () => {
-  it('should produce 33 houses (27 standard + 6 argyle stripes)', () => {
+  it('should produce 35 houses (27 standard + 8 argyle stripes)', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses).toHaveLength(33);
+    expect(model.houses).toHaveLength(35);
   });
 
-  it('should include argyle-d1-0 as the full main diagonal', () => {
+  it('should include argyle-d1-m4 as a 5-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d1-0')?.cells).toEqual([
-      'r0c0', 'r1c1', 'r2c2', 'r3c3', 'r4c4', 'r5c5', 'r6c6', 'r7c7', 'r8c8',
+    expect(model.houses.find((house) => house.id === 'argyle-d1-m4')?.cells).toEqual([
+      'r0c4',
+      'r1c5',
+      'r2c6',
+      'r3c7',
+      'r4c8',
     ]);
   });
 
-  it('should include argyle-d1-m3 as a 6-cell shorter stripe', () => {
+  it('should include argyle-d1-m1 as an 8-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d1-m3')?.cells).toEqual([
-      'r0c3', 'r1c4', 'r2c5', 'r3c6', 'r4c7', 'r5c8',
+    expect(model.houses.find((house) => house.id === 'argyle-d1-m1')?.cells).toEqual([
+      'r0c1',
+      'r1c2',
+      'r2c3',
+      'r3c4',
+      'r4c5',
+      'r5c6',
+      'r6c7',
+      'r7c8',
     ]);
   });
 
-  it('should include argyle-d1-3 as a 6-cell shorter stripe', () => {
+  it('should include argyle-d1-1 as an 8-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d1-3')?.cells).toEqual([
-      'r3c0', 'r4c1', 'r5c2', 'r6c3', 'r7c4', 'r8c5',
+    expect(model.houses.find((house) => house.id === 'argyle-d1-1')?.cells).toEqual([
+      'r1c0',
+      'r2c1',
+      'r3c2',
+      'r4c3',
+      'r5c4',
+      'r6c5',
+      'r7c6',
+      'r8c7',
     ]);
   });
 
-  it('should include argyle-d2-8 as the full anti-diagonal', () => {
+  it('should include argyle-d1-4 as a 5-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d2-8')?.cells).toEqual([
-      'r0c8', 'r1c7', 'r2c6', 'r3c5', 'r4c4', 'r5c3', 'r6c2', 'r7c1', 'r8c0',
+    expect(model.houses.find((house) => house.id === 'argyle-d1-4')?.cells).toEqual([
+      'r4c0',
+      'r5c1',
+      'r6c2',
+      'r7c3',
+      'r8c4',
     ]);
   });
 
-  it('should include argyle-d2-5 as a 6-cell shorter stripe', () => {
+  it('should include argyle-d2-4 as a 5-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d2-5')?.cells).toEqual([
-      'r0c5', 'r1c4', 'r2c3', 'r3c2', 'r4c1', 'r5c0',
+    expect(model.houses.find((house) => house.id === 'argyle-d2-4')?.cells).toEqual([
+      'r0c4',
+      'r1c3',
+      'r2c2',
+      'r3c1',
+      'r4c0',
     ]);
   });
 
-  it('should include argyle-d2-11 as a 6-cell shorter stripe', () => {
+  it('should include argyle-d2-7 as an 8-cell stripe', () => {
     const model = buildModel(argyle);
 
-    expect(model.houses.find((house) => house.id === 'argyle-d2-11')?.cells).toEqual([
-      'r3c8', 'r4c7', 'r5c6', 'r6c5', 'r7c4', 'r8c3',
+    expect(model.houses.find((house) => house.id === 'argyle-d2-7')?.cells).toEqual([
+      'r0c7',
+      'r1c6',
+      'r2c5',
+      'r3c4',
+      'r4c3',
+      'r5c2',
+      'r6c1',
+      'r7c0',
+    ]);
+  });
+
+  it('should include argyle-d2-9 as an 8-cell stripe', () => {
+    const model = buildModel(argyle);
+
+    expect(model.houses.find((house) => house.id === 'argyle-d2-9')?.cells).toEqual([
+      'r1c8',
+      'r2c7',
+      'r3c6',
+      'r4c5',
+      'r5c4',
+      'r6c3',
+      'r7c2',
+      'r8c1',
+    ]);
+  });
+
+  it('should include argyle-d2-12 as a 5-cell stripe', () => {
+    const model = buildModel(argyle);
+
+    expect(model.houses.find((house) => house.id === 'argyle-d2-12')?.cells).toEqual([
+      'r4c8',
+      'r5c7',
+      'r6c6',
+      'r7c5',
+      'r8c4',
     ]);
   });
 });
@@ -74,25 +134,33 @@ describe('argyle validate', () => {
   it('should detect a conflict when two cells on the same D1 stripe share a value', () => {
     const model = buildModel(argyle);
     const values = new Map([
-      ['r0c0', 4],
-      ['r1c1', 4],
+      ['r1c0', 5],
+      ['r4c3', 5],
     ]);
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c0') && conflict.cells.includes('r1c1'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r1c0') && conflict.cells.includes('r4c3')
+      )
+    ).toBe(true);
   });
 
   it('should detect a conflict when two cells on the same D2 stripe share a value', () => {
     const model = buildModel(argyle);
     const values = new Map([
-      ['r0c8', 6],
-      ['r1c7', 6],
+      ['r0c7', 5],
+      ['r5c2', 5],
     ]);
 
     const conflicts = validate(values, model);
 
-    expect(conflicts.some((conflict) => conflict.cells.includes('r0c8') && conflict.cells.includes('r1c7'))).toBe(true);
+    expect(
+      conflicts.some(
+        (conflict) => conflict.cells.includes('r0c7') && conflict.cells.includes('r5c2')
+      )
+    ).toBe(true);
   });
 });
 
