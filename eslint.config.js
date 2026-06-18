@@ -5,6 +5,7 @@ import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import tseslint from 'typescript-eslint';
 import vitestPlugin from '@vitest/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default tseslint.config(
   {
@@ -42,5 +43,6 @@ export default tseslint.config(
       ...testingLibraryPlugin.configs['flat/react'].rules,
       ...vitestPlugin.configs.recommended.rules,
     },
-  }
+  },
+  eslintConfigPrettier
 );
