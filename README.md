@@ -1,6 +1,6 @@
 # Sudoku
 
-**Sudoku** is a browser-based collection of 20 sudoku variants, from beginner-friendly 4×4 grids to advanced multi-grid puzzles.
+**Sudoku** is a browser-based collection of multiple sudoku variants, from beginner-friendly 4×4 grids to advanced multi-grid puzzles.
 
 ## Development
 
