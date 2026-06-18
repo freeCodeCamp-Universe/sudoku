@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { CellId } from '@/engine/types';
 import { neighborDescription } from './neighbor';
 
 describe('neighborDescription', () => {
@@ -23,7 +24,7 @@ describe('neighborDescription', () => {
   });
 
   it('should return "a neighboring cell" for parse failure', () => {
-    expect(neighborDescription('invalid', 'r0c0' as any)).toBe('a neighboring cell');
-    expect(neighborDescription('r0c0', 'invalid' as any)).toBe('a neighboring cell');
+    expect(neighborDescription('invalid' as unknown as CellId, 'r0c0')).toBe('a neighboring cell');
+    expect(neighborDescription('r0c0', 'invalid' as unknown as CellId)).toBe('a neighboring cell');
   });
 });
