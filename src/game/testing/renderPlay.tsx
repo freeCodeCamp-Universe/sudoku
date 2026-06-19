@@ -9,6 +9,11 @@ import { makeFixture, type Fixture } from './makeFixture';
 interface PlayOptions {
   seed?: number;
   checkEnabled?: boolean;
+  // Reuse a pre-built fixture instead of generating one. Required when the
+  // caller has already inspected the fixture (e.g. to find a violating move),
+  // since some variants derive their structure non-deterministically and a
+  // fresh makeFixture would not reproduce it.
+  fixture?: Fixture;
 }
 
 /**
@@ -35,14 +40,24 @@ function usePlay(checkEnabled: boolean) {
   return { state, dispatch, cellState: grid.cellState };
 }
 
-export function renderPlay(variant: Variant, { seed = 1, checkEnabled = false }: PlayOptions = {}) {
-  const fixture = makeFixture(variant, seed);
+export function renderPlay(
+  variant: Variant,
+  { seed = 1, checkEnabled = false, fixture: providedFixture }: PlayOptions = {}
+) {
+  const fixture = providedFixture ?? makeFixture(variant, seed);
+  // Mirror GamePage: a variant's derived structure (cages, kropki marks, edge
+  // clues, ...) must ride on the model so validate() can run the special
+  // constraints. Without it those constraints silently no-op.
+  const model =
+    fixture.structure === undefined
+      ? fixture.model
+      : { ...fixture.model, structure: fixture.structure };
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <GameProvider
         variant={variant}
-        model={fixture.model}
+        model={model}
         givens={fixture.givens}
         solution={fixture.solution}
       >
