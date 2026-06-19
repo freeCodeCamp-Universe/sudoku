@@ -8,7 +8,7 @@
 }
 
 .dot {
-  fill: #d0d0e8;
-  stroke: #1b1b32;
+  fill: var(--overlay-consecutive-fill);
+  stroke: var(--overlay-consecutive-stroke);
   stroke-width: 1.5px;
 }

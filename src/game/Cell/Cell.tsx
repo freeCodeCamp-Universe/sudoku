@@ -21,7 +21,6 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   boxBoundaryRight?: boolean;
   boxBoundaryBottom?: boolean;
   overlayBorders?: boolean;
-  overlap?: number;
   diagonal?: boolean;
   small?: boolean;
   medium?: boolean;
@@ -72,7 +71,6 @@ export function Cell({
   boxBoundaryRight = false,
   boxBoundaryBottom = false,
   overlayBorders = false,
-  overlap = 0,
   diagonal = false,
   small = false,
   medium = false,
@@ -95,16 +93,6 @@ export function Cell({
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
   const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
-  const overlapClass =
-    overlap === 5
-      ? 'five'
-      : overlap === 4
-        ? 'four'
-        : overlap === 3
-          ? 'three'
-          : overlap === 2
-            ? 'two'
-            : undefined;
 
   return (
     <div
@@ -124,7 +112,6 @@ export function Cell({
       data-box-right={boxBoundaryRight || undefined}
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}
-      data-overlap={overlapClass}
       data-diagonal={diagonal || undefined}
       data-small={small || undefined}
       data-medium={medium || undefined}
@@ -154,8 +141,8 @@ export function Cell({
               aria-hidden="true"
               className={styles.colorChip}
               data-color-chip
+              data-color={value}
               data-testid="cell-color-chip"
-              style={{ background: renderSymbol(value) }}
             />
             {colorblind && (
               <span aria-hidden="true" className={styles.colorLabel}>

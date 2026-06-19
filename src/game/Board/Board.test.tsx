@@ -191,13 +191,6 @@ describe('Board', () => {
     expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-bottom', 'true');
     expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-right', 'true');
   });
-
-  it('should render one outer frame per samurai sub-grid without overlap highlighting', () => {
-    render(<Board {...makeSamuraiBoardProps()} />);
-
-    expect(screen.getAllByTestId('multigrid-line').length).toBeGreaterThan(0);
-    expect(getRenderedCell('r6c6')).not.toHaveAttribute('data-overlap');
-  });
 });
 
 describe('Board gutter slots', () => {

@@ -6,12 +6,11 @@
 }
 
 .window {
-  fill: #3b3b4f;
+  fill: var(--overlay-window-fill);
   fill-opacity: 0.35;
   stroke: none;
 }
 
 :global(html.light) .window {
-  fill: #e8e8fa;
   fill-opacity: 0.6;
 }

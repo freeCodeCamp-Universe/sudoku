@@ -6,11 +6,7 @@
 }
 
 .regionBorder {
-  stroke: #9898b8;
+  stroke: var(--overlay-jigsaw-stroke);
   stroke-width: 3;
   stroke-linecap: square;
-}
-
-:global(html.light) .regionBorder {
-  stroke: #6060a0;
 }

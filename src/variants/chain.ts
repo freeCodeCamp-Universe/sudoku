@@ -4,7 +4,7 @@ import { generateGivens9x9 } from './generateGivens9x9';
 import type { Chain as ChainType } from '@/engine/constraints/chain';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from '@/engine/searchState';
 
-const CHAIN_COLORS = [
+export const CHAIN_COLORS = [
   '#99c9ff',
   '#acd157',
   '#f1be32',

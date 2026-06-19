@@ -8,5 +8,5 @@
 }
 
 .triangle {
-  fill: var(--accent-yellow, #f1be32);
+  fill: var(--accent-yellow);
 }

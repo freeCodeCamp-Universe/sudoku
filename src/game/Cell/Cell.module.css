@@ -8,7 +8,7 @@
   font-size: 1.4rem;
   font-weight: 400;
   color: var(--accent-blue);
-  border: 1px solid #4a4a5e;
+  border: 1px solid var(--cell-border);
   cursor: pointer;
   background: var(--bg-secondary);
   user-select: none;
@@ -17,11 +17,11 @@
 }
 
 .cell[data-diagonal] {
-  background: #3b3b4f;
+  background: var(--cell-diagonal-bg);
 }
 
 :global(.light) .cell[data-diagonal] {
-  background: #e8e8fa;
+  background: var(--cell-diagonal-bg);
 }
 
 .cell[data-symbol-kind='letter'] {
@@ -37,41 +37,41 @@
 }
 
 .cell[data-even] {
-  background: #3b3b4f;
+  background: var(--cell-even-bg);
 }
 .cell[data-odd] {
-  background: #12123a;
+  background: var(--cell-odd-bg);
 }
 
 :global(.light) .cell[data-even] {
-  background: #e8e8fa;
+  background: var(--cell-even-bg);
 }
 :global(.light) .cell[data-odd] {
-  background: #ffffff;
+  background: var(--cell-odd-bg);
 }
 
 .cell[data-peer][data-even] {
-  background: #2c2c4c !important;
+  background: var(--cell-peer-even-bg) !important;
 }
 
 .cell[data-peer][data-odd] {
-  background: #1a1a40 !important;
+  background: var(--cell-peer-odd-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-even] {
-  background: #d8d8f0 !important;
+  background: var(--cell-peer-even-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-odd] {
-  background: #ededf6 !important;
+  background: var(--cell-peer-odd-bg) !important;
 }
 
 .cell[data-window] {
-  background: #3b3b4f;
+  background: var(--cell-window-bg);
 }
 
 :global(.light) .cell[data-window] {
-  background: #e8e8fa;
+  background: var(--cell-window-bg);
 }
 
 /* Asterisk and center-dot cells carry a purple base in the overlay's own hue
@@ -80,29 +80,13 @@
 .cell[data-asterisk],
 .cell[data-center-dot],
 .cell[data-girandola] {
-  background: #3b3b4f;
+  background: var(--cell-special-bg);
 }
 
 :global(.light) .cell[data-asterisk],
 :global(.light) .cell[data-center-dot],
 :global(.light) .cell[data-girandola] {
-  background: #e8e8fa;
-}
-
-.cell[data-overlap='two'] {
-  background: #222248;
-}
-
-.cell[data-overlap='three'] {
-  background: #272751;
-}
-
-.cell[data-overlap='four'] {
-  background: #2c2c5a;
-}
-
-.cell[data-overlap='five'] {
-  background: #313163;
+  background: var(--cell-special-bg);
 }
 
 .cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
@@ -112,7 +96,7 @@
   bottom: -1px;
   right: -1px;
   width: 3px;
-  background: #4a4a5e;
+  background: var(--box-boundary);
   z-index: 1;
   pointer-events: none;
 }
@@ -124,7 +108,7 @@
   right: -1px;
   bottom: -1px;
   height: 3px;
-  background: #4a4a5e;
+  background: var(--box-boundary);
   z-index: 1;
   pointer-events: none;
 }
@@ -147,7 +131,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border: 3px solid #4a90d9;
+  border: 3px solid var(--cell-selected-border);
   z-index: 10;
   pointer-events: none;
 }
@@ -155,65 +139,57 @@
 /* Dim the selected cell's peers (its row, column, box, and any other house
    it shares). Subtler than the same-value highlight, which overrides it. */
 .cell[data-peer] {
-  background: #272948 !important;
+  background: var(--cell-peer-bg) !important;
 }
 
 :global(.light) .cell[data-peer] {
-  background: #ededf6 !important;
+  background: var(--cell-peer-bg) !important;
 }
 
 .cell[data-peer][data-overlay-borders],
 .cell[data-peer][data-butterfly],
 .cell[data-peer][data-cross],
-.cell[data-peer][data-flower],
-.cell[data-peer][data-overlap='two'],
-.cell[data-peer][data-overlap='three'],
-.cell[data-peer][data-overlap='four'],
-.cell[data-peer][data-overlap='five'] {
-  background: #2e2e44 !important;
+.cell[data-peer][data-flower] {
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-overlay-borders],
 :global(.light) .cell[data-peer][data-butterfly],
 :global(.light) .cell[data-peer][data-cross],
-:global(.light) .cell[data-peer][data-flower],
-:global(.light) .cell[data-peer][data-overlap='two'],
-:global(.light) .cell[data-peer][data-overlap='three'],
-:global(.light) .cell[data-peer][data-overlap='four'],
-:global(.light) .cell[data-peer][data-overlap='five'] {
-  background: #d8d8f0 !important;
+:global(.light) .cell[data-peer][data-flower] {
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 /* Window cells keep a distinct, lighter peer shade so the selected cell's
    window stays visible instead of dropping to the darker outer-cell peer. */
 .cell[data-peer][data-window] {
-  background: #2e2e44 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-window] {
-  background: #d8d8f0 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 .cell[data-peer][data-asterisk],
 .cell[data-peer][data-center-dot],
 .cell[data-peer][data-girandola] {
-  background: #2e2e44 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-asterisk],
 :global(.light) .cell[data-peer][data-center-dot],
 :global(.light) .cell[data-peer][data-girandola] {
-  background: #d8d8f0 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 /* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals
    stay visible instead of dropping to the plain outer-cell peer. */
 .cell[data-peer][data-diagonal] {
-  background: #2e2e44 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 :global(.light) .cell[data-peer][data-diagonal] {
-  background: #d8d8f0 !important;
+  background: var(--cell-peer-structural-bg) !important;
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
@@ -221,23 +197,15 @@
 .cell[data-same-value],
 .cell[data-same-value][data-butterfly],
 .cell[data-same-value][data-cross],
-.cell[data-same-value][data-flower],
-.cell[data-same-value][data-overlap='two'],
-.cell[data-same-value][data-overlap='three'],
-.cell[data-same-value][data-overlap='four'],
-.cell[data-same-value][data-overlap='five'] {
-  background: #1a4f4f !important;
+.cell[data-same-value][data-flower] {
+  background: var(--cell-same-value-bg) !important;
 }
 
 :global(.light) .cell[data-same-value],
 :global(.light) .cell[data-same-value][data-butterfly],
 :global(.light) .cell[data-same-value][data-cross],
-:global(.light) .cell[data-same-value][data-flower],
-:global(.light) .cell[data-same-value][data-overlap='two'],
-:global(.light) .cell[data-same-value][data-overlap='three'],
-:global(.light) .cell[data-same-value][data-overlap='four'],
-:global(.light) .cell[data-same-value][data-overlap='five'] {
-  background: #cdeaea !important;
+:global(.light) .cell[data-same-value][data-flower] {
+  background: var(--cell-same-value-bg) !important;
 }
 
 .cell[data-revealed] .value {
@@ -329,7 +297,7 @@
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 7px;
   font-weight: 600;
-  color: #aaaacc;
+  color: var(--candidate-text);
   line-height: 1;
 }
 
@@ -343,6 +311,34 @@
   border-radius: 50%;
   display: block;
   pointer-events: none;
+}
+
+.colorChip[data-color='1'] {
+  background: var(--color-1);
+}
+.colorChip[data-color='2'] {
+  background: var(--color-2);
+}
+.colorChip[data-color='3'] {
+  background: var(--color-3);
+}
+.colorChip[data-color='4'] {
+  background: var(--color-4);
+}
+.colorChip[data-color='5'] {
+  background: var(--color-5);
+}
+.colorChip[data-color='6'] {
+  background: var(--color-6);
+}
+.colorChip[data-color='7'] {
+  background: var(--color-7);
+}
+.colorChip[data-color='8'] {
+  background: var(--color-8);
+}
+.colorChip[data-color='9'] {
+  background: var(--color-9);
 }
 
 /* Given cells carry a small dot in the top-start corner so clue cells stay
@@ -382,25 +378,9 @@
 }
 
 :global(.light) .cell {
-  background: #ffffff;
-  color: #2c5f8a;
-  border-color: #d8d8e8;
-}
-
-:global(.light) .cell[data-overlap='two'] {
-  background: #eeeef8;
-}
-
-:global(.light) .cell[data-overlap='three'] {
-  background: #e9e9f6;
-}
-
-:global(.light) .cell[data-overlap='four'] {
-  background: #e4e4f4;
-}
-
-:global(.light) .cell[data-overlap='five'] {
-  background: #dfdff2;
+  background: var(--cell-bg-light);
+  color: var(--cell-text-light);
+  border-color: var(--cell-border);
 }
 
 :global(.light) .cell[data-given] {
@@ -409,11 +389,11 @@
 
 :global(.light) .cell[data-box-right]:not([data-selected])::after,
 :global(.light) .cell[data-box-bottom]:not([data-selected])::before {
-  background: #b8b8cc;
+  background: var(--box-boundary);
 }
 
 :global(.light) .candidate {
-  color: #555570;
+  color: var(--candidate-text);
 }
 
 :global(.light) .colorLabel {

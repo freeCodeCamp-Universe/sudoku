@@ -1,0 +1,16 @@
+import { describe, expect, it } from 'vitest';
+import { readThemeTokens } from './themeTokens';
+
+describe('readThemeTokens', () => {
+  it('should read a dark value from :root', () => {
+    expect(readThemeTokens()['--accent-blue'].dark).toBe('#99c9ff');
+  });
+
+  it('should read a light override when present', () => {
+    expect(readThemeTokens()['--accent-red'].light).toBe('#850000');
+  });
+
+  it('should fall back to the :root value when there is no light override', () => {
+    expect(readThemeTokens()['--accent-blue'].light).toBe('#99c9ff');
+  });
+});

@@ -9,9 +9,49 @@
   --text-bright: #ffffff;
   --accent-yellow: #f1be32;
   --accent-blue: #99c9ff;
+  --color-1: #e03535;
+  --color-2: #f07820;
+  --color-3: #d4a828;
+  --color-4: #33a850;
+  --color-5: #1aabaa;
+  --color-6: #3a80e0;
+  --color-7: #8e52e8;
+  --color-8: #d94080;
+  --color-9: #9898b0;
   --accent-green: #acd157;
   --accent-red: #ffadad;
   --focus-ring: #198eee;
+  --cell-border: #4a4a5e;
+  --cell-bg-light: #ffffff;
+  --cell-text-light: #2c5f8a;
+  --box-boundary: #4a4a5e;
+  --cell-diagonal-bg: #3b3b4f;
+  --cell-window-bg: #3b3b4f;
+  --cell-special-bg: #3b3b4f;
+  --cell-even-bg: #3b3b4f;
+  --cell-odd-bg: #12123a;
+  --cell-peer-even-bg: #2c2c4c;
+  --cell-peer-odd-bg: #1a1a40;
+  --cell-overlap-2-bg: #222248;
+  --cell-overlap-3-bg: #272751;
+  --cell-overlap-4-bg: #2c2c5a;
+  --cell-overlap-5-bg: #313163;
+  --cell-selected-border: #4a90d9;
+  --cell-peer-bg: #272948;
+  --cell-peer-structural-bg: #2e2e44;
+  --cell-same-value-bg: #1a4f4f;
+  --candidate-text: #aaaacc;
+  --overlay-argyle-stroke: #9898b8;
+  --overlay-arrow-stroke: #9898b8;
+  --overlay-cage-stroke: #9898b8;
+  --overlay-jigsaw-stroke: #9898b8;
+  --overlay-window-fill: #3b3b4f;
+  --overlay-special-fill: #3a1a6a;
+  --overlay-kropki-light: #f8f8ff;
+  --overlay-kropki-dark: #4050a0;
+  --overlay-kropki-ring: #5060a0;
+  --overlay-consecutive-fill: #d0d0e8;
+  --overlay-consecutive-stroke: #1b1b32;
 }
 
 .light {
@@ -25,6 +65,28 @@
   --text-bright: #0a0a23;
   --accent-green: #00471b;
   --accent-red: #850000;
+  --cell-border: #d8d8e8;
+  --box-boundary: #b8b8cc;
+  --cell-diagonal-bg: #e8e8fa;
+  --cell-window-bg: #e8e8fa;
+  --cell-special-bg: #e8e8fa;
+  --cell-even-bg: #e8e8fa;
+  --cell-odd-bg: #ffffff;
+  --cell-peer-even-bg: #d8d8f0;
+  --cell-peer-odd-bg: #ededf6;
+  --cell-overlap-2-bg: #eeeef8;
+  --cell-overlap-3-bg: #e9e9f6;
+  --cell-overlap-4-bg: #e4e4f4;
+  --cell-overlap-5-bg: #dfdff2;
+  --cell-peer-bg: #ededf6;
+  --cell-peer-structural-bg: #d8d8f0;
+  --cell-same-value-bg: #cdeaea;
+  --candidate-text: #555570;
+  --overlay-argyle-stroke: #8080a8;
+  --overlay-cage-stroke: #5555aa;
+  --overlay-jigsaw-stroke: #6060a0;
+  --overlay-window-fill: #e8e8fa;
+  --overlay-special-fill: #dcc8f4;
 }
 
 * {

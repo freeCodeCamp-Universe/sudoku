@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
+import { readThemeColor } from '@/app/readThemeColor';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 
@@ -19,8 +20,8 @@ export function CrossPreview() {
         const cells = 21;
         const cell = width / cells;
         const isLight = theme === 'light';
-        const fillOverlap3 = isLight ? '#d8d8ec' : '#252538';
-        const fillOverlap2 = isLight ? '#e8e8f8' : '#1f1f3a';
+        const fillOverlap3 = readThemeColor('--cell-overlap-3-bg');
+        const fillOverlap2 = readThemeColor('--cell-overlap-2-bg');
         const fillSingle = isLight ? '#f5f5f0' : '#1b1b32';
         const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
         const boxLine = isLight ? '#a0a0c0' : '#3b3b4f';
