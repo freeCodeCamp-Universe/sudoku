@@ -173,6 +173,19 @@ One new `src/game/testing/variantGameplay.test.ts`, parametrized over `allVarian
   for a played violation, then asserts on a **witness** cell that the special constraint flags but
   uniqueness does not — a conflict there can only come from the wired special constraint.
 
+- **Pass 3 (done):** real-DOM click-through added to `GamePage.test.tsx`
+  (`GamePage - conflict interaction`). Clicks a `Cell` + `NumberPad` digit that duplicates a peer
+  and asserts the conflict surfaces, then clears on erase. Two notes:
+  - The conflict is asserted via the cell's **accessible name** (`/in conflict/`), which is what
+    assistive tech announces. The warning `<svg>` is `aria-hidden` and, under the default
+    `checkEnabled` (true), also marks merely-incorrect cells, so it is not a clean conflict signal
+    and is not asserted directly.
+  - Done for classic only. The conflict-rendering plumbing in `Cell.tsx` (`data-conflict` +
+    warning icon, both derived purely from props) has no layout-specific branch, and multigrid
+    conflict surfacing is already covered at the `cellState` layer by the Pass 1 matrix. A
+    multigrid DOM test would need an artificial per-variant `generate` mock for negligible added
+    coverage, so it was intentionally skipped.
+
 - **Known pre-existing flake (out of scope):** `generationSoundness.test.ts`'s cross-seed
   uniqueness check occasionally fails because `src/engine/generate.ts` (and several variant
   structure derivations) use unseeded `Math.random`, so generation is not reproducible from a
