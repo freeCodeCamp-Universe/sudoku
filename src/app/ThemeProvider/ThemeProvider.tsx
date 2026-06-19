@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import '@/app/theme.css';
 import { ThemeContext, type Theme, type ThemeContextValue } from './context';
 import styles from './ThemeProvider.module.css';
@@ -18,7 +18,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [announcement, setAnnouncement] = useState('');
   const isMounted = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
