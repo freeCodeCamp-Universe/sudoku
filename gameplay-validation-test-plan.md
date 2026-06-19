@@ -112,7 +112,7 @@ Resolution:
 
 ## Proposed suite
 
-One new `src/game/testing/variantGameplay.test.tsx`, parametrized over `allVariants()`, reusing
+One new `src/game/testing/variantGameplay.test.ts`, parametrized over `allVariants()`, reusing
 `makeFixture` / the `findFixture`-across-seeds helper and a harness wrapping `GameProvider` +
 `useSudokuGrid`.
 
@@ -151,6 +151,32 @@ One new `src/game/testing/variantGameplay.test.tsx`, parametrized over `allVaria
   no `document.activeElement`.
 - `@/` import alias; CSS-module / logical-property rules are irrelevant here (test-only).
 - Verify gate before done: `pnpm build && pnpm test && pnpm lint`.
+
+## Implementation status
+
+- **Pass 1 (done):** `variantGameplay.test.ts` + `renderPlay` harness. Duplicate-in-house
+  conflict, check mode, solved transition, locked cells, and action coverage across all 32
+  variants. Folded in and deleted the classic-only `gameplaySimulation.test.tsx` and the played
+  cases of `cellStateDerivation.test.ts`.
+- **Pass 2 (done):** `specialConstraintGameplay.test.ts`, parametrized over the 9
+  constraint-bearing variants (kropki, killer, arrow, consecutive, greaterThan, evenOdd, chain,
+  sandwich, skyscraper). Two harness fixes were required:
+  1. `renderPlay` now attaches the variant's derived `structure` to the model (mirroring
+     `GamePage.tsx`). Without it `validate()` runs every special constraint against an undefined
+     structure, so they silently no-op and no special conflict can ever surface.
+  2. `renderPlay` accepts a pre-built `fixture`. Some variants derive structure with `Math.random`
+     (e.g. killer's cage carving), so `makeFixture(variant, seed)` is **not** reproducible across
+     calls. The test must reuse the exact fixture it inspected to find the violation.
+
+  Isolation technique: a single `cellState.conflict` boolean can't attribute a conflict to a
+  specific constraint, and most grid edits also trip a uniqueness conflict. So the test searches
+  for a played violation, then asserts on a **witness** cell that the special constraint flags but
+  uniqueness does not — a conflict there can only come from the wired special constraint.
+
+- **Known pre-existing flake (out of scope):** `generationSoundness.test.ts`'s cross-seed
+  uniqueness check occasionally fails because `src/engine/generate.ts` (and several variant
+  structure derivations) use unseeded `Math.random`, so generation is not reproducible from a
+  seed. Unrelated to this work; flagged for a separate fix.
 
 ## Decisions (resolved)
 
