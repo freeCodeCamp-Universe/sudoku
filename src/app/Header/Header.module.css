@@ -55,10 +55,9 @@
   outline-offset: 2px;
 }
 
-.helpBtn,
-.themeBtn {
-  width: 30px;
-  height: 30px;
+.helpBtn {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid var(--border);
   background: none;
@@ -74,18 +73,9 @@
     color 0.15s;
 }
 
-.helpBtn {
-  font-weight: 700;
-}
-
 .helpBtn:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
-}
-
-.themeBtn:hover {
-  border-color: var(--accent-yellow);
-  color: var(--accent-yellow);
 }
 
 .settingsWrap {
@@ -93,8 +83,8 @@
 }
 
 .settingsBtn {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid var(--border);
   background: none;
@@ -213,8 +203,7 @@
   color: #6a6a7a;
 }
 
-.helpBtn:focus-visible,
-.themeBtn:focus-visible {
+.helpBtn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }

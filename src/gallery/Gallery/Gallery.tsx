@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useTheme } from '@/app/ThemeProvider';
+import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import type { Variant } from '@/engine/types';
 import { VariantCard } from '@/gallery/VariantCard';
 import { variantRegistry } from '@/variants/registry';
@@ -67,7 +67,6 @@ export function Gallery() {
   const [sortMode, setSortMode] = useState<SortMode>(
     () => (localStorage.getItem('sudoku-sort') as SortMode | null) ?? 'popularity'
   );
-  const { theme, toggleTheme } = useTheme();
   const visibleVariants = useMemo(
     () => sortVariants(filterVariants(ALL_VARIANTS, query), sortMode),
     [query, sortMode]
@@ -77,14 +76,7 @@ export function Gallery() {
     <main id="main-content" tabIndex={-1} className={styles.main}>
       <header className={styles.header}>
         <div className={styles.headerTopBar}>
-          <button
-            type="button"
-            className={styles.themeBtn}
-            aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
-            onClick={toggleTheme}
-          >
-            {theme === 'light' ? '☽' : '☼'}
-          </button>
+          <ThemeToggleButton />
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
         <p className={styles.subheading}>32 sudoku variants for every skill level</p>
