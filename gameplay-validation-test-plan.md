@@ -186,10 +186,15 @@ One new `src/game/testing/variantGameplay.test.ts`, parametrized over `allVarian
     multigrid DOM test would need an artificial per-variant `generate` mock for negligible added
     coverage, so it was intentionally skipped.
 
-- **Known pre-existing flake (out of scope):** `generationSoundness.test.ts`'s cross-seed
-  uniqueness check occasionally fails because `src/engine/generate.ts` (and several variant
-  structure derivations) use unseeded `Math.random`, so generation is not reproducible from a
-  seed. Unrelated to this work; flagged for a separate fix.
+- **Fixed flake (`generationSoundness.test.ts`):** the cross-seed membership test for `samurai`
+  intermittently failed with `Test timed out in 5000ms`. Root cause is **not** non-determinism —
+  `generate(model, …, seeded(s))` and `solve(max:2)` are fully deterministic (both search paths
+  keep a fixed branch order when no rng is passed; the only hardcoded `Math.random` is in killer's
+  `deriveStructure`, which this test never runs). The membership test does genuinely heavy work for
+  the 369-cell samurai model (5x generate + uniqueness checks, ~5s nominal) and crosses the default
+  5s per-test timeout under parallel CPU load. Fix: raised the per-test timeout on both
+  `generationSoundness` `it.each` blocks to 30s. Reproduced at ~25% of full-suite runs (2/8) before
+  the fix; 0/8 after.
 
 ## Decisions (resolved)
 
