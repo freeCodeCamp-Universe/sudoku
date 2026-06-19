@@ -28,8 +28,8 @@ Branch: `test/board-color` · 9 tasks · order **A1 → A2 → A3 → A4 → A5 
 | A2  | theme.css token reader (`readThemeTokens`) + canvas bridge (`readThemeColor`)                       | —          | done   |
 | A3  | Remove dead overlap board code (`overlap` prop, `[data-overlap]` CSS, 2 absence tests)              | —          | done   |
 | A4  | Migrate cell colors → theme.css tokens; value-pin + integrity tests                                 | A1, A2     | done   |
-| A5  | Migrate overlay colors (cage/argyle strokes) → theme.css tokens                                     | A2         | todo   |
-| A6  | Color palette → CSS via `data-color` (`--color-1..9`); Cell, NumberPad, color.ts                    | A2         | todo   |
+| A5  | Migrate overlay colors (cage/argyle strokes) → theme.css tokens                                     | A2         | done   |
+| A6  | Color palette → CSS via `data-color` (`--color-1..9`); Cell, NumberPad, color.ts                    | A2         | done   |
 | A7  | Unify gallery preview canvas colors via `readThemeColor`                                            | A2, A4     | todo   |
 | A8  | Per-variant color spec table + wiring tests; resolve `chain.color` decision                         | A1, A2, A4 | todo   |
 | A9  | Generate `docs/colors.md` + drift test                                                              | A2, A8     | todo   |
