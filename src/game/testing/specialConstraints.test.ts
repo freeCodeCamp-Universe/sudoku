@@ -210,7 +210,9 @@ describe('special-constraint conflicts', () => {
 
       const bad: Values = new Map(fixture.solution);
       const target = arrowDef.path[0] as CellId;
-      bad.set(target, 9);
+      const currentValue = fixture.solution.get(target) ?? 0;
+      const replacement = currentValue < 9 ? currentValue + 1 : currentValue - 1;
+      bad.set(target, replacement);
 
       expect(validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'arrowSum')).toBe(
         true
@@ -312,28 +314,15 @@ describe('special-constraint conflicts', () => {
       ).toBe(false);
     });
 
-    it('should flag a row or column whose visible count no longer matches the clue', () => {
-      const fixture = findFixture(
-        skyscraper,
-        (structure) =>
-          Boolean(
-            (
-              structure as
-                | {
-                    clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] };
-                  }
-                | undefined
-            )?.clues?.start?.some((value) => value > 0)
-          ) ||
-          Boolean(
-            (
-              structure as
-                | {
-                    clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] };
-                  }
-                | undefined
-            )?.clues?.top?.some((value) => value > 0)
-          )
+    it('should flag a row whose visible count no longer matches its start clue', () => {
+      const fixture = findFixture(skyscraper, (structure) =>
+        Boolean(
+          (
+            structure as
+              | { clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] } }
+              | undefined
+          )?.clues?.start?.some((value) => value > 0)
+        )
       );
       const clues = (
         fixture.structure as
@@ -341,9 +330,15 @@ describe('special-constraint conflicts', () => {
           | undefined
       )?.clues;
       const rowIndex = clues?.start?.findIndex((value) => value > 0) ?? -1;
-      const targetCell = rowIndex >= 0 ? (('r' + rowIndex + 'c0') as CellId) : ('r0c0' as CellId);
+      if (rowIndex < 0) throw new Error('no skyscraper start clue in skyscraper fixture');
+      const clue = clues?.start?.[rowIndex] ?? 0;
+
+      // Build a row whose visible-from-start count is provably different from the clue:
+      // ascending [1..9] has visible count 9, descending has visible count 1.
+      const ascending = range(9).map((n) => n + 1);
+      const arrangement = clue === 9 ? [...ascending].reverse() : ascending;
       const bad: Values = new Map(fixture.solution);
-      bad.set(targetCell, 1);
+      arrangement.forEach((value, col) => bad.set(cellId(rowIndex, col), value));
 
       expect(
         validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'skyscraperVisibility')
