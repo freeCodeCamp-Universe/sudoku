@@ -82,7 +82,12 @@ describe('useSudokuGrid cell state derivation', () => {
     const correctId = 'r0c0' as CellId;
     const wrongId = 'r0c1' as CellId;
     const correctValue = fixture.solution.get(correctId)! as SymbolValue;
-    const wrongValue = ((fixture.solution.get(wrongId)! % 9) + 1) as SymbolValue;
+    // Give the wrong cell the correct cell's value so they collide in their shared row/box.
+    // That forces the correct cell into the conflict set, so its `conflict === false`
+    // assertion below actually exercises the "correct suppresses conflict" path. The value
+    // still differs from the wrong cell's own solution (no row has duplicates), so its
+    // `correct === false` assertion holds too.
+    const wrongValue = correctValue;
     const values: Values = new Map([
       [correctId, correctValue],
       [wrongId, wrongValue],
