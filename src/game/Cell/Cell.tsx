@@ -141,8 +141,8 @@ export function Cell({
               aria-hidden="true"
               className={styles.colorChip}
               data-color-chip
+              data-color={value}
               data-testid="cell-color-chip"
-              style={{ background: renderSymbol(value) }}
             />
             {colorblind && (
               <span aria-hidden="true" className={styles.colorLabel}>

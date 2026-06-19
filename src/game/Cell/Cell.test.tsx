@@ -149,7 +149,7 @@ describe('Cell', () => {
     const colorProps = {
       ...baseProps,
       value: 3 as number,
-      renderSymbol: (_value: number) => '#d4a828',
+      renderSymbol: (value: number) => String(value),
       symbolKind: 'color' as const,
       colorblind: true,
       'aria-label': 'Yellow, row 1, column 1',
@@ -167,10 +167,10 @@ describe('Cell', () => {
       expect(screen.getByText('3')).toBeTruthy();
     });
 
-    it('should set the chip background to the color returned by renderSymbol', () => {
+    it('should tag the chip with its color index so CSS can paint it', () => {
       render(<Cell {...colorProps} />);
 
-      expect(screen.getByTestId('cell-color-chip')).toHaveStyle({ background: '#d4a828' });
+      expect(screen.getByTestId('cell-color-chip')).toHaveAttribute('data-color', '3');
     });
 
     it('should render a given dot when a color cell is given', () => {

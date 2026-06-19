@@ -313,6 +313,34 @@
   pointer-events: none;
 }
 
+.colorChip[data-color='1'] {
+  background: var(--color-1);
+}
+.colorChip[data-color='2'] {
+  background: var(--color-2);
+}
+.colorChip[data-color='3'] {
+  background: var(--color-3);
+}
+.colorChip[data-color='4'] {
+  background: var(--color-4);
+}
+.colorChip[data-color='5'] {
+  background: var(--color-5);
+}
+.colorChip[data-color='6'] {
+  background: var(--color-6);
+}
+.colorChip[data-color='7'] {
+  background: var(--color-7);
+}
+.colorChip[data-color='8'] {
+  background: var(--color-8);
+}
+.colorChip[data-color='9'] {
+  background: var(--color-9);
+}
+
 /* Given cells carry a small dot in the top-start corner so clue cells stay
    distinguishable from player-filled ones once the value is shown as a plain
    color circle. Revealed cells use the same mark in the hint's golden hue. */

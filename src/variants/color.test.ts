@@ -3,7 +3,8 @@ import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import { validate } from '@/engine/validate';
-import { color, COLOR_PALETTE } from './color';
+import { readThemeTokens } from '@/game/testing/themeTokens';
+import { color } from './color';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -15,6 +16,13 @@ function seeded(seed: number): () => number {
 }
 
 describe('color variant', () => {
+  it('should define the nine palette colors in theme.css', () => {
+    const tokens = readThemeTokens();
+
+    expect(tokens['--color-1'].dark).toBe('#e03535');
+    expect(tokens['--color-9'].dark).toBe('#9898b0');
+  });
+
   it('should have 9x9 grid layout', () => {
     expect(color.layout).toEqual({ kind: 'grid', size: 9, box: { rows: 3, cols: 3 } });
   });
@@ -25,15 +33,6 @@ describe('color variant', () => {
 
   it('should have symbolKind color', () => {
     expect(color.symbolKind).toBe('color');
-  });
-
-  it('should export COLOR_PALETTE with 9 entries', () => {
-    expect(COLOR_PALETTE).toHaveLength(9);
-  });
-
-  it('should map renderSymbol(1) to red and renderSymbol(9) to silver', () => {
-    expect(color.renderSymbol?.(1)).toBe('#e03535');
-    expect(color.renderSymbol?.(9)).toBe('#9898b0');
   });
 
   it('should include colorNames with 9 entries', () => {

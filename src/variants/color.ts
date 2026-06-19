@@ -1,17 +1,5 @@
-import type { SymbolValue, Variant } from '@/engine/types';
+import type { Variant } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
-
-export const COLOR_PALETTE = [
-  '#e03535',
-  '#f07820',
-  '#d4a828',
-  '#33a850',
-  '#1aabaa',
-  '#3a80e0',
-  '#8e52e8',
-  '#d94080',
-  '#9898b0',
-];
 
 const COLOR_NAMES = [
   'Red',
@@ -71,8 +59,5 @@ export const color: Variant & { colorNames: string[] } = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: [],
-  renderSymbol(value: SymbolValue): string {
-    return COLOR_PALETTE[value - 1] ?? '#000000';
-  },
   colorNames: COLOR_NAMES,
 };

@@ -43,11 +43,7 @@ export function NumberPad({
               onClick={() => onEnter(symbol)}
             >
               {symbolKind === 'color' ? (
-                <span
-                  aria-hidden="true"
-                  className={styles.colorChip}
-                  style={{ background: renderSymbol(symbol) }}
-                >
+                <span aria-hidden="true" className={styles.colorChip} data-color={symbol}>
                   <span className={styles.colorLabel}>{symbol}</span>
                 </span>
               ) : (
