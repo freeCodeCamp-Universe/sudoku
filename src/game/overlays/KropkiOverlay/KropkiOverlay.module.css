@@ -8,13 +8,13 @@
 }
 
 .dotWhite {
-  fill: #f8f8ff;
-  stroke: #5060a0;
+  fill: var(--overlay-kropki-light);
+  stroke: var(--overlay-kropki-ring);
   stroke-width: 1.5px;
 }
 
 .dotBlack {
-  fill: #4050a0;
-  stroke: #f8f8ff;
+  fill: var(--overlay-kropki-dark);
+  stroke: var(--overlay-kropki-light);
   stroke-width: 1px;
 }

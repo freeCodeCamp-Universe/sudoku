@@ -6,12 +6,11 @@
 }
 
 .asteriskCell {
-  fill: #3a1a6a;
+  fill: var(--overlay-special-fill);
   fill-opacity: 0.45;
   stroke: none;
 }
 
 :global(html.light) .asteriskCell {
-  fill: #dcc8f4;
   fill-opacity: 0.65;
 }

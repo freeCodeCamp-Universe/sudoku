@@ -9,16 +9,16 @@
 
 .bulbCircle {
   fill: none;
-  stroke: #9898b8;
+  stroke: var(--overlay-arrow-stroke);
   stroke-width: 1.5px;
 }
 
 .arrowLine {
   fill: none;
-  stroke: #9898b8;
+  stroke: var(--overlay-arrow-stroke);
   stroke-width: 1.5px;
 }
 
 .arrowhead {
-  fill: #9898b8;
+  fill: var(--overlay-arrow-stroke);
 }

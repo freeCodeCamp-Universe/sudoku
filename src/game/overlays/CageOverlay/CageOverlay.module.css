@@ -8,20 +8,16 @@
 }
 
 .cageLine {
-  stroke: #9898b8;
+  stroke: var(--overlay-cage-stroke);
   stroke-width: 1.5px;
   stroke-dasharray: 4 3;
-}
-
-:global(.light) .cageLine {
-  stroke: #5555aa;
 }
 
 .sumLabel {
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;
   font-weight: 700;
-  fill: #f1be32;
+  fill: var(--accent-yellow);
   dominant-baseline: hanging;
 }
 
