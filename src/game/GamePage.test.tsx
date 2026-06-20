@@ -214,3 +214,43 @@ describe('GamePage - Classic integration', () => {
     vi.useRealTimers();
   });
 });
+
+// Pass 3 (gap G2): clicking a real Cell + NumberPad digit that duplicates a peer
+// must surface the conflict in the rendered DOM. The mocked generate leaves rows
+// 4+ empty, so r3c0 and r3c1 (Row 4, columns 1-2) are guaranteed empty peers in
+// one box. The conflict marker is asserted via the cell's accessible name ("in
+// conflict"), which is what assistive tech announces; the warning <svg> is
+// aria-hidden and, under the default check mode, also marks merely-incorrect
+// cells, so it is not a clean conflict signal.
+describe('GamePage - conflict interaction', () => {
+  it('should mark both cells in conflict when a played digit duplicates a peer', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    await user.click(screen.getByRole('gridcell', { name: /Row 4, column 1,/i }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('gridcell', { name: /Row 4, column 2,/i }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    expect(
+      screen.getByRole('gridcell', { name: /Row 4, column 1,.*in conflict/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('gridcell', { name: /Row 4, column 2,.*in conflict/i })
+    ).toBeInTheDocument();
+  });
+
+  it('should clear the conflict when one duplicate is erased', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    await user.click(screen.getByRole('gridcell', { name: /Row 4, column 1,/i }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('gridcell', { name: /Row 4, column 2,/i }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    // The second cell stays selected, so Erase empties it and breaks the duplicate.
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+
+    expect(screen.queryByRole('gridcell', { name: /in conflict/i })).not.toBeInTheDocument();
+  });
+});
