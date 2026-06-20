@@ -37,33 +37,6 @@
   justify-content: flex-end;
 }
 
-.themeBtn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--text-muted);
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    border-color 0.15s,
-    color 0.15s;
-}
-
-.themeBtn:hover {
-  border-color: var(--accent-yellow);
-  color: var(--accent-yellow);
-}
-
-.themeBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
 .controls {
   display: grid;
   gap: 16px;

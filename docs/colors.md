@@ -15,7 +15,7 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--text-primary` | #f5f6f7 | #1a1a2e |
 | `--text-bright` | #ffffff | #0a0a23 |
 | `--accent-yellow` | #f1be32 | #f1be32 |
-| `--accent-blue` | #99c9ff | #99c9ff |
+| `--accent-blue` | #99c9ff | #1565c0 |
 | `--color-1` | #e03535 | #e03535 |
 | `--color-2` | #f07820 | #f07820 |
 | `--color-3` | #d4a828 | #d4a828 |
