@@ -36,16 +36,18 @@
   --cell-shaded-bg: #9090a8;
   --cell-shaded-text: #0a0a23;
   --cell-shaded-selected-border: #14225e;
-  --cell-peer-even-bg: #2c2c4c;
-  --cell-peer-odd-bg: #1a1a40;
   --cell-overlap-2-bg: #222248;
   --cell-overlap-3-bg: #272751;
   --cell-overlap-4-bg: #2c2c5a;
   --cell-overlap-5-bg: #313163;
   --cell-selected-border: #4a90d9;
-  --cell-peer-bg: #272948;
-  --cell-peer-structural-bg: #2e2e44;
-  --cell-same-value-bg: #1a4f4f;
+  /* Transient highlights composited over the cell's structural color via
+     background-image, so region shading (shaded / window / special) shows
+     through instead of being replaced. Translucent (8-digit RRGGBBAA); peer is
+     a subtle blue, same-value a stronger teal that wins over peer by source
+     order. Advisory (not gated) — these are WCAG convenience cues. */
+  --cell-peer-overlay: #8ea8ff29;
+  --cell-same-value-overlay: #1fb5a852;
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
@@ -79,15 +81,12 @@
   --box-boundary: #b8b8cc;
   --cell-window-bg: #e8e8fa;
   --cell-special-bg: #e8e8fa;
-  --cell-peer-even-bg: #d8d8f0;
-  --cell-peer-odd-bg: #ededf6;
   --cell-overlap-2-bg: #eeeef8;
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
   --cell-overlap-5-bg: #dfdff2;
-  --cell-peer-bg: #ededf6;
-  --cell-peer-structural-bg: #d8d8f0;
-  --cell-same-value-bg: #cdeaea;
+  --cell-peer-overlay: #3a4aa01a;
+  --cell-same-value-overlay: #1fa89c57;
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
   --overlay-cage-stroke: #5555aa;

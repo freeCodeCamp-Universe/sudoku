@@ -10,7 +10,7 @@
   color: var(--accent-blue);
   border: 1px solid var(--cell-border);
   cursor: pointer;
-  background: var(--bg-secondary);
+  background-color: var(--bg-secondary);
   user-select: none;
   transition: background 0.08s;
   position: relative;
@@ -20,14 +20,15 @@
    one tint strong enough to clear 3:1 against the board (WCAG 1.4.11). The tint
    is light in both themes, so digits on it switch to near-black to hold 4.5:1;
    the correct/hint hues cannot survive on the tint and collapse to the same ink.
-   The :not(...) guard yields to the peer / same-value / error backgrounds, which
-   restore the normal dark fill where the default light text stays readable. */
+   Peer and same-value highlights are now translucent overlays that composite
+   over this tint, so the near-black ink stays readable through them and only
+   the opaque error fill (white text) is excluded. */
 .cell[data-shaded] {
-  background: var(--cell-shaded-bg);
+  background-color: var(--cell-shaded-bg);
 }
 
-.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .value,
-.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .candidate {
+.cell[data-shaded]:not([data-error]) .value,
+.cell[data-shaded]:not([data-error]) .candidate {
   color: var(--cell-shaded-text);
 }
 
@@ -47,28 +48,12 @@
   font-size: 0.82rem;
 }
 
-.cell[data-peer][data-even] {
-  background: var(--cell-peer-even-bg) !important;
-}
-
-.cell[data-peer][data-odd] {
-  background: var(--cell-peer-odd-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-even] {
-  background: var(--cell-peer-even-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-odd] {
-  background: var(--cell-peer-odd-bg) !important;
-}
-
 .cell[data-window] {
-  background: var(--cell-window-bg);
+  background-color: var(--cell-window-bg);
 }
 
 :global(.light) .cell[data-window] {
-  background: var(--cell-window-bg);
+  background-color: var(--cell-window-bg);
 }
 
 /* Asterisk and center-dot cells carry a purple base in the overlay's own hue
@@ -76,12 +61,12 @@
    instead of dropping to a grey base. */
 .cell[data-asterisk],
 .cell[data-center-dot] {
-  background: var(--cell-special-bg);
+  background-color: var(--cell-special-bg);
 }
 
 :global(.light) .cell[data-asterisk],
 :global(.light) .cell[data-center-dot] {
-  background: var(--cell-special-bg);
+  background-color: var(--cell-special-bg);
 }
 
 .cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
@@ -131,76 +116,21 @@
   pointer-events: none;
 }
 
-/* Dim the selected cell's peers (its row, column, box, and any other house
-   it shares). Subtler than the same-value highlight, which overrides it. */
+/* Dim the selected cell's peers (its row, column, box, and any other house it
+   shares) with one translucent overlay layered via background-image. It
+   composites over whatever structural color the cell already has — plain,
+   shaded, window, special, or an overlapping-grid base — so a single token
+   replaces the former per-region peer fills and the region's own shading shows
+   through. Subtler than the same-value highlight, which is declared after it
+   and therefore wins the background-image when a cell is both. */
 .cell[data-peer] {
-  background: var(--cell-peer-bg) !important;
+  background-image: linear-gradient(var(--cell-peer-overlay), var(--cell-peer-overlay));
 }
 
-:global(.light) .cell[data-peer] {
-  background: var(--cell-peer-bg) !important;
-}
-
-.cell[data-peer][data-overlay-borders],
-.cell[data-peer][data-butterfly],
-.cell[data-peer][data-cross],
-.cell[data-peer][data-flower] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-overlay-borders],
-:global(.light) .cell[data-peer][data-butterfly],
-:global(.light) .cell[data-peer][data-cross],
-:global(.light) .cell[data-peer][data-flower] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-/* Window cells keep a distinct, lighter peer shade so the selected cell's
-   window stays visible instead of dropping to the darker outer-cell peer. */
-.cell[data-peer][data-window] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-window] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-.cell[data-peer][data-asterisk],
-.cell[data-peer][data-center-dot],
-.cell[data-peer][data-girandola] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-asterisk],
-:global(.light) .cell[data-peer][data-center-dot],
-:global(.light) .cell[data-peer][data-girandola] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-/* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals
-   stay visible instead of dropping to the plain outer-cell peer. */
-.cell[data-peer][data-diagonal] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-diagonal] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-/* Highlight every cell sharing the selected cell's value. Teal keeps it
-   distinct from correct (green). */
-.cell[data-same-value],
-.cell[data-same-value][data-butterfly],
-.cell[data-same-value][data-cross],
-.cell[data-same-value][data-flower] {
-  background: var(--cell-same-value-bg) !important;
-}
-
-:global(.light) .cell[data-same-value],
-:global(.light) .cell[data-same-value][data-butterfly],
-:global(.light) .cell[data-same-value][data-cross],
-:global(.light) .cell[data-same-value][data-flower] {
-  background: var(--cell-same-value-bg) !important;
+/* Highlight every cell sharing the selected cell's value with a stronger teal
+   overlay, distinct from correct (green) and from the peer blue. */
+.cell[data-same-value] {
+  background-image: linear-gradient(var(--cell-same-value-overlay), var(--cell-same-value-overlay));
 }
 
 .cell[data-revealed] .value {
@@ -363,7 +293,7 @@
 }
 
 :global(.light) .cell {
-  background: var(--cell-bg-light);
+  background-color: var(--cell-bg-light);
   color: var(--cell-text-light);
   border-color: var(--cell-border);
 }
@@ -393,11 +323,15 @@
 /* Error fill for cells that are incorrect or in conflict. A saturated red
    background (not hue-only text) so the state reads by luminance for colorblind
    users; the screen-reader announcement still distinguishes incorrect vs
-   in-conflict. Placed last and marked !important to override the peer /
-   same-value background rules, which are themselves !important. */
+   in-conflict. It sets the opaque background-color and clears any peer /
+   same-value overlay (background-image). Declared last, so ordinary source
+   order alone makes it win over the structural tints and the translucent
+   highlights — no forced overrides. The light selector matches the structural
+   light-theme rules' specificity so it also wins on window / special cells. */
 .cell[data-error],
 :global(.light) .cell[data-error] {
-  background: var(--cell-error-bg) !important;
+  background-color: var(--cell-error-bg);
+  background-image: none;
 }
 
 .cell[data-error] .value {

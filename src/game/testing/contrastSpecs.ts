@@ -39,16 +39,11 @@ const SHADED_TEXT = '--cell-shaded-text';
 // Cell-background tints that do NOT need 3:1 vs base, with the reason:
 //  - REDUNDANT: a drawn overlay (windoku window fill, asterisk / center-dot
 //    SVG) already marks the region, so the tint is decorative, not the sole cue.
-//  - CONVENIENCE: selection-time highlights (peer dim, same-value) that aid but
-//    don't encode the puzzle; they stay advisory.
+// Selection-time highlights (peer dim, same-value) are no longer opaque `-bg`
+// tints — they are translucent `-overlay` layers composited over the structural
+// color, outside this `-bg` enumeration, and remain advisory by nature.
 const REDUNDANT = new Set(['--cell-window-bg', '--cell-special-bg']);
-const CONVENIENCE = new Set([
-  '--cell-peer-bg',
-  '--cell-peer-even-bg',
-  '--cell-peer-odd-bg',
-  '--cell-peer-structural-bg',
-  '--cell-same-value-bg',
-]);
+const CONVENIENCE = new Set<string>([]);
 
 // `--cell-overlap-*` tints render only in gallery previews (canvas depth
 // shading), never on the playable board, so they are out of scope here.
@@ -99,11 +94,6 @@ function cellTintPairs(tokens: Record<string, TokenValue>): ContrastPair[] {
     }
 
     for (const role of Object.keys(TEXT)) {
-      // Empty cells can never be same-value (no value to match), so the
-      // candidate pencil-mark color never lands on the same-value fill.
-      if (role === 'candidate' && token === '--cell-same-value-bg') {
-        continue;
-      }
       for (const theme of BOTH) {
         pairs.push({
           label: `${role} text on ${token}`,
