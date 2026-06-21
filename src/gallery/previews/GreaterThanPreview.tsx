@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 
 export function GreaterThanPreview() {
   const { theme } = useTheme();
@@ -15,10 +16,8 @@ export function GreaterThanPreview() {
         const borderColor = isLight ? '#5060a0' : '#9898b8';
         const symbolColor = '#e08860';
 
-        if (isLight) {
-          ctx.fillStyle = '#f5f5f0';
-          ctx.fillRect(0, 0, width, width);
-        }
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(0, 0, width, width);
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.7;

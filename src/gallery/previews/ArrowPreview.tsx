@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 
 export function ArrowPreview() {
   const { theme } = useTheme();
@@ -17,10 +18,8 @@ export function ArrowPreview() {
         const circleFill = isLight ? '#f0f0fc' : '#1a1d27';
         const textColor = isLight ? '#2a2a40' : '#d0d0d5';
 
-        if (isLight) {
-          ctx.fillStyle = '#f5f5f0';
-          ctx.fillRect(0, 0, width, width);
-        }
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(0, 0, width, width);
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.7;

@@ -73,18 +73,17 @@
   flex-shrink: 0;
 }
 
+/* Swatches mirror the board: even cells carry the theme-invariant shaded tint,
+   odd cells stay on the plain cell background (dark base / white in light). */
 .legendSwatchEven {
-  background: #3b3b4f;
+  background: var(--cell-shaded-bg);
 }
 .legendSwatchOdd {
-  background: #12123a;
+  background: var(--bg-secondary);
 }
 
-:global(.light) .legendSwatchEven {
-  background: #e8e8fa;
-}
 :global(.light) .legendSwatchOdd {
-  background: #ffffff;
+  background: var(--cell-bg-light);
 }
 
 .checkPrompt {

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 
 const N = 5;
 
@@ -45,10 +46,8 @@ export function KropkiPreview() {
         const blackDotFill = isLight ? '#4050a0' : '#9898cc';
         const radius = Math.max(3, Math.round((5 * cell) / 52));
 
-        if (isLight) {
-          ctx.fillStyle = '#f5f5f0';
-          ctx.fillRect(0, 0, width, width);
-        }
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(0, 0, width, width);
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.7;

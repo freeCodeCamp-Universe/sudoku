@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 import styles from './Preview.module.css';
 
 const DIGITS: Array<[number, number, number]> = [
@@ -26,9 +27,11 @@ export function SujikenPreview() {
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.6;
+        ctx.fillStyle = previewBaseFill(isLight);
 
         for (let row = 0; row < n; row += 1) {
           for (let col = 0; col <= row; col += 1) {
+            ctx.fillRect(offset + col * size, offset + row * size, size, size);
             ctx.strokeRect(offset + col * size, offset + row * size, size, size);
           }
         }

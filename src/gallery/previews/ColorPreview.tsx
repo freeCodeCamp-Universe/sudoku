@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 import { hashVariantId, seeded } from './seeded';
 
 const CELLS = 9;
@@ -51,10 +52,8 @@ export function ColorPreview({ variantId }: { variantId: string }) {
         const boxLine = isLight ? '#8080a8' : '#3b3b4f';
         const borderColor = isLight ? '#5060a0' : '#9898b8';
 
-        if (isLight) {
-          ctx.fillStyle = '#f5f5f0';
-          ctx.fillRect(0, 0, width, width);
-        }
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(0, 0, width, width);
 
         for (let i = 0; i < 81; i += 1) {
           const colorIdx = cellColors[i];
