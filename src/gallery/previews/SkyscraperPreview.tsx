@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 
 export function SkyscraperPreview() {
   const { theme } = useTheme();
@@ -14,6 +15,9 @@ export function SkyscraperPreview() {
         const gridColor = isLight ? '#c8c8d8' : '#2a2a3a';
         const clueColor = isLight ? '#5060a0' : '#9898b8';
         const fillColor = isLight ? '#dcdcf8' : '#28284c';
+
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(offset, offset, 6 * cell, 6 * cell);
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.7;

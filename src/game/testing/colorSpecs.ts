@@ -26,31 +26,31 @@ export const colorSpecs: ColorSpec[] = [
     variant: sudokuX,
     cell: 'r0c0',
     marker: 'data-diagonal',
-    token: '--cell-diagonal-bg',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
     variantImport: 'windoku',
     variant: windoku,
     cell: 'r1c1',
-    marker: 'data-window',
-    token: '--cell-window-bg',
+    marker: 'data-shaded',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
     variantImport: 'asterisk',
     variant: asterisk,
     cell: 'r4c4',
-    marker: 'data-asterisk',
-    token: '--cell-special-bg',
+    marker: 'data-shaded',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
     variantImport: 'center-dot',
     variant: centerDot,
     cell: 'r1c1',
-    marker: 'data-center-dot',
-    token: '--cell-special-bg',
+    marker: 'data-shaded',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
@@ -58,7 +58,7 @@ export const colorSpecs: ColorSpec[] = [
     variant: girandola,
     cell: 'r0c0',
     marker: 'data-girandola',
-    token: '--cell-special-bg',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
@@ -66,22 +66,18 @@ export const colorSpecs: ColorSpec[] = [
     variant: evenOdd,
     cell: 'r0c3',
     marker: 'data-even',
-    token: '--cell-even-bg',
-    kind: 'value-derived',
-  },
-  {
-    variantImport: 'even-odd',
-    variant: evenOdd,
-    cell: 'r0c0',
-    marker: 'data-odd',
-    token: '--cell-odd-bg',
+    token: '--cell-shaded-bg',
     kind: 'value-derived',
   },
 ];
 
+// Even-odd marks only even cells (shaded); odd cells are unshaded base, so they
+// are not a color marker. Diagonal, girandola, windoku windows, asterisk,
+// center-dot, and even all share --cell-shaded-bg.
+//
 // Colors NOT covered by this table, and where each is covered instead:
-// - cell fill / box / diagonal / window / special / even / odd backgrounds:
-//   theme.css tokens, value-pinned in Task 4 / asserted here.
+// - cell fill / box / shaded backgrounds:
+//   theme.css tokens, value-pinned in cellColors.test.ts / asserted here.
 // - cage strokes (killer) and argyle diagonal strokes: overlay theme tokens,
 //   covered by Task 5 overlay token tests.
 // - kropki dots, greater-than chevrons, arrow strokes, consecutive bars:

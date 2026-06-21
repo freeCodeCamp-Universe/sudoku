@@ -27,33 +27,29 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--color-9` | #9898b0 | #9898b0 |
 | `--accent-green` | #acd157 | #00471b |
 | `--accent-red` | #ffadad | #850000 |
+| `--cell-error-bg` | #cc3333 | #c62828 |
+| `--cell-error-text` | #ffffff | #ffffff |
+| `--cell-hint-text` | #f1be32 | #6b5300 |
 | `--focus-ring` | #198eee | #198eee |
-| `--cell-border` | #4a4a5e | #d8d8e8 |
+| `--cell-border` | #5e5e7a | #d8d8e8 |
 | `--cell-bg-light` | #ffffff | #ffffff |
 | `--cell-text-light` | #2c5f8a | #2c5f8a |
-| `--box-boundary` | #4a4a5e | #b8b8cc |
-| `--cell-diagonal-bg` | #3b3b4f | #e8e8fa |
-| `--cell-window-bg` | #3b3b4f | #e8e8fa |
-| `--cell-special-bg` | #3b3b4f | #e8e8fa |
-| `--cell-even-bg` | #3b3b4f | #e8e8fa |
-| `--cell-odd-bg` | #12123a | #ffffff |
-| `--cell-peer-even-bg` | #2c2c4c | #d8d8f0 |
-| `--cell-peer-odd-bg` | #1a1a40 | #ededf6 |
+| `--box-boundary` | #5e5e7a | #b8b8cc |
+| `--cell-shaded-bg` | #9090a8 | #9090a8 |
+| `--cell-shaded-text` | #0a0a23 | #0a0a23 |
 | `--cell-overlap-2-bg` | #222248 | #eeeef8 |
 | `--cell-overlap-3-bg` | #272751 | #e9e9f6 |
 | `--cell-overlap-4-bg` | #2c2c5a | #e4e4f4 |
 | `--cell-overlap-5-bg` | #313163 | #dfdff2 |
 | `--cell-selected-border` | #4a90d9 | #4a90d9 |
-| `--cell-peer-bg` | #272948 | #ededf6 |
-| `--cell-peer-structural-bg` | #2e2e44 | #d8d8f0 |
-| `--cell-same-value-bg` | #1a4f4f | #cdeaea |
+| `--cell-selected-edge` | #0a0a23 | #0a0a23 |
+| `--cell-peer-overlay` | #2e3850 | #c7d4f5 |
+| `--cell-same-value-overlay` | #533a73 | #ddd0f0 |
 | `--candidate-text` | #aaaacc | #555570 |
 | `--overlay-argyle-stroke` | #9898b8 | #8080a8 |
-| `--overlay-arrow-stroke` | #9898b8 | #9898b8 |
+| `--overlay-arrow-stroke` | #9898b8 | #767698 |
 | `--overlay-cage-stroke` | #9898b8 | #5555aa |
 | `--overlay-jigsaw-stroke` | #9898b8 | #6060a0 |
-| `--overlay-window-fill` | #3b3b4f | #e8e8fa |
-| `--overlay-special-fill` | #3a1a6a | #dcc8f4 |
 | `--overlay-kropki-light` | #f8f8ff | #f8f8ff |
 | `--overlay-kropki-dark` | #4050a0 | #4050a0 |
 | `--overlay-kropki-ring` | #5060a0 | #5060a0 |
@@ -64,10 +60,9 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 
 | Variant | Marker | Token | Kind |
 | --- | --- | --- | --- |
-| sudoku-x | `data-diagonal` | `--cell-diagonal-bg` | positional |
-| windoku | `data-window` | `--cell-window-bg` | positional |
-| asterisk | `data-asterisk` | `--cell-special-bg` | positional |
-| center-dot | `data-center-dot` | `--cell-special-bg` | positional |
-| girandola | `data-girandola` | `--cell-special-bg` | positional |
-| even-odd | `data-even` | `--cell-even-bg` | value-derived |
-| even-odd | `data-odd` | `--cell-odd-bg` | value-derived |
+| sudoku-x | `data-diagonal` | `--cell-shaded-bg` | positional |
+| windoku | `data-shaded` | `--cell-shaded-bg` | positional |
+| asterisk | `data-shaded` | `--cell-shaded-bg` | positional |
+| center-dot | `data-shaded` | `--cell-shaded-bg` | positional |
+| girandola | `data-girandola` | `--cell-shaded-bg` | positional |
+| even-odd | `data-even` | `--cell-shaded-bg` | value-derived |

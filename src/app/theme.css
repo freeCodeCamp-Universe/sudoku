@@ -20,33 +20,46 @@
   --color-9: #9898b0;
   --accent-green: #acd157;
   --accent-red: #ffadad;
+  --cell-error-bg: #cc3333;
+  --cell-error-text: #ffffff;
+  --cell-hint-text: #f1be32;
   --focus-ring: #198eee;
-  --cell-border: #4a4a5e;
+  --cell-border: #5e5e7a;
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
-  --box-boundary: #4a4a5e;
-  --cell-diagonal-bg: #3b3b4f;
-  --cell-window-bg: #3b3b4f;
-  --cell-special-bg: #3b3b4f;
-  --cell-even-bg: #3b3b4f;
-  --cell-odd-bg: #12123a;
-  --cell-peer-even-bg: #2c2c4c;
-  --cell-peer-odd-bg: #1a1a40;
+  --box-boundary: #5e5e7a;
+  /* Shaded constraint regions (even cells, sudoku-x diagonals, girandola,
+     windoku windows, asterisk, center-dot). One tint, theme-invariant, light
+     enough to clear 3:1 against the board in both themes (WCAG 1.4.11). Digits
+     on it use --cell-shaded-text. */
+  --cell-shaded-bg: #9090a8;
+  --cell-shaded-text: #0a0a23;
   --cell-overlap-2-bg: #222248;
   --cell-overlap-3-bg: #272751;
   --cell-overlap-4-bg: #2c2c5a;
   --cell-overlap-5-bg: #313163;
+  /* Selection ring: brand blue, identical on every cell type. A mid-blue can't
+     clear 3:1 on the grey shaded tint by itself, so the ring is paired with a
+     thin dark inner edge (--cell-selected-edge); whichever of the two carries
+     the contrast keeps the indicator visible on any cell background. */
   --cell-selected-border: #4a90d9;
-  --cell-peer-bg: #272948;
-  --cell-peer-structural-bg: #2e2e44;
-  --cell-same-value-bg: #1a4f4f;
+  --cell-selected-edge: #0a0a23;
+  /* Transient selection highlights, layered over the structural color via
+     background-image so error (which clears background-image) and same-value
+     win by source order. Opaque single fills — peer blue, same-value violet — so
+     the highlight looks identical on every cell type (normal, shaded) instead
+     of shifting with the underlying tint. Advisory cues, but
+     every digit color stays >=4.5 against them. The peer blue is desaturated
+     and kept dark so it recedes toward the base (a subtle highlight, not a bold
+     navy) and sits clearly below the lighter grid border instead of colliding
+     with it. */
+  --cell-peer-overlay: #2e3850;
+  --cell-same-value-overlay: #533a73;
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
   --overlay-cage-stroke: #9898b8;
   --overlay-jigsaw-stroke: #9898b8;
-  --overlay-window-fill: #3b3b4f;
-  --overlay-special-fill: #3a1a6a;
   --overlay-kropki-light: #f8f8ff;
   --overlay-kropki-dark: #4050a0;
   --overlay-kropki-ring: #5060a0;
@@ -66,28 +79,21 @@
   --text-bright: #0a0a23;
   --accent-green: #00471b;
   --accent-red: #850000;
+  --cell-error-bg: #c62828;
+  --cell-hint-text: #6b5300;
+  --overlay-arrow-stroke: #767698;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
-  --cell-diagonal-bg: #e8e8fa;
-  --cell-window-bg: #e8e8fa;
-  --cell-special-bg: #e8e8fa;
-  --cell-even-bg: #e8e8fa;
-  --cell-odd-bg: #ffffff;
-  --cell-peer-even-bg: #d8d8f0;
-  --cell-peer-odd-bg: #ededf6;
   --cell-overlap-2-bg: #eeeef8;
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
   --cell-overlap-5-bg: #dfdff2;
-  --cell-peer-bg: #ededf6;
-  --cell-peer-structural-bg: #d8d8f0;
-  --cell-same-value-bg: #cdeaea;
+  --cell-peer-overlay: #c7d4f5;
+  --cell-same-value-overlay: #ddd0f0;
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
   --overlay-cage-stroke: #5555aa;
   --overlay-jigsaw-stroke: #6060a0;
-  --overlay-window-fill: #e8e8fa;
-  --overlay-special-fill: #dcc8f4;
 }
 
 * {

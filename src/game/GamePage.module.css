@@ -66,25 +66,29 @@
 
 .legendSwatch {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 2px;
   border: 1px solid var(--border);
   flex-shrink: 0;
 }
 
+/* Swatches mirror the board: even cells carry the theme-invariant shaded tint,
+   odd cells stay on the plain cell background (dark base / white in light). */
 .legendSwatchEven {
-  background: #3b3b4f;
+  background: var(--cell-shaded-bg);
 }
+/* The odd swatch fill mirrors the dark cell background, which nearly matches the
+   page background, so the swatch boundary (not its fill) must carry the 3:1
+   non-text contrast (WCAG 1.4.11). --border is too faint there; --text-muted
+   clears 3:1 against the page in both themes. */
 .legendSwatchOdd {
-  background: #12123a;
+  background: var(--bg-secondary);
+  border-color: var(--text-muted);
 }
 
-:global(.light) .legendSwatchEven {
-  background: #e8e8fa;
-}
 :global(.light) .legendSwatchOdd {
-  background: #ffffff;
+  background: var(--cell-bg-light);
 }
 
 .checkPrompt {

@@ -9,7 +9,7 @@ import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', 'eslint.config.js'],
+    ignores: ['dist/**', 'coverage/**', '.vite/**', 'eslint.config.js'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

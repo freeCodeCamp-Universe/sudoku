@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill, previewShadedFill } from './previewColors';
 
 const CELLS = 9;
 const BOX = 3;
@@ -20,15 +21,13 @@ export function WindokuPreview() {
       (ctx, { width }) => {
         const cell = width / CELLS;
         const isLight = theme === 'light';
-        const fillWindow = isLight ? '#e8e8fa' : '#3b3b4f';
+        const fillWindow = previewShadedFill();
         const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
         const boxLine = isLight ? '#8080a8' : '#3b3b4f';
         const borderColor = isLight ? '#5060a0' : '#9898b8';
 
-        if (isLight) {
-          ctx.fillStyle = '#f5f5f0';
-          ctx.fillRect(0, 0, CELLS * cell, CELLS * cell);
-        }
+        ctx.fillStyle = previewBaseFill(isLight);
+        ctx.fillRect(0, 0, CELLS * cell, CELLS * cell);
 
         for (const [wr, wc] of WINDOW_ORIGINS) {
           ctx.fillStyle = fillWindow;

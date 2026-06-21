@@ -3,6 +3,7 @@ import { useTheme } from '@/app/ThemeProvider';
 import { readThemeColor } from '@/app/readThemeColor';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
+import { previewBaseFill } from './previewColors';
 
 const CELLS = 21;
 
@@ -95,7 +96,7 @@ export function KazagurumaPreview() {
         const cell = width / CELLS;
         const isLight = theme === 'light';
         const fillOverlap2 = readThemeColor('--cell-overlap-2-bg');
-        const fillSingle = isLight ? '#f5f5f0' : '#1b1b32';
+        const fillSingle = previewBaseFill(isLight);
         const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
         const boxLine = isLight ? '#a0a0c0' : '#3b3b4f';
         const borderColor = isLight ? '#5060a0' : '#9898b8';

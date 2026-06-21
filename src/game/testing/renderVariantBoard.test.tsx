@@ -11,9 +11,10 @@ describe('renderVariantBoard', () => {
     expect(getCell('r0c1')).not.toHaveAttribute('data-diagonal');
   });
 
-  it('should mark a window cell on windoku', () => {
+  it('should mark a window cell as shaded on windoku', () => {
     const { getCell } = renderVariantBoard(windoku);
 
-    expect(getCell('r1c1')).toHaveAttribute('data-window', 'true');
+    expect(getCell('r1c1')).toHaveAttribute('data-shaded', 'true');
+    expect(getCell('r0c0')).not.toHaveAttribute('data-shaded');
   });
 });
