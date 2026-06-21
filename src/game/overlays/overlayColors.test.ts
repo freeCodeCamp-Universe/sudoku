@@ -17,7 +17,7 @@ describe('overlay color tokens', () => {
     expect(tokens['--overlay-cage-stroke']).toEqual({ dark: '#9898b8', light: '#5555aa' });
     expect(tokens['--overlay-argyle-stroke']).toEqual({ dark: '#9898b8', light: '#8080a8' });
     expect(tokens['--overlay-jigsaw-stroke']).toEqual({ dark: '#9898b8', light: '#6060a0' });
-    expect(tokens['--overlay-arrow-stroke']).toEqual({ dark: '#9898b8', light: '#9898b8' });
+    expect(tokens['--overlay-arrow-stroke']).toEqual({ dark: '#9898b8', light: '#767698' });
   });
 
   it('should pin the special-cell and window fills', () => {

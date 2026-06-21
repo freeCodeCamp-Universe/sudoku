@@ -111,14 +111,14 @@ Mirror the existing `colorSpecs` / `colorDocs` pattern.
 
 ## Components and interfaces
 
-| Unit | Purpose | Depends on |
-| --- | --- | --- |
-| `contrast.ts` | WCAG math + alpha compositing | nothing (pure) |
-| `contrastSpecs.ts` | reachable pairs + thresholds | token names from `theme.css` |
-| `contrast.test.ts` | CI gate | `contrast.ts`, `contrastSpecs.ts`, theme parser |
-| `contrast-report.ts` | human-readable table | `contrast.ts`, `contrastSpecs.ts`, theme parser |
-| theme parser (shared) | token -> hex per theme | `theme.css` |
-| `Cell.tsx` / `Cell.module.css` | render error via `data-error` | `--cell-error-bg` |
+| Unit                           | Purpose                       | Depends on                                      |
+| ------------------------------ | ----------------------------- | ----------------------------------------------- |
+| `contrast.ts`                  | WCAG math + alpha compositing | nothing (pure)                                  |
+| `contrastSpecs.ts`             | reachable pairs + thresholds  | token names from `theme.css`                    |
+| `contrast.test.ts`             | CI gate                       | `contrast.ts`, `contrastSpecs.ts`, theme parser |
+| `contrast-report.ts`           | human-readable table          | `contrast.ts`, `contrastSpecs.ts`, theme parser |
+| theme parser (shared)          | token -> hex per theme        | `theme.css`                                     |
+| `Cell.tsx` / `Cell.module.css` | render error via `data-error` | `--cell-error-bg`                               |
 
 ## Testing
 
