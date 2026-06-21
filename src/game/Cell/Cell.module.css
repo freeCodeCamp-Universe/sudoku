@@ -216,16 +216,6 @@
   color: var(--accent-green);
 }
 
-.incorrectIcon {
-  position: absolute;
-  inset-block-start: 2px;
-  inset-inline-end: 2px;
-  width: 0.38em;
-  height: 0.38em;
-  fill: var(--accent-red);
-  pointer-events: none;
-}
-
 .cell[data-word] .value {
   color: var(--cell-hint-text);
 }
@@ -403,4 +393,18 @@
 
 :global(.light) .givenDot {
   background: rgba(0, 0, 0, 0.25);
+}
+
+/* Error fill for cells that are incorrect or in conflict. A saturated red
+   background (not hue-only text) so the state reads by luminance for colorblind
+   users; the screen-reader announcement still distinguishes incorrect vs
+   in-conflict. Placed last and marked !important to override the peer /
+   same-value background rules, which are themselves !important. */
+.cell[data-error],
+:global(.light) .cell[data-error] {
+  background: var(--cell-error-bg) !important;
+}
+
+.cell[data-error] .value {
+  color: var(--cell-error-text);
 }

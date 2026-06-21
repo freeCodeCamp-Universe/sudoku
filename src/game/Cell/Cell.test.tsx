@@ -192,32 +192,32 @@ describe('Cell', () => {
     });
   });
 
-  it('should render the warning icon when conflict is true', () => {
+  it('should mark the cell as an error when conflict is true', () => {
     render(<Cell {...baseProps} value={5} conflict />);
 
-    expect(screen.getByTestId('cell-warning-icon')).toBeTruthy();
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-error');
   });
 
-  it('should render the warning icon when correct is false', () => {
+  it('should mark the cell as an error when correct is false', () => {
     render(<Cell {...baseProps} value={5} correct={false} />);
 
-    expect(screen.getByTestId('cell-warning-icon')).toBeTruthy();
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-error');
   });
 
-  it('should render only one warning icon when both conflict and correct are false', () => {
-    render(<Cell {...baseProps} value={5} conflict correct={false} />);
-
-    expect(screen.getAllByTestId('cell-warning-icon')).toHaveLength(1);
-  });
-
-  it('should not render a warning icon when there is no conflict and correct is undefined', () => {
+  it('should not mark an error when there is no conflict and correct is undefined', () => {
     render(<Cell {...baseProps} value={5} />);
 
-    expect(screen.queryByTestId('cell-warning-icon')).toBeNull();
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-error');
   });
 
-  it('should not render a warning icon when correct is true', () => {
+  it('should not mark an error when correct is true', () => {
     render(<Cell {...baseProps} value={5} correct />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-error');
+  });
+
+  it('should no longer render the legacy warning icon', () => {
+    render(<Cell {...baseProps} value={5} conflict correct={false} />);
 
     expect(screen.queryByTestId('cell-warning-icon')).toBeNull();
   });
