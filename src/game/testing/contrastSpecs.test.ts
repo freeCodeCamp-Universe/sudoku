@@ -39,7 +39,6 @@ describe('selection ring two-tone visibility (WCAG 3:1)', () => {
     const backgrounds: Record<string, string> = {
       base: theme === 'dark' ? tokens['--bg-secondary'].dark : tokens['--cell-bg-light'].light,
       shaded: tokens['--cell-shaded-bg'][theme],
-      window: tokens['--cell-window-bg'][theme],
       special: tokens['--cell-special-bg'][theme],
       overlap: tokens['--cell-overlap-5-bg'][theme],
       error: tokens['--cell-error-bg'][theme],

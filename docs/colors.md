@@ -35,7 +35,6 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-bg-light` | #ffffff | #ffffff |
 | `--cell-text-light` | #2c5f8a | #2c5f8a |
 | `--box-boundary` | #5e5e7a | #b8b8cc |
-| `--cell-window-bg` | #3b3b4f | #e8e8fa |
 | `--cell-special-bg` | #3b3b4f | #e8e8fa |
 | `--cell-shaded-bg` | #9090a8 | #9090a8 |
 | `--cell-shaded-text` | #0a0a23 | #0a0a23 |
@@ -52,7 +51,6 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--overlay-arrow-stroke` | #9898b8 | #767698 |
 | `--overlay-cage-stroke` | #9898b8 | #5555aa |
 | `--overlay-jigsaw-stroke` | #9898b8 | #6060a0 |
-| `--overlay-window-fill` | #3b3b4f | #e8e8fa |
 | `--overlay-special-fill` | #3a1a6a | #dcc8f4 |
 | `--overlay-kropki-light` | #f8f8ff | #f8f8ff |
 | `--overlay-kropki-dark` | #4050a0 | #4050a0 |
@@ -65,7 +63,7 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | Variant | Marker | Token | Kind |
 | --- | --- | --- | --- |
 | sudoku-x | `data-diagonal` | `--cell-shaded-bg` | positional |
-| windoku | `data-window` | `--cell-window-bg` | positional |
+| windoku | `data-shaded` | `--cell-shaded-bg` | positional |
 | asterisk | `data-asterisk` | `--cell-special-bg` | positional |
 | center-dot | `data-center-dot` | `--cell-special-bg` | positional |
 | girandola | `data-girandola` | `--cell-shaded-bg` | positional |

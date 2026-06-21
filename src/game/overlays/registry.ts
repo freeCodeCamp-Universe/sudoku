@@ -9,7 +9,6 @@ import { ConsecutiveOverlay } from './ConsecutiveOverlay';
 import { KropkiOverlay } from './KropkiOverlay';
 import { InequalityOverlay } from './InequalityOverlay';
 import { JigsawOverlay } from './JigsawOverlay';
-import { WindokuOverlay } from './WindokuOverlay';
 
 export const overlayRegistry: Record<string, OverlayComponent> = {
   arrow: ArrowOverlay,
@@ -22,7 +21,6 @@ export const overlayRegistry: Record<string, OverlayComponent> = {
   'kropki-dots': KropkiOverlay,
   inequality: InequalityOverlay,
   jigsaw: JigsawOverlay,
-  windoku: WindokuOverlay,
 };
 
 export function resolveOverlays(ids: string[] = []): OverlayComponent[] {

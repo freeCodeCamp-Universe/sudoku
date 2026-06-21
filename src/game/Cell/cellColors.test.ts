@@ -26,7 +26,6 @@ describe('cell color tokens', () => {
 
   it('should wire shaded cells and the overlay-backed regions to their tokens', () => {
     expect(CELL_CSS).toMatch(/\[data-shaded\]\s*\{\s*background-color:\s*var\(--cell-shaded-bg\)/);
-    expect(CELL_CSS).toMatch(/\[data-window\]\s*\{\s*background-color:\s*var\(--cell-window-bg\)/);
     expect(CELL_CSS).toMatch(
       /data-center-dot\]\s*\{\s*background-color:\s*var\(--cell-special-bg\)/
     );

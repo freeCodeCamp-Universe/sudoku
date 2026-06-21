@@ -37,12 +37,12 @@ const SHADED_BG = '--cell-shaded-bg';
 const SHADED_TEXT = '--cell-shaded-text';
 
 // Cell-background tints that do NOT need 3:1 vs base, with the reason:
-//  - REDUNDANT: a drawn overlay (windoku window fill, asterisk / center-dot
-//    SVG) already marks the region, so the tint is decorative, not the sole cue.
+//  - REDUNDANT: a drawn overlay (asterisk / center-dot SVG) already marks the
+//    region, so the tint is decorative, not the sole cue.
 // Selection-time highlights (peer dim, same-value) are no longer opaque `-bg`
 // tints — they are translucent `-overlay` layers composited over the structural
 // color, outside this `-bg` enumeration, and remain advisory by nature.
-const REDUNDANT = new Set(['--cell-window-bg', '--cell-special-bg']);
+const REDUNDANT = new Set(['--cell-special-bg']);
 const CONVENIENCE = new Set<string>([]);
 
 // `--cell-overlap-*` tints render only in gallery previews (canvas depth

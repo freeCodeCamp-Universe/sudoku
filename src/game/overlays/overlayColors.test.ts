@@ -20,9 +20,8 @@ describe('overlay color tokens', () => {
     expect(tokens['--overlay-arrow-stroke']).toEqual({ dark: '#9898b8', light: '#767698' });
   });
 
-  it('should pin the special-cell and window fills', () => {
+  it('should pin the special-cell fill', () => {
     const tokens = readThemeTokens();
-    expect(tokens['--overlay-window-fill']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
     expect(tokens['--overlay-special-fill']).toEqual({ dark: '#3a1a6a', light: '#dcc8f4' });
   });
 

@@ -19,10 +19,11 @@ describe('preview colors', () => {
     // previewBaseFill: plain cell background per theme.
     expect(tokens['--cell-bg-light']).toEqual({ dark: '#ffffff', light: '#ffffff' });
     expect(tokens['--bg-secondary']).toEqual({ dark: '#1b1b32', light: '#ebebe6' });
-    // previewShadedFill: theme-invariant shaded tint (even / diagonal / girandola).
+    // previewShadedFill: theme-invariant shaded tint (even / diagonal /
+    // girandola / windoku windows).
     expect(tokens['--cell-shaded-bg']).toEqual({ dark: '#9090a8', light: '#9090a8' });
-    // previewRegionFill: windoku / asterisk / center-dot region.
-    expect(tokens['--cell-window-bg']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
+    // previewRegionFill: asterisk / center-dot region.
+    expect(tokens['--cell-special-bg']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
   });
 
   it('should not paint the stale page-background hex as a cell fill in any preview', () => {

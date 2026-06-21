@@ -22,11 +22,12 @@ export function previewShadedFill(): string {
 }
 
 /**
- * Windoku window, asterisk and center-dot regions — matches the board's
- * --cell-window-bg / --cell-special-bg fill.
+ * Asterisk and center-dot regions — matches the board's --cell-special-bg fill.
+ * (Windoku now uses previewShadedFill, the same tint as the other shaded
+ * variants.)
  */
 export function previewRegionFill(): string {
-  return readThemeColor('--cell-window-bg');
+  return readThemeColor('--cell-special-bg');
 }
 
 /**

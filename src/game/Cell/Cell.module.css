@@ -44,14 +44,6 @@
   font-size: 0.82rem;
 }
 
-.cell[data-window] {
-  background-color: var(--cell-window-bg);
-}
-
-:global(.light) .cell[data-window] {
-  background-color: var(--cell-window-bg);
-}
-
 /* Asterisk and center-dot cells carry a purple base in the overlay's own hue
    so a selected cell stays purple when it lifts above the translucent overlay
    instead of dropping to a grey base. */
