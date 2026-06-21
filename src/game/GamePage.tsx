@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
-import { buildModel } from '@/engine/buildModel';
-import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
-import { isJigsawStructure, makePlayableJigsawVariant, PRESET_LAYOUTS } from '@/variants/jigsaw';
+import { isJigsawStructure, PRESET_LAYOUTS } from '@/variants/jigsaw';
 import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import { findCompletedSymbols } from './completedSymbols';
+import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
 import { OnboardingDialog } from './OnboardingDialog';
@@ -604,22 +603,15 @@ export function GamePage() {
   // Randomize which jigsaw region layout a session starts on; rotating by genKey
   // then guarantees a different layout on every New Game.
   const [jigsawLayoutStart] = useState(() => Math.floor(Math.random() * PRESET_LAYOUTS.length));
-  const { model, gameVariant, givens, solution } = useMemo(() => {
-    const activeVariant =
-      variant.id === 'jigsaw'
-        ? makePlayableJigsawVariant(
-            PRESET_LAYOUTS[(jigsawLayoutStart + genKey) % PRESET_LAYOUTS.length]
-          )
-        : variant;
-    const builtModel = buildModel(activeVariant);
-    const puzzle = generate(builtModel, variant.difficulty);
-    return {
-      model: builtModel,
-      gameVariant: activeVariant,
-      givens: puzzle.givens,
-      solution: puzzle.solution,
-    };
-  }, [variant, genKey, jigsawLayoutStart]);
+  // One random seed per session, captured once. buildPuzzle is then a pure
+  // function of (variant, jigsawLayoutStart, genKey, seedBase), so any memo
+  // recompute (StrictMode, Fast Refresh, dropped cache) yields the same puzzle
+  // instead of a fresh one that would desync from the reducer's givens.
+  const [seedBase] = useState(() => Math.floor(Math.random() * 0x7fffffff));
+  const { model, gameVariant, givens, solution } = useMemo(
+    () => buildPuzzle(variant, jigsawLayoutStart, genKey, seedBase),
+    [variant, jigsawLayoutStart, genKey, seedBase]
+  );
 
   return (
     <>
