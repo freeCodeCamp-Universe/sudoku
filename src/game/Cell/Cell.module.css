@@ -20,20 +20,16 @@
    one tint strong enough to clear 3:1 against the board (WCAG 1.4.11). The tint
    is light in both themes, so digits on it switch to near-black to hold 4.5:1;
    the correct/hint hues cannot survive on the tint and collapse to the same ink.
-   Peer and same-value highlights are now translucent overlays that composite
-   over this tint, so the near-black ink stays readable through them and only
-   the opaque error fill (white text) is excluded. */
+   Peer, same-value and error each lay an opaque fill over the tint, carrying
+   their own light/white ink, so the near-black shaded ink applies only when none
+   of them is present. */
 .cell[data-shaded] {
   background-color: var(--cell-shaded-bg);
 }
 
-.cell[data-shaded]:not([data-error]) .value,
-.cell[data-shaded]:not([data-error]) .candidate {
+.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .value,
+.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .candidate {
   color: var(--cell-shaded-text);
-}
-
-.cell[data-shaded][data-selected]:not([data-error])::after {
-  border-color: var(--cell-shaded-selected-border);
 }
 
 .cell[data-symbol-kind='letter'] {
@@ -99,7 +95,8 @@
   cursor: default;
 }
 
-.cell[data-selected] {
+.cell[data-selected],
+.cell:focus-visible {
   z-index: 1;
 }
 
@@ -107,28 +104,38 @@
   content: none;
 }
 
-.cell[data-selected]::after {
+/* The selected cell is also the keyboard-focused cell (roving tabindex), so our
+   ring is the focus indicator. Suppress the browser's default outline, which
+   would otherwise stack its own (light, rounded) ring over ours, and draw the
+   same ring on :focus-visible so a keyboard Tab-in to the not-yet-selected
+   first cell still shows an indicator. */
+.cell:focus {
+  outline: none;
+}
+
+.cell[data-selected]::after,
+.cell:focus-visible::after {
   content: '';
   position: absolute;
   inset: 0;
-  border: 3px solid var(--cell-selected-border);
+  border: 2px solid var(--cell-selected-border);
+  box-shadow: inset 0 0 0 1px var(--cell-selected-edge);
   z-index: 10;
   pointer-events: none;
 }
 
-/* Dim the selected cell's peers (its row, column, box, and any other house it
-   shares) with one translucent overlay layered via background-image. It
-   composites over whatever structural color the cell already has — plain,
-   shaded, window, special, or an overlapping-grid base — so a single token
-   replaces the former per-region peer fills and the region's own shading shows
-   through. Subtler than the same-value highlight, which is declared after it
-   and therefore wins the background-image when a cell is both. */
+/* Mark the selected cell's peers (its row, column, box, and any other house it
+   shares) with one opaque fill laid over whatever structural color the cell has
+   — plain, shaded, window, special, or an overlapping-grid base. A single fill,
+   so the highlight reads the same on every cell type instead of shifting with
+   the tint underneath. Declared before same-value, which wins the
+   background-image when a cell is both. */
 .cell[data-peer] {
   background-image: linear-gradient(var(--cell-peer-overlay), var(--cell-peer-overlay));
 }
 
-/* Highlight every cell sharing the selected cell's value with a stronger teal
-   overlay, distinct from correct (green) and from the peer blue. */
+/* Mark every cell sharing the selected cell's value with one opaque teal fill,
+   distinct from correct (green) and from the peer blue. */
 .cell[data-same-value] {
   background-image: linear-gradient(var(--cell-same-value-overlay), var(--cell-same-value-overlay));
 }

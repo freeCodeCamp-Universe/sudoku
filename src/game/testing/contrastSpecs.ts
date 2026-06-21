@@ -138,33 +138,29 @@ export const contrastPairs: ContrastPair[] = [
     gate: true,
   },
 
+  // Peer and same-value are opaque single fills, so the primary digits must
+  // stay readable on them (value + given, both themes). Pencil-mark candidates
+  // are advisory convenience cues and not gated here.
+  ...['--cell-peer-overlay', '--cell-same-value-overlay'].flatMap((bg) =>
+    BOTH.flatMap((theme) =>
+      (['value', 'given'] as const).map(
+        (role): ContrastPair => ({
+          label: `${role} text on ${bg}`,
+          fg: TEXT[role][theme],
+          bg,
+          threshold: TEXT_AA,
+          themes: [theme],
+          gate: true,
+        })
+      )
+    )
+  ),
+
   // --- Gated essential-state distinctness (3:1 vs base) ---
-  {
-    label: 'selection border vs base',
-    fg: '--cell-selected-border',
-    bg: BASE.dark,
-    threshold: UI_AA,
-    themes: ['dark'],
-    gate: true,
-  },
-  {
-    label: 'selection border vs base',
-    fg: '--cell-selected-border',
-    bg: BASE.light,
-    threshold: UI_AA,
-    themes: ['light'],
-    gate: true,
-  },
-  // Selection ring on a shaded cell: the default blue ring loses contrast on
-  // the light tint, so shaded+selected uses a dark ring (theme-invariant tint).
-  {
-    label: 'shaded selection border vs shaded tint',
-    fg: '--cell-shaded-selected-border',
-    bg: SHADED_BG,
-    threshold: UI_AA,
-    themes: BOTH,
-    gate: true,
-  },
+  // The selection ring is a two-tone indicator (blue ring + dark inner edge):
+  // on any cell background at least one of the two layers clears 3:1. That
+  // "either layer" guarantee can't be a single fg/bg pair, so it is verified
+  // directly in contrastSpecs.test.ts.
   {
     label: 'error background vs base',
     fg: '--cell-error-bg',

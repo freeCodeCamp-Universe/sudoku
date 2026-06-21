@@ -10,16 +10,18 @@ describe('cell color tokens', () => {
     const tokens = readThemeTokens();
     expect(tokens['--cell-shaded-bg']).toEqual({ dark: '#9090a8', light: '#9090a8' });
     expect(tokens['--cell-shaded-text']).toEqual({ dark: '#0a0a23', light: '#0a0a23' });
-    expect(tokens['--cell-shaded-selected-border']).toEqual({ dark: '#14225e', light: '#14225e' });
+    // Two-tone selection ring: brand blue plus a dark inner edge, same in both
+    // themes. The blue carries dark backgrounds, the edge the light/grey ones.
     expect(tokens['--cell-selected-border']).toEqual({ dark: '#4a90d9', light: '#4a90d9' });
+    expect(tokens['--cell-selected-edge']).toEqual({ dark: '#0a0a23', light: '#0a0a23' });
   });
 
-  it('should pin the translucent highlight overlays', () => {
+  it('should pin the opaque highlight fills', () => {
     const tokens = readThemeTokens();
-    // 8-digit RRGGBBAA so they composite over the structural color; the alpha
-    // byte must be < ff or the highlight would be opaque and hide region shading.
-    expect(tokens['--cell-peer-overlay']).toEqual({ dark: '#8ea8ff29', light: '#3a4aa01a' });
-    expect(tokens['--cell-same-value-overlay']).toEqual({ dark: '#1fb5a852', light: '#1fa89c57' });
+    // Opaque single fills (no alpha byte) so peer / same-value look identical on
+    // every cell type instead of compositing differently over each structural tint.
+    expect(tokens['--cell-peer-overlay']).toEqual({ dark: '#2e3850', light: '#c7d4f5' });
+    expect(tokens['--cell-same-value-overlay']).toEqual({ dark: '#14524d', light: '#aadfd6' });
   });
 
   it('should wire shaded cells and the overlay-backed regions to their tokens', () => {

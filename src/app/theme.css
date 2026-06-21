@@ -24,10 +24,10 @@
   --cell-error-text: #ffffff;
   --cell-hint-text: #f1be32;
   --focus-ring: #198eee;
-  --cell-border: #4a4a5e;
+  --cell-border: #5e5e7a;
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
-  --box-boundary: #4a4a5e;
+  --box-boundary: #5e5e7a;
   --cell-window-bg: #3b3b4f;
   --cell-special-bg: #3b3b4f;
   /* Shaded constraint regions (even cells, sudoku-x diagonals, girandola).
@@ -35,19 +35,27 @@
      both themes (WCAG 1.4.11). Digits on it use --cell-shaded-text. */
   --cell-shaded-bg: #9090a8;
   --cell-shaded-text: #0a0a23;
-  --cell-shaded-selected-border: #14225e;
   --cell-overlap-2-bg: #222248;
   --cell-overlap-3-bg: #272751;
   --cell-overlap-4-bg: #2c2c5a;
   --cell-overlap-5-bg: #313163;
+  /* Selection ring: brand blue, identical on every cell type. A mid-blue can't
+     clear 3:1 on the grey shaded tint by itself, so the ring is paired with a
+     thin dark inner edge (--cell-selected-edge); whichever of the two carries
+     the contrast keeps the indicator visible on any cell background. */
   --cell-selected-border: #4a90d9;
-  /* Transient highlights composited over the cell's structural color via
-     background-image, so region shading (shaded / window / special) shows
-     through instead of being replaced. Translucent (8-digit RRGGBBAA); peer is
-     a subtle blue, same-value a stronger teal that wins over peer by source
-     order. Advisory (not gated) — these are WCAG convenience cues. */
-  --cell-peer-overlay: #8ea8ff29;
-  --cell-same-value-overlay: #1fb5a852;
+  --cell-selected-edge: #0a0a23;
+  /* Transient selection highlights, layered over the structural color via
+     background-image so error (which clears background-image) and same-value
+     win by source order. Opaque single fills — peer blue, same-value teal — so
+     the highlight looks identical on every cell type (normal, shaded, window,
+     special) instead of shifting with the underlying tint. Advisory cues, but
+     every digit color stays >=4.5 against them. The peer blue is desaturated
+     and kept dark so it recedes toward the base (a subtle highlight, not a bold
+     navy) and sits clearly below the lighter grid border instead of colliding
+     with it. */
+  --cell-peer-overlay: #2e3850;
+  --cell-same-value-overlay: #14524d;
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
@@ -85,8 +93,8 @@
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
   --cell-overlap-5-bg: #dfdff2;
-  --cell-peer-overlay: #3a4aa01a;
-  --cell-same-value-overlay: #1fa89c57;
+  --cell-peer-overlay: #c7d4f5;
+  --cell-same-value-overlay: #aadfd6;
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
   --overlay-cage-stroke: #5555aa;
