@@ -11,7 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "docs:colors": "tsx scripts/generateColorDocs.ts",
-    "contrast:report": "tsx scripts/contrastReport.ts",
+    "report-contrast": "tsx scripts/contrastReport.ts",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "prepare": "husky"
