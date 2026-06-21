@@ -114,7 +114,7 @@
   background-image: linear-gradient(var(--cell-peer-overlay), var(--cell-peer-overlay));
 }
 
-/* Mark every cell sharing the selected cell's value with one opaque teal fill,
+/* Mark every cell sharing the selected cell's value with one opaque violet fill,
    distinct from correct (green) and from the peer blue. */
 .cell[data-same-value] {
   background-image: linear-gradient(var(--cell-same-value-overlay), var(--cell-same-value-overlay));

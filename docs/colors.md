@@ -44,7 +44,7 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-selected-border` | #4a90d9 | #4a90d9 |
 | `--cell-selected-edge` | #0a0a23 | #0a0a23 |
 | `--cell-peer-overlay` | #2e3850 | #c7d4f5 |
-| `--cell-same-value-overlay` | #14524d | #aadfd6 |
+| `--cell-same-value-overlay` | #533a73 | #ddd0f0 |
 | `--candidate-text` | #aaaacc | #555570 |
 | `--overlay-argyle-stroke` | #9898b8 | #8080a8 |
 | `--overlay-arrow-stroke` | #9898b8 | #767698 |

@@ -21,7 +21,7 @@ describe('cell color tokens', () => {
     // Opaque single fills (no alpha byte) so peer / same-value look identical on
     // every cell type instead of compositing differently over each structural tint.
     expect(tokens['--cell-peer-overlay']).toEqual({ dark: '#2e3850', light: '#c7d4f5' });
-    expect(tokens['--cell-same-value-overlay']).toEqual({ dark: '#14524d', light: '#aadfd6' });
+    expect(tokens['--cell-same-value-overlay']).toEqual({ dark: '#533a73', light: '#ddd0f0' });
   });
 
   it('should wire shaded cells to the shared shaded token', () => {
