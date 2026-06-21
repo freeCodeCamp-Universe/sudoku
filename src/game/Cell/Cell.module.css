@@ -16,12 +16,23 @@
   position: relative;
 }
 
-.cell[data-diagonal] {
-  background: var(--cell-diagonal-bg);
+/* Shaded constraint regions (even cells, sudoku-x diagonals, girandola) share
+   one tint strong enough to clear 3:1 against the board (WCAG 1.4.11). The tint
+   is light in both themes, so digits on it switch to near-black to hold 4.5:1;
+   the correct/hint hues cannot survive on the tint and collapse to the same ink.
+   The :not(...) guard yields to the peer / same-value / error backgrounds, which
+   restore the normal dark fill where the default light text stays readable. */
+.cell[data-shaded] {
+  background: var(--cell-shaded-bg);
 }
 
-:global(.light) .cell[data-diagonal] {
-  background: var(--cell-diagonal-bg);
+.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .value,
+.cell[data-shaded]:not([data-peer]):not([data-same-value]):not([data-error]) .candidate {
+  color: var(--cell-shaded-text);
+}
+
+.cell[data-shaded][data-selected]:not([data-error])::after {
+  border-color: var(--cell-shaded-selected-border);
 }
 
 .cell[data-symbol-kind='letter'] {
@@ -34,20 +45,6 @@
 
 .cell[data-small] {
   font-size: 0.82rem;
-}
-
-.cell[data-even] {
-  background: var(--cell-even-bg);
-}
-.cell[data-odd] {
-  background: var(--cell-odd-bg);
-}
-
-:global(.light) .cell[data-even] {
-  background: var(--cell-even-bg);
-}
-:global(.light) .cell[data-odd] {
-  background: var(--cell-odd-bg);
 }
 
 .cell[data-peer][data-even] {
@@ -78,14 +75,12 @@
    so a selected cell stays purple when it lifts above the translucent overlay
    instead of dropping to a grey base. */
 .cell[data-asterisk],
-.cell[data-center-dot],
-.cell[data-girandola] {
+.cell[data-center-dot] {
   background: var(--cell-special-bg);
 }
 
 :global(.light) .cell[data-asterisk],
-:global(.light) .cell[data-center-dot],
-:global(.light) .cell[data-girandola] {
+:global(.light) .cell[data-center-dot] {
   background: var(--cell-special-bg);
 }
 

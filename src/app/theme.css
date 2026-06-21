@@ -28,11 +28,14 @@
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
   --box-boundary: #4a4a5e;
-  --cell-diagonal-bg: #3b3b4f;
   --cell-window-bg: #3b3b4f;
   --cell-special-bg: #3b3b4f;
-  --cell-even-bg: #3b3b4f;
-  --cell-odd-bg: #12123a;
+  /* Shaded constraint regions (even cells, sudoku-x diagonals, girandola).
+     One tint, theme-invariant, light enough to clear 3:1 against the board in
+     both themes (WCAG 1.4.11). Digits on it use --cell-shaded-text. */
+  --cell-shaded-bg: #9090a8;
+  --cell-shaded-text: #0a0a23;
+  --cell-shaded-selected-border: #14225e;
   --cell-peer-even-bg: #2c2c4c;
   --cell-peer-odd-bg: #1a1a40;
   --cell-overlap-2-bg: #222248;
@@ -74,11 +77,8 @@
   --overlay-arrow-stroke: #767698;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
-  --cell-diagonal-bg: #e8e8fa;
   --cell-window-bg: #e8e8fa;
   --cell-special-bg: #e8e8fa;
-  --cell-even-bg: #e8e8fa;
-  --cell-odd-bg: #ffffff;
   --cell-peer-even-bg: #d8d8f0;
   --cell-peer-odd-bg: #ededf6;
   --cell-overlap-2-bg: #eeeef8;

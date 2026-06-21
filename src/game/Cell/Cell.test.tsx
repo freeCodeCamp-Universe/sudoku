@@ -100,6 +100,18 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-odd', 'true');
   });
 
+  it.each(['even', 'diagonal', 'girandola'] as const)('should mark a %s cell as shaded', (prop) => {
+    render(<Cell {...baseProps} {...{ [prop]: true }} />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-shaded', 'true');
+  });
+
+  it('should not mark an odd cell as shaded', () => {
+    render(<Cell {...baseProps} odd />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-shaded');
+  });
+
   it('should not apply the peer modifier by default', () => {
     render(<Cell {...baseProps} />);
 

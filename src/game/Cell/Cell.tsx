@@ -114,6 +114,7 @@ export function Cell({
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}
       data-diagonal={diagonal || undefined}
+      data-shaded={even || diagonal || girandola || undefined}
       data-small={small || undefined}
       data-medium={medium || undefined}
       data-butterfly={isButterfly || undefined}

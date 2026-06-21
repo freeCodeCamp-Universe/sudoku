@@ -35,11 +35,11 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-bg-light` | #ffffff | #ffffff |
 | `--cell-text-light` | #2c5f8a | #2c5f8a |
 | `--box-boundary` | #4a4a5e | #b8b8cc |
-| `--cell-diagonal-bg` | #3b3b4f | #e8e8fa |
 | `--cell-window-bg` | #3b3b4f | #e8e8fa |
 | `--cell-special-bg` | #3b3b4f | #e8e8fa |
-| `--cell-even-bg` | #3b3b4f | #e8e8fa |
-| `--cell-odd-bg` | #12123a | #ffffff |
+| `--cell-shaded-bg` | #9090a8 | #9090a8 |
+| `--cell-shaded-text` | #0a0a23 | #0a0a23 |
+| `--cell-shaded-selected-border` | #14225e | #14225e |
 | `--cell-peer-even-bg` | #2c2c4c | #d8d8f0 |
 | `--cell-peer-odd-bg` | #1a1a40 | #ededf6 |
 | `--cell-overlap-2-bg` | #222248 | #eeeef8 |
@@ -67,10 +67,9 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 
 | Variant | Marker | Token | Kind |
 | --- | --- | --- | --- |
-| sudoku-x | `data-diagonal` | `--cell-diagonal-bg` | positional |
+| sudoku-x | `data-diagonal` | `--cell-shaded-bg` | positional |
 | windoku | `data-window` | `--cell-window-bg` | positional |
 | asterisk | `data-asterisk` | `--cell-special-bg` | positional |
 | center-dot | `data-center-dot` | `--cell-special-bg` | positional |
-| girandola | `data-girandola` | `--cell-special-bg` | positional |
-| even-odd | `data-even` | `--cell-even-bg` | value-derived |
-| even-odd | `data-odd` | `--cell-odd-bg` | value-derived |
+| girandola | `data-girandola` | `--cell-shaded-bg` | positional |
+| even-odd | `data-even` | `--cell-shaded-bg` | value-derived |
