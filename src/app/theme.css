@@ -20,6 +20,9 @@
   --color-9: #9898b0;
   --accent-green: #acd157;
   --accent-red: #ffadad;
+  --cell-error-bg: #cc3333;
+  --cell-error-text: #ffffff;
+  --cell-hint-text: #f1be32;
   --focus-ring: #198eee;
   --cell-border: #4a4a5e;
   --cell-bg-light: #ffffff;
@@ -66,6 +69,9 @@
   --text-bright: #0a0a23;
   --accent-green: #00471b;
   --accent-red: #850000;
+  --cell-error-bg: #c62828;
+  --cell-hint-text: #6b5300;
+  --overlay-arrow-stroke: #767698;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
   --cell-diagonal-bg: #e8e8fa;

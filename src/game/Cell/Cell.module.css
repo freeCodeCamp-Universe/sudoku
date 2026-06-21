@@ -209,7 +209,7 @@
 }
 
 .cell[data-revealed] .value {
-  color: var(--accent-yellow);
+  color: var(--cell-hint-text);
 }
 
 .cell[data-correct] .value {
@@ -227,7 +227,7 @@
 }
 
 .cell[data-word] .value {
-  color: var(--accent-yellow);
+  color: var(--cell-hint-text);
 }
 
 /* Inter-cell markers (the greater-than triangle) sit on the shared border. Each

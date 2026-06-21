@@ -27,6 +27,9 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--color-9` | #9898b0 | #9898b0 |
 | `--accent-green` | #acd157 | #00471b |
 | `--accent-red` | #ffadad | #850000 |
+| `--cell-error-bg` | #cc3333 | #c62828 |
+| `--cell-error-text` | #ffffff | #ffffff |
+| `--cell-hint-text` | #f1be32 | #6b5300 |
 | `--focus-ring` | #198eee | #198eee |
 | `--cell-border` | #4a4a5e | #d8d8e8 |
 | `--cell-bg-light` | #ffffff | #ffffff |
@@ -49,7 +52,7 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-same-value-bg` | #1a4f4f | #cdeaea |
 | `--candidate-text` | #aaaacc | #555570 |
 | `--overlay-argyle-stroke` | #9898b8 | #8080a8 |
-| `--overlay-arrow-stroke` | #9898b8 | #9898b8 |
+| `--overlay-arrow-stroke` | #9898b8 | #767698 |
 | `--overlay-cage-stroke` | #9898b8 | #5555aa |
 | `--overlay-jigsaw-stroke` | #9898b8 | #6060a0 |
 | `--overlay-window-fill` | #3b3b4f | #e8e8fa |
