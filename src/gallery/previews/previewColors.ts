@@ -22,15 +22,6 @@ export function previewShadedFill(): string {
 }
 
 /**
- * Asterisk and center-dot regions — matches the board's --cell-special-bg fill.
- * (Windoku now uses previewShadedFill, the same tint as the other shaded
- * variants.)
- */
-export function previewRegionFill(): string {
-  return readThemeColor('--cell-special-bg');
-}
-
-/**
  * Digit color for cells painted with previewShadedFill — the board switches
  * shaded cells to near-black ink (--cell-shaded-text) because the light tint
  * cannot hold contrast with the default light digit color.

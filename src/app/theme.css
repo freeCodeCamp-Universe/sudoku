@@ -28,10 +28,10 @@
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
   --box-boundary: #5e5e7a;
-  --cell-special-bg: #3b3b4f;
-  /* Shaded constraint regions (even cells, sudoku-x diagonals, girandola).
-     One tint, theme-invariant, light enough to clear 3:1 against the board in
-     both themes (WCAG 1.4.11). Digits on it use --cell-shaded-text. */
+  /* Shaded constraint regions (even cells, sudoku-x diagonals, girandola,
+     windoku windows, asterisk, center-dot). One tint, theme-invariant, light
+     enough to clear 3:1 against the board in both themes (WCAG 1.4.11). Digits
+     on it use --cell-shaded-text. */
   --cell-shaded-bg: #9090a8;
   --cell-shaded-text: #0a0a23;
   --cell-overlap-2-bg: #222248;
@@ -47,8 +47,8 @@
   /* Transient selection highlights, layered over the structural color via
      background-image so error (which clears background-image) and same-value
      win by source order. Opaque single fills — peer blue, same-value teal — so
-     the highlight looks identical on every cell type (normal, shaded, window,
-     special) instead of shifting with the underlying tint. Advisory cues, but
+     the highlight looks identical on every cell type (normal, shaded) instead
+     of shifting with the underlying tint. Advisory cues, but
      every digit color stays >=4.5 against them. The peer blue is desaturated
      and kept dark so it recedes toward the base (a subtle highlight, not a bold
      navy) and sits clearly below the lighter grid border instead of colliding
@@ -60,7 +60,6 @@
   --overlay-arrow-stroke: #9898b8;
   --overlay-cage-stroke: #9898b8;
   --overlay-jigsaw-stroke: #9898b8;
-  --overlay-special-fill: #3a1a6a;
   --overlay-kropki-light: #f8f8ff;
   --overlay-kropki-dark: #4050a0;
   --overlay-kropki-ring: #5060a0;
@@ -85,7 +84,6 @@
   --overlay-arrow-stroke: #767698;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
-  --cell-special-bg: #e8e8fa;
   --cell-overlap-2-bg: #eeeef8;
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
@@ -96,7 +94,6 @@
   --overlay-argyle-stroke: #8080a8;
   --overlay-cage-stroke: #5555aa;
   --overlay-jigsaw-stroke: #6060a0;
-  --overlay-special-fill: #dcc8f4;
 }
 
 * {

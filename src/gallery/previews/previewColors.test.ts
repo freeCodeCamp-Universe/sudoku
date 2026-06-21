@@ -19,11 +19,9 @@ describe('preview colors', () => {
     // previewBaseFill: plain cell background per theme.
     expect(tokens['--cell-bg-light']).toEqual({ dark: '#ffffff', light: '#ffffff' });
     expect(tokens['--bg-secondary']).toEqual({ dark: '#1b1b32', light: '#ebebe6' });
-    // previewShadedFill: theme-invariant shaded tint (even / diagonal /
-    // girandola / windoku windows).
+    // previewShadedFill: theme-invariant shaded tint shared by every region
+    // variant (even / diagonal / girandola / windoku / asterisk / center-dot).
     expect(tokens['--cell-shaded-bg']).toEqual({ dark: '#9090a8', light: '#9090a8' });
-    // previewRegionFill: asterisk / center-dot region.
-    expect(tokens['--cell-special-bg']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
   });
 
   it('should not paint the stale page-background hex as a cell fill in any preview', () => {
@@ -35,7 +33,14 @@ describe('preview colors', () => {
   });
 
   it('should derive shaded-region previews from the shared shaded token', () => {
-    for (const name of ['SudokuXPreview.tsx', 'GirandolaPreview.tsx', 'EvenOddPreview.tsx']) {
+    for (const name of [
+      'SudokuXPreview.tsx',
+      'GirandolaPreview.tsx',
+      'EvenOddPreview.tsx',
+      'WindokuPreview.tsx',
+      'CenterDotPreview.tsx',
+      'AsteriskPreview.tsx',
+    ]) {
       expect(readPreview(name), `${name} should call previewShadedFill`).toMatch(
         /previewShadedFill\(\)/
       );
@@ -45,7 +50,14 @@ describe('preview colors', () => {
   it('should ink digits on shaded cells with the shaded-text color, like the board', () => {
     // The #9090a8 shaded tint cannot hold contrast with the default light digit
     // color in dark theme, so digits on shaded cells must use previewShadedText.
-    for (const name of ['SudokuXPreview.tsx', 'GirandolaPreview.tsx', 'EvenOddPreview.tsx']) {
+    // (WindokuPreview draws no digits, so it is excluded.)
+    for (const name of [
+      'SudokuXPreview.tsx',
+      'GirandolaPreview.tsx',
+      'EvenOddPreview.tsx',
+      'CenterDotPreview.tsx',
+      'AsteriskPreview.tsx',
+    ]) {
       expect(readPreview(name), `${name} should call previewShadedText`).toMatch(
         /previewShadedText\(\)/
       );

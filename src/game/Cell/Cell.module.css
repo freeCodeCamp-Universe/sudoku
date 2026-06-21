@@ -16,8 +16,9 @@
   position: relative;
 }
 
-/* Shaded constraint regions (even cells, sudoku-x diagonals, girandola) share
-   one tint strong enough to clear 3:1 against the board (WCAG 1.4.11). The tint
+/* Shaded constraint regions (even cells, sudoku-x diagonals, girandola, windoku
+   windows, asterisk, center-dot) share one tint strong enough to clear 3:1
+   against the board (WCAG 1.4.11). The tint
    is light in both themes, so digits on it switch to near-black to hold 4.5:1;
    the correct/hint hues cannot survive on the tint and collapse to the same ink.
    Peer, same-value and error each lay an opaque fill over the tint, carrying
@@ -42,19 +43,6 @@
 
 .cell[data-small] {
   font-size: 0.82rem;
-}
-
-/* Asterisk and center-dot cells carry a purple base in the overlay's own hue
-   so a selected cell stays purple when it lifts above the translucent overlay
-   instead of dropping to a grey base. */
-.cell[data-asterisk],
-.cell[data-center-dot] {
-  background-color: var(--cell-special-bg);
-}
-
-:global(.light) .cell[data-asterisk],
-:global(.light) .cell[data-center-dot] {
-  background-color: var(--cell-special-bg);
 }
 
 .cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
@@ -118,7 +106,7 @@
 
 /* Mark the selected cell's peers (its row, column, box, and any other house it
    shares) with one opaque fill laid over whatever structural color the cell has
-   — plain, shaded, window, special, or an overlapping-grid base. A single fill,
+   — plain, shaded, or an overlapping-grid base. A single fill,
    so the highlight reads the same on every cell type instead of shifting with
    the tint underneath. Declared before same-value, which wins the
    background-image when a cell is both. */

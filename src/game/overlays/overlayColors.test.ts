@@ -20,11 +20,6 @@ describe('overlay color tokens', () => {
     expect(tokens['--overlay-arrow-stroke']).toEqual({ dark: '#9898b8', light: '#767698' });
   });
 
-  it('should pin the special-cell fill', () => {
-    const tokens = readThemeTokens();
-    expect(tokens['--overlay-special-fill']).toEqual({ dark: '#3a1a6a', light: '#dcc8f4' });
-  });
-
   it('should pin the theme-invariant kropki and consecutive colors', () => {
     const tokens = readThemeTokens();
     expect(tokens['--overlay-kropki-light']).toEqual({ dark: '#f8f8ff', light: '#f8f8ff' });

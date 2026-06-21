@@ -24,11 +24,8 @@ describe('cell color tokens', () => {
     expect(tokens['--cell-same-value-overlay']).toEqual({ dark: '#14524d', light: '#aadfd6' });
   });
 
-  it('should wire shaded cells and the overlay-backed regions to their tokens', () => {
+  it('should wire shaded cells to the shared shaded token', () => {
     expect(CELL_CSS).toMatch(/\[data-shaded\]\s*\{\s*background-color:\s*var\(--cell-shaded-bg\)/);
-    expect(CELL_CSS).toMatch(
-      /data-center-dot\]\s*\{\s*background-color:\s*var\(--cell-special-bg\)/
-    );
   });
 
   it('should force near-black ink on shaded cells (not the default light text)', () => {

@@ -36,13 +36,13 @@ const BASE: ThemeRef = { dark: '--bg-secondary', light: '--cell-bg-light' };
 const SHADED_BG = '--cell-shaded-bg';
 const SHADED_TEXT = '--cell-shaded-text';
 
-// Cell-background tints that do NOT need 3:1 vs base, with the reason:
-//  - REDUNDANT: a drawn overlay (asterisk / center-dot SVG) already marks the
-//    region, so the tint is decorative, not the sole cue.
-// Selection-time highlights (peer dim, same-value) are no longer opaque `-bg`
-// tints — they are translucent `-overlay` layers composited over the structural
-// color, outside this `-bg` enumeration, and remain advisory by nature.
-const REDUNDANT = new Set(['--cell-special-bg']);
+// Cell-background tints that do NOT need 3:1 vs base. Every region variant now
+// cues its cells with the sole-cue --cell-shaded-bg tint (gated at 3:1), so
+// there are no decorative-only tints to exempt. Selection-time highlights (peer
+// dim, same-value) are not opaque `-bg` tints — they are translucent `-overlay`
+// layers composited over the structural color, outside this `-bg` enumeration,
+// and remain advisory by nature.
+const REDUNDANT = new Set<string>([]);
 const CONVENIENCE = new Set<string>([]);
 
 // `--cell-overlap-*` tints render only in gallery previews (canvas depth

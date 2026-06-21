@@ -114,14 +114,12 @@ export function Cell({
       data-box-bottom={boxBoundaryBottom || undefined}
       data-overlay-borders={overlayBorders || undefined}
       data-diagonal={diagonal || undefined}
-      data-shaded={even || diagonal || girandola || isWindow || undefined}
+      data-shaded={even || diagonal || girandola || isWindow || asterisk || centerDot || undefined}
       data-small={small || undefined}
       data-medium={medium || undefined}
       data-butterfly={isButterfly || undefined}
       data-cross={isCross || undefined}
       data-flower={isFlower || undefined}
-      data-asterisk={asterisk || undefined}
-      data-center-dot={centerDot || undefined}
       data-girandola={girandola || undefined}
       data-argyle-d1={argyleD1 || undefined}
       data-argyle-d2={argyleD2 || undefined}

@@ -41,16 +41,16 @@ export const colorSpecs: ColorSpec[] = [
     variantImport: 'asterisk',
     variant: asterisk,
     cell: 'r4c4',
-    marker: 'data-asterisk',
-    token: '--cell-special-bg',
+    marker: 'data-shaded',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
     variantImport: 'center-dot',
     variant: centerDot,
     cell: 'r1c1',
-    marker: 'data-center-dot',
-    token: '--cell-special-bg',
+    marker: 'data-shaded',
+    token: '--cell-shaded-bg',
     kind: 'positional',
   },
   {
@@ -72,11 +72,11 @@ export const colorSpecs: ColorSpec[] = [
 ];
 
 // Even-odd marks only even cells (shaded); odd cells are unshaded base, so they
-// are not a color marker. Diagonal, girandola, windoku windows, and even all
-// share --cell-shaded-bg.
+// are not a color marker. Diagonal, girandola, windoku windows, asterisk,
+// center-dot, and even all share --cell-shaded-bg.
 //
 // Colors NOT covered by this table, and where each is covered instead:
-// - cell fill / box / shaded / special backgrounds:
+// - cell fill / box / shaded backgrounds:
 //   theme.css tokens, value-pinned in cellColors.test.ts / asserted here.
 // - cage strokes (killer) and argyle diagonal strokes: overlay theme tokens,
 //   covered by Task 5 overlay token tests.

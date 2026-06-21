@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
-import { previewBaseFill, previewRegionFill } from './previewColors';
+import { previewBaseFill, previewShadedFill, previewShadedText } from './previewColors';
 
 const CELLS = 9;
 const BOX = 3;
@@ -26,11 +26,10 @@ export function CenterDotPreview() {
       (ctx, { width }) => {
         const cell = width / CELLS;
         const isLight = theme === 'light';
-        const fillShaded = previewRegionFill();
+        const fillShaded = previewShadedFill();
         const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
         const boxLine = isLight ? '#8080a8' : '#3b3b4f';
         const borderColor = isLight ? '#5060a0' : '#9898b8';
-        const textColor = isLight ? '#2a2a40' : '#d0d0d5';
 
         ctx.fillStyle = previewBaseFill(isLight);
         ctx.fillRect(0, 0, CELLS * cell, CELLS * cell);
@@ -70,7 +69,7 @@ export function CenterDotPreview() {
         ctx.lineWidth = lw;
         ctx.strokeRect(lw / 2, lw / 2, CELLS * cell - lw, CELLS * cell - lw);
 
-        ctx.fillStyle = textColor;
+        ctx.fillStyle = previewShadedText();
         ctx.font = `600 ${Math.round(cell * 0.55)}px 'Fira Mono', monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
