@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Variant } from '@/engine/types';
+import { COMFORTABLE_CELL_SIZE } from './boardViewport';
 
 function getBaseCellSize(variant: Variant): number {
   const kind = variant.layout.kind;
@@ -22,6 +23,13 @@ function isClassicGrid(variant: Variant): boolean {
   return variant.layout.kind === 'grid' && (variant.layout as { size: number }).size === 9;
 }
 
+function isOversizedVariant(variant: Variant): boolean {
+  const { kind } = variant.layout;
+  if (kind === 'multigrid') return true;
+  if (kind === 'grid') return (variant.layout as { size: number }).size > 9;
+  return false;
+}
+
 // Absolute cell sizes for the classic 9×9 board, each sized so that
 // `9 × cell + 6px` (3px frame per side) fits the smallest viewport in its
 // bucket down to the 320px baseline. See the mobile-9x9-fit design spec.
@@ -36,9 +44,11 @@ function classicCellSize(): number {
 export function useResponsiveCellSize(variant: Variant): number {
   const base = getBaseCellSize(variant);
   const classic = isClassicGrid(variant);
+  const oversized = isOversizedVariant(variant);
 
   function compute(): number {
     if (classic) return classicCellSize();
+    if (oversized) return COMFORTABLE_CELL_SIZE;
     const w = window.innerWidth;
     if (w <= 375) return Math.round(base * (38 / 52));
     if (w <= 520) return Math.round(base * (44 / 52));
@@ -54,7 +64,7 @@ export function useResponsiveCellSize(variant: Variant): number {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [base, classic]);
+  }, [base, classic, oversized]);
 
   return cellSize;
 }

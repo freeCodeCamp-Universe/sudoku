@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { Variant } from '@/engine/types';
+import { COMFORTABLE_CELL_SIZE } from './boardViewport';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 
 const originalWidth = window.innerWidth;
@@ -54,13 +55,28 @@ describe('useResponsiveCellSize', () => {
     });
   });
 
-  describe('16×16 grid (unchanged ratio behavior)', () => {
-    it('should not use the classic step table at the 320px baseline', () => {
-      expect(cellAt(320, super16)).toBe(22);
+  describe('oversized boards use a fixed comfortable cell size', () => {
+    const samurai = {
+      layout: {
+        kind: 'multigrid',
+        canvasCols: 21,
+        canvasRows: 21,
+        subGridSize: 9,
+        box: { rows: 3, cols: 3 },
+        subGrids: [] as { originRow: number; originCol: number }[],
+      },
+    } as unknown as Variant;
+
+    it('should render a 16×16 board at the comfortable size on mobile', () => {
+      expect(cellAt(320, super16)).toBe(COMFORTABLE_CELL_SIZE);
     });
 
-    it('should use the full base size on wide viewports', () => {
-      expect(cellAt(800, super16)).toBe(30);
+    it('should render a multigrid board at the comfortable size on mobile', () => {
+      expect(cellAt(320, samurai)).toBe(COMFORTABLE_CELL_SIZE);
+    });
+
+    it('should keep the comfortable size on desktop', () => {
+      expect(cellAt(1440, super16)).toBe(COMFORTABLE_CELL_SIZE);
     });
   });
 });
