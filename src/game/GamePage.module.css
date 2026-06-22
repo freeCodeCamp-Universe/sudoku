@@ -24,6 +24,25 @@
   align-items: center;
 }
 
+/*
+ * Stable, always-rendered wrapper around the board. It is measured to decide
+ * whether the board is oversized. The base rule is a transparent centering
+ * wrapper that must not alter the classic/desktop layout (no height cap, no
+ * overflow). The oversized modifier gives the clip a definite box: a bounded
+ * block-size so there is something to pan within, plus overflow/touch handling.
+ */
+.boardFrame {
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+}
+
+.boardFrameOversized {
+  block-size: 70vh;
+  overflow: hidden;
+  touch-action: none;
+}
+
 .variantLegend {
   display: flex;
   align-items: center;

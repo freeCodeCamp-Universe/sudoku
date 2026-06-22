@@ -1,6 +1,8 @@
 .viewport {
   position: relative;
   overflow: hidden;
+  inline-size: 100%;
+  block-size: 100%;
   max-width: 100%;
   touch-action: none;
   overscroll-behavior: contain;

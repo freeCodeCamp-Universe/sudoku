@@ -1,11 +1,17 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
+import { isOversized } from '@/game/boardViewport';
+import type { BoardViewportState } from '@/game/gameTypes';
 import { buildMarkerGaps } from '@/game/markerGaps';
+import { useBoardGestures } from '@/game/useBoardGestures';
+import { useBoardViewport } from '@/game/useBoardViewport';
+import { useElementSize } from '@/game/useElementSize';
+import { ZoomControls } from '@/game/ZoomControls';
 import { getVariant } from '@/variants/registry';
 import { isJigsawStructure, makePlayableJigsawVariant, PRESET_LAYOUTS } from '@/variants/jigsaw';
 import { assemblePuzzle } from './assemblePuzzle';
@@ -82,6 +88,39 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
     () => layoutStrategy.canvasSize(variant, cellSize),
     [layoutStrategy, variant, cellSize]
   );
+
+  // Pan/zoom navigation for oversized boards (e.g. samurai, super) on small
+  // screens. `viewportRef` measures a stable, always-rendered board frame so
+  // measurement never deadlocks; `clipRef` belongs to the conditional
+  // BoardViewport clip. Gestures read `e.currentTarget`, so the separate clip
+  // ref is fine.
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const viewportSize = useElementSize(viewportRef);
+  const oversized = isOversized(size, viewportSize) && viewportSize.w > 0;
+  const boardViewport = useBoardViewport(size, viewportSize);
+  const gestures = useBoardGestures(boardViewport);
+
+  const ensureCellVisible = useCallback(
+    (id: CellId) => {
+      const rect = rects.get(id);
+      if (rect) {
+        boardViewport.ensureVisible(rect);
+      }
+    },
+    [boardViewport, rects]
+  );
+
+  const viewportState: BoardViewportState | undefined = oversized
+    ? {
+        transform: boardViewport.transform,
+        viewportRef: clipRef,
+        onPointerDown: gestures.onPointerDown,
+        onPointerMove: gestures.onPointerMove,
+        onPointerUp: gestures.onPointerUp,
+      }
+    : undefined;
+
   const gutters = useMemo(
     () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
     [layoutStrategy, variant, structure]
@@ -149,6 +188,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
     annotators,
     renderSymbol,
     describeSymbol,
+    onCellNavigate: oversized ? ensureCellVisible : undefined,
   });
 
   useEffect(() => {
@@ -268,20 +308,28 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
       />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
-          <Board
-            variant={variant}
-            cells={model.cells}
-            rects={rects}
-            size={size}
-            gutters={gutters}
-            overlays={overlays}
-            grid={grid}
-            renderSymbol={renderSymbol}
-            markerGaps={markerGaps}
-            wordCells={wordCellIds}
-            colorblindMode={settings.colorblindEnabled}
-            parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
-          />
+          <div
+            ref={viewportRef}
+            className={
+              oversized ? `${styles.boardFrame} ${styles.boardFrameOversized}` : styles.boardFrame
+            }
+          >
+            <Board
+              variant={variant}
+              cells={model.cells}
+              rects={rects}
+              size={size}
+              gutters={gutters}
+              overlays={overlays}
+              grid={grid}
+              renderSymbol={renderSymbol}
+              markerGaps={markerGaps}
+              wordCells={wordCellIds}
+              colorblindMode={settings.colorblindEnabled}
+              parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+              viewport={viewportState}
+            />
+          </div>
           {variant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
               <span>There is a hidden word somewhere. Try to find it!</span>
@@ -368,6 +416,13 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           ) : null}
         </div>
         <div className={styles.gameRight}>
+          {oversized ? (
+            <ZoomControls
+              onZoomIn={() => boardViewport.zoomBy(1.2)}
+              onZoomOut={() => boardViewport.zoomBy(1 / 1.2)}
+              onFit={boardViewport.fitWhole}
+            />
+          ) : null}
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={
