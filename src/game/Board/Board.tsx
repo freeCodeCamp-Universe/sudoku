@@ -1,7 +1,9 @@
+import type React from 'react';
 import type { GutterCell, GutterSlots, Rect } from '@/game/gameTypes';
 import { Cell } from '@/game/Cell';
 import { LiveRegion } from '@/game/LiveRegion';
 import type { BoardProps } from '@/game/gameTypes';
+import { BoardViewport } from './BoardViewport';
 import { ANTI_DIAGONAL_CELLS, MAIN_DIAGONAL_CELLS } from '@/variants/sudoku-x';
 import { WINDOKU_WINDOWS } from '@/variants/windoku';
 import { ASTERISK_CELLS } from '@/variants/asterisk';
@@ -177,6 +179,7 @@ export function Board({
   wordCells,
   colorblindMode,
   parityMap,
+  viewport,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
@@ -290,10 +293,14 @@ export function Board({
     </div>
   );
 
+  function wrap(node: React.ReactNode) {
+    return viewport ? <BoardViewport viewport={viewport}>{node}</BoardViewport> : node;
+  }
+
   if (!hasGutters || !gutters) {
     return (
       <div className={styles.boardWrap}>
-        {gridCanvas}
+        {wrap(gridCanvas)}
         <LiveRegion ref={grid.announcerRef} />
       </div>
     );
@@ -301,75 +308,77 @@ export function Board({
 
   return (
     <div className={styles.boardWrap}>
-      <div className={styles.gutterLayout}>
-        {gutters.top ? (
+      {wrap(
+        <div className={styles.gutterLayout}>
+          {gutters.top ? (
+            <div className={styles.gutterRow}>
+              <div className={styles.gutterCorner} />
+              <div data-gutter="top" className={styles.gutterTrack}>
+                {gutters.top.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('top', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.gutterCorner} />
+            </div>
+          ) : null}
           <div className={styles.gutterRow}>
-            <div className={styles.gutterCorner} />
-            <div data-gutter="top" className={styles.gutterTrack}>
-              {gutters.top.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('top', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-            <div className={styles.gutterCorner} />
+            {gutters.start ? (
+              <div data-gutter="start" className={styles.gutterCol}>
+                {gutters.start.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('start', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.gutterCorner} />
+            )}
+            {gridCanvas}
+            {gutters.end ? (
+              <div data-gutter="end" className={styles.gutterCol}>
+                {gutters.end.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('end', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.gutterCorner} />
+            )}
           </div>
-        ) : null}
-        <div className={styles.gutterRow}>
-          {gutters.start ? (
-            <div data-gutter="start" className={styles.gutterCol}>
-              {gutters.start.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('start', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
+          {gutters.bottom ? (
+            <div className={styles.gutterRow}>
+              <div className={styles.gutterCorner} />
+              <div data-gutter="bottom" className={styles.gutterTrack}>
+                {gutters.bottom.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('bottom', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.gutterCorner} />
             </div>
-          ) : (
-            <div className={styles.gutterCorner} />
-          )}
-          {gridCanvas}
-          {gutters.end ? (
-            <div data-gutter="end" className={styles.gutterCol}>
-              {gutters.end.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('end', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className={styles.gutterCorner} />
-          )}
+          ) : null}
         </div>
-        {gutters.bottom ? (
-          <div className={styles.gutterRow}>
-            <div className={styles.gutterCorner} />
-            <div data-gutter="bottom" className={styles.gutterTrack}>
-              {gutters.bottom.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('bottom', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-            <div className={styles.gutterCorner} />
-          </div>
-        ) : null}
-      </div>
+      )}
       <LiveRegion ref={grid.announcerRef} />
     </div>
   );

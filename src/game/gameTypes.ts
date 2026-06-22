@@ -69,6 +69,14 @@ export interface GridInteraction {
  */
 export type MarkerEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
+export interface BoardViewportState {
+  transform: { scale: number; translateX: number; translateY: number };
+  viewportRef: React.RefObject<HTMLDivElement | null>;
+  onPointerDown(e: React.PointerEvent): void;
+  onPointerMove(e: React.PointerEvent): void;
+  onPointerUp(e: React.PointerEvent): void;
+}
+
 export interface BoardProps {
   variant: Variant;
   cells: Cell[];
@@ -82,6 +90,7 @@ export interface BoardProps {
   wordCells?: Set<CellId>;
   colorblindMode?: boolean;
   parityMap?: Map<CellId, 0 | 1>;
+  viewport?: BoardViewportState;
 }
 
 export interface AnnotatorContext {
