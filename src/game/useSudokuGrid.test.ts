@@ -38,6 +38,7 @@ interface TestBoardProps {
   values?: Values;
   checkEnabled?: boolean;
   solution?: Values;
+  onCellNavigate?: (id: CellId) => void;
 }
 
 function TestBoard({
@@ -48,6 +49,7 @@ function TestBoard({
   values = emptyValues,
   checkEnabled = false,
   solution = new Map(),
+  onCellNavigate,
 }: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
@@ -61,6 +63,7 @@ function TestBoard({
     describeSymbol,
     checkEnabled,
     solution,
+    onCellNavigate,
   });
 
   return React.createElement(Board, {
@@ -684,6 +687,18 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c5').peer).toBe(false);
+  });
+
+  it('should call onCellNavigate with the destination cell id on arrow navigation', () => {
+    const onCellNavigate = vi.fn();
+    render(React.createElement(TestBoard, { onCellNavigate }));
+
+    const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+
+    fireEvent.focus(firstCell);
+    fireEvent.keyDown(firstCell, { key: 'ArrowRight' });
+
+    expect(onCellNavigate).toHaveBeenCalledWith('r0c1');
   });
 
   it('should not mark any cell sameValue when the selected cell is empty', () => {
