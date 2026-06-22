@@ -7,12 +7,8 @@ import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { getVariant } from '@/variants/registry';
-import {
-  isJigsawStructure,
-  makeJigsawVariant,
-  makePlayableJigsawVariant,
-  PRESET_LAYOUTS,
-} from '@/variants/jigsaw';
+import { isJigsawStructure, makePlayableJigsawVariant, PRESET_LAYOUTS } from '@/variants/jigsaw';
+import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
@@ -72,69 +68,54 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
   const effectiveSolved = state.solved && checkEnabled;
   const showCheckPrompt = isBoardFull && !checkEnabled;
 
-  const structure = useMemo(
-    () => variant.deriveStructure?.(solution, baseModel),
+  const { model, structure } = useMemo(
+    () => assemblePuzzle(variant, baseModel, solution),
     [baseModel, solution, variant]
   );
-  const liveVariant = useMemo(() => {
-    if (variant.id === 'jigsaw' && isJigsawStructure(structure)) {
-      return makeJigsawVariant(structure.regions);
-    }
-
-    return variant;
-  }, [structure, variant]);
-  const model = useMemo(() => {
-    const liveModel = liveVariant === variant ? baseModel : buildModel(liveVariant);
-
-    return structure === undefined ? liveModel : { ...liveModel, structure };
-  }, [baseModel, liveVariant, structure, variant]);
-  const layoutStrategy = useMemo(
-    () => resolveLayout(liveVariant.layout.kind),
-    [liveVariant.layout.kind]
-  );
-  const cellSize = useResponsiveCellSize(liveVariant);
+  const layoutStrategy = useMemo(() => resolveLayout(variant.layout.kind), [variant.layout.kind]);
+  const cellSize = useResponsiveCellSize(variant);
   const rects = useMemo(
-    () => layoutStrategy.cellRects(liveVariant, cellSize),
-    [layoutStrategy, liveVariant, cellSize]
+    () => layoutStrategy.cellRects(variant, cellSize),
+    [layoutStrategy, variant, cellSize]
   );
   const size = useMemo(
-    () => layoutStrategy.canvasSize(liveVariant, cellSize),
-    [layoutStrategy, liveVariant, cellSize]
+    () => layoutStrategy.canvasSize(variant, cellSize),
+    [layoutStrategy, variant, cellSize]
   );
   const gutters = useMemo(
-    () => liveVariant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(liveVariant),
-    [layoutStrategy, liveVariant, structure]
+    () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
+    [layoutStrategy, variant, structure]
   );
   const overlays = useMemo(
     () =>
-      resolveOverlays(liveVariant.overlayIds ?? []).map((Overlay, index) => (
-        <Overlay key={`${liveVariant.id}-overlay-${index}`} rects={rects} structure={structure} />
+      resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (
+        <Overlay key={`${variant.id}-overlay-${index}`} rects={rects} structure={structure} />
       )),
-    [liveVariant.id, liveVariant.overlayIds, rects, structure]
+    [variant.id, variant.overlayIds, rects, structure]
   );
   const annotators = useMemo(
     () =>
       variant.id === 'jigsaw' && isJigsawStructure(structure)
         ? [jigsawAnnotator(structure)]
-        : resolveAnnotators(liveVariant.annotatorIds ?? []),
-    [liveVariant.annotatorIds, structure, variant.id]
+        : resolveAnnotators(variant.annotatorIds ?? []),
+    [variant.annotatorIds, structure, variant.id]
   );
   const renderSymbol = useMemo(
     () =>
-      liveVariant.renderSymbol
-        ? (value: SymbolValue) => liveVariant.renderSymbol!(value, structure)
+      variant.renderSymbol
+        ? (value: SymbolValue) => variant.renderSymbol!(value, structure)
         : (value: SymbolValue) => String(value),
-    [liveVariant, structure]
+    [variant, structure]
   );
   const describeSymbol = useMemo(() => {
-    const colorNames = (liveVariant as VariantWithColorNames).colorNames;
+    const colorNames = (variant as VariantWithColorNames).colorNames;
 
     if (Array.isArray(colorNames)) {
       return (value: SymbolValue) => colorNames[value - 1] ?? renderSymbol(value);
     }
 
     return renderSymbol;
-  }, [liveVariant, renderSymbol]);
+  }, [variant, renderSymbol]);
   const markerGaps = useMemo(() => buildMarkerGaps(structure), [structure]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
 
@@ -288,7 +269,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
           <Board
-            variant={liveVariant}
+            variant={variant}
             cells={model.cells}
             rects={rects}
             size={size}
@@ -301,12 +282,12 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             colorblindMode={settings.colorblindEnabled}
             parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
           />
-          {liveVariant.id === 'wordoku' ? (
+          {variant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
               <span>There is a hidden word somewhere. Try to find it!</span>
             </div>
           ) : null}
-          {liveVariant.id === 'greater-than' ? (
+          {variant.id === 'greater-than' ? (
             <div className={styles.variantLegend} aria-label="Greater-than rule legend">
               <svg
                 width="10"
@@ -320,7 +301,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               <span>Triangle points toward the smaller of the two adjacent digits.</span>
             </div>
           ) : null}
-          {liveVariant.id === 'consecutive' ? (
+          {variant.id === 'consecutive' ? (
             <div className={styles.variantLegend} aria-label="Consecutive rule legend">
               <svg
                 width="10"
@@ -337,7 +318,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               </span>
             </div>
           ) : null}
-          {liveVariant.id === 'kropki' ? (
+          {variant.id === 'kropki' ? (
             <div className={styles.variantLegend} aria-label="Kropki rule legend">
               <svg
                 width="10"
@@ -361,7 +342,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               <span>One is double the other</span>
             </div>
           ) : null}
-          {liveVariant.id === 'even-odd' ? (
+          {variant.id === 'even-odd' ? (
             <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
               <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
               <span>Even (2, 4, 6, 8)</span>
@@ -369,7 +350,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               <span>Odd (1, 3, 5, 7, 9)</span>
             </div>
           ) : null}
-          {liveVariant.id === 'arrow' ? (
+          {variant.id === 'arrow' ? (
             <div className={styles.variantLegend} aria-label="Arrow rule legend">
               <svg
                 width="44"
@@ -390,7 +371,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={
-              liveVariant.symbolKind === 'letter'
+              variant.symbolKind === 'letter'
                 ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
                 : model.symbols
             }
@@ -467,7 +448,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             candidateMode={candidateMode}
             renderSymbol={renderSymbol}
             describeSymbol={describeSymbol}
-            symbolKind={liveVariant.symbolKind}
+            symbolKind={variant.symbolKind}
           />
           <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
         </div>

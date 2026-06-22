@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import type { Variant } from '@/engine/types';
+import { withStructure } from '@/game/assemblePuzzle';
 import { useGameContext } from '@/game/GameContext';
 import { GameProvider } from '@/game/GameProvider';
 import { useSudokuGrid } from '@/game/useSudokuGrid';
@@ -45,13 +46,12 @@ export function renderPlay(
   { seed = 1, checkEnabled = false, fixture: providedFixture }: PlayOptions = {}
 ) {
   const fixture = providedFixture ?? makeFixture(variant, seed);
-  // Mirror GamePage: a variant's derived structure (cages, kropki marks, edge
-  // clues, ...) must ride on the model so validate() can run the special
-  // constraints. Without it those constraints silently no-op.
-  const model =
-    fixture.structure === undefined
-      ? fixture.model
-      : { ...fixture.model, structure: fixture.structure };
+  // Mirror GamePage's Phase 2 merge so the derived structure (cages, kropki
+  // marks, edge clues, ...) rides on the model and validate() runs the special
+  // constraints. Reuse the fixture's structure rather than re-deriving — some
+  // variants (killer) carve it non-deterministically, so a fresh derivation
+  // would not match the violation the caller already located.
+  const model = withStructure(fixture.model, fixture.structure);
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (

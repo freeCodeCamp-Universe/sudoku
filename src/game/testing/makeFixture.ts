@@ -35,6 +35,9 @@ export function makeFixture(variant: Variant, seed = 1): Fixture {
   const model = buildModel(variant);
   const layout = resolveLayout(variant.layout.kind);
   const { solution, givens } = generate(model, 'intermediate', seeded(seed));
+  // The returned model stays structure-free: callers merge structure when they
+  // need it (renderPlay does, via withStructure; the uniqueness baseline in the
+  // special-constraint tests deliberately does not).
   const structure = variant.deriveStructure?.(solution, model);
 
   return {
