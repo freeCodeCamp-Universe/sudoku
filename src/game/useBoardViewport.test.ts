@@ -32,14 +32,6 @@ describe('useBoardViewport', () => {
     expect(result.current.transform.scale).toBeCloseTo(fitScale(board, viewport));
   });
 
-  it('should reset back to scale 1 at the origin', () => {
-    const { result } = renderHook(() => useBoardViewport(board, viewport));
-    act(() => result.current.fitWhole());
-    act(() => result.current.reset());
-    expect(result.current.transform.scale).toBe(1);
-    expect(result.current.transform.translateX).toBe(0);
-  });
-
   it('should center on a tapped minimap point', () => {
     const { result } = renderHook(() => useBoardViewport(board, viewport));
     act(() => result.current.panToMinimapPoint({ x: 75, y: 75 }, { w: 150, h: 150 }));

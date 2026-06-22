@@ -15,7 +15,6 @@ export interface BoardViewport {
   panBy(dx: number, dy: number): void;
   zoomBy(factor: number, focus?: { x: number; y: number }): void;
   fitWhole(): void;
-  reset(): void;
   panToMinimapPoint(point: { x: number; y: number }, minimap: Size): void;
   ensureVisible(cell: Rect): void;
 }
@@ -50,10 +49,6 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
     });
   }, [board, viewport]);
 
-  const reset = useCallback(() => {
-    setTransform({ scale: 1, ...clampTranslate(ORIGIN, board, viewport) });
-  }, [board, viewport]);
-
   const panToMinimapPoint = useCallback(
     (point: { x: number; y: number }, minimap: Size) => {
       setTransform((t) => ({
@@ -72,7 +67,7 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
   );
 
   return useMemo(
-    () => ({ transform, panBy, zoomBy, fitWhole, reset, panToMinimapPoint, ensureVisible }),
-    [transform, panBy, zoomBy, fitWhole, reset, panToMinimapPoint, ensureVisible]
+    () => ({ transform, panBy, zoomBy, fitWhole, panToMinimapPoint, ensureVisible }),
+    [transform, panBy, zoomBy, fitWhole, panToMinimapPoint, ensureVisible]
   );
 }
