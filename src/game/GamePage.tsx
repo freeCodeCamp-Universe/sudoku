@@ -7,6 +7,7 @@ import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
 import { isOversized } from '@/game/boardViewport';
 import type { BoardViewportState } from '@/game/gameTypes';
+import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
@@ -157,6 +158,11 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
   }, [variant, renderSymbol]);
   const markerGaps = useMemo(() => buildMarkerGaps(structure), [structure]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
+  const filled = useMemo(() => {
+    const set = new Set<CellId>(givensSet);
+    for (const id of state.values.keys()) set.add(id);
+    return set;
+  }, [givensSet, state.values]);
 
   const onEnterValue = useCallback(
     (cellId: CellId, value: SymbolValue | 0) => {
@@ -423,6 +429,23 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               onFit={boardViewport.fitWhole}
             />
           ) : null}
+          {oversized ? (
+            <div className={styles.navDock}>
+              <Minimap
+                rects={rects}
+                filled={filled}
+                board={size}
+                viewport={viewportSize}
+                transform={boardViewport.transform}
+                onSeek={(point) =>
+                  boardViewport.panToMinimapPoint(point, {
+                    w: 150,
+                    h: (size.h / size.w) * 150,
+                  })
+                }
+              />
+            </div>
+          ) : null}
           <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
           <NumberPad
             symbols={
@@ -438,7 +461,9 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
                   ? 4
                   : model.symbols.length === 6
                     ? 3
-                    : undefined
+                    : oversized && model.symbols.length === 9
+                      ? 3
+                      : undefined
             }
             onEnter={(value) => {
               if (!selectedCellId) {

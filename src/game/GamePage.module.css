@@ -83,6 +83,12 @@
   flex-shrink: 0;
 }
 
+.navDock {
+  display: flex;
+  justify-content: center;
+  margin-block-end: 16px;
+}
+
 .legendSwatch {
   display: inline-block;
   width: 14px;
