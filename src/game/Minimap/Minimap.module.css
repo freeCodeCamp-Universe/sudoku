@@ -1,0 +1,25 @@
+.minimap {
+  display: block;
+  inline-size: 150px;
+  block-size: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.cell {
+  fill: var(--border);
+}
+
+.filled {
+  fill: var(--text-muted);
+}
+
+.indicator {
+  fill: var(--accent-blue);
+  fill-opacity: 0.25;
+  stroke: var(--accent-blue);
+  stroke-width: 2;
+}
