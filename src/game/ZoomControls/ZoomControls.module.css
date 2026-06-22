@@ -1,0 +1,25 @@
+.controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-block-end: 16px;
+}
+
+.btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-bright);
+  cursor: pointer;
+}
+
+.fit {
+  width: auto;
+  padding-inline: 12px;
+  font-size: 0.8rem;
+}
