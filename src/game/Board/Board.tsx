@@ -297,9 +297,16 @@ export function Board({
     return viewport ? <BoardViewport viewport={viewport}>{node}</BoardViewport> : node;
   }
 
+  // When the board is wrapped in a clipping viewport, the wrapper must fill the
+  // sized frame so the clip's percentage dimensions resolve against it; the
+  // default `width: max-content` collapses around the absolutely-positioned clip.
+  const boardWrapClass = viewport
+    ? `${styles.boardWrap} ${styles.boardWrapViewport}`
+    : styles.boardWrap;
+
   if (!hasGutters || !gutters) {
     return (
-      <div className={styles.boardWrap}>
+      <div className={boardWrapClass}>
         {wrap(gridCanvas)}
         <LiveRegion ref={grid.announcerRef} />
       </div>
@@ -307,7 +314,7 @@ export function Board({
   }
 
   return (
-    <div className={styles.boardWrap}>
+    <div className={boardWrapClass}>
       {wrap(
         <div className={styles.gutterLayout}>
           {gutters.top ? (
