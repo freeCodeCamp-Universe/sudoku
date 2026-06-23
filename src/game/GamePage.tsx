@@ -327,7 +327,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
         viewport={viewportSize}
         transform={boardViewport.transform}
         onSeek={(point) =>
-          boardViewport.panToMinimapPoint(point, { w: 150, h: (size.h / size.w) * 150 })
+          boardViewport.panToMinimapPoint(point, { w: 120, h: (size.h / size.w) * 120 })
         }
       />
     </div>
@@ -349,7 +349,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             : model.symbols.length === 6
               ? 3
               : oversized && model.symbols.length === 9
-                ? 3
+                ? 5
                 : undefined
       }
       onEnter={(value) => {

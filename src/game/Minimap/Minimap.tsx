@@ -4,7 +4,7 @@ import type { Rect, Size } from '@/game/gameTypes';
 import { indicatorRect } from '@/game/boardViewport';
 import styles from './Minimap.module.css';
 
-const MINIMAP_WIDTH = 150;
+const MINIMAP_WIDTH = 120;
 
 interface MinimapProps {
   rects: Map<CellId, Rect>;

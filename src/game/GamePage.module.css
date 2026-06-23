@@ -40,7 +40,7 @@
 .boardFrameOversized {
   /* Bounded so the controls below stay in view on a phone rather than being
      pushed off-screen; the minimap + pan/zoom reach the rest of the board. */
-  block-size: 40vh;
+  block-size: 48vh;
   overflow: hidden;
   touch-action: none;
 }
@@ -99,18 +99,20 @@
 .controlsRow {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   inline-size: 100%;
-  margin-block-end: 16px;
+  margin-block-start: 12px;
+  margin-block-end: 8px;
 }
 
 .padGroup {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex: 0 1 auto;
   min-inline-size: 0;
 }
@@ -119,7 +121,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex: 0 0 auto;
 }
 
