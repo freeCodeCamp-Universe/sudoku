@@ -18,7 +18,22 @@ export function useElementSize(ref: RefObject<HTMLElement | null>): Size {
     }
     measure();
     window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+
+    // Observe the element itself: its box can change without a window resize
+    // (e.g. a parent toggling a size-changing class once measurement reveals
+    // the board is oversized). Without this, the first measurement — taken
+    // before that class applies — sticks and the reported size is wrong.
+    // ResizeObserver is absent in jsdom; the window listener covers tests.
+    let observer: ResizeObserver | undefined;
+    if (ref.current && typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(measure);
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      observer?.disconnect();
+    };
   }, [ref]);
 
   return size;
