@@ -304,6 +304,119 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
+  const modeSwitcher = (
+    <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
+  );
+  const toolbar = (
+    <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+  );
+  const zoomControls = oversized ? (
+    <ZoomControls
+      onZoomIn={() => boardViewport.zoomBy(1.2)}
+      onZoomOut={() => boardViewport.zoomBy(1 / 1.2)}
+      onFit={boardViewport.fitWhole}
+    />
+  ) : null;
+
+  const minimap = oversized ? (
+    <div className={styles.navDock}>
+      <Minimap
+        rects={rects}
+        filled={filled}
+        board={size}
+        viewport={viewportSize}
+        transform={boardViewport.transform}
+        onSeek={(point) =>
+          boardViewport.panToMinimapPoint(point, { w: 150, h: (size.h / size.w) * 150 })
+        }
+      />
+    </div>
+  ) : null;
+
+  const numberPad = (
+    <NumberPad
+      symbols={
+        variant.symbolKind === 'letter'
+          ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
+          : model.symbols
+      }
+      usedSymbols={usedSymbols}
+      columns={
+        model.symbols.length === 16
+          ? 4
+          : model.symbols.length === 4
+            ? 4
+            : model.symbols.length === 6
+              ? 3
+              : oversized && model.symbols.length === 9
+                ? 3
+                : undefined
+      }
+      onEnter={(value) => {
+        if (!selectedCellId) {
+          return;
+        }
+
+        const isCorrectlyFilled =
+          checkEnabled &&
+          solution.has(selectedCellId) &&
+          state.values.get(selectedCellId) === solution.get(selectedCellId);
+
+        if (isCorrectlyFilled) {
+          return;
+        }
+
+        const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+        const loc = selectedCell
+          ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
+          : null;
+
+        if (value === 0) {
+          dispatch({ type: 'erase', cellId: selectedCellId });
+          if (loc) grid.announce(`${loc}, empty`);
+          return;
+        }
+
+        if (candidateMode) {
+          const current = state.candidates.get(selectedCellId) ?? [];
+          const adding = !current.includes(value);
+          onToggleCandidate(selectedCellId, value);
+          if (loc) {
+            grid.announce(
+              `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
+            );
+          }
+          return;
+        }
+
+        onEnterValue(selectedCellId, value);
+        if (loc) {
+          const nextValues = new Map(state.values);
+          nextValues.set(selectedCellId, value);
+          const isCorrect =
+            checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
+          const correctness =
+            checkEnabled && solution.has(selectedCellId)
+              ? isCorrect
+                ? ', correct'
+                : ', incorrect'
+              : '';
+          const inConflict =
+            !isCorrect &&
+            checkEnabled &&
+            validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+          grid.announce(
+            `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+          );
+        }
+      }}
+      candidateMode={candidateMode}
+      renderSymbol={renderSymbol}
+      describeSymbol={describeSymbol}
+      symbolKind={variant.symbolKind}
+    />
+  );
+
   return (
     <div className={styles.gamePage}>
       <Timer
@@ -423,114 +536,24 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
         </div>
         <div className={styles.gameRight}>
           {oversized ? (
-            <ZoomControls
-              onZoomIn={() => boardViewport.zoomBy(1.2)}
-              onZoomOut={() => boardViewport.zoomBy(1 / 1.2)}
-              onFit={boardViewport.fitWhole}
-            />
-          ) : null}
-          {oversized ? (
-            <div className={styles.navDock}>
-              <Minimap
-                rects={rects}
-                filled={filled}
-                board={size}
-                viewport={viewportSize}
-                transform={boardViewport.transform}
-                onSeek={(point) =>
-                  boardViewport.panToMinimapPoint(point, {
-                    w: 150,
-                    h: (size.h / size.w) * 150,
-                  })
-                }
-              />
+            <div className={styles.controlsRow}>
+              <div className={styles.padGroup}>
+                {modeSwitcher}
+                {numberPad}
+                {toolbar}
+              </div>
+              <div className={styles.mapGroup}>
+                {minimap}
+                {zoomControls}
+              </div>
             </div>
-          ) : null}
-          <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
-          <NumberPad
-            symbols={
-              variant.symbolKind === 'letter'
-                ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
-                : model.symbols
-            }
-            usedSymbols={usedSymbols}
-            columns={
-              model.symbols.length === 16
-                ? 4
-                : model.symbols.length === 4
-                  ? 4
-                  : model.symbols.length === 6
-                    ? 3
-                    : oversized && model.symbols.length === 9
-                      ? 3
-                      : undefined
-            }
-            onEnter={(value) => {
-              if (!selectedCellId) {
-                return;
-              }
-
-              const isCorrectlyFilled =
-                checkEnabled &&
-                solution.has(selectedCellId) &&
-                state.values.get(selectedCellId) === solution.get(selectedCellId);
-
-              if (isCorrectlyFilled) {
-                return;
-              }
-
-              const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-              const loc = selectedCell
-                ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
-                : null;
-
-              if (value === 0) {
-                dispatch({ type: 'erase', cellId: selectedCellId });
-                if (loc) grid.announce(`${loc}, empty`);
-                return;
-              }
-
-              if (candidateMode) {
-                const current = state.candidates.get(selectedCellId) ?? [];
-                const adding = !current.includes(value);
-                onToggleCandidate(selectedCellId, value);
-                if (loc) {
-                  grid.announce(
-                    `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
-                  );
-                }
-                return;
-              }
-
-              onEnterValue(selectedCellId, value);
-              if (loc) {
-                const nextValues = new Map(state.values);
-                nextValues.set(selectedCellId, value);
-                const isCorrect =
-                  checkEnabled &&
-                  solution.has(selectedCellId) &&
-                  value === solution.get(selectedCellId);
-                const correctness =
-                  checkEnabled && solution.has(selectedCellId)
-                    ? isCorrect
-                      ? ', correct'
-                      : ', incorrect'
-                    : '';
-                const inConflict =
-                  !isCorrect &&
-                  checkEnabled &&
-                  validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-                grid.announce(
-                  `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-                );
-              }
-            }}
-            candidateMode={candidateMode}
-            renderSymbol={renderSymbol}
-            describeSymbol={describeSymbol}
-            symbolKind={variant.symbolKind}
-          />
-          <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+          ) : (
+            <>
+              {modeSwitcher}
+              {numberPad}
+              {toolbar}
+            </>
+          )}
         </div>
       </div>
       {showCheckPrompt ? (

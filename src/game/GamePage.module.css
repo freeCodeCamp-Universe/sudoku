@@ -38,7 +38,9 @@
 }
 
 .boardFrameOversized {
-  block-size: 70vh;
+  /* Bounded so the controls below stay in view on a phone rather than being
+     pushed off-screen; the minimap + pan/zoom reach the rest of the board. */
+  block-size: 40vh;
   overflow: hidden;
   touch-action: none;
 }
@@ -86,7 +88,39 @@
 .navDock {
   display: flex;
   justify-content: center;
+}
+
+/*
+ * Oversized-board controls: two groups side by side. The pad group (number pad
+ * + its mode/toolbar buttons) takes priority width; the map group (minimap +
+ * its zoom buttons) sits on the inline-end (right) and only takes the space it
+ * needs, so the pad is never squeezed to a 50/50 split.
+ */
+.controlsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 16px;
+  inline-size: 100%;
   margin-block-end: 16px;
+}
+
+.padGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.mapGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
 }
 
 .legendSwatch {
