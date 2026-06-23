@@ -1,4 +1,13 @@
 site: sudoku
 
 build:
+  command: pnpm run build
   output: dist
+
+deploy:
+  preview: true
+  ignore:
+    - '*.map'
+    - 'node_modules/**'
+    - '.git/**'
+    - '.env*'
