@@ -52,6 +52,18 @@
   margin-block-end: 8px;
 }
 
+/* Stacked variant for the oversized-board action column: full-width buttons,
+   no trailing margin (the column's own gap handles spacing). */
+.buttonRowVertical {
+  flex-direction: column;
+  margin-block-end: 0;
+}
+
+.buttonRowVertical .revealBtn,
+.buttonRowVertical .toolBtn {
+  inline-size: 100%;
+}
+
 .toolBtn,
 .revealBtn {
   font-size: 0.82rem;

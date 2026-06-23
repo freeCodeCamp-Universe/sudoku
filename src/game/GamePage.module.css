@@ -125,6 +125,64 @@
   flex: 0 0 auto;
 }
 
+/* The square number grid and a stacked action column sit side by side, so the
+   actions use the empty space beside the grid instead of adding rows below it. */
+.padBody {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.actionColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actionBtn,
+.actionBtnPrimary {
+  inline-size: 100%;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding-block: 7px;
+  padding-inline: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    opacity 0.15s;
+}
+
+.actionBtn {
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+.actionBtn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.actionBtnPrimary {
+  border: none;
+  background: var(--accent-yellow);
+  color: #0a0a23;
+  font-weight: 700;
+}
+
+.actionBtnPrimary:hover {
+  opacity: 0.88;
+}
+
+.actionBtn:focus-visible,
+.actionBtnPrimary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .legendSwatch {
   display: inline-block;
   width: 14px;

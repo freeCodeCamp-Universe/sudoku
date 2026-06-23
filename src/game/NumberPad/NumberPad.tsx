@@ -7,6 +7,7 @@ interface NumberPadProps {
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
   columns?: number;
+  hideErase?: boolean;
   renderSymbol?: (value: SymbolValue) => string;
   describeSymbol?: (value: SymbolValue) => string;
   symbolKind?: 'digit' | 'letter' | 'color';
@@ -18,6 +19,7 @@ export function NumberPad({
   onEnter,
   candidateMode,
   columns,
+  hideErase = false,
   renderSymbol = (value) => String(value),
   describeSymbol = renderSymbol,
   symbolKind = 'digit',
@@ -51,7 +53,7 @@ export function NumberPad({
               )}
             </button>
           ))}
-          {index === rows.length - 1 && !columns ? (
+          {index === rows.length - 1 && !columns && !hideErase ? (
             <button
               type="button"
               className={`${styles.numBtn} ${styles.erase}`}
@@ -63,7 +65,7 @@ export function NumberPad({
           ) : null}
         </div>
       ))}
-      {columns ? (
+      {columns && !hideErase ? (
         <div className={styles.numpadRow}>
           <button
             type="button"

@@ -333,6 +333,61 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
     </div>
   ) : null;
 
+  const handleNumberEntry = (value: SymbolValue | 0) => {
+    if (!selectedCellId) {
+      return;
+    }
+
+    const isCorrectlyFilled =
+      checkEnabled &&
+      solution.has(selectedCellId) &&
+      state.values.get(selectedCellId) === solution.get(selectedCellId);
+
+    if (isCorrectlyFilled) {
+      return;
+    }
+
+    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+    const loc = selectedCell ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}` : null;
+
+    if (value === 0) {
+      dispatch({ type: 'erase', cellId: selectedCellId });
+      if (loc) grid.announce(`${loc}, empty`);
+      return;
+    }
+
+    if (candidateMode) {
+      const current = state.candidates.get(selectedCellId) ?? [];
+      const adding = !current.includes(value);
+      onToggleCandidate(selectedCellId, value);
+      if (loc) {
+        grid.announce(`${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`);
+      }
+      return;
+    }
+
+    onEnterValue(selectedCellId, value);
+    if (loc) {
+      const nextValues = new Map(state.values);
+      nextValues.set(selectedCellId, value);
+      const isCorrect =
+        checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
+      const correctness =
+        checkEnabled && solution.has(selectedCellId)
+          ? isCorrect
+            ? ', correct'
+            : ', incorrect'
+          : '';
+      const inConflict =
+        !isCorrect &&
+        checkEnabled &&
+        validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+      grid.announce(
+        `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+      );
+    }
+  };
+
   const numberPad = (
     <NumberPad
       symbols={
@@ -349,73 +404,32 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             : model.symbols.length === 6
               ? 3
               : oversized && model.symbols.length === 9
-                ? 5
+                ? 3
                 : undefined
       }
-      onEnter={(value) => {
-        if (!selectedCellId) {
-          return;
-        }
-
-        const isCorrectlyFilled =
-          checkEnabled &&
-          solution.has(selectedCellId) &&
-          state.values.get(selectedCellId) === solution.get(selectedCellId);
-
-        if (isCorrectlyFilled) {
-          return;
-        }
-
-        const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-        const loc = selectedCell
-          ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
-          : null;
-
-        if (value === 0) {
-          dispatch({ type: 'erase', cellId: selectedCellId });
-          if (loc) grid.announce(`${loc}, empty`);
-          return;
-        }
-
-        if (candidateMode) {
-          const current = state.candidates.get(selectedCellId) ?? [];
-          const adding = !current.includes(value);
-          onToggleCandidate(selectedCellId, value);
-          if (loc) {
-            grid.announce(
-              `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
-            );
-          }
-          return;
-        }
-
-        onEnterValue(selectedCellId, value);
-        if (loc) {
-          const nextValues = new Map(state.values);
-          nextValues.set(selectedCellId, value);
-          const isCorrect =
-            checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
-          const correctness =
-            checkEnabled && solution.has(selectedCellId)
-              ? isCorrect
-                ? ', correct'
-                : ', incorrect'
-              : '';
-          const inConflict =
-            !isCorrect &&
-            checkEnabled &&
-            validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-          grid.announce(
-            `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-          );
-        }
-      }}
+      hideErase={oversized}
+      onEnter={handleNumberEntry}
       candidateMode={candidateMode}
       renderSymbol={renderSymbol}
       describeSymbol={describeSymbol}
       symbolKind={variant.symbolKind}
     />
   );
+
+  // Oversized boards stack the actions (erase + toolbar + new game) in a column
+  // beside the square number grid, using the otherwise-empty horizontal space
+  // so the control block stays short and New Game stays in view.
+  const actionColumn = oversized ? (
+    <div className={styles.actionColumn}>
+      <button type="button" className={styles.actionBtn} onClick={() => handleNumberEntry(0)}>
+        Erase
+      </button>
+      <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+      <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
+        New Game
+      </button>
+    </div>
+  ) : null;
 
   return (
     <div className={styles.gamePage}>
@@ -539,8 +553,10 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             <div className={styles.controlsRow}>
               <div className={styles.padGroup}>
                 {modeSwitcher}
-                {numberPad}
-                {toolbar}
+                <div className={styles.padBody}>
+                  {numberPad}
+                  {actionColumn}
+                </div>
               </div>
               <div className={styles.mapGroup}>
                 {minimap}
@@ -571,9 +587,11 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
           </button>
         </div>
       ) : null}
-      <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
-        New Game
-      </button>
+      {oversized ? null : (
+        <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
+          New Game
+        </button>
+      )}
       {winOpen ? (
         <div
           role="dialog"
