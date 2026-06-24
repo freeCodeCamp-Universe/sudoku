@@ -113,6 +113,10 @@ export const skyscraper: Variant = {
           term: 'Line of sight',
           text: "Visibility is strictly from the clue's edge inward. Buildings behind a taller one are completely hidden.",
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

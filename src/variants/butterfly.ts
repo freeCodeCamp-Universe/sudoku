@@ -96,6 +96,10 @@ export const butterfly: Variant = {
           term: 'Solve together',
           text: 'The four grids are linked through their overlapping corners. None can be solved in isolation.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

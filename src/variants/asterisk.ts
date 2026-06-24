@@ -55,6 +55,10 @@ export const asterisk: Variant = {
           term: 'Double duty',
           text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -30,6 +30,10 @@ export const evenOdd: Variant = {
           term: 'Fixed parity',
           text: "The even/odd pattern is set by the puzzle. Every cell's parity is determined before you start.",
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

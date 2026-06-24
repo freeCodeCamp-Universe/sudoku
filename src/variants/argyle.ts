@@ -89,6 +89,10 @@ export const argyle: Variant = {
           term: 'Empty diamonds',
           text: 'Cells inside the empty diamond shapes are not part of any diagonal stripe and only follow the standard row, column, and box rules.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

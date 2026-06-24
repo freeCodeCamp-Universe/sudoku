@@ -96,6 +96,10 @@ export const sohei: Variant = {
           term: 'Solve as one',
           text: 'The four shared corners link all grids into one puzzle; none can be solved without the others.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

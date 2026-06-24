@@ -34,6 +34,10 @@ export const sixBySix: Variant = {
           term: 'Entering digits',
           text: 'Click a cell to select it, then press a digit key or tap the numpad.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -70,6 +70,10 @@ export const kropki: Variant = {
           term: 'Special case',
           text: 'The pair 1 and 2 satisfies both relationships, so it always receives a filled dot.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

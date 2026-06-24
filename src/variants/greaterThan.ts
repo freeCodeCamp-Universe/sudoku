@@ -75,6 +75,10 @@ export const greaterThanVariant: Variant = {
           term: 'All pairs covered',
           text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -108,6 +108,10 @@ export const wordoku: Variant = {
           term: 'Entering letters',
           text: 'Use the letter buttons on screen or type the letters directly on your keyboard.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

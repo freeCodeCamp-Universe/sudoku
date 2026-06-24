@@ -52,6 +52,10 @@ export const centerDot: Variant = {
           term: 'Double duty',
           text: 'Each center cell still belongs to its own row, column, and box, so it must satisfy all standard constraints as well as the center group.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

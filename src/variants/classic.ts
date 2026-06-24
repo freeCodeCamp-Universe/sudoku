@@ -38,6 +38,10 @@ export const classic: Variant = {
           text: 'Click a cell to select it, then press a digit key or tap the numpad.',
         },
         { term: 'Erasing', text: 'Press Backspace or tap the Erase button to clear a cell.' },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

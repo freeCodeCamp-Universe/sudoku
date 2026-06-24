@@ -97,6 +97,10 @@ export const flower: Variant = {
           term: 'Solve as one',
           text: 'All five grids are linked through their shared cells, so they must all be solved together.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -46,6 +46,10 @@ export const color: Variant & { colorNames: string[] } = {
           term: 'Given colors',
           text: 'Cells with a small dot are pre-filled and cannot be changed.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

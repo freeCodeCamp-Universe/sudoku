@@ -220,6 +220,10 @@ export const killer: Variant = {
           term: 'Starting clues',
           text: 'A few cells are pre-filled to help you get started. The cage sums provide the rest of the constraints.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

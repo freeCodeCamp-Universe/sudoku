@@ -122,6 +122,10 @@ export const sujiken: Variant = {
           term: 'Three triangular regions',
           text: 'The three 3×3 triangular regions along the diagonal, also marked by thick borders, must not repeat any digit.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -79,6 +79,10 @@ export const sandwich: Variant = {
           term: 'Any order',
           text: 'The digits between the 1 and 9 can appear in any order, but they must sum to the clue.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

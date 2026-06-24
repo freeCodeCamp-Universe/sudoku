@@ -132,6 +132,10 @@ export function makeJigsawVariant(regions: number[][]): Variant {
             term: 'Given digits',
             text: 'Pre-filled cells are fixed. Fill in the rest to complete the puzzle.',
           },
+          {
+            term: 'Candidate mode',
+            text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          },
         ],
       },
     ],

@@ -44,6 +44,10 @@ export const sudokuX: Variant = {
           term: 'Center cell',
           text: 'The very center cell belongs to both diagonals at once, making it one of the most constrained cells on the board.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

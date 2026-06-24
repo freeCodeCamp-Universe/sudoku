@@ -97,6 +97,10 @@ export const cross: Variant = {
           term: 'Solve as one',
           text: 'The five grids are linked through their shared boxes, so all of them must be solved at the same time.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

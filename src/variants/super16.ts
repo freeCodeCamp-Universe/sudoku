@@ -93,6 +93,10 @@ export const super16: Variant = {
           text: 'Pre-filled cells are fixed. Build your solution around them.',
         },
         { term: 'Entering symbols', text: 'Use the on-screen pad to enter digits or letters.' },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

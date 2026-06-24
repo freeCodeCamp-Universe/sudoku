@@ -94,6 +94,10 @@ export const twodoku: Variant = {
           term: 'Solve together',
           text: 'The shared box links the two grids, so neither can be solved in isolation.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

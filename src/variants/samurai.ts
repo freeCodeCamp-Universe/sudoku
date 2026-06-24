@@ -97,6 +97,10 @@ export const samurai: Variant = {
           term: 'Solve as one',
           text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

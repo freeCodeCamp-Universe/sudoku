@@ -85,6 +85,10 @@ export const windoku: Variant = {
           term: 'Linked constraints',
           text: 'Placing a digit in one window limits where it can go in the others, creating a chain of extra deductions across the board.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

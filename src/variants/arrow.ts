@@ -114,6 +114,10 @@ export const arrow: Variant = {
           term: 'Bulbs can repeat shafts',
           text: 'The bulb digit is not part of the sum. Only the cells along the shaft count.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

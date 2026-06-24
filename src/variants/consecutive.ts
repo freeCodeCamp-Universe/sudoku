@@ -63,6 +63,10 @@ export const consecutiveVariant: Variant = {
           term: 'Both directions matter',
           text: 'Dots mark consecutive pairs and missing dots rule them out. Use both pieces of information to solve the puzzle.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

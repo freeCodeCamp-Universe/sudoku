@@ -170,6 +170,10 @@ export const chainVariant: Variant = {
           term: 'Sudoku still applies',
           text: 'Every chain cell must also satisfy its row, column, and box.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],

@@ -95,6 +95,10 @@ export const gattai3: Variant = {
           term: 'Solve as one',
           text: 'The extensive shared regions tightly link all grids; progress in any one immediately constrains the others.',
         },
+        {
+          term: 'Candidate mode',
+          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+        },
       ],
     },
   ],
