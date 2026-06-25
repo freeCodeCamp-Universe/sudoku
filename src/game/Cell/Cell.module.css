@@ -208,6 +208,13 @@
   background: var(--cell-same-value-bg) !important;
 }
 
+.cell[data-conflict],
+.cell[data-conflict][data-butterfly],
+.cell[data-conflict][data-overlap='two'],
+.cell[data-conflict][data-overlap='four'] {
+  background: #2a1515 !important;
+}
+
 .cell[data-revealed] .value {
   color: var(--accent-yellow);
 }
@@ -216,14 +223,8 @@
   color: var(--accent-green);
 }
 
-.incorrectIcon {
-  position: absolute;
-  inset-block-start: 2px;
-  inset-inline-end: 2px;
-  width: 0.38em;
-  height: 0.38em;
-  fill: var(--accent-red);
-  pointer-events: none;
+.cell[data-incorrect] .value {
+  color: var(--accent-red);
 }
 
 .cell[data-word] .value {
@@ -403,4 +404,11 @@
 
 :global(.light) .givenDot {
   background: rgba(0, 0, 0, 0.25);
+}
+
+:global(.light) .cell[data-conflict],
+:global(.light) .cell[data-conflict][data-butterfly],
+:global(.light) .cell[data-conflict][data-overlap='two'],
+:global(.light) .cell[data-conflict][data-overlap='four'] {
+  background: #f8dede !important;
 }

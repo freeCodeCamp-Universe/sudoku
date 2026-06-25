@@ -192,36 +192,6 @@ describe('Cell', () => {
     });
   });
 
-  it('should render the warning icon when conflict is true', () => {
-    render(<Cell {...baseProps} value={5} conflict />);
-
-    expect(screen.getByTestId('cell-warning-icon')).toBeTruthy();
-  });
-
-  it('should render the warning icon when correct is false', () => {
-    render(<Cell {...baseProps} value={5} correct={false} />);
-
-    expect(screen.getByTestId('cell-warning-icon')).toBeTruthy();
-  });
-
-  it('should render only one warning icon when both conflict and correct are false', () => {
-    render(<Cell {...baseProps} value={5} conflict correct={false} />);
-
-    expect(screen.getAllByTestId('cell-warning-icon')).toHaveLength(1);
-  });
-
-  it('should not render a warning icon when there is no conflict and correct is undefined', () => {
-    render(<Cell {...baseProps} value={5} />);
-
-    expect(screen.queryByTestId('cell-warning-icon')).toBeNull();
-  });
-
-  it('should not render a warning icon when correct is true', () => {
-    render(<Cell {...baseProps} value={5} correct />);
-
-    expect(screen.queryByTestId('cell-warning-icon')).toBeNull();
-  });
-
   it('should render all available candidate slots for a 4x4 board', () => {
     render(<Cell {...baseProps} symbols={[1, 2, 3, 4]} candidates={[1, 4]} />);
 
