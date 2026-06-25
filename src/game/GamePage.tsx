@@ -15,6 +15,7 @@ import { Board } from './Board';
 import { findCompletedSymbols } from './completedSymbols';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
+import { OnboardingDialog } from './OnboardingDialog';
 import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
@@ -40,9 +41,10 @@ interface GameInnerProps {
     highlightPeers: boolean;
   };
   onNewGame?: () => void;
+  onFirstWin?: () => void;
 }
 
-function GameInner({ settings, onNewGame }: GameInnerProps) {
+function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
@@ -484,7 +486,10 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               type="button"
               className={styles.winClose}
               aria-label="Close"
-              onClick={() => setWinOpen(false)}
+              onClick={() => {
+                setWinOpen(false);
+                onFirstWin?.();
+              }}
             >
               ×
             </button>
@@ -510,6 +515,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
                 className={`${styles.modalBtn} ${styles.primary}`}
                 onClick={() => {
                   setWinOpen(false);
+                  onFirstWin?.();
                   onNewGame?.();
                   dispatch({ type: 'newGame' });
                 }}
@@ -519,7 +525,10 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => setWinOpen(false)}
+                onClick={() => {
+                  setWinOpen(false);
+                  onFirstWin?.();
+                }}
               >
                 View Puzzle
               </button>
@@ -581,8 +590,16 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  const { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers } =
-    usePersistence(variantId);
+  const {
+    settings,
+    toggleCheck,
+    toggleTimer,
+    toggleColorblind,
+    toggleHighlightPeers,
+    onboardingShown,
+    acknowledgeOnboarding,
+  } = usePersistence(variantId);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [genKey, setGenKey] = useState(0);
   // Randomize which jigsaw region layout a session starts on; rotating by genKey
   // then guarantees a different layout on every New Game.
@@ -622,7 +639,11 @@ export function GamePage() {
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider variant={gameVariant} model={model} givens={givens} solution={solution}>
-          <GameInner settings={settings} onNewGame={() => setGenKey((k) => k + 1)} />
+          <GameInner
+            settings={settings}
+            onNewGame={() => setGenKey((k) => k + 1)}
+            onFirstWin={onboardingShown ? undefined : () => setOnboardingOpen(true)}
+          />
         </GameProvider>
       </main>
 
@@ -631,6 +652,13 @@ export function GamePage() {
         onClose={() => setHelpOpen(false)}
         help={variant.help}
         description={variant.description}
+      />
+      <OnboardingDialog
+        open={onboardingOpen}
+        onClose={() => {
+          setOnboardingOpen(false);
+          acknowledgeOnboarding();
+        }}
       />
       <KeyboardShortcutsDialog
         open={shortcutsOpen}

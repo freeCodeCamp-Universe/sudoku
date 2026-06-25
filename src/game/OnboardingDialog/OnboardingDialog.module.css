@@ -1,0 +1,100 @@
+.dialog {
+  color: var(--text-muted);
+  inline-size: 90%;
+  max-inline-size: 420px;
+  margin: auto;
+  padding-block: 32px;
+  padding-inline: 36px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-surface);
+}
+
+.dialog::backdrop {
+  background: rgb(10 10 35 / 85%);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: start;
+}
+
+.title {
+  align-self: center;
+  color: var(--text-bright);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.intro {
+  margin-block: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-subtle);
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block: 4px;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
+}
+
+.settingRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-inline-start: 16px;
+  position: relative;
+}
+
+.settingRow::before {
+  content: '\00b7';
+  position: absolute;
+  inset-inline-start: 2px;
+  color: var(--accent-yellow);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.settingRow dt {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.settingRow dd {
+  margin-inline-start: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-subtle);
+}
+
+.closeBtn {
+  inline-size: 100%;
+  margin-block-start: 6px;
+  padding-block: 11px;
+  padding-inline: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  color: var(--text-subtle);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.closeBtn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

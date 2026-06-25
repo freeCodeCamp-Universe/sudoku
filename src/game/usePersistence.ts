@@ -13,12 +13,15 @@ interface PersistenceResult {
   toggleTimer: () => void;
   toggleColorblind: () => void;
   toggleHighlightPeers: () => void;
+  onboardingShown: boolean;
+  acknowledgeOnboarding: () => void;
 }
 
 const CHECK_STORAGE_KEY = 'sudoku-check-answers';
 const TIMER_STORAGE_KEY = 'sudoku-timer';
 const COLORBLIND_STORAGE_KEY = 'sudoku-colorblind';
 const HIGHLIGHT_PEERS_STORAGE_KEY = 'sudoku-highlight-peers';
+const ONBOARDING_STORAGE_KEY = 'sudoku-onboarding-shown';
 
 export function usePersistence(_variantId: string): PersistenceResult {
   const [settings, setSettings] = useState<Settings>(() => ({
@@ -27,6 +30,15 @@ export function usePersistence(_variantId: string): PersistenceResult {
     colorblindEnabled: localStorage.getItem(COLORBLIND_STORAGE_KEY) === 'true',
     highlightPeers: localStorage.getItem(HIGHLIGHT_PEERS_STORAGE_KEY) !== 'false',
   }));
+
+  const [onboardingShown, setOnboardingShown] = useState(
+    () => localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
+  );
+
+  const acknowledgeOnboarding = useCallback(() => {
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+    setOnboardingShown(true);
+  }, []);
 
   const toggleCheck = useCallback(() => {
     setSettings((currentSettings) => {
@@ -62,5 +74,13 @@ export function usePersistence(_variantId: string): PersistenceResult {
     });
   }, []);
 
-  return { settings, toggleCheck, toggleTimer, toggleColorblind, toggleHighlightPeers };
+  return {
+    settings,
+    toggleCheck,
+    toggleTimer,
+    toggleColorblind,
+    toggleHighlightPeers,
+    onboardingShown,
+    acknowledgeOnboarding,
+  };
 }
