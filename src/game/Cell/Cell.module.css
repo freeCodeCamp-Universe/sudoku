@@ -208,10 +208,10 @@
   background: var(--cell-same-value-bg) !important;
 }
 
-.cell[data-conflict],
-.cell[data-conflict][data-butterfly],
-.cell[data-conflict][data-overlap='two'],
-.cell[data-conflict][data-overlap='four'] {
+[data-check] .cell[data-conflict],
+[data-check] .cell[data-conflict][data-butterfly],
+[data-check] .cell[data-conflict][data-overlap='two'],
+[data-check] .cell[data-conflict][data-overlap='four'] {
   background: #2a1515 !important;
 }
 
@@ -406,9 +406,9 @@
   background: rgba(0, 0, 0, 0.25);
 }
 
-:global(.light) .cell[data-conflict],
-:global(.light) .cell[data-conflict][data-butterfly],
-:global(.light) .cell[data-conflict][data-overlap='two'],
-:global(.light) .cell[data-conflict][data-overlap='four'] {
+:global(.light) [data-check] .cell[data-conflict],
+:global(.light) [data-check] .cell[data-conflict][data-butterfly],
+:global(.light) [data-check] .cell[data-conflict][data-overlap='two'],
+:global(.light) [data-check] .cell[data-conflict][data-overlap='four'] {
   background: #f8dede !important;
 }

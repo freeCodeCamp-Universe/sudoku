@@ -82,6 +82,7 @@ export interface BoardProps {
   wordCells?: Set<CellId>;
   colorblindMode?: boolean;
   parityMap?: Map<CellId, 0 | 1>;
+  checkEnabled?: boolean;
 }
 
 export interface AnnotatorContext {

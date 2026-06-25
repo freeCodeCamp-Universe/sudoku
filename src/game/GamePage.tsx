@@ -281,6 +281,7 @@ function GameInner({ settings, onNewGame }: GameInnerProps) {
             wordCells={wordCellIds}
             colorblindMode={settings.colorblindEnabled}
             parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+            checkEnabled={checkEnabled}
           />
           {variant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">

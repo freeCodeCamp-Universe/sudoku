@@ -177,6 +177,7 @@ export function Board({
   wordCells,
   colorblindMode,
   parityMap,
+  checkEnabled,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
@@ -201,6 +202,7 @@ export function Board({
       aria-label="Sudoku grid"
       aria-rowcount={rowCount}
       aria-colcount={colCount}
+      data-check={checkEnabled || undefined}
       className={`${styles.grid}${variant.layout.kind === 'multigrid' ? ` ${styles.multigrid}` : ''}`}
       style={{ width: size.w, height: size.h }}
     >
