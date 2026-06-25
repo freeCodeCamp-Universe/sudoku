@@ -211,7 +211,11 @@
 [data-check] .cell[data-conflict],
 [data-check] .cell[data-conflict][data-butterfly],
 [data-check] .cell[data-conflict][data-overlap='two'],
-[data-check] .cell[data-conflict][data-overlap='four'] {
+[data-check] .cell[data-conflict][data-overlap='four'],
+[data-check] .cell[data-incorrect],
+[data-check] .cell[data-incorrect][data-butterfly],
+[data-check] .cell[data-incorrect][data-overlap='two'],
+[data-check] .cell[data-incorrect][data-overlap='four'] {
   background: #2a1515 !important;
 }
 
@@ -409,6 +413,10 @@
 :global(.light) [data-check] .cell[data-conflict],
 :global(.light) [data-check] .cell[data-conflict][data-butterfly],
 :global(.light) [data-check] .cell[data-conflict][data-overlap='two'],
-:global(.light) [data-check] .cell[data-conflict][data-overlap='four'] {
+:global(.light) [data-check] .cell[data-conflict][data-overlap='four'],
+:global(.light) [data-check] .cell[data-incorrect],
+:global(.light) [data-check] .cell[data-incorrect][data-butterfly],
+:global(.light) [data-check] .cell[data-incorrect][data-overlap='two'],
+:global(.light) [data-check] .cell[data-incorrect][data-overlap='four'] {
   background: #f8dede !important;
 }

@@ -58,6 +58,9 @@ export function HelpDialog({ open, onClose, help, description }: HelpDialogProps
         }
       }}
     >
+      <button type="button" className={styles.closeX} aria-label="Close" onClick={onClose}>
+        ×
+      </button>
       <div className={styles.content}>
         <h2 id={titleId} className={styles.title}>
           How to Play

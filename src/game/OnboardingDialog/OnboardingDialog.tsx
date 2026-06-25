@@ -38,12 +38,15 @@ export function OnboardingDialog({ open, onClose }: OnboardingDialogProps) {
         }
       }}
     >
+      <button type="button" className={styles.closeX} aria-label="Close" onClick={onClose}>
+        ×
+      </button>
       <div className={styles.content}>
         <h2 id={titleId} className={styles.title}>
-          Hint: it&apos;s customizable
+          Hint: it&apos;s customizable!
         </h2>
         <p className={styles.intro}>
-          Use the gear icon in the top right to adjust these settings any time:
+          Use the gear icon in the top right corner to adjust these settings any time:
         </p>
         <dl className={styles.settings}>
           <div className={styles.settingRow}>

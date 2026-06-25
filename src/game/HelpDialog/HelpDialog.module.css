@@ -1,4 +1,5 @@
 .dialog {
+  position: relative;
   color: var(--text-muted);
   inline-size: 90%;
   max-inline-size: 420px;
@@ -8,6 +9,33 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg-surface);
+}
+
+.closeX {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeX:hover {
+  color: var(--text-bright);
+}
+
+.closeX:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .dialog::backdrop {

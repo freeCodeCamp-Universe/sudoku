@@ -7,7 +7,9 @@ describe('OnboardingDialog', () => {
   it('should render the title and settings when open', () => {
     render(<OnboardingDialog open onClose={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { name: "Hint: it's customizable", level: 2 })).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { name: "Hint: it's customizable!", level: 2 })
+    ).toBeTruthy();
     expect(screen.getByText(/gear icon/)).toBeTruthy();
     expect(screen.getByText('Check answers')).toBeTruthy();
     expect(screen.getByText('Timer')).toBeTruthy();
@@ -27,11 +29,11 @@ describe('OnboardingDialog', () => {
   it('should expose an accessible dialog name through aria-labelledby', () => {
     render(<OnboardingDialog open onClose={vi.fn()} />);
 
-    const dialog = screen.getByRole('dialog', { name: "Hint: it's customizable" });
+    const dialog = screen.getByRole('dialog', { name: "Hint: it's customizable!" });
     const labelledBy = dialog.getAttribute('aria-labelledby');
-    const title = screen.getByRole('heading', { name: "Hint: it's customizable", level: 2 });
+    const title = screen.getByRole('heading', { name: "Hint: it's customizable!", level: 2 });
 
-    expect(dialog).toHaveAccessibleName("Hint: it's customizable");
+    expect(dialog).toHaveAccessibleName("Hint: it's customizable!");
     expect(labelledBy).toBeTruthy();
     expect(title.id).toBe(labelledBy);
   });
