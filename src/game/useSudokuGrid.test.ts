@@ -4,8 +4,10 @@ import { describe, expect, it, should, vi } from 'vitest';
 import { uniqueness } from '@/engine/constraints/uniqueness';
 import { gridCells, standardHouses } from '@/engine/grid';
 import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+import { buildModel } from '@/engine/buildModel';
 import { Board } from '@/game/Board/Board';
 import { gridLayout } from '@/game/layouts/grid';
+import { sujiken } from '@/variants/sujiken';
 import { useSudokuGrid } from './useSudokuGrid';
 
 const cells = gridCells(9);
@@ -730,5 +732,26 @@ describe('useSudokuGrid', () => {
 
     expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, correct');
     vi.useRealTimers();
+  });
+});
+
+describe('useSudokuGrid cell labels for Sujiken', () => {
+  it('should omit box number from Sujiken cell labels', () => {
+    const sujikenModel = buildModel(sujiken);
+
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells: sujikenModel.cells,
+        model: sujikenModel,
+        values: new Map(),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    // Sujiken houses are tri-region-*, not box-*; no "box N" should appear
+    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, empty');
+    expect(result.current.cellProps('r4c2')['aria-label']).toBe('Row 5, column 3, empty');
   });
 });

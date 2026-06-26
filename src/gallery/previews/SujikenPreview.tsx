@@ -20,9 +20,19 @@ export function SujikenPreview() {
         const size = width / (n + 1);
         const offset = size * 0.4;
         const isLight = theme === 'light';
-        const gridColor = isLight ? '#c8c8d8' : '#3b3b4f';
-        const diagonalColor = isLight ? '#6060a0' : '#9898b8';
+        const gridColor = isLight ? '#c8c8d8' : '#2a2a3a';
+        const regionBorder = isLight ? '#8080a8' : '#9898b8';
+        const borderColor = isLight ? '#5060a0' : '#9898b8';
         const textColor = isLight ? '#2a2a40' : '#d0d0d5';
+
+        if (isLight) {
+          ctx.fillStyle = '#f5f5f0';
+          for (let row = 0; row < n; row += 1) {
+            for (let col = 0; col <= row; col += 1) {
+              ctx.fillRect(offset + col * size, offset + row * size, size, size);
+            }
+          }
+        }
 
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.6;
@@ -33,7 +43,7 @@ export function SujikenPreview() {
           }
         }
 
-        ctx.strokeStyle = diagonalColor;
+        ctx.strokeStyle = regionBorder;
         ctx.lineWidth = 1.8;
         ctx.beginPath();
 
@@ -54,12 +64,17 @@ export function SujikenPreview() {
 
         ctx.stroke();
 
-        ctx.strokeStyle = diagonalColor;
-        ctx.lineWidth = 1.2;
-
-        for (let diagonal = 0; diagonal < n; diagonal += 1) {
-          ctx.strokeRect(offset + diagonal * size, offset + diagonal * size, size, size);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(offset, offset);
+        for (let i = 0; i < n; i += 1) {
+          ctx.lineTo(offset + (i + 1) * size, offset + i * size);
+          ctx.lineTo(offset + (i + 1) * size, offset + (i + 1) * size);
         }
+        ctx.lineTo(offset, offset + n * size);
+        ctx.closePath();
+        ctx.stroke();
 
         ctx.fillStyle = textColor;
         ctx.font = `600 ${Math.round(size * 0.55)}px 'Fira Mono', monospace`;

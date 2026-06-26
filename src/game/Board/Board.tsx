@@ -203,7 +203,8 @@ export function Board({
       aria-rowcount={rowCount}
       aria-colcount={colCount}
       data-check={checkEnabled || undefined}
-      className={`${styles.grid}${variant.layout.kind === 'multigrid' ? ` ${styles.multigrid}` : ''}`}
+      data-variant={variant.id}
+      className={`${styles.grid}${variant.layout.kind === 'multigrid' || variant.layout.kind === 'triangular' ? ` ${styles.multigrid}` : ''}`}
       style={{ width: size.w, height: size.h }}
     >
       {sortedRows.map(([rowIndex, rowCells]) => (
@@ -245,8 +246,16 @@ export function Board({
                   peer={state.peer}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
-                  boxBoundaryRight={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'col')}
-                  boxBoundaryBottom={variant.id !== 'jigsaw' && isBoxBoundary(variant, cell, 'row')}
+                  boxBoundaryRight={
+                    variant.id !== 'sujiken' &&
+                    variant.id !== 'jigsaw' &&
+                    isBoxBoundary(variant, cell, 'col')
+                  }
+                  boxBoundaryBottom={
+                    variant.id !== 'sujiken' &&
+                    variant.id !== 'jigsaw' &&
+                    isBoxBoundary(variant, cell, 'row')
+                  }
                   overlayBorders={variant.layout.kind === 'multigrid'}
                   diagonal={variant.id === 'sudoku-x' && diagonalSet.has(cell.id)}
                   window={variant.id === 'windoku' && windokuWindowSet.has(cell.id)}

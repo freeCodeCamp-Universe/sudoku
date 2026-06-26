@@ -18,12 +18,9 @@ export function SandwichPreview() {
         const clueColor = isLight ? '#5060a0' : '#9898b8';
         const fillColor = isLight ? '#dcdcf8' : '#28284c';
 
-        ctx.strokeStyle = gridColor;
-        ctx.lineWidth = 0.7;
-        for (let r = 0; r < 6; r += 1) {
-          for (let c = 0; c < 6; c += 1) {
-            ctx.strokeRect(offset + c * cell, offset + r * cell, cell, cell);
-          }
+        if (isLight) {
+          ctx.fillStyle = '#f5f5f0';
+          ctx.fillRect(offset, offset, 6 * cell, 6 * cell);
         }
 
         ctx.fillStyle = fillColor;
@@ -35,8 +32,16 @@ export function SandwichPreview() {
           [4, 5],
           [5, 2],
         ].forEach(([r, c]) => {
-          ctx.fillRect(offset + c * cell + 1, offset + r * cell + 1, cell - 2, cell - 2);
+          ctx.fillRect(offset + c * cell, offset + r * cell, cell, cell);
         });
+
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 0.7;
+        for (let r = 0; r < 6; r += 1) {
+          for (let c = 0; c < 6; c += 1) {
+            ctx.strokeRect(offset + c * cell, offset + r * cell, cell, cell);
+          }
+        }
 
         ctx.fillStyle = clueColor;
         ctx.font = 'bold 9px sans-serif';

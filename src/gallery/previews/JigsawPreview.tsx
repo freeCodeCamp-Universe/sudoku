@@ -1,39 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
+import { PRESET_LAYOUTS } from '@/variants/jigsaw';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 import { hashVariantId, seeded } from './seeded';
 
 const CELLS = 9;
-
-const REGIONS = [
-  0, 0, 0, 1, 1, 2, 2, 2, 2, 0, 0, 1, 1, 2, 2, 3, 3, 2, 0, 0, 1, 4, 4, 3, 3, 3, 3, 0, 4, 4, 4, 5, 5,
-  3, 6, 6, 4, 4, 7, 5, 5, 5, 6, 6, 6, 7, 7, 7, 5, 8, 5, 6, 6, 6, 7, 7, 8, 8, 8, 5, 5, 6, 6, 7, 8, 8,
-  8, 8, 8, 5, 6, 6, 7, 7, 8, 8, 8, 8, 8, 8, 6,
-];
-
-const REGION_COLORS_DARK = [
-  '#1e2030',
-  '#1e2820',
-  '#2a1e1e',
-  '#1e1e2a',
-  '#2a2a1e',
-  '#1e2a2a',
-  '#2a1e2a',
-  '#2a2014',
-  '#14202a',
-];
-const REGION_COLORS_LIGHT = [
-  '#d8d8ec',
-  '#d8ead8',
-  '#ead8d8',
-  '#d8d8ea',
-  '#eaead8',
-  '#d8eaea',
-  '#ead8ea',
-  '#eae0d0',
-  '#d0d8ea',
-];
+const REGIONS_2D = PRESET_LAYOUTS[0];
 
 export function JigsawPreview({ variantId }: { variantId: string }) {
   const { theme } = useTheme();
@@ -47,16 +20,14 @@ export function JigsawPreview({ variantId }: { variantId: string }) {
       (ctx, { width }) => {
         const cell = width / CELLS;
         const isLight = theme === 'light';
-        const regionColors = isLight ? REGION_COLORS_LIGHT : REGION_COLORS_DARK;
         const cellLine = isLight ? '#c8c8d8' : '#2a2a3a';
+        const regionBorder = isLight ? '#8080a8' : '#3b3b4f';
         const borderColor = isLight ? '#5060a0' : '#9898b8';
         const textColor = isLight ? '#2a2a40' : '#d0d0d5';
 
-        for (let i = 0; i < 81; i += 1) {
-          const r = Math.floor(i / CELLS);
-          const c = i % CELLS;
-          ctx.fillStyle = regionColors[REGIONS[i]];
-          ctx.fillRect(c * cell, r * cell, cell, cell);
+        if (isLight) {
+          ctx.fillStyle = '#f5f5f0';
+          ctx.fillRect(0, 0, CELLS * cell, CELLS * cell);
         }
 
         ctx.strokeStyle = cellLine;
@@ -67,6 +38,23 @@ export function JigsawPreview({ variantId }: { variantId: string }) {
           ctx.lineTo(i * cell, CELLS * cell);
           ctx.moveTo(0, i * cell);
           ctx.lineTo(CELLS * cell, i * cell);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = regionBorder;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (let r = 0; r < CELLS; r += 1) {
+          for (let c = 0; c < CELLS; c += 1) {
+            if (c < CELLS - 1 && REGIONS_2D[r][c] !== REGIONS_2D[r][c + 1]) {
+              ctx.moveTo((c + 1) * cell, r * cell);
+              ctx.lineTo((c + 1) * cell, (r + 1) * cell);
+            }
+            if (r < CELLS - 1 && REGIONS_2D[r][c] !== REGIONS_2D[r + 1][c]) {
+              ctx.moveTo(c * cell, (r + 1) * cell);
+              ctx.lineTo((c + 1) * cell, (r + 1) * cell);
+            }
+          }
         }
         ctx.stroke();
 

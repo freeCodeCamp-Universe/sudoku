@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import type { CellId, SymbolValue, Variant, VariantModel } from '@/engine/types';
 import type { CellState } from '@/game/gameTypes';
 import { Board } from '@/game/Board';
+import { resolveOverlays } from '@/game/overlays/registry';
 import { makeFixture, type Fixture } from './makeFixture';
 
 interface CellRenderState {
@@ -45,6 +46,10 @@ export function renderVariantBoard(
     ((value: SymbolValue) =>
       variant.renderSymbol ? variant.renderSymbol(value, structure) : String(value));
 
+  const overlays = resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (
+    <Overlay key={index} rects={fixture.rects} structure={structure} />
+  ));
+
   render(
     <Board
       variant={variant}
@@ -60,6 +65,7 @@ export function renderVariantBoard(
       renderSymbol={renderSymbol}
       parityMap={options.parityMap ?? fixture.parityMap}
       colorblindMode={options.colorblindMode ?? false}
+      overlays={overlays}
     />
   );
 

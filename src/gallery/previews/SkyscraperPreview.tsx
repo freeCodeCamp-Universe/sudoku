@@ -15,6 +15,23 @@ export function SkyscraperPreview() {
         const clueColor = isLight ? '#5060a0' : '#9898b8';
         const fillColor = isLight ? '#dcdcf8' : '#28284c';
 
+        if (isLight) {
+          ctx.fillStyle = '#f5f5f0';
+          ctx.fillRect(offset, offset, 6 * cell, 6 * cell);
+        }
+
+        ctx.fillStyle = fillColor;
+        [
+          [0, 0],
+          [1, 3],
+          [2, 5],
+          [3, 2],
+          [4, 1],
+          [5, 4],
+        ].forEach(([row, col]) => {
+          ctx.fillRect(offset + col * cell, offset + row * cell, cell, cell);
+        });
+
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = 0.7;
 
@@ -48,17 +65,6 @@ export function SkyscraperPreview() {
             offset + index * cell + cell / 2
           )
         );
-        ctx.fillStyle = fillColor;
-        [
-          [0, 0],
-          [1, 3],
-          [2, 5],
-          [3, 2],
-          [4, 1],
-          [5, 4],
-        ].forEach(([row, col]) => {
-          ctx.fillRect(offset + col * cell + 1, offset + row * cell + 1, cell - 2, cell - 2);
-        });
 
         const lw = 1.5;
         ctx.strokeStyle = clueColor;

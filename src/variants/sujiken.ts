@@ -136,7 +136,7 @@ export const sujiken: Variant = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
-  overlayIds: [],
+  overlayIds: ['sujiken'],
   annotatorIds: [],
   extraHouses: buildDiagonalExtra,
 };

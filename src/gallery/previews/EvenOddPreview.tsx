@@ -9,15 +9,15 @@ const BOX = 3;
 
 export function EvenOddPreview({ variantId }: { variantId: string }) {
   const { theme } = useTheme();
-  const digits = useMemo(() => {
+  const { digits, parities } = useMemo(() => {
     const random = seeded(hashVariantId(variantId));
-    return Array.from({ length: 81 }, (_, index) => {
+    const pars = Array.from({ length: 81 }, () => (random() < 0.5 ? 0 : 1));
+    const digs = Array.from({ length: 81 }, (_, index) => {
       if (random() >= 0.15) return 0;
-      const row = Math.floor(index / 9);
-      const col = index % 9;
-      const pool = (row + col) % 2 === 0 ? [2, 4, 6, 8] : [1, 3, 5, 7, 9];
+      const pool = pars[index] === 0 ? [2, 4, 6, 8] : [1, 3, 5, 7, 9];
       return pool[Math.floor(random() * 4)] ?? 0;
     });
+    return { digits: digs, parities: pars };
   }, [variantId]);
 
   const canvasRef = usePreviewCanvas(
@@ -34,7 +34,7 @@ export function EvenOddPreview({ variantId }: { variantId: string }) {
 
         for (let r = 0; r < CELLS; r += 1) {
           for (let c = 0; c < CELLS; c += 1) {
-            ctx.fillStyle = (r + c) % 2 === 0 ? fillEven : fillOdd;
+            ctx.fillStyle = parities[r * CELLS + c] === 0 ? fillEven : fillOdd;
             ctx.fillRect(c * cell, r * cell, cell, cell);
           }
         }
@@ -78,7 +78,7 @@ export function EvenOddPreview({ variantId }: { variantId: string }) {
           ctx.fillText(String(digits[i]), (c + 0.5) * cell, (r + 0.5) * cell);
         }
       },
-      [theme, digits]
+      [theme, digits, parities]
     )
   );
 
