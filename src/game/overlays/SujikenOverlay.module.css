@@ -7,21 +7,13 @@
 
 .border {
   fill: none;
-  stroke: #9898b8;
+  stroke: var(--overlay-argyle-stroke);
   stroke-width: 3;
   stroke-linejoin: miter;
 }
 
-:global(.light) .border {
-  stroke: #8080a8;
-}
-
 .regionLine {
-  stroke: #9898b8;
+  stroke: var(--overlay-argyle-stroke);
   stroke-width: 3;
   stroke-linecap: square;
-}
-
-:global(.light) .regionLine {
-  stroke: #8080a8;
 }
