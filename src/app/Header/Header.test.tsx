@@ -129,6 +129,25 @@ describe('Header', () => {
       expect(timerSwitch).toBeChecked();
     });
 
+    it('should toggle the global high-contrast palette from the settings dropdown', async () => {
+      const user = userEvent.setup();
+      localStorage.clear();
+      document.documentElement.classList.remove('high-contrast');
+
+      render(<SettingsHarness />);
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      const highContrastSwitch = screen.getByRole('switch', { name: /high contrast/i });
+      expect(highContrastSwitch).not.toBeChecked();
+
+      await user.click(highContrastSwitch);
+      expect(highContrastSwitch).toBeChecked();
+      expect(document.documentElement.classList.contains('high-contrast')).toBe(true);
+
+      document.documentElement.classList.remove('high-contrast');
+    });
+
     it('should implement ARIA Disclosure pattern and handle Escape key', async () => {
       const user = userEvent.setup();
       render(<SettingsHarness />);

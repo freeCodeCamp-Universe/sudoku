@@ -1,0 +1,214 @@
+import { contrastRatio, TEXT_AA, UI_AA } from './contrast';
+import { readThemeTokens, type TokenValue } from './themeTokens';
+
+export type Theme = 'dark' | 'light' | 'dark-hc' | 'light-hc';
+
+export interface ContrastPair {
+  label: string;
+  /** Token name (starts with `--`) or a literal hex string. */
+  fg: string;
+  bg: string;
+  threshold: number;
+  theme: Theme;
+  /**
+   * Gated pairs fail the CI test below threshold. Advisory pairs are reported
+   * by `pnpm contrast:report` but do not gate.
+   */
+  gate: boolean;
+}
+
+const THEMES: Theme[] = ['dark', 'light', 'dark-hc', 'light-hc'];
+
+const TOKEN_KEY: Record<Theme, keyof TokenValue> = {
+  dark: 'dark',
+  light: 'light',
+  'dark-hc': 'darkHc',
+  'light-hc': 'lightHc',
+};
+
+type ThemeRef = { dark: string; light: string };
+
+const refFor = (ref: ThemeRef, theme: Theme): string =>
+  theme.startsWith('light') ? ref.light : ref.dark;
+
+// Text colors as actually rendered by Cell.module.css.
+const TEXT: Record<string, ThemeRef> = {
+  value: { dark: '--accent-blue', light: '--cell-text-light' },
+  given: { dark: '--text-subtle', light: '#0a0a23' },
+  correct: { dark: '--accent-green', light: '--accent-green' },
+  incorrect: { dark: '--accent-red', light: '--accent-red' },
+  hint: { dark: '--accent-yellow', light: '--accent-yellow' },
+  candidate: { dark: '--candidate-text', light: '--candidate-text' },
+};
+
+// The plain cell background each theme renders when no state applies.
+const BASE: ThemeRef = { dark: '--bg-secondary', light: '--cell-bg-light' };
+
+// Backgrounds a digit can sit on. Incorrect text only renders on the error
+// background, so it is paired separately below.
+const CELL_BGS = [
+  'base',
+  '--cell-even-bg',
+  '--cell-odd-bg',
+  '--cell-peer-bg',
+  '--cell-peer-structural-bg',
+  '--cell-peer-even-bg',
+  '--cell-peer-odd-bg',
+  '--cell-same-value-bg',
+  '--cell-special-bg',
+] as const;
+
+const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
+
+/**
+ * Known failures the owner has accepted for the standard palette (see the
+ * PR #66 discussion): fixing them in place would require reworking the whole
+ * palette (the even/odd exploration showed no compliant background pair
+ * exists under the current text colors), so the opt-in high-contrast palette
+ * carries the compliant colors instead. Keyed `theme|label`; only standard
+ * themes may appear here — every high-contrast pair is gated. Remove an entry
+ * once its pair is fixed.
+ */
+const ACCEPTED_FAILURES = new Set<string>([
+  'dark|candidate text on --cell-same-value-bg',
+  'dark|even bg vs odd bg',
+  'dark|peer-even bg vs peer-odd bg',
+  'dark|error bg vs base',
+  ...CELL_BGS.map((bg) => `light|hint text on ${bg}`),
+  'light|even bg vs odd bg',
+  'light|peer-even bg vs peer-odd bg',
+  'light|error bg vs base',
+  // These four chips predate the contrast gate and sit below 3:1 on the white
+  // light-theme cells; the high-contrast palette carries the compliant set.
+  'light|chip --color-2 vs base',
+  'light|chip --color-3 vs base',
+  'light|chip --color-5 vs base',
+  'light|chip --color-9 vs base',
+]);
+
+type PairInput = Omit<ContrastPair, 'gate'>;
+
+function withGate(pair: PairInput): ContrastPair {
+  return { ...pair, gate: !ACCEPTED_FAILURES.has(`${pair.theme}|${pair.label}`) };
+}
+
+function textPairs(): PairInput[] {
+  const pairs: PairInput[] = [];
+  for (const role of Object.keys(TEXT)) {
+    if (role === 'incorrect') {
+      continue;
+    }
+    for (const bg of CELL_BGS) {
+      for (const theme of THEMES) {
+        pairs.push({
+          label: `${role} text on ${bg}`,
+          fg: refFor(TEXT[role], theme),
+          bg: bg === 'base' ? refFor(BASE, theme) : bg,
+          threshold: TEXT_AA,
+          theme,
+        });
+      }
+    }
+  }
+  return pairs;
+}
+
+export const contrastPairs: ContrastPair[] = [
+  ...textPairs(),
+
+  // Incorrect digits render only on the error background.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'incorrect text on error background',
+      fg: refFor(TEXT.incorrect, theme),
+      bg: '--cell-error-bg',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
+  // Parity shading is the sole cue distinguishing even from odd cells, so the
+  // two backgrounds need 3:1 against each other (WCAG 1.4.11).
+  ...THEMES.flatMap((theme): PairInput[] => [
+    {
+      label: 'even bg vs odd bg',
+      fg: '--cell-even-bg',
+      bg: '--cell-odd-bg',
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'peer-even bg vs peer-odd bg',
+      fg: '--cell-peer-even-bg',
+      bg: '--cell-peer-odd-bg',
+      threshold: UI_AA,
+      theme,
+    },
+  ]),
+
+  // Essential state indicators vs the plain base.
+  ...THEMES.flatMap((theme): PairInput[] => [
+    {
+      label: 'error bg vs base',
+      fg: '--cell-error-bg',
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'selection ring vs base',
+      fg: '--cell-selected-border',
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    },
+    // The even/odd legend swatches sit on the page background; their border
+    // is what keeps them visible there (the odd swatch fill can match it).
+    {
+      label: 'legend swatch border vs page bg',
+      fg: '--text-muted',
+      bg: '--bg-primary',
+      threshold: UI_AA,
+      theme,
+    },
+  ]),
+
+  // Color-sudoku chips are the rendered symbol, so each chip needs 3:1
+  // against the resting cell background.
+  ...THEMES.flatMap((theme): PairInput[] =>
+    CHIP_TOKENS.map((chip) => ({
+      label: `chip ${chip} vs base`,
+      fg: chip,
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    }))
+  ),
+].map(withGate);
+
+export function resolveColor(
+  ref: string,
+  theme: Theme,
+  tokens: Record<string, TokenValue>
+): string {
+  if (!ref.startsWith('--')) {
+    return ref;
+  }
+  const token = tokens[ref];
+  if (!token) {
+    throw new Error(`Unknown theme token: ${ref}`);
+  }
+  return token[TOKEN_KEY[theme]];
+}
+
+export function evaluatePair(
+  pair: ContrastPair,
+  tokens: Record<string, TokenValue> = readThemeTokens()
+): { ratio: number; pass: boolean } {
+  const fg = resolveColor(pair.fg, pair.theme, tokens);
+  const bg = resolveColor(pair.bg, pair.theme, tokens);
+  // The raw ratio decides pass/fail — ratios are never rounded up, so
+  // 4.4999:1 fails a 4.5:1 threshold.
+  const ratio = contrastRatio(fg, bg);
+  return { ratio, pass: ratio >= pair.threshold };
+}

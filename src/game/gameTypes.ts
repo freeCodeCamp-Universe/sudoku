@@ -80,7 +80,6 @@ export interface BoardProps {
   renderSymbol: (value: SymbolValue) => string;
   markerGaps?: Map<CellId, MarkerEdge[]>;
   wordCells?: Set<CellId>;
-  colorblindMode?: boolean;
   parityMap?: Map<CellId, 0 | 1>;
   checkEnabled?: boolean;
 }

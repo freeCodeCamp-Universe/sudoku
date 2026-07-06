@@ -36,7 +36,6 @@ interface GameInnerProps {
   settings: {
     checkEnabled: boolean;
     timerEnabled: boolean;
-    colorblindEnabled: boolean;
     highlightPeers: boolean;
   };
   onNewGame?: () => void;
@@ -280,7 +279,6 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
             renderSymbol={renderSymbol}
             markerGaps={markerGaps}
             wordCells={wordCellIds}
-            colorblindMode={settings.colorblindEnabled}
             parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
             checkEnabled={checkEnabled}
           />
@@ -593,7 +591,6 @@ export function GamePage() {
     settings,
     toggleCheck,
     toggleTimer,
-    toggleColorblind,
     toggleHighlightPeers,
     onboardingShown,
     acknowledgeOnboarding,
@@ -622,11 +619,9 @@ export function GamePage() {
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
-        colorblindEnabled={settings.colorblindEnabled}
         highlightPeersEnabled={settings.highlightPeers}
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
-        onToggleColorblind={variant.symbolKind === 'color' ? toggleColorblind : undefined}
         onToggleHighlightPeers={toggleHighlightPeers}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>

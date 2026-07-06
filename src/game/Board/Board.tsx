@@ -175,7 +175,6 @@ export function Board({
   renderSymbol,
   markerGaps,
   wordCells,
-  colorblindMode,
   parityMap,
   checkEnabled,
 }: BoardProps) {
@@ -271,7 +270,6 @@ export function Board({
                   flower={variant.id === 'flower'}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
-                  colorblind={colorblindMode}
                   even={parityMap?.get(cell.id) === 0}
                   odd={parityMap?.get(cell.id) === 1}
                   aria-colindex={cell.col + 1}

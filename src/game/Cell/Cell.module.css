@@ -216,7 +216,7 @@
 [data-check] .cell[data-incorrect][data-butterfly],
 [data-check] .cell[data-incorrect][data-overlap='two'],
 [data-check] .cell[data-incorrect][data-overlap='four'] {
-  background: #2a1515 !important;
+  background: var(--cell-error-bg) !important;
 }
 
 .cell[data-revealed] .value {
@@ -369,19 +369,6 @@
   background: rgba(241, 190, 50, 0.85);
 }
 
-.colorLabel {
-  position: absolute;
-  inset-block-end: 2px;
-  inset-inline-end: 3px;
-  font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 9px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1;
-  pointer-events: none;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
-}
-
 :global(.light) .cell {
   background: var(--cell-bg-light);
   color: var(--cell-text-light);
@@ -401,11 +388,6 @@
   color: var(--candidate-text);
 }
 
-:global(.light) .colorLabel {
-  color: rgba(0, 0, 0, 0.7);
-  text-shadow: none;
-}
-
 :global(.light) .givenDot {
   background: rgba(0, 0, 0, 0.25);
 }
@@ -418,5 +400,5 @@
 :global(.light) [data-check] .cell[data-incorrect][data-butterfly],
 :global(.light) [data-check] .cell[data-incorrect][data-overlap='two'],
 :global(.light) [data-check] .cell[data-incorrect][data-overlap='four'] {
-  background: #f8dede !important;
+  background: var(--cell-error-bg) !important;
 }

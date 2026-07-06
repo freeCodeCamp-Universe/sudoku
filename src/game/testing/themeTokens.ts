@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 export interface TokenValue {
   dark: string;
   light: string;
+  darkHc: string;
+  lightHc: string;
 }
 
 const THEME_CSS_PATH = resolve(process.cwd(), 'src/app/theme.css');
@@ -31,11 +33,32 @@ function parseDeclarations(css: string, selector: string): Record<string, string
 export function readThemeTokens(): Record<string, TokenValue> {
   const css = readFileSync(THEME_CSS_PATH, 'utf8');
   const root = parseDeclarations(css, ':root');
-  const light = parseDeclarations(css, '\\.light');
+  const light = parseDeclarations(css, '\\.light(?!\\.)');
+  const highContrast = parseDeclarations(css, '(?<!\\.light)\\.high-contrast');
+  const lightHighContrast = parseDeclarations(css, '\\.light\\.high-contrast');
   const tokens: Record<string, TokenValue> = {};
 
+  // `.high-contrast` is declared after `.light`, so for an element carrying
+  // both classes a token overridden only in `.high-contrast` would beat the
+  // `.light` value and leak a dark high-contrast color into the light theme.
+  // Require an explicit `.light.high-contrast` override for every such token.
+  const leaked = Object.keys(highContrast).filter((name) => !(name in lightHighContrast));
+  if (leaked.length > 0) {
+    throw new Error(
+      `.light.high-contrast must override every token .high-contrast sets; missing: ${leaked.join(', ')}`
+    );
+  }
+
   for (const [name, dark] of Object.entries(root)) {
-    tokens[name] = { dark, light: light[name] ?? dark };
+    // Fallback chains mirror the CSS cascade for an element carrying both
+    // classes: `.high-contrast` is declared after `.light`, so it wins ties,
+    // and `.light.high-contrast` (higher specificity) wins over both.
+    tokens[name] = {
+      dark,
+      light: light[name] ?? dark,
+      darkHc: highContrast[name] ?? dark,
+      lightHc: lightHighContrast[name] ?? highContrast[name] ?? light[name] ?? dark,
+    };
   }
 
   return tokens;

@@ -19,6 +19,7 @@ Package manager is **pnpm**.
 | Run one test file              | `pnpm exec vitest run path/to/file.test.ts`          |
 | Run tests by name              | `pnpm exec vitest run -t "<partial name>"`           |
 | Regenerate color docs          | `pnpm docs:colors`                                   |
+| Report color contrast          | `pnpm contrast:report`                               |
 
 ## Verify before finishing — do not skip
 
@@ -63,6 +64,7 @@ The game area builds the model and generates the puzzle once per variant (memoiz
 - **Exports:** named exports only, no default exports.
 - **Styling:** CSS Modules only (`*.module.css`); no inline styles, no `!important`. Use logical properties (`padding-inline`, `inset-block-start`, `text-align: start`, …) so RTL works; take colors from the theme's CSS custom properties; mobile-first `min-width` queries only.
 - **Generated docs:** `docs/colors.md` is generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `pnpm docs:colors` after any change to color tokens or `colorSpecs.ts` — the drift test in `src/game/testing/colorDocs.test.ts` fails CI if the committed file is stale.
+- **Color contrast gate:** color pairs declared in `src/game/testing/contrastSpecs.ts` (WCAG math in `contrast.ts`) are checked in all four palettes (dark/light × standard/high-contrast) by `contrastSpecs.test.ts`. Ratios are never rounded up. Standard-palette shortfalls the owner accepted live in `ACCEPTED_FAILURES`; every high-contrast pair is gated at AA with no exceptions. Run `pnpm contrast:report` to print every pair's ratio, and add new color pairs to `contrastPairs` when introducing colors.
 - **Imports:** use the `@/` alias for `src` (configured in `tsconfig.json` and `vite.config.ts`).
 - **Tests:** Vitest + `@testing-library/react` + `jest-dom` in `jsdom`. Use `should`-style names and mirror the file under test (never `index.test.tsx`). The Vitest setup file polyfills `HTMLDialogElement` for jsdom.
 - **Querying in tests:** query the way a user (or assistive tech) finds things, in Testing Library's priority order. Prefer `getByRole(role, { name })` — it asserts the accessible role and name at once. Fall back to other accessible queries (`getByLabelText` for form fields, then `getByText`) when no suitable role exists. Use `getByTestId` only as a last resort, and never reach into the DOM (`container.querySelector`, `firstElementChild`, …) — the testing-library lint rules forbid it. Assert focus with `toHaveFocus()` rather than inspecting `document.activeElement`.
