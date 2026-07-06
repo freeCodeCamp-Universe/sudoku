@@ -139,27 +139,6 @@ export function Header({
                     </span>
                   </div>
                 ) : null}
-                <div className={styles.dropdownRow}>
-                  <span id="settings-high-contrast-label" className={styles.dropdownLabel}>
-                    High contrast
-                  </span>
-                  <span className={styles.toggleControl}>
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      className={styles.toggleInput}
-                      checked={highContrast}
-                      aria-labelledby="settings-high-contrast-label"
-                      onChange={toggleHighContrast}
-                    />
-                    <span
-                      aria-hidden="true"
-                      className={`${styles.toggleBtn} ${highContrast ? styles.on : styles.off}`}
-                    >
-                      {highContrast ? 'On' : 'Off'}
-                    </span>
-                  </span>
-                </div>
                 {onToggleHighlightPeers !== undefined ? (
                   <div className={styles.dropdownRow}>
                     <span id="settings-highlight-peers-label" className={styles.dropdownLabel}>
@@ -183,6 +162,27 @@ export function Header({
                     </span>
                   </div>
                 ) : null}
+                <div className={styles.dropdownRow}>
+                  <span id="settings-high-contrast-label" className={styles.dropdownLabel}>
+                    High contrast
+                  </span>
+                  <span className={styles.toggleControl}>
+                    <input
+                      type="checkbox"
+                      role="switch"
+                      className={styles.toggleInput}
+                      checked={highContrast}
+                      aria-labelledby="settings-high-contrast-label"
+                      onChange={toggleHighContrast}
+                    />
+                    <span
+                      aria-hidden="true"
+                      className={`${styles.toggleBtn} ${highContrast ? styles.on : styles.off}`}
+                    >
+                      {highContrast ? 'On' : 'Off'}
+                    </span>
+                  </span>
+                </div>
               </div>
             ) : null}
           </div>
