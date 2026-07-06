@@ -50,8 +50,8 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-error-bg` | #2a1515 | #f8dede | #9c5f5f | #cc7070 |
 | `--numpad-chip-label` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #ffffff |
 | `--numpad-chip-label-bright` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #000000 |
-| `--btn-primary-bg` | #f1be32 | #f1be32 | #ffe38a | #332200 |
-| `--btn-primary-text` | #0a0a23 | #0a0a23 | #0a0a23 | #ffe38a |
+| `--btn-primary-bg` | #f1be32 | #f1be32 | #f1be32 | #6b5300 |
+| `--btn-primary-text` | #0a0a23 | #0a0a23 | #0a0a23 | #ffffff |
 | `--given-dot` | rgba(255, 255, 255, 0.7) | rgba(0, 0, 0, 0.25) | #ffffff | #0a0a23 |
 | `--revealed-dot` | rgba(241, 190, 50, 0.85) | rgba(241, 190, 50, 0.85) | #ffe38a | #493a0f |
 | `--candidate-text` | #aaaacc | #555570 | #e6e6f5 | #14142e |

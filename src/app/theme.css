@@ -118,7 +118,7 @@
   --accent-green: #ddf2a3;
   --accent-red: #fff1f1;
   --accent-yellow: #ffe38a;
-  --btn-primary-bg: #ffe38a;
+  --btn-primary-bg: #f1be32;
   --btn-primary-text: #0a0a23;
   --given-dot: #ffffff;
   --revealed-dot: #ffe38a;
@@ -156,8 +156,8 @@
   --cell-text-light: #0a2540;
   --numpad-chip-label: #ffffff;
   --numpad-chip-label-bright: #000000;
-  --btn-primary-bg: #332200;
-  --btn-primary-text: #ffe38a;
+  --btn-primary-bg: #6b5300;
+  --btn-primary-text: #ffffff;
   --given-dot: #0a0a23;
   --revealed-dot: #493a0f;
   --color-1: #720000;

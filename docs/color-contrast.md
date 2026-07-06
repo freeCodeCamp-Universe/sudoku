@@ -102,11 +102,16 @@ standard light is solid `#000000` (all 9 pass, gated); HC dark is `#000000` ever
 `--btn-primary-bg` / `--btn-primary-text` (New Game, modal confirm). Standard palettes
 keep the brand yellow surface with near-black text (~10:1, gated); its 1.6:1 surface
 against the light page background is an accepted advisory — the label identifies the
-control. HC dark brightens the surface to `--accent-yellow`; HC light inverts to a dark
-brown surface with the pale yellow text (the yellow identity survives as the label
-color). Never restyle these buttons with `--accent-yellow` directly: the HC palettes
-repurpose that token as a _text_ color, which is how the original dark-on-dark bug
-happened.
+control. HC dark keeps the brand yellow surface — it already clears both gates at
+~11:1, so it does not follow `--accent-yellow`'s brightening (which serves that
+token's _text_ role). HC light targets AAA for the label, and gold + dark text is
+infeasible there: 7:1 over the near-black text needs surface luminance >= 0.33, while
+3:1 against the page caps it at 0.27. So the label flips to white on a deep gold
+surface, `#6b5300` (label 7.34:1, vs page 6.71:1) — dark enough for AAA, warm enough
+that the gold identity survives instead of collapsing to brown. The pale yellow label
+cannot reach 7:1 without darkening the surface back to near-brown. Never
+restyle these buttons with `--accent-yellow` directly: the HC palettes repurpose that
+token as a _text_ color, which is how the original dark-on-dark bug happened.
 
 ## Given / revealed cell dots
 
