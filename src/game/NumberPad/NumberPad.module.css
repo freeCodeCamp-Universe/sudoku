@@ -125,13 +125,15 @@
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 0.65rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--numpad-chip-label);
   line-height: 1;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
-:global(.light) .colorLabel {
-  color: rgba(0, 0, 0, 0.7);
+/* The shadow lifts the translucent standard-dark label off mid-tone chips;
+   the other palettes use solid label colors that clear AA on their own. */
+:global(.light) .colorLabel,
+:global(.high-contrast) .colorLabel {
   text-shadow: none;
 }
 

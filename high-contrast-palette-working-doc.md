@@ -82,6 +82,34 @@ palette rework the owner rejected. Accepted failures are listed in `ACCEPTED_FAI
   Swatches enlarged to 18px with a `--text-muted` border (gated at 3:1 vs `--bg-primary`
   in all four palettes — the border is what keeps the odd swatch visible on the page bg).
 
+- **Number-pad chip labels tokenized** as `--numpad-chip-label`: standard dark keeps the
+  translucent white (accepted shortfall, 8/9 chips fail — rgba is unmeasurable by the gate
+  and the owner accepted it); standard light upgraded to solid `#000000` (all 9 pass,
+  gated); HC dark uses `#0a0a23` on the bright chips; HC light uses `#ffffff` because its
+  chips are dark by necessity (3:1 cap vs white cells) — a dark label cannot work there.
+  Two chips tweaked to clear the label: HC dark purple `#7a5fd0` → `#8e75da`, HC light
+  silver `#8c8c8c` → `#727272` (both still >= 3:1 vs base). Text-shadow disabled outside
+  standard dark.
+
+- **HC chips respaced on an equal-ratio luminance ladder** (chip-vs-chip distinctness, not
+  just vs-background): each hue family solved to a geometric luminance rung between the
+  hard bounds (>= 3:1 vs base, numpad label >= 4.5:1). Worst adjacent pair went from
+  1.00:1 (blue vs teal) to 1.19:1 dark / 1.16:1 light — the theoretical max is ~1.20 / 1.18
+  with nine chips in those bounds, so 3:1 between chips is impossible; the ladder is the
+  optimum. HC dark numpad label switched to `#000000` so the darkest rung (purple, L 0.18)
+  clears 4.5:1. Gated by the `CHIP_LADDER_MIN` (1.15:1) test in `contrastSpecs.test.ts`.
+  Trade-off: HC light purple/blue rungs are nearly black — forced by the white-label
+  ceiling (all chips L <= 0.183); lightness carries the distinction there.
+
+- **HC dark chips reworked (v5)** after visual QA flagged pastel convergence (salmon red,
+  pale pink/yellow/silver cluster, then a too-dark mid-gray): rungs reassigned so
+  luminance-neighbors are hue-distant (ladder order purple, blue, red, teal, orange, pink,
+  green, silver, yellow), each rung solved at max saturation for its hue, and the ladder
+  capped at pure yellow's own luminance so the top rung is fully saturated `#ffee00`
+  rather than a white-blend. Silver sits on the second-highest rung as a light gray
+  (`#d9d9d9`) between vivid green and pure yellow; red is a true red (`#ff4d4d`). Same
+  gates, worst adjacent pair 1.171:1 (>= CHIP_LADDER_MIN 1.15).
+
 ## References
 
 - PR #66 (`fix/color-usage`) — prior attempt, source of the contrast math.

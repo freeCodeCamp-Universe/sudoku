@@ -58,7 +58,16 @@ const CELL_BGS = [
   '--cell-special-bg',
 ] as const;
 
-const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
+export const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
+
+/**
+ * Minimum contrast between luminance-adjacent chips in the high-contrast
+ * palettes. Not a WCAG threshold — with nine chips boxed in by the vs-base
+ * and numpad-label gates, an equal-ratio luminance ladder tops out around
+ * 1.19:1 per step, and this floor keeps the ladder from silently collapsing
+ * (the pre-ladder palette had two chips at 1.00:1).
+ */
+export const CHIP_LADDER_MIN = 1.15;
 
 /**
  * Known failures the owner has accepted for the standard palette (see the
@@ -181,6 +190,19 @@ export const contrastPairs: ContrastPair[] = [
       fg: chip,
       bg: refFor(BASE, theme),
       threshold: UI_AA,
+      theme,
+    }))
+  ),
+
+  // Number-pad chip labels. The standard dark label is a translucent rgba the
+  // math here cannot resolve, and the owner accepted its shortfall — so only
+  // the solid-label palettes are declared.
+  ...(['light', 'dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    CHIP_TOKENS.map((chip) => ({
+      label: `numpad label on chip ${chip}`,
+      fg: '--numpad-chip-label',
+      bg: chip,
+      threshold: TEXT_AA,
       theme,
     }))
   ),
