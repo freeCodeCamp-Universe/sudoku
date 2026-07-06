@@ -20,15 +20,35 @@ const ANCHORS: Record<string, string> = {
   silver: '#bfbfbf',
 };
 
+// The light ladder darkens anchors toward black (channel proportions are
+// preserved), so any white or gray mixed into an anchor survives as mud in
+// the dark rungs. These anchors are max-chroma versions of the same hues;
+// the dark ladder keeps the softer ANCHORS above because its bright rungs
+// are solved by white-blending instead.
+const LIGHT_ANCHORS: Record<string, string> = {
+  ...ANCHORS,
+  red: '#ff0000',
+  orange: '#ff8000',
+  // Yellow-shifted leaf green: pure green darkens into teal's cyan family,
+  // and the two sit one rung apart.
+  green: '#55e600',
+  teal: '#00cccc',
+  blue: '#0022ff',
+  purple: '#8000ff',
+  // Magenta rather than pink-red: darkened, a reddish pink anchor lands in
+  // the same crimson family as the red chip two rungs below it.
+  pink: '#ff00cc',
+};
+
 // Ladder rung orders (darkest first): luminance-neighbors are hue-distant,
 // and each hue sits near its natural lightness for the theme.
 const DARK_RUNGS = ['purple', 'blue', 'red', 'teal', 'orange', 'pink', 'green', 'silver', 'yellow'];
 const LIGHT_RUNGS = [
   'purple',
-  'blue',
-  'teal',
   'red',
+  'blue',
   'pink',
+  'teal',
   'green',
   'orange',
   'yellow',
@@ -70,20 +90,28 @@ const bounds: Bounds[] = (['darkHc', 'lightHc'] as const).map((themeKey) => {
         lMax: relativeLuminance(ANCHORS.yellow),
       }
     : {
+        // Light chips are bounded by the base alone: the number-pad label
+        // polarity is per chip (--numpad-chip-label-bright on the top rungs),
+        // so the white-label cap no longer squeezes the whole ladder. The
+        // floor is raised off near-black so the bottom rungs keep a readable
+        // hue — at L 0.01 purple and red were indistinguishable dark blobs.
+        // 0.020 is the highest floor that keeps the worst rounded step at or
+        // above CHIP_LADDER_MIN and the white label at 4.5:1 on rung 7.
         themeKey,
         base,
         label,
-        lMin: 0.01,
-        lMax: Math.min(baseBound(base, false), labelBound(label, false)) - 0.005,
+        lMin: 0.02,
+        lMax: baseBound(base, false) - 0.005,
       };
 });
 
 for (const { themeKey, base, label, lMin, lMax } of bounds) {
   const rungs = luminanceLadder(lMin, lMax, 9);
   const order = themeKey === 'darkHc' ? DARK_RUNGS : LIGHT_RUNGS;
+  const anchors = themeKey === 'darkHc' ? ANCHORS : LIGHT_ANCHORS;
   const solved: Record<string, string> = {};
   order.forEach((hue, i) => {
-    solved[hue] = atLuminance(ANCHORS[hue], rungs[i]);
+    solved[hue] = atLuminance(anchors[hue], rungs[i]);
   });
 
   console.log(`\n=== ${themeKey} (rungs L ${lMin.toFixed(3)} .. ${lMax.toFixed(3)}) ===`);
@@ -91,9 +119,12 @@ for (const { themeKey, base, label, lMin, lMax } of bounds) {
     const token = `--color-${i + 1}`;
     const committed = tokens[token][themeKey];
     const hex = solved[hue];
+    const white = contrastRatio(hex, '#ffffff');
+    const black = contrastRatio(hex, '#000000');
     console.log(
       `${token} ${hue.padEnd(7)} solved ${hex}  committed ${committed}  ` +
-        `vsBase ${contrastRatio(hex, base).toFixed(2)}  label ${contrastRatio(hex, label).toFixed(2)}`
+        `vsBase ${contrastRatio(hex, base).toFixed(2)}  label ${contrastRatio(hex, label).toFixed(2)}  ` +
+        `whiteLabel ${white.toFixed(2)}  blackLabel ${black.toFixed(2)}`
     );
   });
 

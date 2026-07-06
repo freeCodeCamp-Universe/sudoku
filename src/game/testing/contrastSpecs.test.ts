@@ -31,7 +31,7 @@ describe('contrastSpecs', () => {
     // Any two chips can sit on adjacent cells, and hue collapses under
     // color-vision deficiency, so the chips are spaced on a luminance ladder.
     for (const theme of ['dark-hc', 'light-hc'] as const) {
-      it(`should keep every luminance-adjacent chip pair at ${CHIP_LADDER_MIN}:1 or better (${theme})`, () => {
+      it(`should keep every luminance-adjacent chip pair at ${CHIP_LADDER_MIN[theme]}:1 or better (${theme})`, () => {
         const sorted = CHIP_TOKENS.map((token) => resolveColor(token, theme, tokens)).sort(
           (a, b) => relativeLuminance(a) - relativeLuminance(b)
         );
@@ -41,7 +41,7 @@ describe('contrastSpecs', () => {
           expect(
             ratio,
             `${sorted[i - 1]} vs ${sorted[i]} is ${ratio.toFixed(3)}:1`
-          ).toBeGreaterThanOrEqual(CHIP_LADDER_MIN);
+          ).toBeGreaterThanOrEqual(CHIP_LADDER_MIN[theme]);
         }
       });
     }

@@ -61,13 +61,29 @@ const CELL_BGS = [
 export const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
 
 /**
- * Minimum contrast between luminance-adjacent chips in the high-contrast
- * palettes. Not a WCAG threshold — with nine chips boxed in by the vs-base
- * and numpad-label gates, an equal-ratio luminance ladder tops out around
- * 1.19:1 per step, and this floor keeps the ladder from silently collapsing
- * (the pre-ladder palette had two chips at 1.00:1).
+ * Chips 3 and 9 sit on the two brightest ladder rungs in both high-contrast
+ * palettes and render `--numpad-chip-label-bright` (NumberPad.module.css);
+ * in light HC that label is dark, which is what lets the ladder rise past
+ * the white-label bound.
  */
-export const CHIP_LADDER_MIN = 1.15;
+export const chipLabelToken = (chip: string): string =>
+  chip === '--color-3' || chip === '--color-9'
+    ? '--numpad-chip-label-bright'
+    : '--numpad-chip-label';
+
+/**
+ * Minimum contrast between luminance-adjacent chips in the high-contrast
+ * palettes. Not a WCAG threshold — nine chips boxed in by the vs-base and
+ * numpad-label gates cannot reach 3:1 against each other, so the ladder is
+ * spaced at the best equal ratio the bounds allow, and this floor keeps it
+ * from silently collapsing (the pre-ladder palette had two chips at 1.00:1).
+ * The light ladder has more headroom (per-chip label polarity leaves the
+ * 3:1-vs-white base as its only cap), so its floor is higher.
+ */
+export const CHIP_LADDER_MIN: Record<'dark-hc' | 'light-hc', number> = {
+  'dark-hc': 1.15,
+  'light-hc': 1.2,
+};
 
 /**
  * Known failures the owner has accepted for the standard palette (see the
@@ -93,6 +109,10 @@ const ACCEPTED_FAILURES = new Set<string>([
   'light|chip --color-3 vs base',
   'light|chip --color-5 vs base',
   'light|chip --color-9 vs base',
+  // The standard light primary button keeps its brand yellow, which sits too
+  // close to the light page background; its 10:1+ label is what identifies
+  // the control. The high-contrast palettes carry a compliant surface.
+  'light|primary button bg vs page bg',
 ]);
 
 type PairInput = Omit<ContrastPair, 'gate'>;
@@ -200,11 +220,45 @@ export const contrastPairs: ContrastPair[] = [
   ...(['light', 'dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
     CHIP_TOKENS.map((chip) => ({
       label: `numpad label on chip ${chip}`,
-      fg: '--numpad-chip-label',
+      fg: chipLabelToken(chip),
       bg: chip,
       threshold: TEXT_AA,
       theme,
     }))
+  ),
+
+  // The primary action button (New Game and modal confirm).
+  ...THEMES.flatMap((theme): PairInput[] => [
+    {
+      label: 'primary button text on primary button bg',
+      fg: '--btn-primary-text',
+      bg: '--btn-primary-bg',
+      threshold: TEXT_AA,
+      theme,
+    },
+    {
+      label: 'primary button bg vs page bg',
+      fg: '--btn-primary-bg',
+      bg: '--bg-primary',
+      threshold: UI_AA,
+      theme,
+    },
+  ]),
+
+  // Given/revealed cell dots are the sole cue separating clues and revealed
+  // cells from player entries. The standard values are translucent rgba the
+  // math here cannot resolve (accepted shortfall, as with the dark numpad
+  // label), so only the solid high-contrast palettes are declared.
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    (['--given-dot', '--revealed-dot'] as const).flatMap((dot) =>
+      [...CELL_BGS, '--cell-error-bg' as const].map((bg) => ({
+        label: `${dot === '--given-dot' ? 'given' : 'revealed'} dot on ${bg}`,
+        fg: dot,
+        bg: bg === 'base' ? refFor(BASE, theme) : bg,
+        threshold: UI_AA,
+        theme,
+      }))
+    )
   ),
 ].map(withGate);
 

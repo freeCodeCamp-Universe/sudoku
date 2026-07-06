@@ -51,35 +51,69 @@ were solved together).
 
 Chips are the rendered symbol, so each needs 3:1 against the resting cell background, and
 the number-pad label needs 4.5:1 on every chip. Boxed in by those two bounds, nine chips
-cannot reach 3:1 against _each other_ — the optimum is an equal-ratio luminance ladder,
-about 1.17–1.19:1 per step. Design rules, encoded in the high-contrast chip sets:
+cannot reach 3:1 against _each other_ — the optimum is an equal-ratio luminance ladder.
+Design rules, encoded in the high-contrast chip sets:
 
 1. **Every chip one geometric luminance rung apart** — under color-vision deficiency hue
-   collapses, so lightness carries the distinction. Gated by `CHIP_LADDER_MIN` (1.15:1)
-   in `contrastSpecs.test.ts`.
+   collapses, so lightness carries the distinction. Gated per palette by
+   `CHIP_LADDER_MIN` (dark 1.15:1, light 1.2:1) in `contrastSpecs.test.ts`.
 2. **Hue families stay truthful** to `colorNames` in `src/variants/color.ts` (screen
-   readers announce "Red", "Blue", ...), and **ladder neighbors are hue-distant** (order:
-   purple, blue, red, teal, orange, pink, green, silver, yellow) so adjacent rungs never
-   rely on lightness alone.
+   readers announce "Red", "Blue", ...), and **ladder neighbors are hue-distant** (dark:
+   purple, blue, red, teal, orange, pink, green, silver, yellow; light: purple, red,
+   blue, pink, teal, green, orange, yellow, silver) so adjacent rungs never rely on
+   lightness alone. The light order interleaves warm hues between purple, blue, and
+   teal — on the dark rungs those cool hues are near-indistinguishable as neighbors.
 3. **Solve each rung at maximum saturation** for its hue (scale toward black, or blend
    toward white only when unavoidable) — white-blending is what turns red into salmon.
    Cap the dark ladder at pure yellow's own luminance (~0.82) so the top rung stays fully
-   saturated.
-4. Silver is the one neutral; it sits on the second-highest dark rung as a light gray.
+   saturated. Darkening preserves the anchor's channel proportions, so the light ladder
+   solves from its own **max-chroma anchors** (`LIGHT_ANCHORS` in `chipLadderReport.ts`) —
+   any white or gray in an anchor survives as mud in the dark rungs (a desaturated UI blue
+   darkens to navy-gray).
+4. Silver is the one neutral; it sits on the highest light rung and the second-highest
+   dark rung as a gray.
+5. **Label polarity is per chip**, not per palette: chips 3 and 9 occupy the two
+   brightest rungs in both HC ladders and render `--numpad-chip-label-bright`. In light
+   HC that label is dark, which frees the ladder's cap from the white label (L <= 0.183)
+   up to the 3:1-vs-white base bound (L <= 0.295) — per-step separation improves from
+   ~1.16:1 to ~1.22:1 and the upper rungs get light enough for hue to read.
 
 Use `pnpm contrast:ladder` to re-solve candidate sets when bounds or hues change.
 
-**Known trade-off**: the high-contrast _light_ chips are capped at L <= 0.183 (white
-number-pad label at 4.5:1), so their dark rungs (purple, blue) are nearly black; the
-ladder, not the hue, separates them.
+The light ladder's **floor is raised off near-black** (lMin 0.02): below that, no hue is
+perceptible and the two darkest rungs read as identical blobs regardless of anchor. The
+floor trades a little step spacing (worst step ~1.21 vs the 1.2 gate) for readable hue on
+the purple and red rungs; it cannot rise further without breaking the gate or pushing the
+rung-7 white label under 4.5:1.
+
+**Known trade-off**: the chip-vs-base gate uses the resting (white) cell — on tinted
+state backgrounds (peer/same-value highlights) the brightest chips dip below 3:1.
 
 ## Number-pad chip labels
 
-`--numpad-chip-label` per palette: standard dark keeps the translucent white
-(accepted shortfall — 8/9 chips fail regardless of label polarity, and rgba cannot be
-measured by the gate); standard light is solid `#000000` (all 9 pass, gated); HC dark is
-`#000000` (bright chips); HC light is `#ffffff` (dark chips — a dark label mathematically
-cannot reach 4.5:1 under the chip luminance cap).
+`--numpad-chip-label` per palette, with `--numpad-chip-label-bright` on chips 3 and 9
+(see rule 5 above): standard dark keeps the translucent white (accepted shortfall — 8/9
+chips fail regardless of label polarity, and rgba cannot be measured by the gate);
+standard light is solid `#000000` (all 9 pass, gated); HC dark is `#000000` everywhere
+(bright chips); HC light is `#ffffff` with a `#000000` bright-chip label, both gated.
+
+## Primary action button
+
+`--btn-primary-bg` / `--btn-primary-text` (New Game, modal confirm). Standard palettes
+keep the brand yellow surface with near-black text (~10:1, gated); its 1.6:1 surface
+against the light page background is an accepted advisory — the label identifies the
+control. HC dark brightens the surface to `--accent-yellow`; HC light inverts to a dark
+brown surface with the pale yellow text (the yellow identity survives as the label
+color). Never restyle these buttons with `--accent-yellow` directly: the HC palettes
+repurpose that token as a _text_ color, which is how the original dark-on-dark bug
+happened.
+
+## Given / revealed cell dots
+
+`--given-dot` / `--revealed-dot` mark clue and revealed cells (Cell.module.css). The
+standard values are translucent rgba (accepted shortfall, unmeasurable by the gate); the
+HC palettes use solid values gated at 3:1 against every cell background a dot can sit on,
+including the error background.
 
 ## Changing colors
 

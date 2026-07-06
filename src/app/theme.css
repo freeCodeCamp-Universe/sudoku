@@ -42,6 +42,11 @@
   --cell-same-value-bg: #1a4f4f;
   --cell-error-bg: #2a1515;
   --numpad-chip-label: rgba(255, 255, 255, 0.9);
+  --numpad-chip-label-bright: rgba(255, 255, 255, 0.9);
+  --btn-primary-bg: #f1be32;
+  --btn-primary-text: #0a0a23;
+  --given-dot: rgba(255, 255, 255, 0.7);
+  --revealed-dot: rgba(241, 190, 50, 0.85);
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
@@ -86,6 +91,8 @@
   --cell-same-value-bg: #cdeaea;
   --cell-error-bg: #f8dede;
   --numpad-chip-label: #000000;
+  --numpad-chip-label-bright: #000000;
+  --given-dot: rgba(0, 0, 0, 0.25);
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
   --overlay-cage-stroke: #5555aa;
@@ -102,13 +109,19 @@
    into the light theme (readThemeTokens enforces this). Chip colors keep each
    index in its named hue family (see colorNames in src/variants/color.ts) and
    stagger luminance so any two chips also differ in lightness — that is what
-   makes the set usable under color-vision deficiency. */
+   makes the set usable under color-vision deficiency. The two brightest rungs
+   (chips 3 and 9 in both HC ladders) carry --numpad-chip-label-bright so the
+   light ladder can rise past the white-label bound. */
 .high-contrast {
   --accent-blue: #d8ecff;
   --text-subtle: #ffffff;
   --accent-green: #ddf2a3;
   --accent-red: #fff1f1;
   --accent-yellow: #ffe38a;
+  --btn-primary-bg: #ffe38a;
+  --btn-primary-text: #0a0a23;
+  --given-dot: #ffffff;
+  --revealed-dot: #ffe38a;
   --candidate-text: #e6e6f5;
   --cell-even-bg: #60607a;
   --cell-odd-bg: #0f0f2c;
@@ -116,6 +129,7 @@
   --cell-peer-odd-bg: #0b0b24;
   --cell-error-bg: #9c5f5f;
   --numpad-chip-label: #000000;
+  --numpad-chip-label-bright: #000000;
   --color-1: #ff4d4d;
   --color-2: #fe8b1a;
   --color-3: #ffee00;
@@ -141,15 +155,20 @@
   --cell-error-bg: #cc7070;
   --cell-text-light: #0a2540;
   --numpad-chip-label: #ffffff;
-  --color-1: #771e1e;
-  --color-2: #8f4f0f;
-  --color-3: #7e670d;
-  --color-4: #186218;
-  --color-5: #083939;
-  --color-6: #11274c;
-  --color-7: #220d41;
-  --color-8: #79304d;
-  --color-9: #767676;
+  --numpad-chip-label-bright: #000000;
+  --btn-primary-bg: #332200;
+  --btn-primary-text: #ffe38a;
+  --given-dot: #0a0a23;
+  --revealed-dot: #493a0f;
+  --color-1: #720000;
+  --color-2: #b95d00;
+  --color-3: #918700;
+  --color-4: #2c7800;
+  --color-5: #006767;
+  --color-6: #001cd1;
+  --color-7: #380070;
+  --color-8: #950077;
+  --color-9: #939393;
 }
 
 * {

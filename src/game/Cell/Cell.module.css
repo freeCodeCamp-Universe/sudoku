@@ -362,11 +362,11 @@
 }
 
 .givenDot {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--given-dot);
 }
 
 .revealedDot {
-  background: rgba(241, 190, 50, 0.85);
+  background: var(--revealed-dot);
 }
 
 :global(.light) .cell {
@@ -386,10 +386,6 @@
 
 :global(.light) .candidate {
   color: var(--candidate-text);
-}
-
-:global(.light) .givenDot {
-  background: rgba(0, 0, 0, 0.25);
 }
 
 :global(.light) [data-check] .cell[data-conflict],

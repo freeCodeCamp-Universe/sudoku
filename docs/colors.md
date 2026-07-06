@@ -16,15 +16,15 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--text-bright` | #ffffff | #0a0a23 | #ffffff | #0a0a23 |
 | `--accent-yellow` | #f1be32 | #f1be32 | #ffe38a | #332200 |
 | `--accent-blue` | #99c9ff | #1565c0 | #d8ecff | #0a2540 |
-| `--color-1` | #e03535 | #e03535 | #ff4d4d | #771e1e |
-| `--color-2` | #f07820 | #f07820 | #fe8b1a | #8f4f0f |
-| `--color-3` | #d4a828 | #d4a828 | #ffee00 | #7e670d |
-| `--color-4` | #33a850 | #33a850 | #65e165 | #186218 |
-| `--color-5` | #1aabaa | #1aabaa | #11acac | #083939 |
-| `--color-6` | #3a80e0 | #3a80e0 | #4080e8 | #11274c |
-| `--color-7` | #8e52e8 | #8e52e8 | #9447ff | #220d41 |
-| `--color-8` | #d94080 | #d94080 | #ff98cc | #79304d |
-| `--color-9` | #9898b0 | #9898b0 | #d9d9d9 | #767676 |
+| `--color-1` | #e03535 | #e03535 | #ff4d4d | #720000 |
+| `--color-2` | #f07820 | #f07820 | #fe8b1a | #b95d00 |
+| `--color-3` | #d4a828 | #d4a828 | #ffee00 | #918700 |
+| `--color-4` | #33a850 | #33a850 | #65e165 | #2c7800 |
+| `--color-5` | #1aabaa | #1aabaa | #11acac | #006767 |
+| `--color-6` | #3a80e0 | #3a80e0 | #4080e8 | #001cd1 |
+| `--color-7` | #8e52e8 | #8e52e8 | #9447ff | #380070 |
+| `--color-8` | #d94080 | #d94080 | #ff98cc | #950077 |
+| `--color-9` | #9898b0 | #9898b0 | #d9d9d9 | #939393 |
 | `--accent-green` | #acd157 | #00471b | #ddf2a3 | #092809 |
 | `--accent-red` | #ffadad | #850000 | #fff1f1 | #4d0000 |
 | `--focus-ring` | #198eee | #198eee | #198eee | #198eee |
@@ -49,6 +49,11 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-same-value-bg` | #1a4f4f | #cdeaea | #1a4f4f | #cdeaea |
 | `--cell-error-bg` | #2a1515 | #f8dede | #9c5f5f | #cc7070 |
 | `--numpad-chip-label` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #ffffff |
+| `--numpad-chip-label-bright` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #000000 |
+| `--btn-primary-bg` | #f1be32 | #f1be32 | #ffe38a | #332200 |
+| `--btn-primary-text` | #0a0a23 | #0a0a23 | #0a0a23 | #ffe38a |
+| `--given-dot` | rgba(255, 255, 255, 0.7) | rgba(0, 0, 0, 0.25) | #ffffff | #0a0a23 |
+| `--revealed-dot` | rgba(241, 190, 50, 0.85) | rgba(241, 190, 50, 0.85) | #ffe38a | #493a0f |
 | `--candidate-text` | #aaaacc | #555570 | #e6e6f5 | #14142e |
 | `--overlay-argyle-stroke` | #9898b8 | #8080a8 | #9898b8 | #8080a8 |
 | `--overlay-arrow-stroke` | #9898b8 | #9898b8 | #9898b8 | #9898b8 |
