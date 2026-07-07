@@ -70,6 +70,18 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--overlay-kropki-ring` | #5060a0 | #5060a0 | #5060a0 | #5060a0 |
 | `--overlay-consecutive-fill` | #d0d0e8 | #d0d0e8 | #d0d0e8 | #d0d0e8 |
 | `--overlay-consecutive-stroke` | #1b1b32 | #1b1b32 | #1b1b32 | #1b1b32 |
+| `--overlay-chain-1` | #99c9ff | #99c9ff | #0064d6 | #3091ff |
+| `--overlay-chain-2` | #acd157 | #acd157 | #007a1e | #00a82a |
+| `--overlay-chain-3` | #f1be32 | #f1be32 | #866300 | #b98700 |
+| `--overlay-chain-4` | #ff9966 | #ff9966 | #a94f00 | #e86c00 |
+| `--overlay-chain-5` | #cc88ff | #cc88ff | #9321f6 | #ba69ff |
+| `--overlay-chain-6` | #55ddbb | #55ddbb | #007763 | #00a287 |
+| `--overlay-chain-7` | #ff88aa | #ff88aa | #bc3265 | #ff498c |
+| `--overlay-chain-8` | #88ddff | #88ddff | #007190 | #009dc7 |
+| `--overlay-chain-9` | #ffcc55 | #ffcc55 | #726a00 | #9d9200 |
+| `--overlay-chain-10` | #dd88cc | #dd88cc | #c100a5 | #f343d9 |
+| `--overlay-chain-11` | #88ccaa | #88ccaa | #3f7500 | #57a200 |
+| `--overlay-chain-12` | #ffaa66 | #ffaa66 | #d30000 | #ff5252 |
 
 ## Per-variant color markers
 

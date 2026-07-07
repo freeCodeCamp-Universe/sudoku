@@ -20,7 +20,7 @@ const rects = gridLayout.cellRects(variant);
 
 describe('ChainOverlay', () => {
   it('should render an SVG element when chains are provided', () => {
-    const chains: Chain[] = [{ cells: ['r0c1', 'r1c1', 'r1c2'], color: '#99c9ff' }];
+    const chains: Chain[] = [{ cells: ['r0c1', 'r1c1', 'r1c2'] }];
 
     render(<ChainOverlay rects={rects} structure={{ chains }} />);
 
@@ -29,8 +29,8 @@ describe('ChainOverlay', () => {
 
   it('should render one polyline per chain', () => {
     const chains: Chain[] = [
-      { cells: ['r0c1', 'r1c1', 'r1c2'], color: '#99c9ff' },
-      { cells: ['r3c0', 'r4c0', 'r4c1'], color: '#acd157' },
+      { cells: ['r0c1', 'r1c1', 'r1c2'] },
+      { cells: ['r3c0', 'r4c0', 'r4c1'] },
     ];
 
     render(<ChainOverlay rects={rects} structure={{ chains }} />);
@@ -38,12 +38,25 @@ describe('ChainOverlay', () => {
     expect(screen.getAllByTestId('chain-line')).toHaveLength(2);
   });
 
-  it('should set the stroke color from the chain color', () => {
-    const chains: Chain[] = [{ cells: ['r0c1', 'r1c1'], color: '#f1be32' }];
+  it('should stroke each chain with its indexed theme token', () => {
+    const chains: Chain[] = [{ cells: ['r0c1', 'r1c1'] }, { cells: ['r3c0', 'r4c0'] }];
 
     render(<ChainOverlay rects={rects} structure={{ chains }} />);
 
-    expect(screen.getByTestId('chain-line').getAttribute('stroke')).toBe('#f1be32');
+    const lines = screen.getAllByTestId('chain-line');
+    expect(lines[0].getAttribute('stroke')).toBe('var(--overlay-chain-1)');
+    expect(lines[1].getAttribute('stroke')).toBe('var(--overlay-chain-2)');
+  });
+
+  it('should wrap the stroke token past twelve chains', () => {
+    const chains: Chain[] = Array.from({ length: 13 }, (_, i) => ({
+      cells: [`r${i % 9}c${Math.floor(i / 9)}`] as Chain['cells'],
+    }));
+
+    render(<ChainOverlay rects={rects} structure={{ chains }} />);
+
+    const lines = screen.getAllByTestId('chain-line');
+    expect(lines[12].getAttribute('stroke')).toBe('var(--overlay-chain-1)');
   });
 
   it('should render nothing when chains array is empty', () => {

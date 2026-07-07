@@ -14,7 +14,7 @@ describe('chainVariant', () => {
   it('should detect a chain violation with a duplicate value', () => {
     const model = buildModel(chainVariant);
     // Provide a minimal chain structure with one 3-cell chain
-    const testChain: ChainType = { cells: ['r0c0', 'r0c1', 'r0c2'], color: '#fff' };
+    const testChain: ChainType = { cells: ['r0c0', 'r0c1', 'r0c2'] };
     const modelWithStructure = { ...model, structure: { chains: [testChain] } };
     const brokenValues = new Map<string, number>([
       ['r0c0', 5],
@@ -29,7 +29,7 @@ describe('chainVariant', () => {
 
   it('should accept a valid consecutive chain', () => {
     const model = buildModel(chainVariant);
-    const testChain: ChainType = { cells: ['r0c0', 'r1c0', 'r2c0'], color: '#fff' };
+    const testChain: ChainType = { cells: ['r0c0', 'r1c0', 'r2c0'] };
     const modelWithStructure = { ...model, structure: { chains: [testChain] } };
     const values = new Map<string, number>([
       ['r0c0', 3],

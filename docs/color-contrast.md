@@ -227,6 +227,30 @@ are documented here rather than gated):
   white lands on the region fills' luminance rung, leaving a hue-only
   difference against them.
 
+## Chain lines
+
+`--overlay-chain-1` … `--overlay-chain-12` color the chain-sudoku polylines
+(ChainOverlay). The overlay sits at z-index 1 — above the cell backgrounds but
+below the cells' value/candidate spans (z-index 2, Cell.module.css) — so the
+line passes behind the digits. The selected cell forms a stacking context, so
+it is lifted to z-index 2 and the line breaks under it rather than painting
+over its digit.
+
+The standard palettes keep the original pastels at 0.3 opacity (a blend the
+gate cannot measure, accepted like the given dots). In high contrast the lines
+render solid and are gated on two sides: 3:1 against the resting base
+(WCAG 1.4.11) and 4.5:1 under every text role a chain cell can render. That
+double bound pins all twelve lines to a single luminance rung — the same
+arithmetic as the region fills (dark HC: L ≈ 0.137–0.142 between the base
+floor and the `--accent-blue` cap; light HC: L ≈ 0.258–0.300 between the
+`--accent-yellow` floor and the white-base cap) — so no luminance ladder fits
+and hue alone separates chains. That is accepted: each chain is spatially
+contiguous, so connectivity, not color, carries the grouping; hue keeps each
+index in its standard palette's hue family (theme toggles preserve chain
+identity) and hue-adjacent colors sit index-distant. State fills (error,
+highlights) are excluded from the line gate, like the chip and inequality
+gates. The gallery's ChainPreview keeps its own decorative pastel set.
+
 ## Given / revealed cell dots
 
 `--given-dot` / `--revealed-dot` mark clue and revealed cells (Cell.module.css). The

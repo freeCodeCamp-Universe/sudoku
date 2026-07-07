@@ -78,6 +78,16 @@ const REGION_FILLS = [
 export const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
 
 /**
+ * Chain-sudoku lines (ChainOverlay). In high contrast they render solid and
+ * pass behind the digits, so each line is both a graphical object (3:1 vs the
+ * resting base, WCAG 1.4.11) and the immediate background of every text role
+ * a chain cell can render (4.5:1). The standard palettes draw the lines at
+ * 0.3 opacity — a blend the math here cannot resolve, so like the given dots
+ * only the solid high-contrast palettes are declared.
+ */
+export const CHAIN_TOKENS = Array.from({ length: 12 }, (_, i) => `--overlay-chain-${i + 1}`);
+
+/**
  * Chips 3 and 9 sit on the two brightest ladder rungs in both high-contrast
  * palettes and render `--numpad-chip-label-bright` (NumberPad.module.css);
  * in light HC that label is dark, which is what lets the ladder rise past
@@ -411,6 +421,31 @@ export const contrastPairs: ContrastPair[] = [
       threshold: TEXT_AA,
       theme,
     })
+  ),
+
+  // Chain lines (see CHAIN_TOKENS above): each line needs 3:1 against the
+  // resting base it crosses, and every text role needs 4.5:1 on the line
+  // passing behind it. State fills (error, highlights) are excluded, like the
+  // chip and inequality gates. All twelve lines share one luminance rung —
+  // the vs-base floor and the text-role cap leave no room for a ladder — so
+  // hue alone separates chains; spatial contiguity carries the grouping.
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    CHAIN_TOKENS.flatMap((line) => [
+      {
+        label: `chain line ${line} vs base`,
+        fg: line,
+        bg: refFor(BASE, theme),
+        threshold: UI_AA,
+        theme,
+      },
+      ...Object.keys(TEXT).map((role) => ({
+        label: `${role} text on chain line ${line}`,
+        fg: refFor(TEXT[role], theme),
+        bg: line,
+        threshold: TEXT_AA,
+        theme,
+      })),
+    ])
   ),
 
   // Given/revealed cell dots are the sole cue separating clues and revealed

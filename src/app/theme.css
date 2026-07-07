@@ -63,6 +63,18 @@
   --overlay-kropki-ring: #5060a0;
   --overlay-consecutive-fill: #d0d0e8;
   --overlay-consecutive-stroke: #1b1b32;
+  --overlay-chain-1: #99c9ff;
+  --overlay-chain-2: #acd157;
+  --overlay-chain-3: #f1be32;
+  --overlay-chain-4: #ff9966;
+  --overlay-chain-5: #cc88ff;
+  --overlay-chain-6: #55ddbb;
+  --overlay-chain-7: #ff88aa;
+  --overlay-chain-8: #88ddff;
+  --overlay-chain-9: #ffcc55;
+  --overlay-chain-10: #dd88cc;
+  --overlay-chain-11: #88ccaa;
+  --overlay-chain-12: #ffaa66;
 }
 
 .light {
@@ -175,6 +187,25 @@
   --color-7: #9447ff;
   --color-8: #ff98cc;
   --color-9: #d9d9d9;
+  /* Chain lines render solid (ChainOverlay drops its 0.3 opacity in HC) and
+     sit directly behind every text role a chain cell can render, so all
+     twelve share one luminance rung: 3:1 above the plain base from below,
+     4.5:1 under --accent-blue from above — the same narrow window as the
+     region fills. Hue alone separates chains (no ladder fits the window);
+     each index stays in its standard hue family and hue-adjacent colors are
+     kept index-distant. */
+  --overlay-chain-1: #0064d6;
+  --overlay-chain-2: #007a1e;
+  --overlay-chain-3: #866300;
+  --overlay-chain-4: #a94f00;
+  --overlay-chain-5: #9321f6;
+  --overlay-chain-6: #007763;
+  --overlay-chain-7: #bc3265;
+  --overlay-chain-8: #007190;
+  --overlay-chain-9: #726a00;
+  --overlay-chain-10: #c100a5;
+  --overlay-chain-11: #3f7500;
+  --overlay-chain-12: #d30000;
 }
 
 .light.high-contrast {
@@ -229,6 +260,21 @@
   --color-7: #380070;
   --color-8: #950077;
   --color-9: #939393;
+  /* Chain lines: 3:1 below the white base from above, 4.5:1 over the darkest
+     text role (--accent-red #4d0000) from below. Wider window than dark HC,
+     same single-rung, hue-only design. */
+  --overlay-chain-1: #3091ff;
+  --overlay-chain-2: #00a82a;
+  --overlay-chain-3: #b98700;
+  --overlay-chain-4: #e86c00;
+  --overlay-chain-5: #ba69ff;
+  --overlay-chain-6: #00a287;
+  --overlay-chain-7: #ff498c;
+  --overlay-chain-8: #009dc7;
+  --overlay-chain-9: #9d9200;
+  --overlay-chain-10: #f343d9;
+  --overlay-chain-11: #57a200;
+  --overlay-chain-12: #ff5252;
 }
 
 * {

@@ -2,7 +2,6 @@ import type { CellId, Conflict, Constraint, SymbolValue, VariantModel } from '..
 
 export interface Chain {
   cells: CellId[];
-  color: string;
 }
 
 function getChains(model: VariantModel): Chain[] {

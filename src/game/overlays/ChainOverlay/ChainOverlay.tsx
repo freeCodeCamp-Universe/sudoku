@@ -51,7 +51,7 @@ export function ChainOverlay({ rects, structure }: ChainOverlayProps) {
             data-testid="chain-line"
             className={styles.line}
             points={points}
-            stroke={chainDef.color}
+            stroke={`var(--overlay-chain-${(index % 12) + 1})`}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"

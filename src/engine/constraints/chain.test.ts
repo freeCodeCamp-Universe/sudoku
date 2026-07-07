@@ -16,9 +16,7 @@ function makeModel(chains: ChainType[]): VariantModel {
 
 describe('chain constraint', () => {
   it('should report a conflict when a chain has a duplicate value', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)] }];
     const values: Values = new Map([
       [cellId(0, 0), 4],
       [cellId(0, 1), 4],
@@ -32,9 +30,7 @@ describe('chain constraint', () => {
   });
 
   it('should report a conflict when the range of filled chain values >= chain length', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)] }];
     const values: Values = new Map([
       [cellId(0, 0), 1],
       [cellId(0, 1), 8],
@@ -47,7 +43,7 @@ describe('chain constraint', () => {
 
   it('should report no conflict for a valid partial chain fill', () => {
     const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2), cellId(0, 3)], color: '#acd157' },
+      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2), cellId(0, 3)] },
     ];
     const values: Values = new Map([
       [cellId(0, 0), 3],
@@ -58,9 +54,7 @@ describe('chain constraint', () => {
   });
 
   it('should report no conflict for a fully valid chain', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)], color: '#f1be32' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)] }];
     const values: Values = new Map([
       [cellId(0, 0), 4],
       [cellId(0, 1), 6],
@@ -83,9 +77,7 @@ describe('chain constraint', () => {
   });
 
   it('should not permit a value that would create a duplicate in the chain', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)] }];
     const model = makeModel(chains);
     const values: Values = new Map([[cellId(0, 0), 5]]);
 
@@ -94,9 +86,7 @@ describe('chain constraint', () => {
   });
 
   it('should not permit a value that would push the range beyond chain length - 1', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 0), cellId(0, 1), cellId(0, 2)] }];
     const model = makeModel(chains);
     const values: Values = new Map([[cellId(0, 0), 1]]);
 
