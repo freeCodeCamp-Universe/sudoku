@@ -113,6 +113,9 @@ const ACCEPTED_FAILURES = new Set<string>([
   // close to the light page background; its 10:1+ label is what identifies
   // the control. The high-contrast palettes carry a compliant surface.
   'light|primary button bg vs page bg',
+  // Standard light --text-muted sits at 4.44:1 on the button background; the
+  // known default-mode muted-text shortfall will be fixed separately.
+  'light|muted text on button bg',
 ]);
 
 type PairInput = Omit<ContrastPair, 'gate'>;
@@ -244,6 +247,34 @@ export const contrastPairs: ContrastPair[] = [
       theme,
     },
   ]),
+
+  // Board clue text (skyscraper gutter numbers) renders on the page
+  // background. It stays a distinct blue in every palette — --accent-blue
+  // won't do, because the high-contrast palettes repurpose that token as a
+  // near-white/near-black body-text color, which erases the blue identity
+  // separating outer clues from cell values.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'board clue text vs page bg',
+      fg: '--board-clue-text',
+      bg: '--bg-primary',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
+  // Muted text labels the secondary controls (mode switcher, erase, reveal,
+  // clear all) at rest on their shared button background. The high-contrast
+  // palettes override --text-muted, since dim text defeats the mode's purpose.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'muted text on button bg',
+      fg: '--text-muted',
+      bg: '--bg-secondary',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
 
   // Given/revealed cell dots are the sole cue separating clues and revealed
   // cells from player entries. The standard values are translucent rgba the

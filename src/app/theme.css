@@ -9,6 +9,7 @@
   --text-bright: #ffffff;
   --accent-yellow: #f1be32;
   --accent-blue: #99c9ff;
+  --board-clue-text: #99c9ff;
   --color-1: #e03535;
   --color-2: #f07820;
   --color-3: #d4a828;
@@ -64,6 +65,7 @@
 .light {
   --bg-primary: #f5f5f0;
   --accent-blue: #1565c0;
+  --board-clue-text: #0d47a1;
   --bg-secondary: #ebebe6;
   --bg-surface: #e0e0db;
   --border: #c8c8d8;
@@ -114,6 +116,11 @@
    light ladder can rise past the white-label bound. */
 .high-contrast {
   --accent-blue: #d8ecff;
+  /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
+     brightens toward white for its text role here, which would erase the blue
+     identity that separates clues from cell values. */
+  --board-clue-text: #99c9ff;
+  --text-muted: #d0d0d5;
   --text-subtle: #ffffff;
   --accent-green: #ddf2a3;
   --accent-red: #fff1f1;
@@ -143,6 +150,8 @@
 
 .light.high-contrast {
   --accent-blue: #0a2540;
+  --board-clue-text: #0d47a1;
+  --text-muted: #2a2a40;
   --text-subtle: #0a0a23;
   --accent-green: #092809;
   --accent-red: #4d0000;

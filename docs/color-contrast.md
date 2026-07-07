@@ -113,6 +113,25 @@ cannot reach 7:1 without darkening the surface back to near-brown. Never
 restyle these buttons with `--accent-yellow` directly: the HC palettes repurpose that
 token as a _text_ color, which is how the original dark-on-dark bug happened.
 
+## Board clue text
+
+`--board-clue-text` colors outer board clues (the skyscraper gutter numbers) on the
+page background. It exists because `--accent-blue` cannot serve this role: the
+high-contrast palettes repurpose that token as a near-white/near-black body-text
+color, which erased the blue identity separating outer clues from cell values (and
+in the light palettes the accent blue sat too close to the blue cell text). The
+token stays a saturated blue in all four palettes — `#99c9ff` in both darks,
+`#0d47a1` in both lights — gated at 4.5:1 against `--bg-primary`.
+
+## Muted text in high contrast
+
+The high-contrast palettes override `--text-muted` (`#d0d0d5` dark, `#2a2a40`
+light): dim text defeats the mode's purpose, so every muted label — including the
+resting secondary controls (mode switcher, Erase, Reveal Cell, Clear All) —
+brightens one step short of `--text-subtle`, keeping pressed/active states (which
+use `--text-bright`) distinguishable. The pair against the button background
+(`--bg-secondary`) is gated at 4.5:1 in both HC palettes and standard dark.
+
 ## Given / revealed cell dots
 
 `--given-dot` / `--revealed-dot` mark clue and revealed cells (Cell.module.css). The
