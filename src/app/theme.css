@@ -136,11 +136,14 @@
   /* Borders brighten so grid lines and control outlines clear WCAG 1.4.11
      (3:1) against every fill they sit on. The dark grid has no white cells
      (--cell-bg-light only applies under .light), so the cell/box border can
-     rise until it clears even the mid-luminance even/error fills. */
+     rise until it clears even the mid-luminance even/error fills. The cell
+     border sits at the 3:1 floor already (3.15:1 vs the error fill), so box
+     boundaries separate upward — white, a 1.58:1 step above the cell lines —
+     to keep the box structure readable next to bright 1px cell lines. */
   --border: #9898b0;
   --cell-border: #cccce0;
-  --box-boundary: #cccce0;
-  --board-frame: #cccce0;
+  --box-boundary: #ffffff;
+  --board-frame: #ffffff;
   --accent-blue: #d8ecff;
   /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
      brightens toward white for its text role here, which would erase the blue
@@ -210,9 +213,12 @@
 
 .light.high-contrast {
   --border: #55556d;
-  --cell-border: #262638;
-  --box-boundary: #262638;
-  --board-frame: #262638;
+  /* Cell borders lift to the 3:1 ceiling (3.13:1 vs the error fill) while box
+     boundaries deepen to the page ink, a 1.81:1 step, so the box structure
+     stays readable — mirroring the dark palette's white-box separation. */
+  --cell-border: #3c3c50;
+  --box-boundary: #0a0a23;
+  --board-frame: #0a0a23;
   --accent-blue: #0a2540;
   --board-clue-text: #0d47a1;
   --text-muted: #2a2a40;

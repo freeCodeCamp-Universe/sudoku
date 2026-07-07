@@ -373,7 +373,7 @@ export const contrastPairs: ContrastPair[] = [
   // The board frame (Board.module.css grid border and samurai edge strips)
   // outlines the whole puzzle against the page background. Passes in every
   // palette, so all four are gated; in high contrast it shares the
-  // --cell-border value so the frame and the grid lines read as one system.
+  // --box-boundary value so the frame and the box lines read as one system.
   ...THEMES.map(
     (theme): PairInput => ({
       label: 'board frame vs page bg',

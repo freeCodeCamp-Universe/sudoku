@@ -119,18 +119,27 @@ Cell borders and box boundaries are graphical objects required to understand the
 so WCAG 1.4.11 wants 3:1 against every cell fill they delimit. The standard palettes sit
 well below that (dark `--cell-border` is 1.95:1 on the board background, light is 1.41:1
 on white cells) — an accepted shortfall alongside the even/odd shading. The
-high-contrast palettes override `--cell-border` and `--box-boundary` (`#cccce0` dark,
-`#262638` light), gated at 3:1 against the full cell-background set including the error
-fill. This is feasible because the dark grid never shows white cells (`--cell-bg-light`
-only applies under `.light`), so the dark border can rise until it clears the
-mid-luminance even (`#60607a`) and error (`#9c5f5f`) fills; the light border drops to
-near-black, which clears its even (`#8f8fa8`) and error (`#cc7070`) fills from below.
+high-contrast palettes override `--cell-border` and `--box-boundary`, gated at 3:1
+against the full cell-background set including the error fill. This is feasible because
+the dark grid never shows white cells (`--cell-bg-light` only applies under `.light`),
+so the dark border can rise until it clears the mid-luminance even (`#60607a`) and
+error (`#9c5f5f`) fills; the light border drops to near-black, which clears its even
+(`#8f8fa8`) and error (`#cc7070`) fills from below.
+
+Cell and box lines do **not** share one color in high contrast, unlike the standard
+palettes. When every line is bright, a 1px cell border already pops against the dark
+board, so the 3px-vs-1px thickness cue alone no longer separates boxes from cells the
+way it does with dim standard lines. The fix is a luminance step between the two line
+roles, and each palette only has headroom in one direction. Dark: the cell border
+`#cccce0` sits at the 3:1 floor (3.15:1 vs the error fill — no room to dim), so the box
+boundary rises to `#ffffff`, a 1.58:1 step above the cell lines. Light: the box
+boundary deepens to the page ink `#0a0a23` while the cell border lifts to `#3c3c50`,
+the 3:1 ceiling (3.13:1 vs the error fill), a 1.81:1 step.
 
 `--board-frame` (the 3px outline around the whole board and the samurai edge strips,
 Board.module.css) was previously hardcoded; it is now a token in all four palettes and
-in high contrast it takes the `--cell-border` value, so the frame and the interior grid
-lines read as one system. It is gated at 3:1 against the page background in every
-palette.
+in high contrast it takes the `--box-boundary` value, so the frame and the box lines
+read as one system. It is gated at 3:1 against the page background in every palette.
 
 `--border` (toolbar buttons, cards, dialogs) gets the same treatment (`#9898b0` dark —
 the existing overlay-stroke gray — and `#55556d` light), gated at 3:1 against

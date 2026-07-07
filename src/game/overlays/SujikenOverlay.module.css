@@ -7,13 +7,13 @@
 
 .border {
   fill: none;
-  stroke: var(--overlay-argyle-stroke);
+  stroke: var(--board-frame);
   stroke-width: 3;
   stroke-linejoin: miter;
 }
 
 .regionLine {
-  stroke: var(--overlay-argyle-stroke);
+  stroke: var(--board-frame);
   stroke-width: 3;
   stroke-linecap: square;
 }
