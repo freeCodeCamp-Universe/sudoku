@@ -9,6 +9,7 @@
   --text-bright: #ffffff;
   --accent-yellow: #f1be32;
   --accent-blue: #99c9ff;
+  --board-clue-text: #99c9ff;
   --color-1: #e03535;
   --color-2: #f07820;
   --color-3: #d4a828;
@@ -25,6 +26,7 @@
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
   --box-boundary: #4a4a5e;
+  --board-frame: #9898b8;
   --cell-diagonal-bg: #3b3b4f;
   --cell-window-bg: #3b3b4f;
   --cell-special-bg: #3b3b4f;
@@ -40,10 +42,19 @@
   --cell-peer-bg: #272948;
   --cell-peer-structural-bg: #2e2e44;
   --cell-same-value-bg: #1a4f4f;
+  --cell-error-bg: #2a1515;
+  --numpad-chip-label: rgba(255, 255, 255, 0.9);
+  --numpad-chip-label-bright: rgba(255, 255, 255, 0.9);
+  --btn-primary-bg: #f1be32;
+  --btn-primary-text: #0a0a23;
+  --given-dot: rgba(255, 255, 255, 0.7);
+  --revealed-dot: rgba(241, 190, 50, 0.85);
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
+  --overlay-inequality-fill: #f1be32;
   --overlay-cage-stroke: #9898b8;
+  --overlay-cage-sum: #f1be32;
   --overlay-jigsaw-stroke: #9898b8;
   --overlay-window-fill: #3b3b4f;
   --overlay-special-fill: #3a1a6a;
@@ -52,15 +63,28 @@
   --overlay-kropki-ring: #5060a0;
   --overlay-consecutive-fill: #d0d0e8;
   --overlay-consecutive-stroke: #1b1b32;
+  --overlay-chain-1: #99c9ff;
+  --overlay-chain-2: #acd157;
+  --overlay-chain-3: #f1be32;
+  --overlay-chain-4: #ff9966;
+  --overlay-chain-5: #cc88ff;
+  --overlay-chain-6: #55ddbb;
+  --overlay-chain-7: #ff88aa;
+  --overlay-chain-8: #88ddff;
+  --overlay-chain-9: #ffcc55;
+  --overlay-chain-10: #dd88cc;
+  --overlay-chain-11: #88ccaa;
+  --overlay-chain-12: #ffaa66;
 }
 
 .light {
   --bg-primary: #f5f5f0;
   --accent-blue: #1565c0;
+  --board-clue-text: #0d47a1;
   --bg-secondary: #ebebe6;
   --bg-surface: #e0e0db;
   --border: #c8c8d8;
-  --text-muted: #6a6a7a;
+  --text-muted: #626262;
   --text-subtle: #2a2a40;
   --text-primary: #1a1a2e;
   --text-bright: #0a0a23;
@@ -68,6 +92,7 @@
   --accent-red: #850000;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
+  --board-frame: #8080a8;
   --cell-diagonal-bg: #e8e8fa;
   --cell-window-bg: #e8e8fa;
   --cell-special-bg: #e8e8fa;
@@ -82,12 +107,180 @@
   --cell-peer-bg: #ededf6;
   --cell-peer-structural-bg: #d8d8f0;
   --cell-same-value-bg: #cdeaea;
+  --cell-error-bg: #f8dede;
+  --numpad-chip-label: #000000;
+  --numpad-chip-label-bright: #000000;
+  --given-dot: rgba(0, 0, 0, 0.25);
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
+  --overlay-inequality-fill: #c79100;
   --overlay-cage-stroke: #5555aa;
+  --overlay-cage-sum: #c79100;
   --overlay-jigsaw-stroke: #6060a0;
   --overlay-window-fill: #e8e8fa;
   --overlay-special-fill: #dcc8f4;
+}
+
+/* High-contrast palette: an orthogonal modifier on top of either theme.
+   Every pair here must clear WCAG AA — all high-contrast pairs are gated by
+   contrastSpecs.test.ts, with no advisory exceptions. The .light.high-contrast
+   block must override every token this block overrides: it is declared after
+   .light, so a missing light override would leak a dark high-contrast value
+   into the light theme (readThemeTokens enforces this). Chip colors keep each
+   index in its named hue family (see colorNames in src/variants/color.ts) and
+   stagger luminance so any two chips also differ in lightness — that is what
+   makes the set usable under color-vision deficiency. The two brightest rungs
+   (chips 3 and 9 in both HC ladders) carry --numpad-chip-label-bright so the
+   light ladder can rise past the white-label bound. */
+.high-contrast {
+  /* Borders brighten so grid lines and control outlines clear WCAG 1.4.11
+     (3:1) against every fill they sit on. The dark grid has no white cells
+     (--cell-bg-light only applies under .light), so the cell/box border can
+     rise until it clears even the mid-luminance even/error fills. The cell
+     border sits at the 3:1 floor already (3.15:1 vs the error fill), so box
+     boundaries separate upward — white, a 1.58:1 step above the cell lines —
+     to keep the box structure readable next to bright 1px cell lines. */
+  --border: #9898b0;
+  --cell-border: #cccce0;
+  --box-boundary: #ffffff;
+  --board-frame: #ffffff;
+  --accent-blue: #d8ecff;
+  /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
+     brightens toward white for its text role here, which would erase the blue
+     identity that separates clues from cell values. */
+  --board-clue-text: #99c9ff;
+  --text-muted: #d0d0d5;
+  --text-subtle: #ffffff;
+  --accent-green: #ddf2a3;
+  --accent-red: #fff1f1;
+  --accent-yellow: #ffeaa8;
+  /* Inequality markers are graphical objects, not text, so they get their own
+     token instead of --accent-yellow (whose HC values serve a text role). */
+  --overlay-inequality-fill: #ffe38a;
+  --overlay-cage-sum: #ffe38a;
+  --btn-primary-bg: #f1be32;
+  --btn-primary-text: #0a0a23;
+  --given-dot: #ffffff;
+  --revealed-dot: #ffe38a;
+  --candidate-text: #f0f0fa;
+  /* Region fills (X diagonals, windows, special cells) must clear 3:1 above
+     the plain base while every light text role keeps 4.5:1 on them — a narrow
+     luminance window that also forces the hint/candidate text bumps here. */
+  --cell-diagonal-bg: #65658a;
+  --cell-window-bg: #65658a;
+  --cell-special-bg: #65658a;
+  --overlay-window-fill: #65658a;
+  --overlay-special-fill: #6d6398;
+  /* The standard ring (#4a90d9) sits at 1.66:1 on the mid-gray region fills;
+     a brighter blue clears 3:1 on every fill a selected cell can carry. */
+  --cell-selected-border: #a8d4ff;
+  --cell-even-bg: #60607a;
+  --cell-odd-bg: #0f0f2c;
+  --cell-peer-even-bg: #646480;
+  --cell-peer-odd-bg: #0b0b24;
+  --cell-error-bg: #9c5f5f;
+  --numpad-chip-label: #000000;
+  --numpad-chip-label-bright: #000000;
+  --color-1: #ff4d4d;
+  --color-2: #fe8b1a;
+  --color-3: #ffee00;
+  --color-4: #65e165;
+  --color-5: #11acac;
+  --color-6: #4080e8;
+  --color-7: #9447ff;
+  --color-8: #ff98cc;
+  --color-9: #d9d9d9;
+  /* Chain lines render solid (ChainOverlay drops its 0.3 opacity in HC) and
+     sit directly behind every text role a chain cell can render, so all
+     twelve share one luminance rung: 3:1 above the plain base from below,
+     4.5:1 under --accent-blue from above — the same narrow window as the
+     region fills. Hue alone separates chains (no ladder fits the window);
+     each index stays in its standard hue family and hue-adjacent colors are
+     kept index-distant. */
+  --overlay-chain-1: #0064d6;
+  --overlay-chain-2: #007a1e;
+  --overlay-chain-3: #866300;
+  --overlay-chain-4: #a94f00;
+  --overlay-chain-5: #9321f6;
+  --overlay-chain-6: #007763;
+  --overlay-chain-7: #bc3265;
+  --overlay-chain-8: #007190;
+  --overlay-chain-9: #726a00;
+  --overlay-chain-10: #c100a5;
+  --overlay-chain-11: #3f7500;
+  --overlay-chain-12: #d30000;
+}
+
+.light.high-contrast {
+  --border: #55556d;
+  /* Cell borders lift to the 3:1 ceiling (3.13:1 vs the error fill) while box
+     boundaries deepen to the page ink, a 1.81:1 step, so the box structure
+     stays readable — mirroring the dark palette's white-box separation. */
+  --cell-border: #3c3c50;
+  --box-boundary: #0a0a23;
+  --board-frame: #0a0a23;
+  --accent-blue: #0a2540;
+  --board-clue-text: #0d47a1;
+  --text-muted: #2a2a40;
+  --text-subtle: #0a0a23;
+  --accent-green: #092809;
+  --accent-red: #4d0000;
+  --accent-yellow: #332200;
+  /* Deepest gold that clears 3:1 on white cells and the page background while
+     still reading yellow; state fills (error) are excluded like the chip gate. */
+  --overlay-inequality-fill: #a97b00;
+  /* Cage sums are text, so their gate is 4.5:1 — one gold rung deeper than
+     the 3:1 inequality markers. */
+  --overlay-cage-sum: #8a6a00;
+  --candidate-text: #14142e;
+  /* Region fills share the even-cell gray: 3:1 above white cells, 4.5:1 under
+     every dark text role. The special fill keeps its purple identity at the
+     same luminance. */
+  --cell-diagonal-bg: #8f8fa8;
+  --cell-window-bg: #8f8fa8;
+  --cell-special-bg: #8f8fa8;
+  --overlay-window-fill: #8f8fa8;
+  --overlay-special-fill: #a087c4;
+  /* Navy ring: the standard blue is 1.06:1 on the region-fill gray. The error
+     fill (#cc7070, L 0.256) is the binding cap — ring luminance must stay
+     under ~0.052 to clear 3:1 on it. */
+  --cell-selected-border: #08306b;
+  --cell-even-bg: #8f8fa8;
+  --cell-odd-bg: #ffffff;
+  --cell-peer-even-bg: #8989a2;
+  --cell-peer-odd-bg: #fafafc;
+  --cell-error-bg: #cc7070;
+  --cell-text-light: #0a2540;
+  --numpad-chip-label: #ffffff;
+  --numpad-chip-label-bright: #000000;
+  --btn-primary-bg: #6b5300;
+  --btn-primary-text: #ffffff;
+  --given-dot: #0a0a23;
+  --revealed-dot: #493a0f;
+  --color-1: #720000;
+  --color-2: #a45300;
+  --color-3: #918700;
+  --color-4: #008a00;
+  --color-5: #006767;
+  --color-6: #001cd1;
+  --color-7: #380070;
+  --color-8: #950077;
+  --color-9: #939393;
+  /* Chain lines: 3:1 below the white base from above, 4.5:1 over the darkest
+     text role (--accent-red #4d0000) from below. Wider window than dark HC,
+     same single-rung, hue-only design. */
+  --overlay-chain-1: #3091ff;
+  --overlay-chain-2: #00a82a;
+  --overlay-chain-3: #b98700;
+  --overlay-chain-4: #e86c00;
+  --overlay-chain-5: #ba69ff;
+  --overlay-chain-6: #00a287;
+  --overlay-chain-7: #ff498c;
+  --overlay-chain-8: #009dc7;
+  --overlay-chain-9: #9d9200;
+  --overlay-chain-10: #f343d9;
+  --overlay-chain-11: #57a200;
+  --overlay-chain-12: #ff5252;
 }
 
 * {

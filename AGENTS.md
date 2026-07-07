@@ -19,6 +19,8 @@ Package manager is **pnpm**.
 | Run one test file              | `pnpm exec vitest run path/to/file.test.ts`          |
 | Run tests by name              | `pnpm exec vitest run -t "<partial name>"`           |
 | Regenerate color docs          | `pnpm docs:colors`                                   |
+| Report color contrast          | `pnpm contrast:report`                               |
+| Solve chip color ladders       | `pnpm contrast:ladder`                               |
 
 ## Verify before finishing — do not skip
 
@@ -40,7 +42,7 @@ Three layers, each depending only on the ones above it: **engine** (pure puzzle 
 - `src/gallery/` — the home grid of puzzles and their canvas previews.
 - `src/app/` — shell: routing, page layout, header, theme.
 - `scripts/` — generator scripts run via `pnpm <script-name>` (e.g. `pnpm docs:colors`); not typechecked by `tsc --noEmit`.
-- `docs/` — generated reference files; do not hand-edit.
+- `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc.
 
 ### The data-driven variant pipeline (worth understanding up front)
 
@@ -63,6 +65,7 @@ The game area builds the model and generates the puzzle once per variant (memoiz
 - **Exports:** named exports only, no default exports.
 - **Styling:** CSS Modules only (`*.module.css`); no inline styles, no `!important`. Use logical properties (`padding-inline`, `inset-block-start`, `text-align: start`, …) so RTL works; take colors from the theme's CSS custom properties; mobile-first `min-width` queries only.
 - **Generated docs:** `docs/colors.md` is generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `pnpm docs:colors` after any change to color tokens or `colorSpecs.ts` — the drift test in `src/game/testing/colorDocs.test.ts` fails CI if the committed file is stale.
+- **Color contrast gate:** before changing any color, read `docs/color-contrast.md` — it records the palette architecture, the gate policy, the accepted even/odd infeasibility proof, and the chip luminance-ladder rules.
 - **Imports:** use the `@/` alias for `src` (configured in `tsconfig.json` and `vite.config.ts`).
 - **Tests:** Vitest + `@testing-library/react` + `jest-dom` in `jsdom`. Use `should`-style names and mirror the file under test (never `index.test.tsx`). The Vitest setup file polyfills `HTMLDialogElement` for jsdom.
 - **Querying in tests:** query the way a user (or assistive tech) finds things, in Testing Library's priority order. Prefer `getByRole(role, { name })` — it asserts the accessible role and name at once. Fall back to other accessible queries (`getByLabelText` for form fields, then `getByText`) when no suitable role exists. Use `getByTestId` only as a last resort, and never reach into the DOM (`container.querySelector`, `firstElementChild`, …) — the testing-library lint rules forbid it. Assert focus with `toHaveFocus()` rather than inspecting `document.activeElement`.

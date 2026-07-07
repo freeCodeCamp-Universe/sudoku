@@ -41,6 +41,10 @@
   flex-shrink: 0;
 }
 
+.legendTriangle {
+  fill: var(--overlay-inequality-fill);
+}
+
 .legendCircle {
   fill: none;
   stroke: #9898b8;
@@ -66,25 +70,18 @@
 
 .legendSwatch {
   display: inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 2px;
-  border: 1px solid var(--border);
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: 1px solid var(--text-muted);
   flex-shrink: 0;
 }
 
 .legendSwatchEven {
-  background: #3b3b4f;
+  background: var(--cell-even-bg);
 }
 .legendSwatchOdd {
-  background: #12123a;
-}
-
-:global(.light) .legendSwatchEven {
-  background: #e8e8fa;
-}
-:global(.light) .legendSwatchOdd {
-  background: #ffffff;
+  background: var(--cell-odd-bg);
 }
 
 .checkPrompt {
@@ -119,8 +116,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--accent-yellow);
-  color: #0a0a23;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border: none;
   font-size: 0.88rem;
   font-weight: 700;
@@ -204,8 +201,8 @@
 }
 
 .primary {
-  background: var(--accent-yellow);
-  color: #0a0a23;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border: none;
 }
 .secondary {

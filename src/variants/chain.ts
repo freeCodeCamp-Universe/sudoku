@@ -4,21 +4,6 @@ import { generateGivens9x9 } from './generateGivens9x9';
 import type { Chain as ChainType } from '@/engine/constraints/chain';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from '@/engine/searchState';
 
-export const CHAIN_COLORS = [
-  '#99c9ff',
-  '#acd157',
-  '#f1be32',
-  '#ff9966',
-  '#cc88ff',
-  '#55ddbb',
-  '#ff88aa',
-  '#88ddff',
-  '#ffcc55',
-  '#dd88cc',
-  '#88ccaa',
-  '#ffaa66',
-];
-
 // Ties chains to the specific solution object; no timing/race issues
 const chainsBySolution = new WeakMap<Solution, ChainType[]>();
 
@@ -81,7 +66,6 @@ function extractChainsFromSolution(solution: Values, rng: () => number): ChainTy
       for (const [pr, pc] of path) used.add(`r${pr}c${pc}`);
       chains.push({
         cells: path.map(([pr, pc]) => cellId(pr, pc) as CellId),
-        color: CHAIN_COLORS[chains.length % CHAIN_COLORS.length],
       });
     }
 

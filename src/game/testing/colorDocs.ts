@@ -4,7 +4,10 @@ import { colorSpecs } from './colorSpecs';
 export function buildColorDocs(): string {
   const tokens = readThemeTokens();
   const tokenRows = Object.entries(tokens)
-    .map(([name, value]) => `| \`${name}\` | ${value.dark} | ${value.light} |`)
+    .map(
+      ([name, value]) =>
+        `| \`${name}\` | ${value.dark} | ${value.light} | ${value.darkHc} | ${value.lightHc} |`
+    )
     .join('\n');
   const specRows = colorSpecs
     .map(
@@ -19,8 +22,8 @@ export function buildColorDocs(): string {
     '',
     '## Tokens',
     '',
-    '| Token | Dark | Light |',
-    '| --- | --- | --- |',
+    '| Token | Dark | Light | Dark HC | Light HC |',
+    '| --- | --- | --- | --- | --- |',
     tokenRows,
     '',
     '## Per-variant color markers',

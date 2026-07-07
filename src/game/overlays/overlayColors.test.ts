@@ -14,25 +14,31 @@ function overlayModuleCss(): string[] {
 describe('overlay color tokens', () => {
   it('should pin the line-stroke tokens', () => {
     const tokens = readThemeTokens();
-    expect(tokens['--overlay-cage-stroke']).toEqual({ dark: '#9898b8', light: '#5555aa' });
-    expect(tokens['--overlay-argyle-stroke']).toEqual({ dark: '#9898b8', light: '#8080a8' });
-    expect(tokens['--overlay-jigsaw-stroke']).toEqual({ dark: '#9898b8', light: '#6060a0' });
-    expect(tokens['--overlay-arrow-stroke']).toEqual({ dark: '#9898b8', light: '#9898b8' });
+    expect(tokens['--overlay-cage-stroke']).toMatchObject({ dark: '#9898b8', light: '#5555aa' });
+    expect(tokens['--overlay-argyle-stroke']).toMatchObject({ dark: '#9898b8', light: '#8080a8' });
+    expect(tokens['--overlay-jigsaw-stroke']).toMatchObject({ dark: '#9898b8', light: '#6060a0' });
+    expect(tokens['--overlay-arrow-stroke']).toMatchObject({ dark: '#9898b8', light: '#9898b8' });
   });
 
   it('should pin the special-cell and window fills', () => {
     const tokens = readThemeTokens();
-    expect(tokens['--overlay-window-fill']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
-    expect(tokens['--overlay-special-fill']).toEqual({ dark: '#3a1a6a', light: '#dcc8f4' });
+    expect(tokens['--overlay-window-fill']).toMatchObject({ dark: '#3b3b4f', light: '#e8e8fa' });
+    expect(tokens['--overlay-special-fill']).toMatchObject({ dark: '#3a1a6a', light: '#dcc8f4' });
   });
 
   it('should pin the theme-invariant kropki and consecutive colors', () => {
     const tokens = readThemeTokens();
-    expect(tokens['--overlay-kropki-light']).toEqual({ dark: '#f8f8ff', light: '#f8f8ff' });
-    expect(tokens['--overlay-kropki-dark']).toEqual({ dark: '#4050a0', light: '#4050a0' });
-    expect(tokens['--overlay-kropki-ring']).toEqual({ dark: '#5060a0', light: '#5060a0' });
-    expect(tokens['--overlay-consecutive-fill']).toEqual({ dark: '#d0d0e8', light: '#d0d0e8' });
-    expect(tokens['--overlay-consecutive-stroke']).toEqual({ dark: '#1b1b32', light: '#1b1b32' });
+    expect(tokens['--overlay-kropki-light']).toMatchObject({ dark: '#f8f8ff', light: '#f8f8ff' });
+    expect(tokens['--overlay-kropki-dark']).toMatchObject({ dark: '#4050a0', light: '#4050a0' });
+    expect(tokens['--overlay-kropki-ring']).toMatchObject({ dark: '#5060a0', light: '#5060a0' });
+    expect(tokens['--overlay-consecutive-fill']).toMatchObject({
+      dark: '#d0d0e8',
+      light: '#d0d0e8',
+    });
+    expect(tokens['--overlay-consecutive-stroke']).toMatchObject({
+      dark: '#1b1b32',
+      light: '#1b1b32',
+    });
   });
 
   it('should not leave bare color hex in any overlay module CSS', () => {

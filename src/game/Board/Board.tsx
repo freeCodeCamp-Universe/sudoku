@@ -175,7 +175,6 @@ export function Board({
   renderSymbol,
   markerGaps,
   wordCells,
-  colorblindMode,
   parityMap,
   checkEnabled,
 }: BoardProps) {
@@ -229,7 +228,11 @@ export function Board({
                   insetBlockStart: rect.y,
                   width: rect.w,
                   height: rect.h,
-                  zIndex: state.selected ? 2 : 0,
+                  // z-auto when unselected: an explicit z-index would form a
+                  // stacking context that traps the value/candidate spans
+                  // (z-index 2) below the chain overlay (z-index 1). The
+                  // selected slot lifts above the overlay as a whole.
+                  zIndex: state.selected ? 2 : undefined,
                 }}
               >
                 <Cell
@@ -271,7 +274,6 @@ export function Board({
                   flower={variant.id === 'flower'}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
-                  colorblind={colorblindMode}
                   even={parityMap?.get(cell.id) === 0}
                   odd={parityMap?.get(cell.id) === 1}
                   aria-colindex={cell.col + 1}

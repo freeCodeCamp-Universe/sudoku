@@ -23,7 +23,6 @@ export interface RenderVariantBoardOptions {
   renderSymbol?: (value: SymbolValue) => string;
   parityMap?: Map<CellId, 0 | 1>;
   structure?: unknown;
-  colorblindMode?: boolean;
 }
 
 function defaultCellState(): CellState {
@@ -64,7 +63,6 @@ export function renderVariantBoard(
       }}
       renderSymbol={renderSymbol}
       parityMap={options.parityMap ?? fixture.parityMap}
-      colorblindMode={options.colorblindMode ?? false}
       overlays={overlays}
     />
   );

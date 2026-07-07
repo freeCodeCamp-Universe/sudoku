@@ -8,9 +8,24 @@ const CELL_CSS = readFileSync(resolve(process.cwd(), 'src/game/Cell/Cell.module.
 describe('cell color tokens', () => {
   it('should pin the structural shades', () => {
     const tokens = readThemeTokens();
-    expect(tokens['--cell-diagonal-bg']).toEqual({ dark: '#3b3b4f', light: '#e8e8fa' });
-    expect(tokens['--cell-same-value-bg']).toEqual({ dark: '#1a4f4f', light: '#cdeaea' });
-    expect(tokens['--cell-selected-border']).toEqual({ dark: '#4a90d9', light: '#4a90d9' });
+    expect(tokens['--cell-diagonal-bg']).toEqual({
+      dark: '#3b3b4f',
+      light: '#e8e8fa',
+      darkHc: '#65658a',
+      lightHc: '#8f8fa8',
+    });
+    expect(tokens['--cell-same-value-bg']).toEqual({
+      dark: '#1a4f4f',
+      light: '#cdeaea',
+      darkHc: '#1a4f4f',
+      lightHc: '#cdeaea',
+    });
+    expect(tokens['--cell-selected-border']).toEqual({
+      dark: '#4a90d9',
+      light: '#4a90d9',
+      darkHc: '#a8d4ff',
+      lightHc: '#08306b',
+    });
   });
 
   it('should wire each structural marker to its token', () => {

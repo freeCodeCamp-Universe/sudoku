@@ -35,7 +35,6 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   argyleD2?: boolean;
   markerEdges?: MarkerEdge[];
   word?: boolean;
-  colorblind?: boolean;
   even?: boolean;
   odd?: boolean;
 }
@@ -85,7 +84,6 @@ export function Cell({
   argyleD2 = false,
   markerEdges,
   word = false,
-  colorblind = false,
   even = false,
   odd = false,
   className,
@@ -127,7 +125,6 @@ export function Cell({
       data-word={word || undefined}
       data-even={even || undefined}
       data-odd={odd || undefined}
-      data-colorblind={(colorblind && symbolKind === 'color') || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
@@ -144,11 +141,6 @@ export function Cell({
               data-color={value}
               data-testid="cell-color-chip"
             />
-            {colorblind && (
-              <span aria-hidden="true" className={styles.colorLabel}>
-                {value}
-              </span>
-            )}
             {given ? (
               <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
             ) : revealed ? (

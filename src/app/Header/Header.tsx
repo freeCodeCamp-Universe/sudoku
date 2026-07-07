@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '@/app/ThemeProvider';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import styles from './Header.module.css';
 
@@ -10,11 +11,9 @@ interface HeaderProps {
   onKeyboardShortcutsOpen?: () => void;
   checkEnabled?: boolean;
   timerEnabled?: boolean;
-  colorblindEnabled?: boolean;
   highlightPeersEnabled?: boolean;
   onToggleCheck?: () => void;
   onToggleTimer?: () => void;
-  onToggleColorblind?: () => void;
   onToggleHighlightPeers?: () => void;
 }
 
@@ -25,13 +24,12 @@ export function Header({
   onKeyboardShortcutsOpen,
   checkEnabled,
   timerEnabled,
-  colorblindEnabled,
   highlightPeersEnabled,
   onToggleCheck,
   onToggleTimer,
-  onToggleColorblind,
   onToggleHighlightPeers,
 }: HeaderProps) {
+  const { highContrast, toggleHighContrast } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const settingsBtnRef = useRef<HTMLButtonElement>(null);
@@ -56,7 +54,6 @@ export function Header({
   const hasSettings =
     onToggleCheck !== undefined ||
     onToggleTimer !== undefined ||
-    onToggleColorblind !== undefined ||
     onToggleHighlightPeers !== undefined;
 
   return (
@@ -142,29 +139,6 @@ export function Header({
                     </span>
                   </div>
                 ) : null}
-                {onToggleColorblind !== undefined ? (
-                  <div className={styles.dropdownRow}>
-                    <span id="settings-colorblind-label" className={styles.dropdownLabel}>
-                      Colorblind mode
-                    </span>
-                    <span className={styles.toggleControl}>
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        className={styles.toggleInput}
-                        checked={Boolean(colorblindEnabled)}
-                        aria-labelledby="settings-colorblind-label"
-                        onChange={onToggleColorblind}
-                      />
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.toggleBtn} ${colorblindEnabled ? styles.on : styles.off}`}
-                      >
-                        {colorblindEnabled ? 'On' : 'Off'}
-                      </span>
-                    </span>
-                  </div>
-                ) : null}
                 {onToggleHighlightPeers !== undefined ? (
                   <div className={styles.dropdownRow}>
                     <span id="settings-highlight-peers-label" className={styles.dropdownLabel}>
@@ -188,6 +162,27 @@ export function Header({
                     </span>
                   </div>
                 ) : null}
+                <div className={styles.dropdownRow}>
+                  <span id="settings-high-contrast-label" className={styles.dropdownLabel}>
+                    High contrast
+                  </span>
+                  <span className={styles.toggleControl}>
+                    <input
+                      type="checkbox"
+                      role="switch"
+                      className={styles.toggleInput}
+                      checked={highContrast}
+                      aria-labelledby="settings-high-contrast-label"
+                      onChange={toggleHighContrast}
+                    />
+                    <span
+                      aria-hidden="true"
+                      className={`${styles.toggleBtn} ${highContrast ? styles.on : styles.off}`}
+                    >
+                      {highContrast ? 'On' : 'Off'}
+                    </span>
+                  </span>
+                </div>
               </div>
             ) : null}
           </div>

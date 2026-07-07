@@ -151,7 +151,6 @@ describe('Cell', () => {
       value: 3 as number,
       renderSymbol: (value: number) => String(value),
       symbolKind: 'color' as const,
-      colorblind: true,
       'aria-label': 'Yellow, row 1, column 1',
     };
 
@@ -159,12 +158,6 @@ describe('Cell', () => {
       render(<Cell {...colorProps} />);
 
       expect(screen.getByTestId('cell-color-chip')).toBeTruthy();
-    });
-
-    it('should render a visible numeric label alongside the color chip', () => {
-      render(<Cell {...colorProps} />);
-
-      expect(screen.getByText('3')).toBeTruthy();
     });
 
     it('should tag the chip with its color index so CSS can paint it', () => {

@@ -3,11 +3,20 @@
   inset-block-start: 0;
   inset-inline-start: 0;
   pointer-events: none;
-  z-index: 2;
+  /* Below the cells' value/candidate spans (z-index 2, Cell.module.css) so
+     the line passes behind the digits, but above the cell backgrounds. */
+  z-index: 1;
   overflow: visible;
 }
 
 .line {
   fill: none;
   opacity: 0.3;
+}
+
+/* Translucent pastel defeats high contrast: the solid --overlay-chain-* HC
+   values are gated at 3:1 vs the resting base and 4.5:1 under every text
+   role, which only holds at full opacity. */
+:global(.high-contrast) .line {
+  opacity: 1;
 }

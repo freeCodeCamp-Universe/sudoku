@@ -28,9 +28,7 @@ function makeCtx(chains: ChainType[], values: Values = new Map()): AnnotatorCont
 
 describe('chainAnnotator', () => {
   it('should describe a cell that is part of a single chain', () => {
-    const chains: ChainType[] = [
-      { cells: [cellId(0, 1), cellId(1, 1), cellId(1, 2)], color: '#99c9ff' },
-    ];
+    const chains: ChainType[] = [{ cells: [cellId(0, 1), cellId(1, 1), cellId(1, 2)] }];
     const result = chainAnnotator.describe(cellId(0, 1), makeCtx(chains));
 
     expect(result).toBe('chain of 3 cells');
@@ -38,8 +36,8 @@ describe('chainAnnotator', () => {
 
   it('should describe cells when multiple chains exist', () => {
     const chains: ChainType[] = [
-      { cells: [cellId(0, 1), cellId(1, 1), cellId(1, 2)], color: '#99c9ff' },
-      { cells: [cellId(5, 5), cellId(5, 6)], color: '#ffc999' },
+      { cells: [cellId(0, 1), cellId(1, 1), cellId(1, 2)] },
+      { cells: [cellId(5, 5), cellId(5, 6)] },
     ];
 
     expect(chainAnnotator.describe(cellId(0, 1), makeCtx(chains))).toBe('chain 1 of 2, 3 cells');
@@ -47,7 +45,7 @@ describe('chainAnnotator', () => {
   });
 
   it('should return null for a cell not in any chain', () => {
-    const chains: ChainType[] = [{ cells: [cellId(0, 1), cellId(1, 1)], color: '#99c9ff' }];
+    const chains: ChainType[] = [{ cells: [cellId(0, 1), cellId(1, 1)] }];
 
     expect(chainAnnotator.describe(cellId(5, 5), makeCtx(chains))).toBeNull();
   });
