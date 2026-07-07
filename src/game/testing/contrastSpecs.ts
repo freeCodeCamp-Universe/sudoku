@@ -56,6 +56,23 @@ const CELL_BGS = [
   '--cell-peer-odd-bg',
   '--cell-same-value-bg',
   '--cell-special-bg',
+  '--cell-diagonal-bg',
+  '--cell-window-bg',
+] as const;
+
+/**
+ * Variant region shading (Sudoku X diagonals, windoku windows, the
+ * asterisk/center-dot/girandola special cells) is the sole cue marking the
+ * extra constraint region, so the fill needs 3:1 against the plain cell base
+ * it sits beside (WCAG 1.4.11). The overlay fills mirror the cell tokens so
+ * the canvas previews shade the same regions.
+ */
+const REGION_FILLS = [
+  '--cell-diagonal-bg',
+  '--cell-window-bg',
+  '--cell-special-bg',
+  '--overlay-window-fill',
+  '--overlay-special-fill',
 ] as const;
 
 export const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
@@ -100,6 +117,12 @@ const ACCEPTED_FAILURES = new Set<string>([
   'dark|peer-even bg vs peer-odd bg',
   'dark|error bg vs base',
   ...CELL_BGS.map((bg) => `light|hint text on ${bg}`),
+  // Standard region shading (X diagonals, windows, special cells) is a subtle
+  // tint by design, like the even/odd pair; high contrast carries the 3:1 fills.
+  ...REGION_FILLS.flatMap((fill) => [
+    `dark|region fill ${fill} vs base`,
+    `light|region fill ${fill} vs base`,
+  ]),
   'light|even bg vs odd bg',
   'light|peer-even bg vs peer-odd bg',
   'light|error bg vs base',
@@ -208,6 +231,19 @@ export const contrastPairs: ContrastPair[] = [
     },
   ]),
 
+  // Variant region fills vs the plain base (see REGION_FILLS above). The
+  // standard palettes sit well below 3:1 (accepted shortfall, as with the
+  // even/odd shading); the high-contrast palettes carry compliant fills.
+  ...THEMES.flatMap((theme): PairInput[] =>
+    REGION_FILLS.map((fill) => ({
+      label: `region fill ${fill} vs base`,
+      fg: fill,
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    }))
+  ),
+
   // Color-sudoku chips are the rendered symbol, so each chip needs 3:1
   // against the resting cell background.
   ...THEMES.flatMap((theme): PairInput[] =>
@@ -294,6 +330,21 @@ export const contrastPairs: ContrastPair[] = [
         theme,
       }))
     )
+  ),
+
+  // The selection ring outlines the selected cell on whatever fill that cell
+  // carries (region fills, parity shades, error, ...), so in high contrast it
+  // gates like the grid lines: 3:1 against the full cell-background set. The
+  // standard ring passes vs base (gated above) but sits near 1:1 on the
+  // region fills (accepted shortfall, as with the standard grid lines).
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    [...CELL_BGS, '--cell-error-bg' as const].map((bg) => ({
+      label: `selection ring on ${bg}`,
+      fg: '--cell-selected-border',
+      bg: bg === 'base' ? refFor(BASE, theme) : bg,
+      threshold: UI_AA,
+      theme,
+    }))
   ),
 
   // UI component borders (toolbar buttons, cards, dialogs) sit on the page

@@ -138,7 +138,7 @@
   --text-subtle: #ffffff;
   --accent-green: #ddf2a3;
   --accent-red: #fff1f1;
-  --accent-yellow: #ffe38a;
+  --accent-yellow: #ffeaa8;
   /* Inequality markers are graphical objects, not text, so they get their own
      token instead of --accent-yellow (whose HC values serve a text role). */
   --overlay-inequality-fill: #ffe38a;
@@ -147,7 +147,18 @@
   --btn-primary-text: #0a0a23;
   --given-dot: #ffffff;
   --revealed-dot: #ffe38a;
-  --candidate-text: #e6e6f5;
+  --candidate-text: #f0f0fa;
+  /* Region fills (X diagonals, windows, special cells) must clear 3:1 above
+     the plain base while every light text role keeps 4.5:1 on them — a narrow
+     luminance window that also forces the hint/candidate text bumps here. */
+  --cell-diagonal-bg: #65658a;
+  --cell-window-bg: #65658a;
+  --cell-special-bg: #65658a;
+  --overlay-window-fill: #65658a;
+  --overlay-special-fill: #6d6398;
+  /* The standard ring (#4a90d9) sits at 1.66:1 on the mid-gray region fills;
+     a brighter blue clears 3:1 on every fill a selected cell can carry. */
+  --cell-selected-border: #a8d4ff;
   --cell-even-bg: #60607a;
   --cell-odd-bg: #0f0f2c;
   --cell-peer-even-bg: #646480;
@@ -185,6 +196,18 @@
      the 3:1 inequality markers. */
   --overlay-cage-sum: #8a6a00;
   --candidate-text: #14142e;
+  /* Region fills share the even-cell gray: 3:1 above white cells, 4.5:1 under
+     every dark text role. The special fill keeps its purple identity at the
+     same luminance. */
+  --cell-diagonal-bg: #8f8fa8;
+  --cell-window-bg: #8f8fa8;
+  --cell-special-bg: #8f8fa8;
+  --overlay-window-fill: #8f8fa8;
+  --overlay-special-fill: #a087c4;
+  /* Navy ring: the standard blue is 1.06:1 on the region-fill gray. The error
+     fill (#cc7070, L 0.256) is the binding cap — ring luminance must stay
+     under ~0.052 to clear 3:1 on it. */
+  --cell-selected-border: #08306b;
   --cell-even-bg: #8f8fa8;
   --cell-odd-bg: #ffffff;
   --cell-peer-even-bg: #8989a2;

@@ -11,8 +11,8 @@ describe('cell color tokens', () => {
     expect(tokens['--cell-diagonal-bg']).toEqual({
       dark: '#3b3b4f',
       light: '#e8e8fa',
-      darkHc: '#3b3b4f',
-      lightHc: '#e8e8fa',
+      darkHc: '#65658a',
+      lightHc: '#8f8fa8',
     });
     expect(tokens['--cell-same-value-bg']).toEqual({
       dark: '#1a4f4f',
@@ -23,8 +23,8 @@ describe('cell color tokens', () => {
     expect(tokens['--cell-selected-border']).toEqual({
       dark: '#4a90d9',
       light: '#4a90d9',
-      darkHc: '#4a90d9',
-      lightHc: '#4a90d9',
+      darkHc: '#a8d4ff',
+      lightHc: '#08306b',
     });
   });
 

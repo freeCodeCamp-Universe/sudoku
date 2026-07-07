@@ -134,8 +134,19 @@ palette.
 
 `--border` (toolbar buttons, cards, dialogs) gets the same treatment (`#9898b0` dark —
 the existing overlay-stroke gray — and `#55556d` light), gated at 3:1 against
-`--bg-primary`, `--bg-secondary`, and `--bg-surface`. `--cell-selected-border` and
-`--focus-ring` already clear 3:1 in every palette and keep their standard values.
+`--bg-primary`, `--bg-secondary`, and `--bg-surface`. `--focus-ring` already clears
+3:1 in every palette and keeps its standard value.
+
+## Selection ring
+
+`--cell-selected-border` outlines the selected cell on whatever fill that cell
+carries, so in high contrast it gates like the grid lines: 3:1 against the full
+cell-background set including the error fill. The standard blue (`#4a90d9`) clears
+3:1 vs base in every palette (gated) but sits near 1:1 on the mid-gray region
+fills, so the HC palettes override it: `#a8d4ff` dark (a brighter blue; the error
+fill is the binding pair at 3.21:1) and `#08306b` light (navy — the error fill's
+luminance 0.256 caps the ring at L ≈ 0.052, which forces it well past the standard
+blue toward black).
 
 ## Board clue text
 
@@ -175,6 +186,46 @@ small bold _text_, so its HC gate is 4.5:1 against the resting base: `#ffe38a` d
 `#8a6a00` light (one gold rung deeper than the 3:1 marker gold, 5.07:1 on white).
 Standard palettes mirror the marker values (`#f1be32` dark gated, `#c79100` light
 accepted advisory).
+
+## Variant region fills
+
+`--cell-diagonal-bg` (Sudoku X), `--cell-window-bg` / `--overlay-window-fill`
+(windoku), and `--cell-special-bg` / `--overlay-special-fill` (asterisk,
+center dot, girandola) shade the extra constraint region — the sole cue that a
+cell belongs to it, so WCAG 1.4.11 wants 3:1 against the plain cell base. The
+standard palettes keep their subtle tints (accepted shortfall, as with even/odd);
+the high-contrast palettes override all five, gated at 3:1 vs base in all four
+region-fill pairs plus every text role at 4.5:1 (the cell tokens sit in
+`CELL_BGS`, which also extends the border and dot gates to them).
+
+The dark-HC window is narrow: the fill must clear 3:1 **above** the plain base
+(`--bg-secondary`, luminance ≈ 0.012) while the light text roles keep 4.5:1 on
+it from above — feasible only between fill luminance ≈ 0.137 and ≈ 0.143 under
+`--accent-blue` (#d8ecff). That is why `.high-contrast` also brightens
+`--accent-yellow` (#ffe38a → #ffeaa8) and `--candidate-text` (#e6e6f5 →
+#f0f0fa): at #65658a the old hint gold and candidate gray sat under 4.5:1. Both
+tokens only ever render on dark fills, so brightening is strictly safe. Light
+HC reuses the solved even-cell gray (#8f8fa8); the special fill keeps its
+purple identity at the same luminance rung (#6d6398 dark, #a087c4 light).
+
+The fills are also pinned from the text side: with the fill at exactly 3:1 vs
+base, text-on-fill tops out at (text-vs-base ÷ 3) — 5.18:1 in light HC, 5.60:1
+in dark HC — so AAA (7:1) on region fills is infeasible and the shipped values
+sit within a few percent of that optimum. Accepted, undeclared shortfalls in
+the highlight states (verified infeasible under the same arithmetic, so they
+are documented here rather than gated):
+
+- **Error fill vs region fill** (~1.1:1 both HC palettes): an error fill cannot
+  clear 3:1 against the mid-gray region fills while `--accent-red` keeps 4.5:1
+  on it. Hue plus the red digit carries the state.
+- **Region cue under peer highlight**: peer cells swap to
+  `--cell-peer-structural-bg`, which sits near the plain peer fill (1.06:1 dark
+  HC, 1.20:1 light HC). In light HC the triple constraint (peer 3:1 vs white,
+  region-peer 3:1 vs peer, dark text 4.5:1 on both) is infeasible; the region
+  cue returns the moment the selection moves.
+- **Same-value teal vs base** (1.27:1 light HC): any teal that clears 3:1 vs
+  white lands on the region fills' luminance rung, leaving a hue-only
+  difference against them.
 
 ## Given / revealed cell dots
 
