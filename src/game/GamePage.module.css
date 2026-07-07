@@ -41,6 +41,10 @@
   flex-shrink: 0;
 }
 
+.legendTriangle {
+  fill: var(--overlay-inequality-fill);
+}
+
 .legendCircle {
   fill: none;
   stroke: #9898b8;

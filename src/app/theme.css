@@ -52,7 +52,9 @@
   --candidate-text: #aaaacc;
   --overlay-argyle-stroke: #9898b8;
   --overlay-arrow-stroke: #9898b8;
+  --overlay-inequality-fill: #f1be32;
   --overlay-cage-stroke: #9898b8;
+  --overlay-cage-sum: #f1be32;
   --overlay-jigsaw-stroke: #9898b8;
   --overlay-window-fill: #3b3b4f;
   --overlay-special-fill: #3a1a6a;
@@ -99,7 +101,9 @@
   --given-dot: rgba(0, 0, 0, 0.25);
   --candidate-text: #555570;
   --overlay-argyle-stroke: #8080a8;
+  --overlay-inequality-fill: #c79100;
   --overlay-cage-stroke: #5555aa;
+  --overlay-cage-sum: #c79100;
   --overlay-jigsaw-stroke: #6060a0;
   --overlay-window-fill: #e8e8fa;
   --overlay-special-fill: #dcc8f4;
@@ -135,6 +139,10 @@
   --accent-green: #ddf2a3;
   --accent-red: #fff1f1;
   --accent-yellow: #ffe38a;
+  /* Inequality markers are graphical objects, not text, so they get their own
+     token instead of --accent-yellow (whose HC values serve a text role). */
+  --overlay-inequality-fill: #ffe38a;
+  --overlay-cage-sum: #ffe38a;
   --btn-primary-bg: #f1be32;
   --btn-primary-text: #0a0a23;
   --given-dot: #ffffff;
@@ -170,6 +178,12 @@
   --accent-green: #092809;
   --accent-red: #4d0000;
   --accent-yellow: #332200;
+  /* Deepest gold that clears 3:1 on white cells and the page background while
+     still reading yellow; state fills (error) are excluded like the chip gate. */
+  --overlay-inequality-fill: #a97b00;
+  /* Cage sums are text, so their gate is 4.5:1 — one gold rung deeper than
+     the 3:1 inequality markers. */
+  --overlay-cage-sum: #8a6a00;
   --candidate-text: #14142e;
   --cell-even-bg: #8f8fa8;
   --cell-odd-bg: #ffffff;

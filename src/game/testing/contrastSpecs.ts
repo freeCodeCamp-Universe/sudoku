@@ -113,6 +113,12 @@ const ACCEPTED_FAILURES = new Set<string>([
   // close to the light page background; its 10:1+ label is what identifies
   // the control. The high-contrast palettes carry a compliant surface.
   'light|primary button bg vs page bg',
+  // The standard light inequality markers keep a recognizable brand gold
+  // (deepened from #f1be32 to #c79100 for visibility) but stay under 3:1 by
+  // design; the high-contrast palettes carry the compliant golds.
+  'light|inequality marker vs base',
+  'light|inequality marker vs page bg',
+  'light|cage sum on base',
 ]);
 
 type PairInput = Omit<ContrastPair, 'gate'>;
@@ -313,6 +319,45 @@ export const contrastPairs: ContrastPair[] = [
       fg: '--board-frame',
       bg: '--bg-primary',
       threshold: UI_AA,
+      theme,
+    })
+  ),
+
+  // Greater-than inequality markers are graphical objects required to solve
+  // the puzzle, so they need 3:1 (WCAG 1.4.11) against the resting cell
+  // background they straddle and against the page background the legend
+  // triangle sits on. Like the chip gate, state fills (error, highlights) are
+  // excluded: no color clears the light-HC error fill from below while still
+  // reading yellow. The token exists because --accent-yellow won't do — the
+  // high-contrast palettes repurpose it as a text color (near-black in light
+  // HC), which erased the markers entirely.
+  ...THEMES.flatMap((theme): PairInput[] => [
+    {
+      label: 'inequality marker vs base',
+      fg: '--overlay-inequality-fill',
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'inequality marker vs page bg',
+      fg: '--overlay-inequality-fill',
+      bg: '--bg-primary',
+      threshold: UI_AA,
+      theme,
+    },
+  ]),
+
+  // Killer cage sums are small bold text on the cell fill, so they gate at
+  // 4.5:1 against the resting base — one gold rung deeper than the 3:1
+  // inequality markers in light HC. Same token rationale: --accent-yellow's
+  // HC values erase the yellow identity.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'cage sum on base',
+      fg: '--overlay-cage-sum',
+      bg: refFor(BASE, theme),
+      threshold: TEXT_AA,
       theme,
     })
   ),

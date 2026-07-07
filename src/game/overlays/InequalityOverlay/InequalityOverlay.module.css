@@ -8,5 +8,5 @@
 }
 
 .triangle {
-  fill: var(--accent-yellow);
+  fill: var(--overlay-inequality-fill);
 }

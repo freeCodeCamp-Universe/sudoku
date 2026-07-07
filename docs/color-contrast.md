@@ -156,6 +156,26 @@ brightens one step short of `--text-subtle`, keeping pressed/active states (whic
 use `--text-bright`) distinguishable. The pair against the button background
 (`--bg-secondary`) is gated at 4.5:1 in both HC palettes and standard dark.
 
+## Greater-than inequality markers
+
+`--overlay-inequality-fill` colors the triangles between cells (InequalityOverlay) and
+the legend triangle under the board. A dedicated token because `--accent-yellow` cannot
+serve this role: the HC palettes repurpose it as a text color (near-black in light HC),
+which erased the markers — the same failure mode as the primary-button bug above. The
+markers are graphical objects, so the HC values are gated at 3:1 against the resting
+cell background and the page background (`#ffe38a` dark, `#a97b00` light — the lightest
+gold that clears both light backgrounds while still reading yellow). Like the chip gate,
+state fills are excluded: nothing clears the light-HC error fill from below without
+collapsing to near-black. Standard dark keeps the brand `#f1be32` (9.7:1, gated);
+standard light deepens it to `#c79100` for visibility but stays under 3:1 by design
+(accepted advisory — the standard palette is the low-contrast mode).
+
+`--overlay-cage-sum` (killer cage sums, CageOverlay) follows the same pattern but is
+small bold _text_, so its HC gate is 4.5:1 against the resting base: `#ffe38a` dark,
+`#8a6a00` light (one gold rung deeper than the 3:1 marker gold, 5.07:1 on white).
+Standard palettes mirror the marker values (`#f1be32` dark gated, `#c79100` light
+accepted advisory).
+
 ## Given / revealed cell dots
 
 `--given-dot` / `--revealed-dot` mark clue and revealed cells (Cell.module.css). The

@@ -294,9 +294,9 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
-                <polygon points="10,5 0,0 0,10" fill="#f1be32" />
+                <polygon points="10,5 0,0 0,10" className={styles.legendTriangle} />
               </svg>
               <span>Triangle points toward the smaller of the two adjacent digits.</span>
             </div>

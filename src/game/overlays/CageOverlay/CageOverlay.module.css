@@ -17,7 +17,7 @@
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;
   font-weight: 700;
-  fill: var(--accent-yellow);
+  fill: var(--overlay-cage-sum);
   dominant-baseline: hanging;
 }
 
