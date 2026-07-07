@@ -60,9 +60,11 @@ Design rules, encoded in the high-contrast chip sets:
 2. **Hue families stay truthful** to `colorNames` in `src/variants/color.ts` (screen
    readers announce "Red", "Blue", ...), and **ladder neighbors are hue-distant** (dark:
    purple, blue, red, teal, orange, pink, green, silver, yellow; light: purple, red,
-   blue, pink, teal, green, orange, yellow, silver) so adjacent rungs never rely on
+   blue, pink, teal, orange, green, yellow, silver) so adjacent rungs never rely on
    lightness alone. The light order interleaves warm hues between purple, blue, and
    teal — on the dark rungs those cool hues are near-indistinguishable as neighbors.
+   Orange sits between teal and green so those hue neighbors stay two rungs apart,
+   which also frees the green anchor to be pure green rather than yellow-shifted.
 3. **Solve each rung at maximum saturation** for its hue (scale toward black, or blend
    toward white only when unavoidable) — white-blending is what turns red into salmon.
    Cap the dark ladder at pure yellow's own luminance (~0.82) so the top rung stays fully

@@ -29,9 +29,10 @@ const LIGHT_ANCHORS: Record<string, string> = {
   ...ANCHORS,
   red: '#ff0000',
   orange: '#ff8000',
-  // Yellow-shifted leaf green: pure green darkens into teal's cyan family,
-  // and the two sit one rung apart.
-  green: '#55e600',
+  // Pure green: with orange between teal and green on the light rungs, green
+  // no longer darkens down next to teal's cyan family, so max chroma wins —
+  // it also keeps green hue-distant from the olive yellow rung above it.
+  green: '#00e600',
   teal: '#00cccc',
   blue: '#0022ff',
   purple: '#8000ff',
@@ -49,8 +50,8 @@ const LIGHT_RUNGS = [
   'blue',
   'pink',
   'teal',
-  'green',
   'orange',
+  'green',
   'yellow',
   'silver',
 ];
