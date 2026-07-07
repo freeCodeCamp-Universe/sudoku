@@ -113,9 +113,6 @@ const ACCEPTED_FAILURES = new Set<string>([
   // close to the light page background; its 10:1+ label is what identifies
   // the control. The high-contrast palettes carry a compliant surface.
   'light|primary button bg vs page bg',
-  // Standard light --text-muted sits at 4.44:1 on the button background; the
-  // known default-mode muted-text shortfall will be fixed separately.
-  'light|muted text on button bg',
 ]);
 
 type PairInput = Omit<ContrastPair, 'gate'>;
