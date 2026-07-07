@@ -273,6 +273,50 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
+  // Grid lines are graphical objects required to understand the puzzle
+  // (WCAG 1.4.11): cell borders and box boundaries need 3:1 against every
+  // cell fill they delimit. Only the high-contrast palettes are declared —
+  // the standard border values predate the gate and sit below 3:1 (accepted
+  // shortfall, as with the standard even/odd shading).
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    (['--cell-border', '--box-boundary'] as const).flatMap((line) =>
+      [...CELL_BGS, '--cell-error-bg' as const].map((bg) => ({
+        label: `${line === '--cell-border' ? 'cell border' : 'box boundary'} on ${bg}`,
+        fg: line,
+        bg: bg === 'base' ? refFor(BASE, theme) : bg,
+        threshold: UI_AA,
+        theme,
+      }))
+    )
+  ),
+
+  // UI component borders (toolbar buttons, cards, dialogs) sit on the page
+  // backgrounds. Declared for the high-contrast palettes only, matching the
+  // grid-line policy above.
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    (['--bg-primary', '--bg-secondary', '--bg-surface'] as const).map((bg) => ({
+      label: `ui border on ${bg}`,
+      fg: '--border',
+      bg,
+      threshold: UI_AA,
+      theme,
+    }))
+  ),
+
+  // The board frame (Board.module.css grid border and samurai edge strips)
+  // outlines the whole puzzle against the page background. Passes in every
+  // palette, so all four are gated; in high contrast it shares the
+  // --cell-border value so the frame and the grid lines read as one system.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'board frame vs page bg',
+      fg: '--board-frame',
+      bg: '--bg-primary',
+      threshold: UI_AA,
+      theme,
+    })
+  ),
+
   // Given/revealed cell dots are the sole cue separating clues and revealed
   // cells from player entries. The standard values are translucent rgba the
   // math here cannot resolve (accepted shortfall, as with the dark numpad

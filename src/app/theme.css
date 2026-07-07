@@ -26,6 +26,7 @@
   --cell-bg-light: #ffffff;
   --cell-text-light: #2c5f8a;
   --box-boundary: #4a4a5e;
+  --board-frame: #9898b8;
   --cell-diagonal-bg: #3b3b4f;
   --cell-window-bg: #3b3b4f;
   --cell-special-bg: #3b3b4f;
@@ -77,6 +78,7 @@
   --accent-red: #850000;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
+  --board-frame: #8080a8;
   --cell-diagonal-bg: #e8e8fa;
   --cell-window-bg: #e8e8fa;
   --cell-special-bg: #e8e8fa;
@@ -115,6 +117,14 @@
    (chips 3 and 9 in both HC ladders) carry --numpad-chip-label-bright so the
    light ladder can rise past the white-label bound. */
 .high-contrast {
+  /* Borders brighten so grid lines and control outlines clear WCAG 1.4.11
+     (3:1) against every fill they sit on. The dark grid has no white cells
+     (--cell-bg-light only applies under .light), so the cell/box border can
+     rise until it clears even the mid-luminance even/error fills. */
+  --border: #9898b0;
+  --cell-border: #cccce0;
+  --box-boundary: #cccce0;
+  --board-frame: #cccce0;
   --accent-blue: #d8ecff;
   /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
      brightens toward white for its text role here, which would erase the blue
@@ -149,6 +159,10 @@
 }
 
 .light.high-contrast {
+  --border: #55556d;
+  --cell-border: #262638;
+  --box-boundary: #262638;
+  --board-frame: #262638;
   --accent-blue: #0a2540;
   --board-clue-text: #0d47a1;
   --text-muted: #2a2a40;

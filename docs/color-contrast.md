@@ -113,6 +113,30 @@ cannot reach 7:1 without darkening the surface back to near-brown. Never
 restyle these buttons with `--accent-yellow` directly: the HC palettes repurpose that
 token as a _text_ color, which is how the original dark-on-dark bug happened.
 
+## Grid lines and UI borders in high contrast
+
+Cell borders and box boundaries are graphical objects required to understand the puzzle,
+so WCAG 1.4.11 wants 3:1 against every cell fill they delimit. The standard palettes sit
+well below that (dark `--cell-border` is 1.95:1 on the board background, light is 1.41:1
+on white cells) — an accepted shortfall alongside the even/odd shading. The
+high-contrast palettes override `--cell-border` and `--box-boundary` (`#cccce0` dark,
+`#262638` light), gated at 3:1 against the full cell-background set including the error
+fill. This is feasible because the dark grid never shows white cells (`--cell-bg-light`
+only applies under `.light`), so the dark border can rise until it clears the
+mid-luminance even (`#60607a`) and error (`#9c5f5f`) fills; the light border drops to
+near-black, which clears its even (`#8f8fa8`) and error (`#cc7070`) fills from below.
+
+`--board-frame` (the 3px outline around the whole board and the samurai edge strips,
+Board.module.css) was previously hardcoded; it is now a token in all four palettes and
+in high contrast it takes the `--cell-border` value, so the frame and the interior grid
+lines read as one system. It is gated at 3:1 against the page background in every
+palette.
+
+`--border` (toolbar buttons, cards, dialogs) gets the same treatment (`#9898b0` dark —
+the existing overlay-stroke gray — and `#55556d` light), gated at 3:1 against
+`--bg-primary`, `--bg-secondary`, and `--bg-surface`. `--cell-selected-border` and
+`--focus-ring` already clear 3:1 in every palette and keep their standard values.
+
 ## Board clue text
 
 `--board-clue-text` colors outer board clues (the skyscraper gutter numbers) on the

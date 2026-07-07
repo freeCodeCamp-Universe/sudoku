@@ -10,7 +10,7 @@
      (content-box) rather than eating into it and clipping the right/bottom edge. */
   box-sizing: content-box;
   position: relative;
-  border: 3px solid #9898b8;
+  border: 3px solid var(--board-frame);
   box-shadow: 0 4px 24px rgb(0 0 0 / 50%);
 }
 
@@ -25,7 +25,7 @@
 
 .samuraiEdge {
   position: absolute;
-  background: #9898b8;
+  background: var(--board-frame);
   pointer-events: none;
   z-index: 1;
 }
@@ -35,16 +35,11 @@
 }
 
 :global(.light) .grid {
-  border-color: #8080a8;
   box-shadow: 0 4px 24px rgb(0 0 0 / 12%);
 }
 
 :global(.light) .multigrid {
   box-shadow: none;
-}
-
-:global(.light) .samuraiEdge {
-  background: #8080a8;
 }
 
 @media (max-width: 1280px) {
