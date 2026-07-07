@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import '@/app/theme.css';
+import '@/app/layers.css';
 import { ThemeContext, type Theme, type ThemeContextValue } from './context';
 import styles from './ThemeProvider.module.css';
 

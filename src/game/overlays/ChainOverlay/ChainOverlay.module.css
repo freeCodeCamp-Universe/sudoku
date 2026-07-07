@@ -3,9 +3,10 @@
   inset-block-start: 0;
   inset-inline-start: 0;
   pointer-events: none;
-  /* Below the cells' value/candidate spans (z-index 2, Cell.module.css) so
-     the line passes behind the digits, but above the cell backgrounds. */
-  z-index: 1;
+  /* Below the grid-line layer so cell borders and box boundaries stay visible
+     where a chain crosses them, and below the cell-content layer so the line
+     passes behind the digits, but above the cell backgrounds. */
+  z-index: var(--layer-chain);
   overflow: visible;
 }
 

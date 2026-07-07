@@ -3,7 +3,9 @@
   inset-block-start: 0;
   inset-inline-start: 0;
   pointer-events: none;
-  z-index: 2;
+  /* Shares the cell-content tier: the translucent stripes sit above the grid
+     lines but below the clue overlays. */
+  z-index: var(--layer-cell-content);
 }
 
 .line {

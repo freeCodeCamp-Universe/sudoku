@@ -20,14 +20,21 @@
 }
 
 .cellSlot {
+  /* z-auto when unselected: an explicit z-index would form a stacking context
+     that traps the cell-content spans below the chain overlay. The selected
+     slot lifts above the overlay as a whole. */
   position: absolute;
+}
+
+.cellSlotSelected {
+  z-index: var(--layer-cell-content);
 }
 
 .samuraiEdge {
   position: absolute;
   background: var(--board-frame);
   pointer-events: none;
-  z-index: 1;
+  z-index: var(--layer-grid-lines);
 }
 
 .row {
