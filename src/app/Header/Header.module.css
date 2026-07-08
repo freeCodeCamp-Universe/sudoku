@@ -123,7 +123,7 @@
   flex-direction: column;
   gap: 10px;
   min-width: 180px;
-  z-index: 50;
+  z-index: var(--layer-dropdown);
   box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
 }
 

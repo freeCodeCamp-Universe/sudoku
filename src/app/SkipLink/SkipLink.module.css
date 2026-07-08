@@ -2,7 +2,7 @@
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
-  z-index: 1000;
+  z-index: var(--layer-skip-link);
   transform: translateY(-150%);
   padding-block: 0.5rem;
   padding-inline: 1rem;

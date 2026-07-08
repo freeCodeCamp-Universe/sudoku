@@ -8,7 +8,6 @@
   font-size: 1.4rem;
   font-weight: 400;
   color: var(--accent-blue);
-  border: 1px solid var(--cell-border);
   cursor: pointer;
   background: var(--bg-secondary);
   user-select: none;
@@ -89,28 +88,29 @@
   background: var(--cell-special-bg);
 }
 
-.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
+/* Grid lines live on ::before rather than the cell's `border` property so
+   they carry a z-index above the chain overlay (--layer-chain) instead of
+   being painted over wherever an opaque chain line crosses a cell. The same
+   pseudo thickens to the 3px box boundary on box edges; those edges overshoot
+   the cell by 1px to bridge the seam with the neighbouring cell, matching the
+   absolutely-positioned strips they replaced. */
+.cell::before {
   content: '';
   position: absolute;
-  top: -1px;
-  bottom: -1px;
-  right: -1px;
-  width: 3px;
-  background: var(--box-boundary);
-  z-index: 1;
+  inset: 0;
+  border: 1px solid var(--cell-border);
+  z-index: var(--layer-grid-lines);
   pointer-events: none;
 }
 
+.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::before {
+  inset-inline-end: -1px;
+  border-inline-end: 3px solid var(--box-boundary);
+}
+
 .cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::before {
-  content: '';
-  position: absolute;
-  left: -1px;
-  right: -1px;
-  bottom: -1px;
-  height: 3px;
-  background: var(--box-boundary);
-  z-index: 1;
-  pointer-events: none;
+  inset-block-end: -1px;
+  border-block-end: 3px solid var(--box-boundary);
 }
 
 .cell[data-given] {
@@ -120,7 +120,7 @@
 }
 
 .cell[data-selected] {
-  z-index: 1;
+  z-index: var(--layer-grid-lines);
 }
 
 .cell[data-selected]::before {
@@ -132,7 +132,7 @@
   position: absolute;
   inset: 0;
   border: 3px solid var(--cell-selected-border);
-  z-index: 10;
+  z-index: var(--layer-selection);
   pointer-events: none;
 }
 
@@ -240,11 +240,11 @@
    background, so the grid border appears to stop for the marker. The cell only
    covers its own half of the border, so two cells with different backgrounds
    each stay correct. The yellow triangle (overlay layer) draws on top. The
-   z-index clears the 3px box border (z-index 1) drawn on box-boundary edges. */
+   content layer clears the grid-line layer drawn on box-boundary edges. */
 .markerGap {
   position: absolute;
   background-color: inherit;
-  z-index: 2;
+  z-index: var(--layer-cell-content);
   pointer-events: none;
 }
 
@@ -278,9 +278,9 @@
   inset-block-start: -2px;
 }
 
-/* Symbols sit above the chain overlay (z-index 1, ChainOverlay.module.css)
-   so chain lines pass behind the digits, but stay below the z-index 3
-   overlays (cage sums, kropki dots, inequality triangles). */
+/* Symbols sit above the chain overlay and grid lines so chain lines pass
+   behind the digits, but stay below the clue overlays (cage sums, kropki
+   dots, inequality triangles). */
 .value {
   display: flex;
   align-items: center;
@@ -288,7 +288,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  z-index: 2;
+  z-index: var(--layer-cell-content);
 }
 
 .candidates {
@@ -299,7 +299,7 @@
   inset: 2px;
   pointer-events: none;
   /* Above the chain overlay, like .value. */
-  z-index: 2;
+  z-index: var(--layer-cell-content);
 }
 
 .candidate {
@@ -365,7 +365,7 @@
   height: 7px;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 2;
+  z-index: var(--layer-cell-content);
 }
 
 .givenDot {
@@ -379,16 +379,10 @@
 :global(.light) .cell {
   background: var(--cell-bg-light);
   color: var(--cell-text-light);
-  border-color: var(--cell-border);
 }
 
 :global(.light) .cell[data-given] {
   color: #0a0a23;
-}
-
-:global(.light) .cell[data-box-right]:not([data-selected])::after,
-:global(.light) .cell[data-box-bottom]:not([data-selected])::before {
-  background: var(--box-boundary);
 }
 
 :global(.light) .candidate {
