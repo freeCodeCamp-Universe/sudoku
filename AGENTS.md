@@ -42,7 +42,7 @@ Three layers, each depending only on the ones above it: **engine** (pure puzzle 
 - `src/gallery/` — the home grid of puzzles and their canvas previews.
 - `src/app/` — shell: routing, page layout, header, theme.
 - `scripts/` — generator scripts run via `pnpm <script-name>` (e.g. `pnpm docs:colors`); not typechecked by `tsc --noEmit`.
-- `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc.
+- `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc; `breakpoints.md` lists the allowed media query breakpoints.
 
 ### The data-driven variant pipeline (worth understanding up front)
 
@@ -63,7 +63,7 @@ The game area builds the model and generates the puzzle once per variant (memoiz
 
 - **File naming:** name files after what they export (`Button.tsx`, `Button.module.css`, `Button.test.tsx`). `index.ts(x)` is reserved for barrel files that only re-export from siblings — never put a component, hook, or other logic in an `index` file.
 - **Exports:** named exports only, no default exports.
-- **Styling:** CSS Modules only (`*.module.css`); no inline styles, no `!important`. Use logical properties (`padding-inline`, `inset-block-start`, `text-align: start`, …) so RTL works; take colors from the theme's CSS custom properties; mobile-first `min-width` queries only.
+- **Styling:** CSS Modules only (`*.module.css`); no inline styles, no `!important`. Use logical properties (`padding-inline`, `inset-block-start`, `text-align: start`, …) so RTL works; take colors from the theme's CSS custom properties; mobile-first `min-width` queries only, using only the breakpoints in `docs/breakpoints.md`.
 - **Generated docs:** `docs/colors.md` is generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `pnpm docs:colors` after any change to color tokens or `colorSpecs.ts` — the drift test in `src/game/testing/colorDocs.test.ts` fails CI if the committed file is stale.
 - **Color contrast gate:** before changing any color, read `docs/color-contrast.md` — it records the palette architecture, the gate policy, the accepted even/odd infeasibility proof, and the chip luminance-ladder rules.
 - **Imports:** use the `@/` alias for `src` (configured in `tsconfig.json` and `vite.config.ts`).
