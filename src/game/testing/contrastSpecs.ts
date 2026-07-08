@@ -126,7 +126,10 @@ const ACCEPTED_FAILURES = new Set<string>([
   'dark|even bg vs odd bg',
   'dark|peer-even bg vs peer-odd bg',
   'dark|error bg vs base',
-  ...CELL_BGS.map((bg) => `light|hint text on ${bg}`),
+  // The deepened light hint gold (#7b5e2c) clears 4.5:1 on most cell
+  // backgrounds; these two peer-highlight tints remain slightly too light.
+  'light|hint text on --cell-peer-structural-bg',
+  'light|hint text on --cell-peer-even-bg',
   // Standard region shading (X diagonals, windows, special cells) is a subtle
   // tint by design, like the even/odd pair; high contrast carries the 3:1 fills.
   ...REGION_FILLS.flatMap((fill) => [

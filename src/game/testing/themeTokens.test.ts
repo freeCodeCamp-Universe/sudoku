@@ -11,7 +11,7 @@ describe('readThemeTokens', () => {
   });
 
   it('should fall back to the :root value when there is no light override', () => {
-    expect(readThemeTokens()['--accent-yellow'].light).toBe('#f1be32');
+    expect(readThemeTokens()['--focus-ring'].light).toBe('#198eee');
   });
 
   it('should read a light override for --accent-blue', () => {
