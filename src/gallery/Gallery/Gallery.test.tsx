@@ -106,6 +106,37 @@ describe('Gallery', () => {
     await user.click(screen.getByRole('button', { name: /switch to light theme/i }));
 
     expect(screen.getByRole('button', { name: /switch to dark theme/i })).toBeTruthy();
-    expect(screen.getByRole('status')).toHaveTextContent('Light theme');
+    expect(screen.getByText('Light theme')).toBeTruthy();
+  });
+
+  it('should announce the result count when a search matches', async () => {
+    const user = userEvent.setup();
+
+    renderGallery();
+
+    await user.type(screen.getByRole('searchbox', { name: /search puzzles/i }), 'classic');
+
+    const count = screen.getAllByRole('link').length;
+    expect(screen.getByText(new RegExp(`${count} puzzles? found\\.`))).toBeTruthy();
+  });
+
+  it('should announce when a search matches nothing', async () => {
+    const user = userEvent.setup();
+
+    renderGallery();
+
+    await user.type(screen.getByRole('searchbox', { name: /search puzzles/i }), 'zzzznotavariant');
+
+    expect(screen.getByText('No puzzles found.')).toBeTruthy();
+  });
+
+  it('should announce the sort mode when sorting changes', async () => {
+    const user = userEvent.setup();
+
+    renderGallery();
+
+    await user.selectOptions(screen.getByRole('combobox', { name: /sort puzzles by/i }), 'alpha');
+
+    expect(screen.getByText('Sorted by A-Z.')).toBeTruthy();
   });
 });

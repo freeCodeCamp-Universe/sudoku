@@ -8,6 +8,19 @@ import styles from './Gallery.module.css';
 type SortMode = 'popularity' | 'alpha' | 'difficulty';
 
 const ALL_VARIANTS = Object.values(variantRegistry);
+const SORT_LABELS: Record<SortMode, string> = {
+  popularity: 'Popularity',
+  alpha: 'A-Z',
+  difficulty: 'Difficulty',
+};
+
+function resultAnnouncement(count: number): string {
+  if (count === 0) {
+    return 'No puzzles found.';
+  }
+
+  return `${count} ${count === 1 ? 'puzzle' : 'puzzles'} found.`;
+}
 const DIFFICULTY_ORDER: Record<Variant['difficulty'], number> = {
   beginner: 1,
   intermediate: 2,
@@ -67,6 +80,7 @@ export function Gallery() {
   const [sortMode, setSortMode] = useState<SortMode>(
     () => (localStorage.getItem('sudoku-sort') as SortMode | null) ?? 'popularity'
   );
+  const [announcement, setAnnouncement] = useState('');
   const visibleVariants = useMemo(
     () => sortVariants(filterVariants(ALL_VARIANTS, query), sortMode),
     [query, sortMode]
@@ -92,7 +106,11 @@ export function Gallery() {
             spellCheck={false}
             aria-label="Search puzzles"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              const nextQuery = event.target.value;
+              setQuery(nextQuery);
+              setAnnouncement(resultAnnouncement(filterVariants(ALL_VARIANTS, nextQuery).length));
+            }}
           />
         </div>
 
@@ -109,6 +127,7 @@ export function Gallery() {
               const mode = event.target.value as SortMode;
               localStorage.setItem('sudoku-sort', mode);
               setSortMode(mode);
+              setAnnouncement(`Sorted by ${SORT_LABELS[mode]}.`);
             }}
           >
             <option value="popularity">Popularity</option>
@@ -127,6 +146,10 @@ export function Gallery() {
           ))}
         </div>
       )}
+
+      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+        {announcement}
+      </div>
     </main>
   );
 }
