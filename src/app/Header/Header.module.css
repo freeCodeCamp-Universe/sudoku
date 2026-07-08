@@ -1,45 +1,76 @@
 .topBar {
   width: min(1280px, 100%);
   margin-inline: auto;
-  padding-inline: 16px;
+  padding-inline: 0;
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0;
-  margin-block-end: 36px;
+  gap: 8px;
+  margin-block-end: 20px;
   position: relative;
 }
 
+@media (min-width: 600px) {
+  .topBar {
+    padding-inline: 16px;
+    justify-content: space-between;
+    gap: 0;
+    margin-block-end: 36px;
+  }
+}
+
 .title {
-  position: absolute;
-  inset-inline-start: 50%;
-  transform: translateX(-50%);
-  font-size: 1.1rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-bright);
   white-space: nowrap;
-  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 600px) {
+  .title {
+    position: absolute;
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    flex: none;
+    font-size: 1.1rem;
+  }
 }
 
 .topBarRight {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
+@media (min-width: 600px) {
+  .topBarRight {
+    margin-inline-start: 0;
+  }
 }
 
 .backBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-subtle);
   font-size: 0.88rem;
-  padding: 6px 14px;
-  border-radius: 2px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  flex-shrink: 0;
   transition:
     border-color 0.15s,
     color 0.15s;
@@ -53,6 +84,37 @@
 .backBtn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+.backBtnText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 600px) {
+  .backBtn {
+    width: auto;
+    height: auto;
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+
+  .backBtnText {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
 }
 
 .helpBtn {
@@ -208,18 +270,12 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 520px) {
+.keyboardBtn {
+  display: none;
+}
+
+@media (min-width: 600px) {
   .keyboardBtn {
-    display: none;
-  }
-
-  .topBar {
-    gap: 8px;
-    margin-block-end: 20px;
-    padding-inline: 0;
-  }
-
-  .title {
-    font-size: 0.95rem;
+    display: flex;
   }
 }
