@@ -145,6 +145,9 @@
   --cell-border: #cccce0;
   --box-boundary: #ffffff;
   --board-frame: #ffffff;
+  /* Jigsaw region borders play the box-boundary role, so they share its
+     value and the region and box lines read as one system. */
+  --overlay-jigsaw-stroke: #ffffff;
   --accent-blue: #d8ecff;
   /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
      brightens toward white for its text role here, which would erase the blue
@@ -220,6 +223,7 @@
   --cell-border: #3c3c50;
   --box-boundary: #0a0a23;
   --board-frame: #0a0a23;
+  --overlay-jigsaw-stroke: #0a0a23;
   --accent-blue: #0a2540;
   --board-clue-text: #0d47a1;
   --text-muted: #2a2a40;

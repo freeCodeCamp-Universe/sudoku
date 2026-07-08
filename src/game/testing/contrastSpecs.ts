@@ -345,6 +345,21 @@ export const contrastPairs: ContrastPair[] = [
     )
   ),
 
+  // Jigsaw region borders are the sole cue marking the irregular regions, so
+  // they gate like the box boundaries they replace: 3:1 against every cell
+  // fill they can delimit (WCAG 1.4.11). High-contrast only, matching the
+  // grid-line policy; the HC values share --box-boundary so the region and
+  // box lines read as one system.
+  ...(['dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+    [...CELL_BGS, '--cell-error-bg' as const].map((bg) => ({
+      label: `jigsaw region border on ${bg}`,
+      fg: '--overlay-jigsaw-stroke',
+      bg: bg === 'base' ? refFor(BASE, theme) : bg,
+      threshold: UI_AA,
+      theme,
+    }))
+  ),
+
   // The selection ring outlines the selected cell on whatever fill that cell
   // carries (region fills, parity shades, error, ...), so in high contrast it
   // gates like the grid lines: 3:1 against the full cell-background set. The
