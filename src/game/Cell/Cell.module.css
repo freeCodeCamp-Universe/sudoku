@@ -90,10 +90,7 @@
 
 /* Grid lines live on ::before rather than the cell's `border` property so
    they carry a z-index above the chain overlay (--layer-chain) instead of
-   being painted over wherever an opaque chain line crosses a cell. The same
-   pseudo thickens to the 3px box boundary on box edges; those edges overshoot
-   the cell by 1px to bridge the seam with the neighbouring cell, matching the
-   absolutely-positioned strips they replaced. */
+   being painted over wherever an opaque chain line crosses a cell. */
 .cell::before {
   content: '';
   position: absolute;
@@ -103,14 +100,30 @@
   pointer-events: none;
 }
 
-.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::before {
-  inset-inline-end: -1px;
-  border-inline-end: 3px solid var(--box-boundary);
+/* Box boundaries draw on ::after (free while the cell is unselected), one
+   layer above the grid lines: the thick edge overshoots into the neighbour
+   cell, and on its own layer no neighbour's 1px line can cut across it. A
+   separate pseudo also avoids the mitred corner joint the 1px and thick
+   borders would form if they shared one border box. */
+.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after,
+.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: var(--layer-box-lines);
+  pointer-events: none;
 }
 
-.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::before {
-  inset-block-end: -1px;
-  border-block-end: 3px solid var(--box-boundary);
+.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
+  /* The overshoot scales with the width so the line stays straddling the
+     seam: -1px at the standard 3px, -2px at the high-contrast 5px. */
+  inset-inline-end: calc((var(--box-boundary-width, 3px) - 1px) / -2);
+  border-inline-end: var(--box-boundary-width, 3px) solid var(--box-boundary);
+}
+
+.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::after {
+  inset-block-end: calc((var(--box-boundary-width, 3px) - 1px) / -2);
+  border-block-end: var(--box-boundary-width, 3px) solid var(--box-boundary);
 }
 
 .cell[data-given] {
@@ -240,7 +253,7 @@
    background, so the grid border appears to stop for the marker. The cell only
    covers its own half of the border, so two cells with different backgrounds
    each stay correct. The yellow triangle (overlay layer) draws on top. The
-   content layer clears the grid-line layer drawn on box-boundary edges. */
+   content layer clears the box-lines layer drawn on box-boundary edges. */
 .markerGap {
   position: absolute;
   background-color: inherit;

@@ -6,11 +6,12 @@
 }
 
 .grid {
-  /* size.w/size.h describe the cell area, so the 3px border must sit outside it
-     (content-box) rather than eating into it and clipping the right/bottom edge. */
+  /* size.w/size.h describe the cell area, so the frame border must sit outside
+     it (content-box) rather than eating into it and clipping the right/bottom
+     edge. */
   box-sizing: content-box;
   position: relative;
-  border: 3px solid var(--board-frame);
+  border: var(--box-boundary-width, 3px) solid var(--board-frame);
   box-shadow: 0 4px 24px rgb(0 0 0 / 50%);
 }
 
@@ -34,7 +35,18 @@
   position: absolute;
   background: var(--board-frame);
   pointer-events: none;
-  z-index: var(--layer-grid-lines);
+  z-index: var(--layer-box-lines);
+}
+
+/* Thickness comes from the shared token so high contrast can widen the
+   structural lines; Board.tsx only positions the strips and sets their
+   length along the run. */
+.samuraiEdge[data-orientation='h'] {
+  block-size: var(--box-boundary-width, 3px);
+}
+
+.samuraiEdge[data-orientation='v'] {
+  inline-size: var(--box-boundary-width, 3px);
 }
 
 .row {

@@ -1,17 +1,16 @@
-/* Region borders are grid lines, so they share --layer-grid-lines with the
-   cell borders (Cell.module.css ::before); the overlay renders after the cell
-   rows, so DOM order paints the 3px region lines above the 1px cell lines
+/* Region borders play the box-boundary role, so they sit on the box-lines
+   layer: above the 1px cell borders (which would otherwise cut across them)
    while digits and the selection ring stay on top. */
 .overlay {
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
   pointer-events: none;
-  z-index: var(--layer-grid-lines);
+  z-index: var(--layer-box-lines);
 }
 
 .regionBorder {
   stroke: var(--overlay-jigsaw-stroke);
-  stroke-width: 3;
+  stroke-width: var(--box-boundary-width, 3px);
   stroke-linecap: square;
 }

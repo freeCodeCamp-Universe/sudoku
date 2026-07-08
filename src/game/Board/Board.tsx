@@ -83,6 +83,8 @@ function buildMultigridLines(
   }
 
   const { subGrids, subGridSize, box } = variant.layout;
+  /* The strips' cross dimension is set in CSS (--box-boundary-width, so high
+     contrast can widen it); stroke only fills the Rect shape here. */
   const stroke = 3;
   const offset = 1;
   const horizontal = new Map<number, Array<{ start: number; end: number }>>();
@@ -282,20 +284,24 @@ export function Board({
           })}
         </div>
       ))}
-      {multigridLines.map((line) => (
-        <div
-          key={line.id}
-          aria-hidden="true"
-          data-testid="multigrid-line"
-          className={styles.samuraiEdge}
-          style={{
-            insetInlineStart: line.x,
-            insetBlockStart: line.y,
-            width: line.w,
-            height: line.h,
-          }}
-        />
-      ))}
+      {multigridLines.map((line) => {
+        const horizontal = line.id.startsWith('h-');
+
+        return (
+          <div
+            key={line.id}
+            aria-hidden="true"
+            data-testid="multigrid-line"
+            data-orientation={horizontal ? 'h' : 'v'}
+            className={styles.samuraiEdge}
+            style={
+              horizontal
+                ? { insetInlineStart: line.x, insetBlockStart: line.y, width: line.w }
+                : { insetInlineStart: line.x, insetBlockStart: line.y, height: line.h }
+            }
+          />
+        );
+      })}
       {overlays}
     </div>
   );

@@ -145,8 +145,10 @@ from `#cccce0` to `#b5b5c9` — the 3:1 floor vs the even fill (3.02:1) — and 
 boundary stays `#ffffff`, widening the box-vs-cell step from 1.58:1 to 2.02:1. That is
 the compliant maximum: a 3:1 step would need fills 3:1 below the border and a base 3:1
 below the fills, which bottoms out below black — the same infeasibility shape as the
-even/odd proof. Widening it further means a non-color cue (line width, casing), not
-palette work. The light palettes keep the standard `--bg-secondary`; `.light.high-contrast`
+even/odd proof. Because ~2:1 is not enough for the box structure to read on its own,
+high contrast also widens the structural lines: `--box-boundary-width` (layers.css)
+grows from 3px to 5px for box boundaries, jigsaw region borders, samurai edges, and
+the board frame, so the width ratio carries the structure that color cannot. The light palettes keep the standard `--bg-secondary`; `.light.high-contrast`
 re-declares it only to satisfy the override-parity rule.
 
 `--board-frame` (the 3px outline around the whole board and the samurai edge strips,
