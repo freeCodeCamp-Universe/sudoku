@@ -91,7 +91,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--board-clue-text);
