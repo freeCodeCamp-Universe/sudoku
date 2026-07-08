@@ -1,15 +1,18 @@
 /* Board stacking order, bottom to top. Every z-index inside the grid must
    reference one of these tokens so the layering reads in one place: chain
-   lines sit above cell backgrounds but below the grid lines, digits and
-   marker gaps sit above the grid lines, clue overlays (cages, kropki dots,
-   inequality triangles) sit above the digits, and the selection ring tops
-   everything. Kept separate from theme.css, whose :root block is parsed as
-   color tokens by src/game/testing/themeTokens.ts and docs generation. */
+   lines sit above cell backgrounds but below the grid lines, box/region
+   structure lines sit above the 1px grid lines (so neighboring cells' grid
+   lines cannot cut across them), digits and marker gaps sit above the
+   structure lines, clue overlays (cages, kropki dots, inequality triangles)
+   sit above the digits, and the selection ring tops everything. Kept
+   separate from theme.css, whose :root block is parsed as color tokens by
+   src/game/testing/themeTokens.ts and docs generation. */
 :root {
   --layer-chain: 0;
   --layer-grid-lines: 1;
-  --layer-cell-content: 2;
-  --layer-clue-overlays: 3;
+  --layer-box-lines: 2;
+  --layer-cell-content: 3;
+  --layer-clue-overlays: 4;
   --layer-selection: 10;
 
   /* App chrome above the board: the header's settings dropdown, confirm
@@ -17,4 +20,17 @@
   --layer-dropdown: 50;
   --layer-modal: 100;
   --layer-skip-link: 1000;
+
+  /* Structural line width: box boundaries, jigsaw region borders, samurai
+     edges, and the board frame share one thickness so the box skeleton reads
+     as one system. Lives here rather than theme.css, whose blocks are parsed
+     as color tokens. */
+  --box-boundary-width: 3px;
+}
+
+/* High contrast widens the structural lines: the compliant palette caps the
+   box-vs-cell luminance step at ~2:1 (see docs/color-contrast.md), so the
+   width ratio carries the box structure instead. */
+.high-contrast {
+  --box-boundary-width: 5px;
 }

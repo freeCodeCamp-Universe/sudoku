@@ -16,7 +16,12 @@ describe('overlay color tokens', () => {
     const tokens = readThemeTokens();
     expect(tokens['--overlay-cage-stroke']).toMatchObject({ dark: '#9898b8', light: '#5555aa' });
     expect(tokens['--overlay-argyle-stroke']).toMatchObject({ dark: '#9898b8', light: '#8080a8' });
-    expect(tokens['--overlay-jigsaw-stroke']).toMatchObject({ dark: '#9898b8', light: '#6060a0' });
+    expect(tokens['--overlay-jigsaw-stroke']).toMatchObject({
+      dark: '#9898b8',
+      light: '#6060a0',
+      darkHc: '#ffffff',
+      lightHc: '#0a0a23',
+    });
     expect(tokens['--overlay-arrow-stroke']).toMatchObject({ dark: '#9898b8', light: '#9898b8' });
   });
 

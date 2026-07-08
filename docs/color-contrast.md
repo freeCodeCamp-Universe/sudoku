@@ -124,19 +124,32 @@ on white cells) — an accepted shortfall alongside the even/odd shading. The
 high-contrast palettes override `--cell-border` and `--box-boundary`, gated at 3:1
 against the full cell-background set including the error fill. This is feasible because
 the dark grid never shows white cells (`--cell-bg-light` only applies under `.light`),
-so the dark border can rise until it clears the mid-luminance even (`#60607a`) and
-error (`#9c5f5f`) fills; the light border drops to near-black, which clears its even
-(`#8f8fa8`) and error (`#cc7070`) fills from below.
+so the dark border rises only as far as the mid-luminance even (`#60607a`), region
+(`#5f5f81`), and error (`#8a5252`) fills force it; the light border drops to
+near-black, which clears its even (`#8f8fa8`) and error (`#cc7070`) fills from below.
 
 Cell and box lines do **not** share one color in high contrast, unlike the standard
 palettes. When every line is bright, a 1px cell border already pops against the dark
 board, so the 3px-vs-1px thickness cue alone no longer separates boxes from cells the
 way it does with dim standard lines. The fix is a luminance step between the two line
-roles, and each palette only has headroom in one direction. Dark: the cell border
-`#cccce0` sits at the 3:1 floor (3.15:1 vs the error fill — no room to dim), so the box
-boundary rises to `#ffffff`, a 1.58:1 step above the cell lines. Light: the box
-boundary deepens to the page ink `#0a0a23` while the cell border lifts to `#3c3c50`,
-the 3:1 ceiling (3.13:1 vs the error fill), a 1.81:1 step.
+roles, and each palette only has headroom in one direction. Light: the box boundary
+deepens to the page ink `#0a0a23` while the cell border lifts to `#3c3c50`, the 3:1
+ceiling (3.13:1 vs the error fill), a 1.81:1 step.
+
+Dark buys its step by sliding the whole fill ladder down. The dark-HC base
+(`--bg-secondary`) darkens to the odd-fill value `#0f0f2c`, which lowers the 3:1 floor
+under the region fills (`#65658a` → `#5f5f81`), the error fill (`#9c5f5f` → `#8a5252`),
+and the peer-even fill (`#646480` → `#5e5e78`); the even fill `#60607a` is pinned by
+its 3:1 pairing with the odd fill and stays. With the fills down, the cell border dims
+from `#cccce0` to `#b5b5c9` — the 3:1 floor vs the even fill (3.02:1) — and the box
+boundary stays `#ffffff`, widening the box-vs-cell step from 1.58:1 to 2.02:1. That is
+the compliant maximum: a 3:1 step would need fills 3:1 below the border and a base 3:1
+below the fills, which bottoms out below black — the same infeasibility shape as the
+even/odd proof. Because ~2:1 is not enough for the box structure to read on its own,
+high contrast also widens the structural lines: `--box-boundary-width` (layers.css)
+grows from 3px to 5px for box boundaries, jigsaw region borders, samurai edges, and
+the board frame, so the width ratio carries the structure that color cannot. The light palettes keep the standard `--bg-secondary`; `.light.high-contrast`
+re-declares it only to satisfy the override-parity rule.
 
 `--board-frame` (the 3px outline around the whole board and the samurai edge strips,
 Board.module.css) was previously hardcoded; it is now a token in all four palettes and

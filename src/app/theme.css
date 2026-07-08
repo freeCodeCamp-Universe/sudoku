@@ -90,6 +90,7 @@
   --text-bright: #0a0a23;
   --accent-green: #00471b;
   --accent-red: #850000;
+  --accent-yellow: #7b5e2c;
   --cell-border: #d8d8e8;
   --box-boundary: #b8b8cc;
   --board-frame: #8080a8;
@@ -135,15 +136,25 @@
 .high-contrast {
   /* Borders brighten so grid lines and control outlines clear WCAG 1.4.11
      (3:1) against every fill they sit on. The dark grid has no white cells
-     (--cell-bg-light only applies under .light), so the cell/box border can
-     rise until it clears even the mid-luminance even/error fills. The cell
-     border sits at the 3:1 floor already (3.15:1 vs the error fill), so box
-     boundaries separate upward — white, a 1.58:1 step above the cell lines —
-     to keep the box structure readable next to bright 1px cell lines. */
+     (--cell-bg-light only applies under .light), so the cell border rises
+     only as far as the mid-luminance fills force it. Those fills (region,
+     error, peer-even) slide down with the darkened base below, which lets
+     the cell border sit at #b5b5c9 — the 3:1 floor vs the even fill — while
+     box boundaries stay white, a ~2:1 step above the cell lines that keeps
+     the box structure readable (a 3:1 step is provably infeasible: it would
+     need the base to sit below black; see docs/color-contrast.md). */
   --border: #9898b0;
-  --cell-border: #cccce0;
+  --cell-border: #b5b5c9;
   --box-boundary: #ffffff;
+  /* The plain cell base darkens to the odd-fill value so the whole fill
+     ladder (region, error, peer-even) can slide down with it — that is what
+     frees the cell border to dim while keeping 3:1 on every fill, widening
+     the box-vs-cell line step from 1.58:1 to ~2:1. */
+  --bg-secondary: #0f0f2c;
   --board-frame: #ffffff;
+  /* Jigsaw region borders play the box-boundary role, so they share its
+     value and the region and box lines read as one system. */
+  --overlay-jigsaw-stroke: #ffffff;
   --accent-blue: #d8ecff;
   /* Board clues (skyscraper gutter) keep the standard-dark blue: --accent-blue
      brightens toward white for its text role here, which would erase the blue
@@ -166,19 +177,19 @@
   /* Region fills (X diagonals, windows, special cells) must clear 3:1 above
      the plain base while every light text role keeps 4.5:1 on them — a narrow
      luminance window that also forces the hint/candidate text bumps here. */
-  --cell-diagonal-bg: #65658a;
-  --cell-window-bg: #65658a;
-  --cell-special-bg: #65658a;
-  --overlay-window-fill: #65658a;
-  --overlay-special-fill: #6d6398;
+  --cell-diagonal-bg: #5f5f81;
+  --cell-window-bg: #5f5f81;
+  --cell-special-bg: #5f5f81;
+  --overlay-window-fill: #5f5f81;
+  --overlay-special-fill: #655c8e;
   /* The standard ring (#4a90d9) sits at 1.66:1 on the mid-gray region fills;
      a brighter blue clears 3:1 on every fill a selected cell can carry. */
   --cell-selected-border: #a8d4ff;
   --cell-even-bg: #60607a;
   --cell-odd-bg: #0f0f2c;
-  --cell-peer-even-bg: #646480;
+  --cell-peer-even-bg: #5e5e78;
   --cell-peer-odd-bg: #0b0b24;
-  --cell-error-bg: #9c5f5f;
+  --cell-error-bg: #8a5252;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;
   --color-1: #ff4d4d;
@@ -212,6 +223,10 @@
 }
 
 .light.high-contrast {
+  /* Light cells render --cell-bg-light, so the dark palette's base darkening
+     has no light counterpart; this re-declares the standard light value only
+     because .light.high-contrast must override every .high-contrast token. */
+  --bg-secondary: #ebebe6;
   --border: #55556d;
   /* Cell borders lift to the 3:1 ceiling (3.13:1 vs the error fill) while box
      boundaries deepen to the page ink, a 1.81:1 step, so the box structure
@@ -219,6 +234,7 @@
   --cell-border: #3c3c50;
   --box-boundary: #0a0a23;
   --board-frame: #0a0a23;
+  --overlay-jigsaw-stroke: #0a0a23;
   --accent-blue: #0a2540;
   --board-clue-text: #0d47a1;
   --text-muted: #2a2a40;
