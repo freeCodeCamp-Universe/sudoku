@@ -14,8 +14,25 @@ const sujikenVariant: Variant = {
 };
 
 describe('triangularLayout', () => {
+  it('should base cells at 52px', () => {
+    expect(triangularLayout.baseCellSize(sujikenVariant)).toBe(52);
+  });
+
   it('should return 45 cell rects', () => {
     expect(triangularLayout.cellRects(sujikenVariant).size).toBe(45);
+  });
+
+  it('should scale cell rects with an explicit override', () => {
+    expect(triangularLayout.cellRects(sujikenVariant, 38).get('r1c1')).toEqual({
+      x: 38,
+      y: 38,
+      w: 38,
+      h: 38,
+    });
+  });
+
+  it('should scale the canvas with an explicit override', () => {
+    expect(triangularLayout.canvasSize(sujikenVariant, 38)).toEqual({ w: 342, h: 342 });
   });
 
   it('should not include void cell r0c1', () => {

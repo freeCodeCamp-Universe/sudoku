@@ -1,25 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { Variant } from '@/engine/types';
-
-function getBaseCellSize(variant: Variant): number {
-  const kind = variant.layout.kind;
-  if (kind === 'grid') {
-    const size = (variant.layout as { size: number }).size;
-    if (size === 16) return 30;
-    return 52;
-  }
-  if (kind === 'multigrid') {
-    const cols = (variant.layout as { canvasCols: number }).canvasCols;
-    if (cols === 21) return 30;
-    if (cols === 15) return 30;
-    if (cols === 12) return 40;
-    return Math.floor(400 / cols);
-  }
-  return 52;
-}
+import { resolveLayout } from './layouts/registry';
 
 export function useResponsiveCellSize(variant: Variant): number {
-  const base = getBaseCellSize(variant);
+  const base = resolveLayout(variant.layout.kind).baseCellSize(variant);
 
   function compute(): number {
     const w = window.innerWidth;

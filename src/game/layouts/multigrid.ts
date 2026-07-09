@@ -2,22 +2,6 @@ import { cellId } from '@/engine/grid';
 import type { MultiGridLayout } from '@/engine/types';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
 
-function getCellSize(canvasCols: number): number {
-  if (canvasCols === 21) {
-    return 30;
-  }
-
-  if (canvasCols === 15) {
-    return 30;
-  }
-
-  if (canvasCols === 12) {
-    return 40;
-  }
-
-  return Math.floor(400 / canvasCols);
-}
-
 function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGridLayout {
   if (variant.layout.kind !== 'multigrid') {
     throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
@@ -27,9 +11,25 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGr
 }
 
 export const multigridLayout: LayoutStrategy = {
+  baseCellSize(variant) {
+    const { canvasCols } = getLayout(variant);
+    if (canvasCols === 21) {
+      return 30;
+    }
+
+    if (canvasCols === 15) {
+      return 30;
+    }
+
+    if (canvasCols === 12) {
+      return 40;
+    }
+
+    return Math.floor(400 / canvasCols);
+  },
   cellRects(variant, cellSizeOverride) {
     const { canvasRows, canvasCols, subGridSize, subGrids } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? getCellSize(canvasCols);
+    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
     const rects = new Map<string, Rect>();
 
     for (let row = 0; row < canvasRows; row += 1) {
@@ -59,7 +59,7 @@ export const multigridLayout: LayoutStrategy = {
   },
   canvasSize(variant, cellSizeOverride) {
     const { canvasRows, canvasCols } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? getCellSize(canvasCols);
+    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
 
     return { w: canvasCols * cellSize, h: canvasRows * cellSize };
   },
