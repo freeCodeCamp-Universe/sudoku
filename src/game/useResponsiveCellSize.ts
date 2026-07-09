@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { Variant } from '@/engine/types';
+import {
+  CELL_SIZE_STANDARD,
+  CELL_SIZE_STANDARD_NARROW,
+  CELL_SIZE_STANDARD_SMALL,
+  VIEWPORT_NARROW,
+  VIEWPORT_SMALL,
+} from './layouts/cellSizes';
 import { resolveLayout } from './layouts/registry';
 
 export function useResponsiveCellSize(variant: Variant): number {
@@ -7,8 +14,12 @@ export function useResponsiveCellSize(variant: Variant): number {
 
   function compute(): number {
     const w = window.innerWidth;
-    if (w <= 375) return Math.round(base * (38 / 52));
-    if (w <= 520) return Math.round(base * (44 / 52));
+    if (w <= VIEWPORT_NARROW) {
+      return Math.round(base * (CELL_SIZE_STANDARD_NARROW / CELL_SIZE_STANDARD));
+    }
+    if (w <= VIEWPORT_SMALL) {
+      return Math.round(base * (CELL_SIZE_STANDARD_SMALL / CELL_SIZE_STANDARD));
+    }
     return base;
   }
 

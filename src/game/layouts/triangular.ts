@@ -1,6 +1,7 @@
 import { cellId } from '@/engine/grid';
 import type { TriangularLayout } from '@/engine/types';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
+import { CELL_SIZE_STANDARD } from './cellSizes';
 
 function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): TriangularLayout {
   if (variant.layout.kind !== 'triangular') {
@@ -12,7 +13,7 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): Triangu
 
 export const triangularLayout: LayoutStrategy = {
   baseCellSize() {
-    return 52;
+    return CELL_SIZE_STANDARD;
   },
   cellRects(variant, cellSizeOverride) {
     const { size } = getLayout(variant);

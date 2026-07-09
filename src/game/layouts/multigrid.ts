@@ -1,6 +1,7 @@
 import { cellId } from '@/engine/grid';
 import type { MultiGridLayout } from '@/engine/types';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
+import { CELL_SIZE_COMPACT, CELL_SIZE_ROOMY, MULTIGRID_MAX_CANVAS_WIDTH } from './cellSizes';
 
 function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGridLayout {
   if (variant.layout.kind !== 'multigrid') {
@@ -13,19 +14,15 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGr
 export const multigridLayout: LayoutStrategy = {
   baseCellSize(variant) {
     const { canvasCols } = getLayout(variant);
-    if (canvasCols === 21) {
-      return 30;
-    }
-
-    if (canvasCols === 15) {
-      return 30;
+    if (canvasCols === 21 || canvasCols === 15) {
+      return CELL_SIZE_COMPACT;
     }
 
     if (canvasCols === 12) {
-      return 40;
+      return CELL_SIZE_ROOMY;
     }
 
-    return Math.floor(400 / canvasCols);
+    return Math.floor(MULTIGRID_MAX_CANVAS_WIDTH / canvasCols);
   },
   cellRects(variant, cellSizeOverride) {
     const { canvasRows, canvasCols, subGridSize, subGrids } = getLayout(variant);

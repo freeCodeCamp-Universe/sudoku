@@ -1,5 +1,6 @@
 import { cellId, range } from '@/engine/grid';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
+import { CELL_SIZE_COMPACT, CELL_SIZE_STANDARD } from './cellSizes';
 
 export const gridLayout: LayoutStrategy = {
   baseCellSize(variant) {
@@ -7,7 +8,7 @@ export const gridLayout: LayoutStrategy = {
       throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
     }
 
-    return variant.layout.size === 16 ? 30 : 52;
+    return variant.layout.size === 16 ? CELL_SIZE_COMPACT : CELL_SIZE_STANDARD;
   },
   cellRects(variant, cellSizeOverride) {
     if (variant.layout.kind !== 'grid') {
