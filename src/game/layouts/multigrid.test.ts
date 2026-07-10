@@ -50,6 +50,10 @@ const butterflyVariant: Variant = {
 };
 
 describe('multigridLayout - Samurai', () => {
+  it('should base a 21-col canvas at 30px', () => {
+    expect(multigridLayout.baseCellSize(samuraiVariant)).toBe(30);
+  });
+
   it('should return 369 cell rects', () => {
     expect(multigridLayout.cellRects(samuraiVariant).size).toBe(369);
   });
@@ -78,6 +82,10 @@ describe('multigridLayout - Samurai', () => {
 });
 
 describe('multigridLayout - Butterfly', () => {
+  it('should base a 12-col canvas at 40px', () => {
+    expect(multigridLayout.baseCellSize(butterflyVariant)).toBe(40);
+  });
+
   it('should return 144 cell rects', () => {
     expect(multigridLayout.cellRects(butterflyVariant).size).toBe(144);
   });

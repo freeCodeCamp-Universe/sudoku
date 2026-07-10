@@ -1,20 +1,24 @@
 import { cellId, range } from '@/engine/grid';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
+import { CELL_SIZE_COMPACT, CELL_SIZE_STANDARD } from './cellSizes';
 
-function getCellSize(gridSize: number): number {
-  if (gridSize === 16) return 30;
-  if (gridSize === 4) return 80;
-  return 52;
+function baseCellSize(variant: Parameters<LayoutStrategy['baseCellSize']>[0]): number {
+  if (variant.layout.kind !== 'grid') {
+    throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
+  }
+
+  return variant.layout.size === 16 ? CELL_SIZE_COMPACT : CELL_SIZE_STANDARD;
 }
 
 export const gridLayout: LayoutStrategy = {
+  baseCellSize,
   cellRects(variant, cellSizeOverride) {
     if (variant.layout.kind !== 'grid') {
       throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
     }
 
     const rects = new Map<string, Rect>();
-    const cellSize = cellSizeOverride ?? getCellSize(variant.layout.size);
+    const cellSize = cellSizeOverride ?? baseCellSize(variant);
 
     for (const row of range(variant.layout.size)) {
       for (const col of range(variant.layout.size)) {
@@ -34,7 +38,7 @@ export const gridLayout: LayoutStrategy = {
       throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
     }
 
-    const cellSize = cellSizeOverride ?? getCellSize(variant.layout.size);
+    const cellSize = cellSizeOverride ?? baseCellSize(variant);
     return { w: variant.layout.size * cellSize, h: variant.layout.size * cellSize };
   },
 };

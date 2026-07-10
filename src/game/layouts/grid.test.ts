@@ -13,7 +13,41 @@ const classicVariant: Variant = {
   constraintIds: [],
 };
 
+const miniVariant: Variant = {
+  id: 'mini',
+  name: 'Mini Sudoku',
+  description: 'Test variant.',
+  popularity: 0,
+  difficulty: 'beginner',
+  layout: { kind: 'grid', size: 4, box: { rows: 2, cols: 2 } },
+  symbols: [1, 2, 3, 4],
+  constraintIds: [],
+};
+
+const megaVariant: Variant = {
+  id: 'mega',
+  name: 'Mega Sudoku',
+  description: 'Test variant.',
+  popularity: 0,
+  difficulty: 'advanced',
+  layout: { kind: 'grid', size: 16, box: { rows: 4, cols: 4 } },
+  symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+  constraintIds: [],
+};
+
 describe('gridLayout strategy', () => {
+  it('should base a 9x9 grid at 52px', () => {
+    expect(gridLayout.baseCellSize(classicVariant)).toBe(52);
+  });
+
+  it('should base a 4x4 mini grid at 52px', () => {
+    expect(gridLayout.baseCellSize(miniVariant)).toBe(52);
+  });
+
+  it('should base a 16x16 grid at 30px', () => {
+    expect(gridLayout.baseCellSize(megaVariant)).toBe(30);
+  });
+
   it('should return 81 cell rects for a 9x9 grid', () => {
     expect(gridLayout.cellRects(classicVariant).size).toBe(81);
   });

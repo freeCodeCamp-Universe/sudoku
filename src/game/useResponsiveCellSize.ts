@@ -1,30 +1,25 @@
 import { useEffect, useState } from 'react';
 import type { Variant } from '@/engine/types';
-
-function getBaseCellSize(variant: Variant): number {
-  const kind = variant.layout.kind;
-  if (kind === 'grid') {
-    const size = (variant.layout as { size: number }).size;
-    if (size === 16) return 30;
-    return 52;
-  }
-  if (kind === 'multigrid') {
-    const cols = (variant.layout as { canvasCols: number }).canvasCols;
-    if (cols === 21) return 30;
-    if (cols === 15) return 30;
-    if (cols === 12) return 40;
-    return Math.floor(400 / cols);
-  }
-  return 52;
-}
+import {
+  CELL_SIZE_STANDARD,
+  CELL_SIZE_STANDARD_NARROW,
+  CELL_SIZE_STANDARD_SMALL,
+  VIEWPORT_NARROW,
+  VIEWPORT_SMALL,
+} from './layouts/cellSizes';
+import { resolveLayout } from './layouts/registry';
 
 export function useResponsiveCellSize(variant: Variant): number {
-  const base = getBaseCellSize(variant);
+  const base = resolveLayout(variant.layout.kind).baseCellSize(variant);
 
   function compute(): number {
     const w = window.innerWidth;
-    if (w <= 375) return Math.round(base * (38 / 52));
-    if (w <= 520) return Math.round(base * (44 / 52));
+    if (w <= VIEWPORT_NARROW) {
+      return Math.round(base * (CELL_SIZE_STANDARD_NARROW / CELL_SIZE_STANDARD));
+    }
+    if (w <= VIEWPORT_SMALL) {
+      return Math.round(base * (CELL_SIZE_STANDARD_SMALL / CELL_SIZE_STANDARD));
+    }
     return base;
   }
 

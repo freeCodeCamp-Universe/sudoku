@@ -59,6 +59,15 @@ So **adding a puzzle type** is usually: add a spec under `src/variants/` and reg
 
 The game area builds the model and generates the puzzle once per variant (memoized), exposes board state through a context backed by a reducer, and renders the board to a canvas via the resolved layout strategy and overlays. A grid hook derives per-cell view state and owns keyboard navigation (roving `tabindex`, arrow-key movement); a persistence hook stores settings and progress.
 
+### Cell sizing
+
+Cell sizing has exactly two owners, and every pixel number lives in `src/game/layouts/cellSizes.ts`:
+
+- **Base size** (what a variant's cells measure with no viewport pressure) is owned by the layout strategy via `LayoutStrategy.baseCellSize(variant)`, defined once per layout kind.
+- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`, which reads the base from the strategy and scales it by the viewport steps.
+
+Never write a cell-size or sizing-breakpoint literal in a layout strategy or the hook — add or reuse a named constant in `cellSizes.ts`. New layout strategies must implement `baseCellSize` from those constants and honor the optional `cellSizeOverride` in `cellRects` / `canvasSize`.
+
 ## Conventions
 
 - **File naming:** name files after what they export (`Button.tsx`, `Button.module.css`, `Button.test.tsx`). `index.ts(x)` is reserved for barrel files that only re-export from siblings — never put a component, hook, or other logic in an `index` file.

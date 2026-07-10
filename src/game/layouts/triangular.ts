@@ -1,8 +1,7 @@
 import { cellId } from '@/engine/grid';
 import type { TriangularLayout } from '@/engine/types';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
-
-const CELL_SIZE = 52;
+import { CELL_SIZE_STANDARD } from './cellSizes';
 
 function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): TriangularLayout {
   if (variant.layout.kind !== 'triangular') {
@@ -13,26 +12,29 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): Triangu
 }
 
 export const triangularLayout: LayoutStrategy = {
-  cellRects(variant) {
+  baseCellSize: () => CELL_SIZE_STANDARD,
+  cellRects(variant, cellSizeOverride) {
     const { size } = getLayout(variant);
+    const cellSize = cellSizeOverride ?? CELL_SIZE_STANDARD;
     const rects = new Map<string, Rect>();
 
     for (let row = 0; row < size; row += 1) {
       for (let col = 0; col <= row; col += 1) {
         rects.set(cellId(row, col), {
-          x: col * CELL_SIZE,
-          y: row * CELL_SIZE,
-          w: CELL_SIZE,
-          h: CELL_SIZE,
+          x: col * cellSize,
+          y: row * cellSize,
+          w: cellSize,
+          h: cellSize,
         });
       }
     }
 
     return rects;
   },
-  canvasSize(variant) {
+  canvasSize(variant, cellSizeOverride) {
     const { size } = getLayout(variant);
+    const cellSize = cellSizeOverride ?? CELL_SIZE_STANDARD;
 
-    return { w: size * CELL_SIZE, h: size * CELL_SIZE };
+    return { w: size * cellSize, h: size * cellSize };
   },
 };
