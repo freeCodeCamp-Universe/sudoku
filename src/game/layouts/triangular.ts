@@ -12,12 +12,10 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): Triangu
 }
 
 export const triangularLayout: LayoutStrategy = {
-  baseCellSize() {
-    return CELL_SIZE_STANDARD;
-  },
+  baseCellSize: () => CELL_SIZE_STANDARD,
   cellRects(variant, cellSizeOverride) {
     const { size } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
+    const cellSize = cellSizeOverride ?? CELL_SIZE_STANDARD;
     const rects = new Map<string, Rect>();
 
     for (let row = 0; row < size; row += 1) {
@@ -35,7 +33,7 @@ export const triangularLayout: LayoutStrategy = {
   },
   canvasSize(variant, cellSizeOverride) {
     const { size } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
+    const cellSize = cellSizeOverride ?? CELL_SIZE_STANDARD;
 
     return { w: size * cellSize, h: size * cellSize };
   },

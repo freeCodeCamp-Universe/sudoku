@@ -11,22 +11,24 @@ function getLayout(variant: Parameters<LayoutStrategy['cellRects']>[0]): MultiGr
   return variant.layout;
 }
 
+function baseCellSize(variant: Parameters<LayoutStrategy['baseCellSize']>[0]): number {
+  const { canvasCols } = getLayout(variant);
+  if (canvasCols === 21 || canvasCols === 15) {
+    return CELL_SIZE_COMPACT;
+  }
+
+  if (canvasCols === 12) {
+    return CELL_SIZE_ROOMY;
+  }
+
+  return Math.floor(MULTIGRID_MAX_CANVAS_WIDTH / canvasCols);
+}
+
 export const multigridLayout: LayoutStrategy = {
-  baseCellSize(variant) {
-    const { canvasCols } = getLayout(variant);
-    if (canvasCols === 21 || canvasCols === 15) {
-      return CELL_SIZE_COMPACT;
-    }
-
-    if (canvasCols === 12) {
-      return CELL_SIZE_ROOMY;
-    }
-
-    return Math.floor(MULTIGRID_MAX_CANVAS_WIDTH / canvasCols);
-  },
+  baseCellSize,
   cellRects(variant, cellSizeOverride) {
     const { canvasRows, canvasCols, subGridSize, subGrids } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
+    const cellSize = cellSizeOverride ?? baseCellSize(variant);
     const rects = new Map<string, Rect>();
 
     for (let row = 0; row < canvasRows; row += 1) {
@@ -56,7 +58,7 @@ export const multigridLayout: LayoutStrategy = {
   },
   canvasSize(variant, cellSizeOverride) {
     const { canvasRows, canvasCols } = getLayout(variant);
-    const cellSize = cellSizeOverride ?? this.baseCellSize(variant);
+    const cellSize = cellSizeOverride ?? baseCellSize(variant);
 
     return { w: canvasCols * cellSize, h: canvasRows * cellSize };
   },
