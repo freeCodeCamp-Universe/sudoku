@@ -1,45 +1,48 @@
-.modeSwitcher {
+.tablist {
   display: flex;
-  width: 100%;
-  margin-block-end: 16px;
+  inline-size: 100%;
   border: 1px solid var(--border);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.modeBtn {
+.tab {
   flex: 1;
+  min-inline-size: 0;
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 0.72rem;
+  /* Sized for the worst case: three tabs in the ~2/3-width column at 320px. */
+  font-size: 0.65rem;
   font-weight: 600;
+  letter-spacing: 0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 7px 0;
+  padding-block: 8px;
+  padding-inline: 2px;
   border: none;
   background: var(--bg-secondary);
   color: var(--text-muted);
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background 0.15s,
     color 0.15s;
 }
 
-.modeBtn + .modeBtn {
+.tab + .tab {
   border-inline-start: 1px solid var(--border);
 }
 
-.modeBtn[aria-pressed='true'] {
+.tab[aria-selected='true'] {
   background: var(--bg-surface);
   color: var(--text-bright);
 }
 
-.modeBtn:focus-visible {
+.tab:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: -2px;
 }
 
-@media (max-width: 520px) {
-  .modeBtn {
-    padding: 10px 0;
+@media (min-width: 600px) {
+  .tab {
+    font-size: 0.72rem;
   }
 }
