@@ -68,6 +68,16 @@
   flex-shrink: 0;
 }
 
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 100%;
+  /* Separate the tablist from the number pad, matching the spacing the retired
+     ModeSwitcher provided. PR 4's layout rework replaces this with a gap. */
+  margin-block-start: 16px;
+}
+
 .legendSwatch {
   display: inline-block;
   width: 18px;

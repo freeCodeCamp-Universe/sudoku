@@ -19,7 +19,7 @@ import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog/KeyboardShort
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
-import { ModeSwitcher } from './ModeSwitcher';
+import { Tabs, type Tab } from './Tabs';
 import { NumberPad } from './NumberPad';
 import { resolveOverlays } from './overlays/registry';
 import { Timer } from './Timer';
@@ -258,6 +258,19 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
+  // Normal and Candidate share the input panel (the number pad) and differ only
+  // in pen vs. pencil.
+  const controlTabs: Tab[] = [
+    { id: 'normal', label: 'Normal', panelId: 'control-panel-input' },
+    { id: 'candidate', label: 'Candidate', panelId: 'control-panel-input' },
+  ];
+  const activeControlTab = candidateMode ? 'candidate' : 'normal';
+  const selectControlTab = (id: string) => {
+    if ((id === 'candidate') !== candidateMode) {
+      toggleCandidateMode();
+    }
+  };
+
   return (
     <div className={styles.gamePage}>
       <Timer
@@ -368,88 +381,102 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
           ) : null}
         </div>
         <div className={styles.gameRight}>
-          <ModeSwitcher candidateMode={candidateMode} onToggle={toggleCandidateMode} />
-          <NumberPad
-            symbols={
-              variant.symbolKind === 'letter'
-                ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
-                : model.symbols
-            }
-            usedSymbols={usedSymbols}
-            columns={
-              model.symbols.length === 16
-                ? 4
-                : model.symbols.length === 4
+          <Tabs
+            tabs={controlTabs}
+            activeId={activeControlTab}
+            onSelect={selectControlTab}
+            ariaLabel="Input mode"
+          />
+          <div
+            role="tabpanel"
+            id="control-panel-input"
+            aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
+            className={styles.panel}
+          >
+            <NumberPad
+              symbols={
+                variant.symbolKind === 'letter'
+                  ? [...model.symbols].sort((a, b) =>
+                      renderSymbol(a).localeCompare(renderSymbol(b))
+                    )
+                  : model.symbols
+              }
+              usedSymbols={usedSymbols}
+              columns={
+                model.symbols.length === 16
                   ? 4
-                  : model.symbols.length === 6
-                    ? 3
-                    : undefined
-            }
-            onEnter={(value) => {
-              if (!selectedCellId) {
-                return;
+                  : model.symbols.length === 4
+                    ? 4
+                    : model.symbols.length === 6
+                      ? 3
+                      : undefined
               }
-
-              const isCorrectlyFilled =
-                checkEnabled &&
-                solution.has(selectedCellId) &&
-                state.values.get(selectedCellId) === solution.get(selectedCellId);
-
-              if (isCorrectlyFilled) {
-                return;
-              }
-
-              const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-              const loc = selectedCell
-                ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
-                : null;
-
-              if (value === 0) {
-                dispatch({ type: 'erase', cellId: selectedCellId });
-                if (loc) grid.announce(`${loc}, empty`);
-                return;
-              }
-
-              if (candidateMode) {
-                const current = state.candidates.get(selectedCellId) ?? [];
-                const adding = !current.includes(value);
-                onToggleCandidate(selectedCellId, value);
-                if (loc) {
-                  grid.announce(
-                    `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
-                  );
+              onEnter={(value) => {
+                if (!selectedCellId) {
+                  return;
                 }
-                return;
-              }
 
-              onEnterValue(selectedCellId, value);
-              if (loc) {
-                const nextValues = new Map(state.values);
-                nextValues.set(selectedCellId, value);
-                const isCorrect =
+                const isCorrectlyFilled =
                   checkEnabled &&
                   solution.has(selectedCellId) &&
-                  value === solution.get(selectedCellId);
-                const correctness =
-                  checkEnabled && solution.has(selectedCellId)
-                    ? isCorrect
-                      ? ', correct'
-                      : ', incorrect'
-                    : '';
-                const inConflict =
-                  !isCorrect &&
-                  checkEnabled &&
-                  validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-                grid.announce(
-                  `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-                );
-              }
-            }}
-            candidateMode={candidateMode}
-            renderSymbol={renderSymbol}
-            describeSymbol={describeSymbol}
-            symbolKind={variant.symbolKind}
-          />
+                  state.values.get(selectedCellId) === solution.get(selectedCellId);
+
+                if (isCorrectlyFilled) {
+                  return;
+                }
+
+                const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+                const loc = selectedCell
+                  ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
+                  : null;
+
+                if (value === 0) {
+                  dispatch({ type: 'erase', cellId: selectedCellId });
+                  if (loc) grid.announce(`${loc}, empty`);
+                  return;
+                }
+
+                if (candidateMode) {
+                  const current = state.candidates.get(selectedCellId) ?? [];
+                  const adding = !current.includes(value);
+                  onToggleCandidate(selectedCellId, value);
+                  if (loc) {
+                    grid.announce(
+                      `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
+                    );
+                  }
+                  return;
+                }
+
+                onEnterValue(selectedCellId, value);
+                if (loc) {
+                  const nextValues = new Map(state.values);
+                  nextValues.set(selectedCellId, value);
+                  const isCorrect =
+                    checkEnabled &&
+                    solution.has(selectedCellId) &&
+                    value === solution.get(selectedCellId);
+                  const correctness =
+                    checkEnabled && solution.has(selectedCellId)
+                      ? isCorrect
+                        ? ', correct'
+                        : ', incorrect'
+                      : '';
+                  const inConflict =
+                    !isCorrect &&
+                    checkEnabled &&
+                    validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+                  grid.announce(
+                    `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+                  );
+                }
+              }}
+              candidateMode={candidateMode}
+              renderSymbol={renderSymbol}
+              describeSymbol={describeSymbol}
+              symbolKind={variant.symbolKind}
+            />
+          </div>
           <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
         </div>
       </div>
