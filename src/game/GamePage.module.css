@@ -58,6 +58,10 @@
 .boardFrame {
   display: flex;
   justify-content: center;
+  /* Not stretch: the board wrap's margin-block-end would make a stretched
+     wrap slightly shorter than the frame, turning it into a scrollbox that
+     clips the last row of a board the oversized check says fits. */
+  align-items: flex-start;
   inline-size: 100%;
   /* Preferred height; min-block-size 0 lets it shrink below this when the
      controls row is taller than usual, instead of pushing the page taller
@@ -66,10 +70,11 @@
   min-block-size: 0;
 }
 
-/* Compound selector so the bounded block-size wins over the desktop
-   media rule below regardless of source order: the pan/zoom clip inside is
-   absolutely positioned and sized off this box, so an auto-height frame
-   would collapse to nothing and hide the board. */
+/* The pan/zoom clip inside is absolutely positioned and sized off this box,
+   so the frame must keep a bounded block-size whenever the modifier is on
+   (an auto-height frame would collapse to nothing and hide the board). The
+   modifier only appears below the desktop breakpoint — GamePage gates
+   panZoomActive on !isDesktop. */
 .boardFrame.boardFrameOversized {
   /* Bounded so the controls below stay in view on a phone rather than being
      pushed off-screen; the minimap + pan/zoom reach the rest of the board.
@@ -170,7 +175,7 @@
   gap: 8px;
   flex: 1 1 0;
   min-inline-size: 88px;
-  max-inline-size: 320px;
+  max-inline-size: 200px;
 }
 
 .panel {
@@ -195,6 +200,17 @@
   .actionColumn {
     max-inline-size: 320px;
     margin-inline: auto;
+  }
+
+  /* Tablets have height to spare, so let the frame claim all of it: an
+     over-tall preferred size that the shrink chain (see top of file)
+     collapses to exactly the space the header, timer, and controls leave
+     over. Applied to both frame states — if only one state were tall, a
+     board that fits the tall frame but not the short one would flip the
+     oversized flag back and forth forever. Phones keep the 56vh split. */
+  .boardFrame,
+  .boardFrame.boardFrameOversized {
+    block-size: 100vh;
   }
 }
 
