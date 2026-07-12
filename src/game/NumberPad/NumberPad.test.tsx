@@ -57,7 +57,7 @@ describe('NumberPad', () => {
     expect(onEnter).toHaveBeenCalledWith(0);
   });
 
-  it('should mark buttons for fully-placed symbols as used', () => {
+  it('should mark buttons for fully-placed symbols as disabled but keep them focusable', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
@@ -67,7 +67,127 @@ describe('NumberPad', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: '7' })).toBeDisabled();
+    const usedButton = screen.getByRole('button', { name: '7' });
+    expect(usedButton).toHaveAttribute('aria-disabled', 'true');
+    usedButton.focus();
+    expect(usedButton).toHaveFocus();
+  });
+
+  it('should not call onEnter when a used button is activated', async () => {
+    const user = userEvent.setup();
+    const onEnter = vi.fn();
+
+    render(
+      <NumberPad
+        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        usedSymbols={new Set([7])}
+        onEnter={onEnter}
+        candidateMode={false}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: '7' }));
+
+    expect(onEnter).not.toHaveBeenCalled();
+  });
+
+  it('should expose the pad as a single-tab-stop grid', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <>
+        <NumberPad
+          symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          usedSymbols={new Set()}
+          onEnter={() => {}}
+          candidateMode={false}
+        />
+        <button type="button">After</button>
+      </>
+    );
+
+    expect(screen.getByRole('grid', { name: 'Number pad' })).toBeTruthy();
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: '1' })).toHaveFocus();
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'After' })).toHaveFocus();
+  });
+
+  it('should move focus between buttons with the arrow keys', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <NumberPad
+        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        usedSymbols={new Set()}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    // Default layout: rows of 5, Erase appended to the last row.
+    await user.tab();
+    expect(screen.getByRole('button', { name: '1' })).toHaveFocus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('button', { name: '2' })).toHaveFocus();
+
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('button', { name: '7' })).toHaveFocus();
+
+    await user.keyboard('{End}');
+    expect(screen.getByRole('button', { name: 'Erase' })).toHaveFocus();
+
+    await user.keyboard('{Home}');
+    expect(screen.getByRole('button', { name: '6' })).toHaveFocus();
+
+    await user.keyboard('{ArrowUp}{ArrowLeft}');
+    expect(screen.getByRole('button', { name: '1' })).toHaveFocus();
+  });
+
+  it('should keep focus on the edge button when arrowing past the grid edge', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <NumberPad
+        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        usedSymbols={new Set()}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowLeft}{ArrowUp}');
+    expect(screen.getByRole('button', { name: '1' })).toHaveFocus();
+  });
+
+  it('should return to the last focused button when tabbing back into the pad', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <>
+        <NumberPad
+          symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          usedSymbols={new Set()}
+          onEnter={() => {}}
+          candidateMode={false}
+        />
+        <button type="button">After</button>
+      </>
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowRight}{ArrowRight}');
+    expect(screen.getByRole('button', { name: '3' })).toHaveFocus();
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'After' })).toHaveFocus();
+
+    await user.tab({ shift: true });
+    expect(screen.getByRole('button', { name: '3' })).toHaveFocus();
   });
 
   it('should use descriptive aria-labels for color symbols', () => {

@@ -32,14 +32,20 @@
   justify-content: center;
 }
 
-/* Buttons cap at 44px (WCAG AAA target size) on mobile and flex down when a
+/* Cells cap at 44px (WCAG AAA target size) on mobile and flex down when a
    row doesn't fit the column (narrow viewports); aspect-ratio keeps them
-   square. Desktop reverts to the 52px design size below. */
-.numBtn {
+   square. Desktop reverts to the 52px design size below. The gridcell
+   wrapper owns the flex sizing; the button just fills it. */
+.numCell {
   flex: 1 1 0;
   min-inline-size: 0;
   max-inline-size: var(--numpad-btn-size);
   aspect-ratio: 1;
+}
+
+.numBtn {
+  inline-size: 100%;
+  block-size: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,7 +89,7 @@
   color: var(--accent-red);
 }
 
-.eraseFullWidth {
+.numCell.eraseFullWidth {
   flex-basis: 100%;
   max-inline-size: none;
   aspect-ratio: auto;
@@ -198,7 +204,7 @@
     --numpad-btn-size: 52px;
   }
 
-  .numBtn:not(.eraseFullWidth) {
+  .numCell:not(.eraseFullWidth) {
     flex: 0 0 auto;
     inline-size: var(--numpad-btn-size);
   }
