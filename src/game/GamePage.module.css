@@ -191,6 +191,13 @@
   inline-size: 100%;
 }
 
+@media (min-width: 600px) {
+  .actionColumn {
+    max-inline-size: 320px;
+    margin-inline: auto;
+  }
+}
+
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside
    the Controls tab instead). */
 .newGameBtn {
