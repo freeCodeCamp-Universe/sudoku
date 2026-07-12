@@ -29,7 +29,10 @@ export function NumberPad({
   }
 
   return (
-    <div className={`${styles.numpad}${candidateMode ? ` ${styles.candidate}` : ''}`}>
+    <div
+      className={`${styles.numpad}${candidateMode ? ` ${styles.candidate}` : ''}`}
+      data-cols={columns}
+    >
       {rows.map((row, index) => (
         <div key={index} className={styles.numpadRow}>
           {row.map((symbol) => (

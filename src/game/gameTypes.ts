@@ -70,6 +70,16 @@ export interface GridInteraction {
  */
 export type MarkerEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
+export interface BoardViewportState {
+  transform: { scale: number; translateX: number; translateY: number };
+  // Ease to the transform (programmatic moves) instead of jumping (gestures).
+  animated: boolean;
+  viewportRef: React.RefObject<HTMLDivElement | null>;
+  onPointerDown(e: React.PointerEvent): void;
+  onPointerMove(e: React.PointerEvent): void;
+  onPointerUp(e: React.PointerEvent): void;
+}
+
 export interface BoardProps {
   variant: Variant;
   cells: Cell[];
@@ -82,6 +92,7 @@ export interface BoardProps {
   markerGaps?: Map<CellId, MarkerEdge[]>;
   wordCells?: Set<CellId>;
   parityMap?: Map<CellId, 0 | 1>;
+  viewport?: BoardViewportState;
   checkEnabled?: boolean;
 }
 

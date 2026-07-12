@@ -52,6 +52,18 @@
   margin-block-end: 8px;
 }
 
+/* Stacked variant for the mobile Controls-tab action column: full-width
+   buttons, no trailing margin (the column's own gap handles spacing). */
+.buttonRowVertical {
+  flex-direction: column;
+  margin-block-end: 0;
+}
+
+.buttonRowVertical .revealBtn,
+.buttonRowVertical .toolBtn {
+  inline-size: 100%;
+}
+
 .toolBtn,
 .revealBtn {
   font-size: 0.82rem;
@@ -79,32 +91,6 @@
 
 .toolBtn:focus-visible,
 .revealBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.newBtn {
-  margin-block-start: 24px;
-  align-self: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 10px 28px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.newBtn:hover {
-  opacity: 0.88;
-}
-
-.newBtn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
@@ -190,22 +176,4 @@
 .modalBtn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-}
-
-@media (max-width: 520px) {
-  .buttonRow {
-    gap: 6px;
-    width: 100%;
-  }
-
-  .revealBtn,
-  .toolBtn {
-    flex: 1;
-    box-sizing: border-box;
-  }
-
-  .newBtn {
-    width: 100%;
-    box-sizing: border-box;
-  }
 }

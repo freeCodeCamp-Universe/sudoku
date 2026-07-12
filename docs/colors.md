@@ -82,6 +82,9 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--overlay-chain-10` | #dd88cc | #dd88cc | #c100a5 | #f343d9 |
 | `--overlay-chain-11` | #88ccaa | #88ccaa | #3f7500 | #57a200 |
 | `--overlay-chain-12` | #ffaa66 | #ffaa66 | #d30000 | #ff5252 |
+| `--minimap-cell` | #3b3b4f | #c8c8d8 | #2a2a40 | #c8c8d8 |
+| `--minimap-filled` | #858591 | #626262 | #78788c | #0a0a23 |
+| `--minimap-view` | #99c9ff | #1565c0 | #d8ecff | #1565c0 |
 
 ## Per-variant color markers
 

@@ -64,7 +64,7 @@ The game area builds the model and generates the puzzle once per variant (memoiz
 Cell sizing has exactly two owners, and every pixel number lives in `src/game/layouts/cellSizes.ts`:
 
 - **Base size** (what a variant's cells measure with no viewport pressure) is owned by the layout strategy via `LayoutStrategy.baseCellSize(variant)`, defined once per layout kind.
-- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`, which reads the base from the strategy and scales it by the viewport steps.
+- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`: for non-oversized boards it picks the largest step in `CELL_SIZE_STEPS` (capped at the layout's base) whose canvas plus board frame fits the current viewport bucket's floor (`VIEWPORT_BUCKET_FLOORS`, 320px baseline per WCAG reflow); oversized boards (16×16, multigrids) instead pan at a comfortable size below the desktop cutoff. The frame width depends on the high-contrast setting — the TS constants mirror `--box-boundary-width` in `src/app/layers.css`, and a drift test in `cellSizes.test.ts` keeps them in sync.
 
 Never write a cell-size or sizing-breakpoint literal in a layout strategy or the hook — add or reuse a named constant in `cellSizes.ts`. New layout strategies must implement `baseCellSize` from those constants and honor the optional `cellSizeOverride` in `cellRects` / `canvasSize`.
 

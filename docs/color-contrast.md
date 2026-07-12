@@ -275,6 +275,24 @@ identity) and hue-adjacent colors sit index-distant. State fills (error,
 highlights) are excluded from the line gate, like the chip and inequality
 gates. The gallery's ChainPreview keeps its own decorative pastel set.
 
+## Minimap
+
+`--minimap-cell` / `--minimap-filled` / `--minimap-view` color the pan/zoom board
+overview (Minimap.module.css): the empty-cell texture, the filled-cell marks, and the
+view indicator. Dedicated tokens because the map used to borrow `--border`,
+`--text-muted`, and `--accent-blue`, whose high-contrast values converge on text-role
+grays/near-whites (dark) or near-blacks (light) and erased the map's internal
+separation — the same failure mode as the primary button and inequality markers.
+Filled cells and the view indicator are graphical objects, so the HC palettes gate
+filled-vs-cell, view-vs-cell, and view-vs-filled at 3:1. Dark HC keeps the dark map
+ordering (dark texture `#2a2a40`, mid-gray fill `#78788c`, HC accent-blue view
+`#d8ecff`); light HC inverts it (light texture `#c8c8d8`, page-ink fill `#0a0a23`,
+saturated blue view `#1565c0`) — the view color must sit between the other two, and
+each palette only has a 3:1-wide window for it in one direction. The empty texture
+stays near the map background by design (extent is decorative; the border carries the
+component edge). Standard palettes keep the original subtle values (three advisory
+shortfalls in `ACCEPTED_FAILURES`).
+
 ## Given / revealed cell dots
 
 `--given-dot` / `--revealed-dot` mark clue and revealed cells (Cell.module.css). The

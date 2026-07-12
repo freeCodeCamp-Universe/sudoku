@@ -1,7 +1,7 @@
 /**
  * Single home for the board cell-size numbers. Layout strategies express
  * their `baseCellSize` in terms of these constants, and the responsive
- * policy in `useResponsiveCellSize` shrinks relative to CELL_SIZE_STANDARD.
+ * policy in `useResponsiveCellSize` picks a fitted step from CELL_SIZE_STEPS.
  * Never write a cell-size literal in a layout or the hook.
  */
 
@@ -20,13 +20,39 @@ export const CELL_SIZE_COMPACT = 30;
  */
 export const MULTIGRID_MAX_CANVAS_WIDTH = 400;
 
-/** Viewport widths (px) at which cells shrink below their base size. */
-export const VIEWPORT_SMALL = 520;
-export const VIEWPORT_NARROW = 375;
+/**
+ * Structural line width (px): the board frame border and box boundaries.
+ * Mirrors --box-boundary-width in src/app/layers.css (default and
+ * .high-contrast values); cellSizes.test.ts fails if the two drift apart.
+ */
+export const BOX_BOUNDARY_WIDTH = 3;
+export const BOX_BOUNDARY_WIDTH_HIGH_CONTRAST = 5;
+
+/** Total inline frame around the board canvas (one border per side). */
+export function boardFrameWidth(highContrast: boolean): number {
+  return 2 * (highContrast ? BOX_BOUNDARY_WIDTH_HIGH_CONTRAST : BOX_BOUNDARY_WIDTH);
+}
 
 /**
- * What CELL_SIZE_STANDARD shrinks to at each viewport step. Other base
- * sizes scale by the same ratio (e.g. 44 / 52 of their base).
+ * Cell-size ladder for boards under viewport pressure, largest first.
+ * The responsive policy picks the largest step (capped at the layout's base
+ * size) whose canvas plus frame fits the current viewport bucket's floor, so
+ * a board never overflows any viewport in its bucket down to the 320px
+ * baseline. See docs/superpowers/plans/2026-06-23-mobile-9x9-fit.md.
  */
-export const CELL_SIZE_STANDARD_SMALL = 44;
-export const CELL_SIZE_STANDARD_NARROW = 38;
+export const CELL_SIZE_STEPS = [CELL_SIZE_STANDARD, 44, 38, 34] as const;
+
+/**
+ * Viewport bucket floors (px), largest first: the guaranteed minimum width
+ * per device class (320 baseline, 360 small phones, 414 large phones, 520
+ * phablet and up). Fitted cell sizes are computed against the floor of the
+ * current viewport's bucket, so the size is stable across each bucket
+ * instead of changing on every resize pixel.
+ */
+export const VIEWPORT_BUCKET_FLOORS = [520, 414, 360, 320] as const;
+
+/**
+ * Viewport at/above which oversized boards (16×16, multigrids) render at their
+ * true base size; below it they use the comfortable size for panning.
+ */
+export const VIEWPORT_DESKTOP = 1024;

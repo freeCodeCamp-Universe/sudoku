@@ -4,7 +4,13 @@
   color: var(--text-muted);
   letter-spacing: 2px;
   text-align: center;
-  margin-block-end: 20px;
+  margin-block-end: 10px;
+}
+
+@media (min-width: 600px) {
+  .timer {
+    margin-block-end: 20px;
+  }
 }
 
 .running {
