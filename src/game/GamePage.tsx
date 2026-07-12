@@ -132,7 +132,11 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   const gestures = useBoardGestures(boardViewport);
   // The pan/zoom clip also engages when the user zooms into a board that
   // already fits its frame (scale 1 is natural size for fitting boards).
-  const panZoomActive = oversized || boardViewport.transform.scale > 1;
+  // Never at desktop: boards render at natural size there, and the clip's
+  // percentage-width wrap has no intrinsic width, so mounting it inside the
+  // shrink-to-fit desktop gameLeft column collapses the board to 0px (e.g.
+  // when a mobile zoom level survives a resize across the 1024px breakpoint).
+  const panZoomActive = !isDesktop && (oversized || boardViewport.transform.scale > 1);
 
   const ensureCellVisible = useCallback(
     (id: CellId) => {

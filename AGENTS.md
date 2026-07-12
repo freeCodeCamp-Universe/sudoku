@@ -59,6 +59,8 @@ So **adding a puzzle type** is usually: add a spec under `src/variants/` and reg
 
 The game area builds the model and generates the puzzle once per variant (memoized), exposes board state through a context backed by a reducer, and renders the board to a canvas via the resolved layout strategy and overlays. A grid hook derives per-cell view state and owns keyboard navigation (roving `tabindex`, arrow-key movement); a persistence hook stores settings and progress.
 
+The board pan/zoom viewport (minimap, zoom controls, `boardFrameOversized` clip) is **mobile-only**: at desktop widths (≥ 1024px) boards always render at natural size and a short window scrolls. `GamePage` gates `panZoomActive` on `!isDesktop` — keep it that way. The clip's wrapper is percentage-width with absolutely positioned content, so it has no intrinsic width; if it ever mounts inside the desktop layout's shrink-to-fit board column, the column silently collapses to 0px and the board disappears.
+
 ### Cell sizing
 
 Cell sizing has exactly two owners, and every pixel number lives in `src/game/layouts/cellSizes.ts`:
