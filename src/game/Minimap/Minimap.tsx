@@ -11,11 +11,21 @@ interface MinimapProps {
   filled: Set<CellId>;
   board: Size;
   viewport: Size;
+  /** Offset from the board's origin to the cell canvas: gutters plus frame edge. */
+  origin: { x: number; y: number };
   transform: { scale: number; translateX: number; translateY: number };
   onSeek(point: { x: number; y: number }): void;
 }
 
-export function Minimap({ rects, filled, board, viewport, transform, onSeek }: MinimapProps) {
+export function Minimap({
+  rects,
+  filled,
+  board,
+  viewport,
+  origin,
+  transform,
+  onSeek,
+}: MinimapProps) {
   const scale = MINIMAP_WIDTH / board.w;
   const height = board.h * scale;
   const minimap: Size = { w: MINIMAP_WIDTH, h: height };
@@ -46,8 +56,8 @@ export function Minimap({ rects, filled, board, viewport, transform, onSeek }: M
         <rect
           key={id}
           className={filled.has(id) ? styles.filled : styles.cell}
-          x={r.x * scale}
-          y={r.y * scale}
+          x={(r.x + origin.x) * scale}
+          y={(r.y + origin.y) * scale}
           width={r.w * scale}
           height={r.h * scale}
         />

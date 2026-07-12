@@ -15,6 +15,7 @@ const baseProps = {
   filled: new Set<CellId>(['r0c0' as CellId]),
   board: { w: 840, h: 840 },
   viewport: { w: 360, h: 360 },
+  origin: { x: 0, y: 0 },
   transform: { scale: 1, translateX: 0, translateY: 0 },
 };
 
