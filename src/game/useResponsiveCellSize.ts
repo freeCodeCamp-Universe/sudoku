@@ -5,6 +5,7 @@ import { COMFORTABLE_CELL_SIZE } from './boardViewport';
 import {
   boardFrameWidth,
   CELL_SIZE_STEPS,
+  GUTTER_SIZE,
   VIEWPORT_BUCKET_FLOORS,
   VIEWPORT_DESKTOP,
 } from './layouts/cellSizes';
@@ -42,8 +43,11 @@ export function useResponsiveCellSize(variant: Variant): number {
 
     const floor = bucketFloor(window.innerWidth);
     const frame = boardFrameWidth(highContrast);
+    // Clue-gutter variants render a gutter column (or matching corner) on
+    // both inline sides of the canvas, so the fit must budget for them.
+    const gutterExtent = variant.deriveGutters || layout.gutters ? 2 * GUTTER_SIZE : 0;
     const fitted = CELL_SIZE_STEPS.find(
-      (step) => step <= base && layout.canvasSize(variant, step).w + frame <= floor
+      (step) => step <= base && layout.canvasSize(variant, step).w + frame + gutterExtent <= floor
     );
     return fitted ?? CELL_SIZE_STEPS[CELL_SIZE_STEPS.length - 1];
   }

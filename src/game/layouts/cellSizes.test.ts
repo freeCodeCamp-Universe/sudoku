@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { BOX_BOUNDARY_WIDTH, BOX_BOUNDARY_WIDTH_HIGH_CONTRAST } from './cellSizes';
+import { BOX_BOUNDARY_WIDTH, BOX_BOUNDARY_WIDTH_HIGH_CONTRAST, GUTTER_SIZE } from './cellSizes';
 
 // The responsive cell-size fit math assumes the frame widths declared in
 // layers.css. This drift test keeps the TS constants and the CSS custom
@@ -28,5 +28,17 @@ describe('cellSizes CSS drift', () => {
     expect(boundaryWidthIn(layersCss.slice(highContrastIndex))).toBe(
       BOX_BOUNDARY_WIDTH_HIGH_CONTRAST
     );
+  });
+
+  it('should match the gutter cross size in Board.module.css', () => {
+    const boardCss = readFileSync(
+      resolve(process.cwd(), 'src/game/Board/Board.module.css'),
+      'utf8'
+    );
+    const match = boardCss.match(/\.gutterCorner\s*\{[^}]*width:\s*(\d+)px/);
+    if (!match) {
+      throw new Error('no .gutterCorner width declaration found');
+    }
+    expect(Number(match[1])).toBe(GUTTER_SIZE);
   });
 });

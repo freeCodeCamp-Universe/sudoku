@@ -4,7 +4,13 @@ import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
-import { boardFrameEdge, framedBoardSize, isOversized } from '@/game/boardViewport';
+import {
+  boardFrameEdge,
+  framedBoardSize,
+  gutteredBoardSize,
+  gutterOrigin,
+  isOversized,
+} from '@/game/boardViewport';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
@@ -100,8 +106,18 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     [layoutStrategy, variant, cellSize]
   );
 
+  const gutters = useMemo(
+    () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
+    [layoutStrategy, variant, structure]
+  );
+
   const frameEdge = boardFrameEdge(variant.layout.kind, highContrast);
-  const framedSize = useMemo(() => framedBoardSize(size, frameEdge), [size, frameEdge]);
+  // The full rendered extent the viewport must fit and pan: framed canvas
+  // plus any clue gutters around it.
+  const framedSize = useMemo(
+    () => gutteredBoardSize(framedBoardSize(size, frameEdge), gutters),
+    [size, frameEdge, gutters]
+  );
 
   // Pan/zoom navigation for oversized boards (e.g. samurai, super) on small
   // screens. `viewportRef` measures a stable, always-rendered board frame so
@@ -123,11 +139,17 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
       const rect = rects.get(id);
       if (rect) {
         // Cell rects are in canvas coordinates; the viewport's origin is the
-        // grid's border-box corner, one frame edge before the canvas.
-        boardViewport.ensureVisible({ ...rect, x: rect.x + frameEdge, y: rect.y + frameEdge });
+        // gutter layout's corner (when clue gutters exist), one gutter plus
+        // one frame edge before the canvas.
+        const origin = gutterOrigin(gutters);
+        boardViewport.ensureVisible({
+          ...rect,
+          x: rect.x + origin.x + frameEdge,
+          y: rect.y + origin.y + frameEdge,
+        });
       }
     },
-    [boardViewport, rects, frameEdge]
+    [boardViewport, rects, frameEdge, gutters]
   );
 
   const viewportState: BoardViewportState | undefined = panZoomActive
@@ -141,10 +163,6 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
       }
     : undefined;
 
-  const gutters = useMemo(
-    () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
-    [layoutStrategy, variant, structure]
-  );
   const overlays = useMemo(
     () =>
       resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (

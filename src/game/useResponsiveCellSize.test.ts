@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
 import type { Variant } from '@/engine/types';
 import { COMFORTABLE_CELL_SIZE } from './boardViewport';
-import { boardFrameWidth } from './layouts/cellSizes';
+import { boardFrameWidth, GUTTER_SIZE } from './layouts/cellSizes';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 
 const originalWidth = window.innerWidth;
@@ -91,6 +91,28 @@ describe('useResponsiveCellSize', () => {
 
     it('should keep the 6×6 board at its base size on the smallest viewport', () => {
       expect(cellAt(320, sixBySix)).toBe(52);
+    });
+  });
+
+  describe('clue-gutter boards budget for their gutters', () => {
+    const guttered = {
+      layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
+      deriveGutters: () => undefined,
+    } as unknown as Variant;
+
+    it('should shrink further than the bare classic grid at the same width', () => {
+      expect(cellAt(414, guttered)).toBe(34);
+      expect(cellAt(520, guttered)).toBe(44);
+    });
+
+    it('should keep the guttered board within its bucket floor once a step fits', () => {
+      const cell = cellAt(414, guttered);
+      expect(9 * cell + boardFrameWidth(false) + 2 * GUTTER_SIZE).toBeLessThanOrEqual(414);
+    });
+
+    it('should fall back to the smallest step when no step fits with gutters', () => {
+      expect(cellAt(320, guttered)).toBe(34);
+      expect(cellAt(360, guttered)).toBe(34);
     });
   });
 

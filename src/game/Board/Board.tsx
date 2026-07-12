@@ -73,6 +73,10 @@ export function Board({
   checkEnabled,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
+  // Clue cells in the gutters must track the responsive cell size so each
+  // clue stays centered on its row/column; gutters only exist on uniform
+  // grid layouts, so any rect carries the size.
+  const gutterCellSize = rects.values().next().value?.w;
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
   const colCount = cells.reduce((max, cell) => Math.max(max, cell.col), -1) + 1;
   const multigridLines = buildMultigridLines(variant, rects, size);
@@ -229,7 +233,14 @@ export function Board({
   return (
     <div className={boardWrapClass}>
       {wrap(
-        <div className={styles.gutterLayout}>
+        <div
+          className={styles.gutterLayout}
+          style={
+            gutterCellSize
+              ? ({ '--gutter-cell-size': `${gutterCellSize}px` } as React.CSSProperties)
+              : undefined
+          }
+        >
           {gutters.top ? (
             <div className={styles.gutterRow}>
               <div className={styles.gutterCorner} />

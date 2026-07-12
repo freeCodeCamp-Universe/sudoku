@@ -34,6 +34,14 @@ export function boardFrameWidth(highContrast: boolean): number {
 }
 
 /**
+ * Cross-axis size (px) of a clue gutter (skyscraper/sandwich edge clues):
+ * the width of the start/end gutter columns and corners, and the height of
+ * the top/bottom clue tracks. Mirrors the .gutterCorner width in
+ * src/game/Board/Board.module.css; cellSizes.test.ts fails if they drift.
+ */
+export const GUTTER_SIZE = 40;
+
+/**
  * Cell-size ladder for boards under viewport pressure, largest first.
  * The responsive policy picks the largest step (capped at the layout's base
  * size) whose canvas plus frame fits the current viewport bucket's floor, so
