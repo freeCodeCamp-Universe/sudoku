@@ -59,12 +59,14 @@ So **adding a puzzle type** is usually: add a spec under `src/variants/` and reg
 
 The game area builds the model and generates the puzzle once per variant (memoized), exposes board state through a context backed by a reducer, and renders the board to a canvas via the resolved layout strategy and overlays. A grid hook derives per-cell view state and owns keyboard navigation (roving `tabindex`, arrow-key movement); a persistence hook stores settings and progress.
 
+The board pan/zoom viewport (minimap, zoom controls, `boardFrameOversized` clip) is **mobile-only**: at desktop widths (≥ 1024px) boards always render at natural size and a short window scrolls. `GamePage` gates `panZoomActive` on `!isDesktop` — keep it that way. The clip's wrapper is percentage-width with absolutely positioned content, so it has no intrinsic width; if it ever mounts inside the desktop layout's shrink-to-fit board column, the column silently collapses to 0px and the board disappears.
+
 ### Cell sizing
 
 Cell sizing has exactly two owners, and every pixel number lives in `src/game/layouts/cellSizes.ts`:
 
 - **Base size** (what a variant's cells measure with no viewport pressure) is owned by the layout strategy via `LayoutStrategy.baseCellSize(variant)`, defined once per layout kind.
-- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`, which reads the base from the strategy and scales it by the viewport steps.
+- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`: for non-oversized boards it picks the largest step in `CELL_SIZE_STEPS` (capped at the layout's base) whose canvas plus board frame fits the current viewport bucket's floor (`VIEWPORT_BUCKET_FLOORS`, 320px baseline per WCAG reflow); oversized boards (16×16, multigrids) instead pan at a comfortable size below the desktop cutoff. The frame width depends on the high-contrast setting — the TS constants mirror `--box-boundary-width` in `src/app/layers.css`, and a drift test in `cellSizes.test.ts` keeps them in sync.
 
 Never write a cell-size or sizing-breakpoint literal in a layout strategy or the hook — add or reuse a named constant in `cellSizes.ts`. New layout strategies must implement `baseCellSize` from those constants and honor the optional `cellSizeOverride` in `cellRects` / `canvasSize`.
 

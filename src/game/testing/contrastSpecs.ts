@@ -155,6 +155,13 @@ const ACCEPTED_FAILURES = new Set<string>([
   'light|inequality marker vs base',
   'light|inequality marker vs page bg',
   'light|cage sum on base',
+  // The standard minimap keeps its original subtle palette (filled cells sit
+  // at 2.99:1 on the cell texture in dark, and the blue view indicator rides
+  // close to the filled fills in both); the high-contrast palettes carry
+  // compliant minimap tokens.
+  'dark|minimap filled vs cell',
+  'dark|minimap view vs filled',
+  'light|minimap view vs filled',
 ]);
 
 type PairInput = Omit<ContrastPair, 'gate'>;
@@ -465,6 +472,37 @@ export const contrastPairs: ContrastPair[] = [
       })),
     ])
   ),
+
+  // Minimap (pan/zoom board overview): filled cells are the sole cue for
+  // where the puzzle has content, and the view indicator is the sole cue for
+  // where the viewport sits, so both gate as graphical objects (WCAG 1.4.11)
+  // against every fill they sit beside. Dedicated tokens because the map used
+  // to borrow --border / --text-muted / --accent-blue, whose high-contrast
+  // values converge on text-role grays and erased the map. The standard
+  // palettes predate the gate and keep their advisory shortfalls.
+  ...THEMES.flatMap((theme): PairInput[] => [
+    {
+      label: 'minimap filled vs cell',
+      fg: '--minimap-filled',
+      bg: '--minimap-cell',
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'minimap view vs cell',
+      fg: '--minimap-view',
+      bg: '--minimap-cell',
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'minimap view vs filled',
+      fg: '--minimap-view',
+      bg: '--minimap-filled',
+      threshold: UI_AA,
+      theme,
+    },
+  ]),
 
   // Given/revealed cell dots are the sole cue separating clues and revealed
   // cells from player entries. The standard values are translucent rgba the

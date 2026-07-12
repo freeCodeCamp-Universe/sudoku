@@ -75,6 +75,9 @@
   --overlay-chain-10: #dd88cc;
   --overlay-chain-11: #88ccaa;
   --overlay-chain-12: #ffaa66;
+  --minimap-cell: #3b3b4f;
+  --minimap-filled: #858591;
+  --minimap-view: #99c9ff;
 }
 
 .light {
@@ -120,6 +123,9 @@
   --overlay-jigsaw-stroke: #6060a0;
   --overlay-window-fill: #e8e8fa;
   --overlay-special-fill: #dcc8f4;
+  --minimap-cell: #c8c8d8;
+  --minimap-filled: #626262;
+  --minimap-view: #1565c0;
 }
 
 /* High-contrast palette: an orthogonal modifier on top of either theme.
@@ -220,6 +226,17 @@
   --overlay-chain-10: #c100a5;
   --overlay-chain-11: #3f7500;
   --overlay-chain-12: #d30000;
+  /* Minimap (pan/zoom board overview). Dedicated tokens because the map used
+     to borrow --border / --text-muted / --accent-blue, whose high-contrast
+     values converge on text-role grays and erase the map's internal
+     separation — the same failure mode as the primary button. Filled cells
+     and the view indicator are graphical objects, so filled-vs-cell,
+     view-vs-cell, and view-vs-filled are gated at 3:1 (WCAG 1.4.11); the
+     empty-cell texture stays near the map background by design, as in the
+     standard palettes. */
+  --minimap-cell: #2a2a40;
+  --minimap-filled: #78788c;
+  --minimap-view: #d8ecff;
 }
 
 .light.high-contrast {
@@ -297,6 +314,13 @@
   --overlay-chain-10: #f343d9;
   --overlay-chain-11: #57a200;
   --overlay-chain-12: #ff5252;
+  /* Minimap: the light ordering inverts the dark one — cell texture lightest,
+     view indicator a saturated mid blue, filled cells page-ink dark — so the
+     same three 3:1 gates hold from the opposite direction. The cell and view
+     values match the standard light palette, which already clears its gates. */
+  --minimap-cell: #c8c8d8;
+  --minimap-filled: #0a0a23;
+  --minimap-view: #1565c0;
 }
 
 * {
@@ -307,10 +331,15 @@ html {
   font-size: 18px;
 }
 
+/* A definite viewport-height body (not min-height) so the game page's flex
+   chain can shrink the board frame when tall controls need the space; pages
+   taller than the viewport scroll inside the body instead of growing it. */
 body {
   margin: 0;
-  min-height: 100vh;
+  block-size: 100vh;
+  block-size: 100dvh;
   overflow-x: hidden;
+  overflow-y: auto;
   font-family:
     Lato,
     -apple-system,
@@ -322,7 +351,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 24px 60px;
+  padding: 16px;
+}
+
+@media (min-width: 1024px) {
+  body {
+    padding: 32px 24px 60px;
+  }
 }
 
 a,
@@ -333,7 +368,12 @@ select {
   font: inherit;
 }
 
+/* Part of the viewport-height flex chain: min-block-size 0 lets the game
+   page shrink its board frame instead of overflowing the bounded body. */
 #root {
   width: 100%;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
 }

@@ -1,15 +1,31 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
+import { useTheme } from '@/app/ThemeProvider';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
+import {
+  boardFrameEdge,
+  framedBoardSize,
+  gutteredBoardSize,
+  gutterOrigin,
+  isOversized,
+} from '@/game/boardViewport';
+import type { BoardViewportState } from '@/game/gameTypes';
+import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
+import { BoardZoomControls } from '@/game/BoardZoomControls';
+import { useBoardGestures } from '@/game/useBoardGestures';
+import { useBoardViewport } from '@/game/useBoardViewport';
+import { useElementSize } from '@/game/useElementSize';
+import { useMediaQuery } from '@/game/useMediaQuery';
 import { getVariant } from '@/variants/registry';
 import { isJigsawStructure, PRESET_LAYOUTS } from '@/variants/jigsaw';
 import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
+import { Tabs, type Tab } from './Tabs';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
@@ -19,7 +35,6 @@ import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog/KeyboardShort
 import { GameProvider } from './GameProvider';
 import { resolveLayout } from './layouts/registry';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
-import { Tabs, type Tab } from './Tabs';
 import { NumberPad } from './NumberPad';
 import { resolveOverlays } from './overlays/registry';
 import { Timer } from './Timer';
@@ -46,10 +61,18 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
+  const [controlsOpen, setControlsOpen] = useState(false);
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const [verifyMode, setVerifyMode] = useState(false);
   const [isVisible, setIsVisible] = useState(!document.hidden);
+  // At desktop width and up (aligned with VIEWPORT_DESKTOP in cellSizes.ts)
+  // the board sits beside the controls, so the compact minimap + zoom +
+  // Controls-tab layout gives way to the original desktop layout: plain
+  // Normal/Candidate tabs, a horizontal toolbar, and a standalone New Game
+  // button, with no minimap.
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const { highContrast } = useTheme();
 
   useEffect(() => {
     setVerifyMode(false);
@@ -82,10 +105,68 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     () => layoutStrategy.canvasSize(variant, cellSize),
     [layoutStrategy, variant, cellSize]
   );
+
   const gutters = useMemo(
     () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
     [layoutStrategy, variant, structure]
   );
+
+  const frameEdge = boardFrameEdge(variant.layout.kind, highContrast);
+  // The full rendered extent the viewport must fit and pan: framed canvas
+  // plus any clue gutters around it.
+  const framedSize = useMemo(
+    () => gutteredBoardSize(framedBoardSize(size, frameEdge), gutters),
+    [size, frameEdge, gutters]
+  );
+
+  // Pan/zoom navigation for oversized boards (e.g. samurai, super) on small
+  // screens. `viewportRef` measures a stable, always-rendered board frame so
+  // measurement never deadlocks; `clipRef` belongs to the conditional
+  // BoardViewport clip. Gestures read `e.currentTarget`, so the separate clip
+  // ref is fine.
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const viewportSize = useElementSize(viewportRef);
+  const oversized = isOversized(framedSize, viewportSize) && viewportSize.w > 0;
+  const boardViewport = useBoardViewport(framedSize, viewportSize);
+  const gestures = useBoardGestures(boardViewport);
+  // The pan/zoom clip also engages when the user zooms into a board that
+  // already fits its frame (scale 1 is natural size for fitting boards).
+  // Never at desktop: boards render at natural size there, and the clip's
+  // percentage-width wrap has no intrinsic width, so mounting it inside the
+  // shrink-to-fit desktop gameLeft column collapses the board to 0px (e.g.
+  // when a mobile zoom level survives a resize across the 1024px breakpoint).
+  const panZoomActive = !isDesktop && (oversized || boardViewport.transform.scale > 1);
+
+  const ensureCellVisible = useCallback(
+    (id: CellId) => {
+      const rect = rects.get(id);
+      if (rect) {
+        // Cell rects are in canvas coordinates; the viewport's origin is the
+        // gutter layout's corner (when clue gutters exist), one gutter plus
+        // one frame edge before the canvas.
+        const origin = gutterOrigin(gutters);
+        boardViewport.ensureVisible({
+          ...rect,
+          x: rect.x + origin.x + frameEdge,
+          y: rect.y + origin.y + frameEdge,
+        });
+      }
+    },
+    [boardViewport, rects, frameEdge, gutters]
+  );
+
+  const viewportState: BoardViewportState | undefined = panZoomActive
+    ? {
+        transform: boardViewport.transform,
+        animated: boardViewport.animated,
+        viewportRef: clipRef,
+        onPointerDown: gestures.onPointerDown,
+        onPointerMove: gestures.onPointerMove,
+        onPointerUp: gestures.onPointerUp,
+      }
+    : undefined;
+
   const overlays = useMemo(
     () =>
       resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (
@@ -118,6 +199,11 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   }, [variant, renderSymbol]);
   const markerGaps = useMemo(() => buildMarkerGaps(structure), [structure]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
+  const filled = useMemo(() => {
+    const set = new Set<CellId>(givensSet);
+    for (const id of state.values.keys()) set.add(id);
+    return set;
+  }, [givensSet, state.values]);
 
   const onEnterValue = useCallback(
     (cellId: CellId, value: SymbolValue | 0) => {
@@ -149,6 +235,7 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     annotators,
     renderSymbol,
     describeSymbol,
+    onCellNavigate: panZoomActive ? ensureCellVisible : undefined,
   });
 
   useEffect(() => {
@@ -258,18 +345,146 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
+  const zoomControls = (
+    <BoardZoomControls
+      viewport={boardViewport}
+      viewportSize={viewportSize}
+      selectedCellId={selectedCellId}
+      rects={rects}
+      frameEdge={frameEdge}
+    />
+  );
+
+  const minimap = (
+    <div className={styles.navDock}>
+      <Minimap
+        rects={rects}
+        filled={filled}
+        board={framedSize}
+        viewport={viewportSize}
+        // Without the clip the board renders untransformed, so the indicator
+        // must reflect identity even if the viewport state has drifted.
+        transform={
+          panZoomActive ? boardViewport.transform : { scale: 1, translateX: 0, translateY: 0 }
+        }
+        onSeek={(point) =>
+          boardViewport.panToMinimapPoint(point, { w: 120, h: (framedSize.h / framedSize.w) * 120 })
+        }
+      />
+    </div>
+  );
+
+  const handleNumberEntry = (value: SymbolValue | 0) => {
+    if (!selectedCellId) {
+      return;
+    }
+
+    const isCorrectlyFilled =
+      checkEnabled &&
+      solution.has(selectedCellId) &&
+      state.values.get(selectedCellId) === solution.get(selectedCellId);
+
+    if (isCorrectlyFilled) {
+      return;
+    }
+
+    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
+    const loc = selectedCell ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}` : null;
+
+    if (value === 0) {
+      dispatch({ type: 'erase', cellId: selectedCellId });
+      if (loc) grid.announce(`${loc}, empty`);
+      return;
+    }
+
+    if (candidateMode) {
+      const current = state.candidates.get(selectedCellId) ?? [];
+      const adding = !current.includes(value);
+      onToggleCandidate(selectedCellId, value);
+      if (loc) {
+        grid.announce(`${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`);
+      }
+      return;
+    }
+
+    onEnterValue(selectedCellId, value);
+    if (loc) {
+      const nextValues = new Map(state.values);
+      nextValues.set(selectedCellId, value);
+      const isCorrect =
+        checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
+      const correctness =
+        checkEnabled && solution.has(selectedCellId)
+          ? isCorrect
+            ? ', correct'
+            : ', incorrect'
+          : '';
+      const inConflict =
+        !isCorrect &&
+        checkEnabled &&
+        validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+      grid.announce(
+        `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
+      );
+    }
+  };
+
+  const numberPad = (
+    <NumberPad
+      symbols={
+        variant.symbolKind === 'letter'
+          ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
+          : model.symbols
+      }
+      usedSymbols={usedSymbols}
+      columns={
+        model.symbols.length === 16
+          ? 4
+          : model.symbols.length === 4
+            ? 4
+            : model.symbols.length === 6
+              ? 3
+              : undefined
+      }
+      onEnter={handleNumberEntry}
+      candidateMode={candidateMode}
+      renderSymbol={renderSymbol}
+      describeSymbol={describeSymbol}
+      symbolKind={variant.symbolKind}
+    />
+  );
+
   // Normal and Candidate share the input panel (the number pad) and differ only
-  // in pen vs. pencil.
+  // in pen vs. pencil. Below tablet width a Controls tab is appended to swap in
+  // the reveal/clear/new-game actions; at desktop width those actions live in a
+  // standalone toolbar + New Game button instead, so the tab is dropped.
   const controlTabs: Tab[] = [
     { id: 'normal', label: 'Normal', panelId: 'control-panel-input' },
     { id: 'candidate', label: 'Candidate', panelId: 'control-panel-input' },
+    ...(isDesktop
+      ? []
+      : [{ id: 'controls', label: 'Controls', panelId: 'control-panel-controls' }]),
   ];
-  const activeControlTab = candidateMode ? 'candidate' : 'normal';
+  const activeControlTab =
+    !isDesktop && controlsOpen ? 'controls' : candidateMode ? 'candidate' : 'normal';
   const selectControlTab = (id: string) => {
+    if (id === 'controls') {
+      setControlsOpen(true);
+      return;
+    }
+    setControlsOpen(false);
     if ((id === 'candidate') !== candidateMode) {
       toggleCandidateMode();
     }
   };
+  const controlsPanel = (
+    <div className={styles.actionColumn}>
+      <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+      <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
+        New Game
+      </button>
+    </div>
+  );
 
   return (
     <div className={styles.gamePage}>
@@ -281,20 +496,30 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
       />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
-          <Board
-            variant={variant}
-            cells={model.cells}
-            rects={rects}
-            size={size}
-            gutters={gutters}
-            overlays={overlays}
-            grid={grid}
-            renderSymbol={renderSymbol}
-            markerGaps={markerGaps}
-            wordCells={wordCellIds}
-            parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
-            checkEnabled={checkEnabled}
-          />
+          <div
+            ref={viewportRef}
+            className={
+              panZoomActive
+                ? `${styles.boardFrame} ${styles.boardFrameOversized}`
+                : styles.boardFrame
+            }
+          >
+            <Board
+              variant={variant}
+              cells={model.cells}
+              rects={rects}
+              size={size}
+              gutters={gutters}
+              overlays={overlays}
+              grid={grid}
+              renderSymbol={renderSymbol}
+              markerGaps={markerGaps}
+              wordCells={wordCellIds}
+              parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+              viewport={viewportState}
+              checkEnabled={checkEnabled}
+            />
+          </div>
           {variant.id === 'wordoku' ? (
             <div className={styles.variantLegend} aria-label="Wordoku rule legend">
               <span>There is a hidden word somewhere. Try to find it!</span>
@@ -381,105 +606,65 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
           ) : null}
         </div>
         <div className={styles.gameRight}>
-          <Tabs
-            tabs={controlTabs}
-            activeId={activeControlTab}
-            onSelect={selectControlTab}
-            ariaLabel="Input mode"
-          />
-          <div
-            role="tabpanel"
-            id="control-panel-input"
-            aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-            className={styles.panel}
-          >
-            <NumberPad
-              symbols={
-                variant.symbolKind === 'letter'
-                  ? [...model.symbols].sort((a, b) =>
-                      renderSymbol(a).localeCompare(renderSymbol(b))
-                    )
-                  : model.symbols
-              }
-              usedSymbols={usedSymbols}
-              columns={
-                model.symbols.length === 16
-                  ? 4
-                  : model.symbols.length === 4
-                    ? 4
-                    : model.symbols.length === 6
-                      ? 3
-                      : undefined
-              }
-              onEnter={(value) => {
-                if (!selectedCellId) {
-                  return;
-                }
-
-                const isCorrectlyFilled =
-                  checkEnabled &&
-                  solution.has(selectedCellId) &&
-                  state.values.get(selectedCellId) === solution.get(selectedCellId);
-
-                if (isCorrectlyFilled) {
-                  return;
-                }
-
-                const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-                const loc = selectedCell
-                  ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}`
-                  : null;
-
-                if (value === 0) {
-                  dispatch({ type: 'erase', cellId: selectedCellId });
-                  if (loc) grid.announce(`${loc}, empty`);
-                  return;
-                }
-
-                if (candidateMode) {
-                  const current = state.candidates.get(selectedCellId) ?? [];
-                  const adding = !current.includes(value);
-                  onToggleCandidate(selectedCellId, value);
-                  if (loc) {
-                    grid.announce(
-                      `${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`
-                    );
-                  }
-                  return;
-                }
-
-                onEnterValue(selectedCellId, value);
-                if (loc) {
-                  const nextValues = new Map(state.values);
-                  nextValues.set(selectedCellId, value);
-                  const isCorrect =
-                    checkEnabled &&
-                    solution.has(selectedCellId) &&
-                    value === solution.get(selectedCellId);
-                  const correctness =
-                    checkEnabled && solution.has(selectedCellId)
-                      ? isCorrect
-                        ? ', correct'
-                        : ', incorrect'
-                      : '';
-                  const inConflict =
-                    !isCorrect &&
-                    checkEnabled &&
-                    validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-                  grid.announce(
-                    `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-                  );
-                }
-              }}
-              candidateMode={candidateMode}
-              renderSymbol={renderSymbol}
-              describeSymbol={describeSymbol}
-              symbolKind={variant.symbolKind}
-            />
-          </div>
-          <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+          {isDesktop ? (
+            <>
+              <Tabs
+                tabs={controlTabs}
+                activeId={activeControlTab}
+                onSelect={selectControlTab}
+                ariaLabel="Input mode"
+              />
+              <div
+                role="tabpanel"
+                id="control-panel-input"
+                aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
+                className={styles.panel}
+              >
+                {numberPad}
+              </div>
+              <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+            </>
+          ) : (
+            <div className={styles.controlsRow}>
+              <div className={styles.controlsMain}>
+                <Tabs
+                  tabs={controlTabs}
+                  activeId={activeControlTab}
+                  onSelect={selectControlTab}
+                  ariaLabel="Input mode and controls"
+                />
+                <div
+                  role="tabpanel"
+                  id="control-panel-input"
+                  aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
+                  className={styles.panel}
+                  hidden={controlsOpen}
+                >
+                  {numberPad}
+                </div>
+                <div
+                  role="tabpanel"
+                  id="control-panel-controls"
+                  aria-labelledby="controls-tab"
+                  className={styles.panel}
+                  hidden={!controlsOpen}
+                >
+                  {controlsPanel}
+                </div>
+              </div>
+              <div className={styles.mapGroup}>
+                {minimap}
+                {zoomControls}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+      {isDesktop ? (
+        <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
+          New Game
+        </button>
+      ) : null}
       {showCheckPrompt ? (
         <div className={styles.checkPrompt}>
           Looks like you&apos;re done!
@@ -495,9 +680,6 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
           </button>
         </div>
       ) : null}
-      <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
-        New Game
-      </button>
       {winOpen ? (
         <div
           role="dialog"

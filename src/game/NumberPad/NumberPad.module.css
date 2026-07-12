@@ -1,19 +1,45 @@
 .numpad {
+  --numpad-gap: 6px;
+  --numpad-btn-size: 44px;
+
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-block-end: 24px;
+  gap: var(--numpad-gap);
+  inline-size: 100%;
+}
+
+/* When the pad has a fixed column count (which is also when the full-width
+   Erase row renders), cap the pad at the rows' natural width so Erase spans
+   exactly as far as the button rows. */
+.numpad[data-cols='3'] {
+  --numpad-cols: 3;
+}
+
+.numpad[data-cols='4'] {
+  --numpad-cols: 4;
+}
+
+.numpad[data-cols] {
+  max-inline-size: calc(
+    var(--numpad-cols) * var(--numpad-btn-size) + (var(--numpad-cols) - 1) * var(--numpad-gap)
+  );
+  margin-inline: auto;
 }
 
 .numpadRow {
   display: flex;
-  gap: 8px;
+  gap: var(--numpad-gap);
   justify-content: center;
 }
 
+/* Buttons cap at 44px (WCAG AAA target size) on mobile and flex down when a
+   row doesn't fit the column (narrow viewports); aspect-ratio keeps them
+   square. Desktop reverts to the 52px design size below. */
 .numBtn {
-  width: 52px;
-  height: 52px;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  max-inline-size: var(--numpad-btn-size);
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,7 +48,7 @@
   border-block-end: 3px solid transparent;
   border-radius: 2px;
   color: var(--text-primary);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
   transition:
@@ -47,7 +73,7 @@
 }
 
 .erase {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 400;
   color: var(--text-muted);
 }
@@ -58,7 +84,10 @@
 }
 
 .eraseFullWidth {
-  width: 100%;
+  flex-basis: 100%;
+  max-inline-size: none;
+  aspect-ratio: auto;
+  block-size: 44px;
 }
 
 .candidate .numBtn:not(.erase) {
@@ -145,23 +174,32 @@
   text-shadow: none;
 }
 
-@media (max-width: 520px) {
+@media (min-width: 600px) {
+  .numpad {
+    --numpad-gap: 8px;
+  }
+
   .numBtn {
-    width: 44px;
-    height: 44px;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 
   .numBtn.erase {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
+}
 
-  .numpadRow {
-    gap: 5px;
-  }
-
+/* At desktop width the board sits beside a shrink-to-fit controls column
+   that the numpad must size, so the buttons revert to their fixed 52px
+   design size. It must be a specified inline-size, not a flex-basis:
+   browsers ignore flex-basis when computing the intrinsic width that sizes
+   that column. */
+@media (min-width: 1024px) {
   .numpad {
-    gap: 5px;
-    margin-block-end: 16px;
+    --numpad-btn-size: 52px;
+  }
+
+  .numBtn:not(.eraseFullWidth) {
+    flex: 0 0 auto;
+    inline-size: var(--numpad-btn-size);
   }
 }

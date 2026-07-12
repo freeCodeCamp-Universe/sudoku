@@ -4,14 +4,15 @@ import styles from './Toolbar.module.css';
 interface ToolbarProps {
   onClearAll: () => void;
   onReveal: () => void;
+  vertical?: boolean;
 }
 
-export function Toolbar({ onClearAll, onReveal }: ToolbarProps) {
+export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps) {
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
   return (
     <>
-      <div className={styles.buttonRow}>
+      <div className={`${styles.buttonRow}${vertical ? ` ${styles.buttonRowVertical}` : ''}`}>
         <button type="button" className={styles.revealBtn} onClick={onReveal}>
           Reveal Cell
         </button>

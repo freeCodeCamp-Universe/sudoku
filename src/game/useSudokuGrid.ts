@@ -12,6 +12,7 @@ interface UseSudokuGridOptions {
   givens: Set<CellId>;
   revealed?: Set<CellId>;
   solution?: Values;
+  onCellNavigate?: (id: CellId) => void;
   onEnterValue: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate: (id: CellId, value: SymbolValue) => void;
   checkEnabled?: boolean;
@@ -78,6 +79,7 @@ export function useSudokuGrid({
   givens,
   revealed = new Set(),
   solution = new Map(),
+  onCellNavigate,
   onEnterValue,
   onToggleCandidate,
   checkEnabled = false,
@@ -268,7 +270,8 @@ export function useSudokuGrid({
         selectCell(nextId);
         const grid = event.currentTarget.closest?.('[role="grid"]');
         const target = grid?.querySelector<HTMLElement>(`[data-cell="${nextId}"]`);
-        target?.focus();
+        target?.focus({ preventScroll: true });
+        onCellNavigate?.(nextId);
         return;
       }
 
@@ -350,6 +353,7 @@ export function useSudokuGrid({
       describeSymbol,
       givens,
       model,
+      onCellNavigate,
       onEnterValue,
       onToggleCandidate,
       renderSymbol,

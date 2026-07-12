@@ -1,7 +1,9 @@
-import type { GutterCell, GutterSlots, Rect } from '@/game/gameTypes';
+import type React from 'react';
+import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { Cell } from '@/game/Cell';
 import { LiveRegion } from '@/game/LiveRegion';
 import type { BoardProps } from '@/game/gameTypes';
+import { BoardViewport } from './BoardViewport';
 import { ANTI_DIAGONAL_CELLS, MAIN_DIAGONAL_CELLS } from '@/variants/sudoku-x';
 import { WINDOKU_WINDOWS } from '@/variants/windoku';
 import { ASTERISK_CELLS } from '@/variants/asterisk';
@@ -9,6 +11,7 @@ import { CENTER_DOT_CELLS } from '@/variants/centerDot';
 import { GIRANDOLA_CELLS } from '@/variants/girandola';
 import { ARGYLE_D1_OFFSETS, ARGYLE_D2_SUMS } from '@/variants/argyle';
 import { isBoxBoundary } from './boxBoundary';
+import { buildMultigridLines } from './multigridLines';
 
 const argyleD1Set = new Set(
   ARGYLE_D1_OFFSETS.flatMap((offset) =>
@@ -54,118 +57,6 @@ function buildGutterAriaLabel(side: keyof GutterSlots, cell: GutterCell): string
   }
 }
 
-function mergeRanges(
-  ranges: Array<{ start: number; end: number }>
-): Array<{ start: number; end: number }> {
-  const sorted = [...ranges].sort((left, right) => left.start - right.start);
-  const merged: Array<{ start: number; end: number }> = [];
-
-  for (const range of sorted) {
-    const previous = merged[merged.length - 1];
-
-    if (!previous || range.start > previous.end) {
-      merged.push({ ...range });
-      continue;
-    }
-
-    previous.end = Math.max(previous.end, range.end);
-  }
-
-  return merged;
-}
-
-function buildMultigridLines(
-  variant: BoardProps['variant'],
-  rects: BoardProps['rects']
-): Array<Rect & { id: string }> {
-  if (variant.layout.kind !== 'multigrid') {
-    return [];
-  }
-
-  const { subGrids, subGridSize, box } = variant.layout;
-  /* The strips' cross dimension is set in CSS (--box-boundary-width, so high
-     contrast can widen it); stroke only fills the Rect shape here. */
-  const stroke = 3;
-  const offset = 1;
-  const horizontal = new Map<number, Array<{ start: number; end: number }>>();
-  const vertical = new Map<number, Array<{ start: number; end: number }>>();
-
-  function pushHorizontal(y: number, start: number, end: number) {
-    const segments = horizontal.get(y) ?? [];
-    segments.push({ start, end });
-    horizontal.set(y, segments);
-  }
-
-  function pushVertical(x: number, start: number, end: number) {
-    const segments = vertical.get(x) ?? [];
-    segments.push({ start, end });
-    vertical.set(x, segments);
-  }
-
-  for (const { originRow, originCol } of subGrids) {
-    const topLeft = rects.get(`r${originRow}c${originCol}`);
-    const bottomRight = rects.get(`r${originRow + subGridSize - 1}c${originCol + subGridSize - 1}`);
-
-    if (!topLeft || !bottomRight) {
-      continue;
-    }
-
-    const xStart = topLeft.x - offset;
-    const xEnd = bottomRight.x + bottomRight.w + offset;
-    const yStart = topLeft.y - offset;
-    const yEnd = bottomRight.y + bottomRight.h + offset;
-
-    pushHorizontal(yStart, xStart, xEnd);
-    pushHorizontal(bottomRight.y + bottomRight.h - offset, xStart, xEnd);
-    pushVertical(xStart, yStart, yEnd);
-    pushVertical(bottomRight.x + bottomRight.w - offset, yStart, yEnd);
-
-    for (let localRow = box.rows - 1; localRow < subGridSize - 1; localRow += box.rows) {
-      const boundaryCell = rects.get(`r${originRow + localRow}c${originCol}`);
-
-      if (boundaryCell) {
-        pushHorizontal(boundaryCell.y + boundaryCell.h - offset, xStart, xEnd);
-      }
-    }
-
-    for (let localCol = box.cols - 1; localCol < subGridSize - 1; localCol += box.cols) {
-      const boundaryCell = rects.get(`r${originRow}c${originCol + localCol}`);
-
-      if (boundaryCell) {
-        pushVertical(boundaryCell.x + boundaryCell.w - offset, yStart, yEnd);
-      }
-    }
-  }
-
-  const edges: Array<Rect & { id: string }> = [];
-
-  for (const [y, ranges] of horizontal.entries()) {
-    for (const [index, range] of mergeRanges(ranges).entries()) {
-      edges.push({
-        id: `h-${y}-${index}`,
-        x: range.start,
-        y,
-        w: range.end - range.start,
-        h: stroke,
-      });
-    }
-  }
-
-  for (const [x, ranges] of vertical.entries()) {
-    for (const [index, range] of mergeRanges(ranges).entries()) {
-      edges.push({
-        id: `v-${x}-${index}`,
-        x,
-        y: range.start,
-        w: stroke,
-        h: range.end - range.start,
-      });
-    }
-  }
-
-  return edges;
-}
-
 export function Board({
   variant,
   cells,
@@ -178,12 +69,17 @@ export function Board({
   markerGaps,
   wordCells,
   parityMap,
+  viewport,
   checkEnabled,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
+  // Clue cells in the gutters must track the responsive cell size so each
+  // clue stays centered on its row/column; gutters only exist on uniform
+  // grid layouts, so any rect carries the size.
+  const gutterCellSize = rects.values().next().value?.w;
   const rowCount = cells.reduce((max, cell) => Math.max(max, cell.row), -1) + 1;
   const colCount = cells.reduce((max, cell) => Math.max(max, cell.col), -1) + 1;
-  const multigridLines = buildMultigridLines(variant, rects);
+  const multigridLines = buildMultigridLines(variant, rects, size);
   const rowGroups = new Map<number, typeof cells>();
 
   for (const cell of cells) {
@@ -296,8 +192,16 @@ export function Board({
             className={styles.samuraiEdge}
             style={
               horizontal
-                ? { insetInlineStart: line.x, insetBlockStart: line.y, width: line.w }
-                : { insetInlineStart: line.x, insetBlockStart: line.y, height: line.h }
+                ? {
+                    insetInlineStart: line.x,
+                    width: line.w,
+                    ...(line.anchorEnd ? { insetBlockEnd: 0 } : { insetBlockStart: line.y }),
+                  }
+                : {
+                    insetBlockStart: line.y,
+                    height: line.h,
+                    ...(line.anchorEnd ? { insetInlineEnd: 0 } : { insetInlineStart: line.x }),
+                  }
             }
           />
         );
@@ -306,86 +210,106 @@ export function Board({
     </div>
   );
 
+  function wrap(node: React.ReactNode) {
+    return viewport ? <BoardViewport viewport={viewport}>{node}</BoardViewport> : node;
+  }
+
+  // When the board is wrapped in a clipping viewport, the wrapper must fill the
+  // sized frame so the clip's percentage dimensions resolve against it; the
+  // default `width: max-content` collapses around the absolutely-positioned clip.
+  const boardWrapClass = viewport
+    ? `${styles.boardWrap} ${styles.boardWrapViewport}`
+    : styles.boardWrap;
+
   if (!hasGutters || !gutters) {
     return (
-      <div className={styles.boardWrap}>
-        {gridCanvas}
+      <div className={boardWrapClass}>
+        {wrap(gridCanvas)}
         <LiveRegion ref={grid.announcerRef} />
       </div>
     );
   }
 
   return (
-    <div className={styles.boardWrap}>
-      <div className={styles.gutterLayout}>
-        {gutters.top ? (
+    <div className={boardWrapClass}>
+      {wrap(
+        <div
+          className={styles.gutterLayout}
+          style={
+            gutterCellSize
+              ? ({ '--gutter-cell-size': `${gutterCellSize}px` } as React.CSSProperties)
+              : undefined
+          }
+        >
+          {gutters.top ? (
+            <div className={styles.gutterRow}>
+              <div className={styles.gutterCorner} />
+              <div data-gutter="top" className={styles.gutterTrack}>
+                {gutters.top.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('top', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.gutterCorner} />
+            </div>
+          ) : null}
           <div className={styles.gutterRow}>
-            <div className={styles.gutterCorner} />
-            <div data-gutter="top" className={styles.gutterTrack}>
-              {gutters.top.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('top', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-            <div className={styles.gutterCorner} />
+            {gutters.start ? (
+              <div data-gutter="start" className={styles.gutterCol}>
+                {gutters.start.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('start', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.gutterCorner} />
+            )}
+            {gridCanvas}
+            {gutters.end ? (
+              <div data-gutter="end" className={styles.gutterCol}>
+                {gutters.end.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('end', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.gutterCorner} />
+            )}
           </div>
-        ) : null}
-        <div className={styles.gutterRow}>
-          {gutters.start ? (
-            <div data-gutter="start" className={styles.gutterCol}>
-              {gutters.start.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('start', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
+          {gutters.bottom ? (
+            <div className={styles.gutterRow}>
+              <div className={styles.gutterCorner} />
+              <div data-gutter="bottom" className={styles.gutterTrack}>
+                {gutters.bottom.map((cell) => (
+                  <div
+                    key={cell.id}
+                    className={styles.gutterCell}
+                    aria-label={buildGutterAriaLabel('bottom', cell)}
+                  >
+                    {cell.label}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.gutterCorner} />
             </div>
-          ) : (
-            <div className={styles.gutterCorner} />
-          )}
-          {gridCanvas}
-          {gutters.end ? (
-            <div data-gutter="end" className={styles.gutterCol}>
-              {gutters.end.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('end', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className={styles.gutterCorner} />
-          )}
+          ) : null}
         </div>
-        {gutters.bottom ? (
-          <div className={styles.gutterRow}>
-            <div className={styles.gutterCorner} />
-            <div data-gutter="bottom" className={styles.gutterTrack}>
-              {gutters.bottom.map((cell) => (
-                <div
-                  key={cell.id}
-                  className={styles.gutterCell}
-                  aria-label={buildGutterAriaLabel('bottom', cell)}
-                >
-                  {cell.label}
-                </div>
-              ))}
-            </div>
-            <div className={styles.gutterCorner} />
-          </div>
-        ) : null}
-      </div>
+      )}
       <LiveRegion ref={grid.announcerRef} />
     </div>
   );

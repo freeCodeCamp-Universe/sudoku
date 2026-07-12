@@ -70,6 +70,17 @@
   }
 }
 
+/* Compound selector so this wins over the max-width:1280px rule above
+   regardless of source order. Fills the sized board frame; the inner
+   clipping viewport handles overflow, so this must not scroll. */
+.boardWrap.boardWrapViewport {
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  margin-block-end: 0;
+  overflow: hidden;
+}
+
 .gutterLayout {
   display: flex;
   flex-direction: column;
@@ -88,14 +99,15 @@
 
 .gutterTrack {
   display: flex;
-  padding-inline: 3px;
+  /* Match the grid's frame border so clue cells line up with canvas cells. */
+  padding-inline: var(--box-boundary-width, 3px);
 }
 
 .gutterCol {
   display: flex;
   flex-direction: column;
   width: 40px;
-  padding-block: 3px;
+  padding-block: var(--box-boundary-width, 3px);
   flex-shrink: 0;
 }
 
@@ -108,14 +120,16 @@
   color: var(--board-clue-text);
 }
 
+/* The along-axis size tracks the responsive cell size (set by Board on the
+   gutter layout) so each clue stays centered on its row/column. */
 .gutterTrack .gutterCell {
-  width: 52px;
+  width: var(--gutter-cell-size, 52px);
   height: 40px;
 }
 
 .gutterCol .gutterCell {
   width: 40px;
-  height: 52px;
+  height: var(--gutter-cell-size, 52px);
 }
 
 @media (min-width: 768px) {

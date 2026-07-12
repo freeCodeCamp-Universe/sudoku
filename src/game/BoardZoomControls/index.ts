@@ -1,0 +1,1 @@
+export { BoardZoomControls } from './BoardZoomControls';

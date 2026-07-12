@@ -27,6 +27,33 @@ if (typeof localStorage === 'undefined' || localStorage === null) {
   });
 }
 
+// jsdom has no `matchMedia`. Derive `matches` from `window.innerWidth` so tests
+// can drive responsive breakpoints by setting `window.innerWidth` before render.
+// Only `(min-width: Npx)` / `(max-width: Npx)` queries are supported; anything
+// else reports no match so an unsupported query fails loudly in tests. The shim
+// never fires `change` events, so width changes after render are not observed.
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
+  window.matchMedia = (query: string): MediaQueryList => {
+    const min = /\(min-width:\s*(\d+(?:\.\d+)?)px\)/.exec(query);
+    const max = /\(max-width:\s*(\d+(?:\.\d+)?)px\)/.exec(query);
+    const width = window.innerWidth;
+    const matches =
+      (min !== null || max !== null) &&
+      (min ? width >= Number(min[1]) : true) &&
+      (max ? width <= Number(max[1]) : true);
+    return {
+      matches,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    } as MediaQueryList;
+  };
+}
+
 if (typeof HTMLDialogElement !== 'undefined') {
   if (typeof HTMLDialogElement.prototype.showModal !== 'function') {
     HTMLDialogElement.prototype.showModal = function showModal() {

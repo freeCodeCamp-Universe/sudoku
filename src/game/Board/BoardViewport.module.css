@@ -1,0 +1,30 @@
+.viewport {
+  position: relative;
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: 100%;
+  max-width: 100%;
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+.content {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* Programmatic moves (button zoom, minimap seek, ensure-visible) ease into
+   place so the view doesn't lurch; gesture-driven transforms drop this class
+   to track the pointer instantly. */
+.contentAnimated {
+  transition: transform 250ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contentAnimated {
+    transition: none;
+  }
+}

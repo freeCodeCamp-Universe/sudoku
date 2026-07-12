@@ -1,3 +1,18 @@
+/*
+ * The body is a definite viewport height (see theme.css), and every link in
+ * the chain from #root down to .boardFrame opts into shrinking with
+ * min-block-size: 0. All other content (header, timer, tabs, numpad, legends)
+ * keeps its natural min-content floor, so when a variant's controls are taller
+ * than usual (e.g. Super Sudoku's four-row numpad) the squeeze lands entirely
+ * on the board frame and the controls claim that height from the board.
+ */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  min-block-size: 0;
+}
+
 .mainContent:focus {
   outline: none;
 }
@@ -8,20 +23,65 @@
   align-items: center;
   width: min(1280px, 100%);
   margin-inline: auto;
+  min-block-size: 0;
 }
 
+/* Mobile-first: the board stacks above the controls. At desktop width and up
+   (min-width: 1024px, below — aligned with VIEWPORT_DESKTOP in cellSizes.ts)
+   it splits into board + controls columns. */
 .gameLayout {
   display: flex;
-  gap: 48px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0;
   width: 100%;
+  min-block-size: 0;
 }
 
 .gameLeft {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  min-block-size: 0;
+}
+
+/*
+ * Stable, always-rendered wrapper around the board. It is measured to decide
+ * whether the board is oversized. In the stacked (mobile) layout every variant
+ * gets a bounded frame height so the controls dock at a consistent position;
+ * the desktop media block below removes the cap so the board renders at natural
+ * height. The oversized modifier gives the clip a definite box: a bounded
+ * block-size so there is something to pan within, plus overflow/touch handling.
+ */
+.boardFrame {
+  display: flex;
+  justify-content: center;
+  /* Not stretch: the board wrap's margin-block-end would make a stretched
+     wrap slightly shorter than the frame, turning it into a scrollbox that
+     clips the last row of a board the oversized check says fits. */
+  align-items: flex-start;
+  inline-size: 100%;
+  /* Preferred height; min-block-size 0 lets it shrink below this when the
+     controls row is taller than usual, instead of pushing the page taller
+     than the viewport. */
+  block-size: 56vh;
+  min-block-size: 0;
+}
+
+/* The pan/zoom clip inside is absolutely positioned and sized off this box,
+   so the frame must keep a bounded block-size whenever the modifier is on
+   (an auto-height frame would collapse to nothing and hide the board). The
+   modifier only appears below the desktop breakpoint — GamePage gates
+   panZoomActive on !isDesktop. */
+.boardFrame.boardFrameOversized {
+  /* Bounded so the controls below stay in view on a phone rather than being
+     pushed off-screen; the minimap + pan/zoom reach the rest of the board.
+     The board is the primary surface, so it takes the larger share of height. */
+  block-size: 56vh;
+  overflow: hidden;
+  touch-action: none;
 }
 
 .variantLegend {
@@ -65,7 +125,57 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 16px;
   flex-shrink: 0;
+  width: 100%;
+}
+
+.navDock {
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+}
+
+/*
+ * Mobile controls (only rendered below 1024px): two columns. The main column
+ * holds the Normal/Candidate/Controls tablist with the active panel beneath it;
+ * the map column holds the minimap + zoom buttons on the inline-end. Keeping the
+ * panel in the same column as the tabs stops the tall minimap from pushing the
+ * number pad far down the screen. The 2:1 split gives the minimap ~1/3 of the
+ * row; the 5-across numpad buttons stay pinned at their 44px max at these widths
+ * so the wider map column costs the numpad no size, only reclaims dead space.
+ */
+.controlsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  inline-size: 100%;
+  margin-block-start: 12px;
+  margin-block-end: 8px;
+  /* Floor at the standard-variant controls height (tablist ~30px + 10px
+     column gap + two 44px numpad rows with a 6px gap) so variants with
+     shorter panels keep the controls docked at a consistent position. */
+  min-block-size: 134px;
+}
+
+.controlsMain {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  flex: 2 1 0;
+  min-inline-size: 0;
+}
+
+.mapGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-inline-size: 88px;
+  max-inline-size: 200px;
 }
 
 .panel {
@@ -73,9 +183,107 @@
   flex-direction: column;
   align-items: center;
   inline-size: 100%;
-  /* Separate the tablist from the number pad, matching the spacing the retired
-     ModeSwitcher provided. PR 4's layout rework replaces this with a gap. */
-  margin-block-start: 16px;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.actionColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  inline-size: 100%;
+}
+
+@media (min-width: 600px) {
+  .actionColumn {
+    max-inline-size: 320px;
+    margin-inline: auto;
+  }
+
+  /* Tablets have height to spare, so let the frame claim all of it: an
+     over-tall preferred size that the shrink chain (see top of file)
+     collapses to exactly the space the header, timer, and controls leave
+     over. Applied to both frame states — if only one state were tall, a
+     board that fits the tall frame but not the short one would flip the
+     oversized flag back and forth forever. Phones keep the 56vh split. */
+  .boardFrame,
+  .boardFrame.boardFrameOversized {
+    block-size: 100vh;
+  }
+}
+
+/* Desktop standalone New Game button (the mobile layout keeps New Game inside
+   the Controls tab instead). */
+.newGameBtn {
+  margin-block-start: 40px;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 10px 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.newGameBtn:hover {
+  opacity: 0.88;
+}
+
+.newGameBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.actionBtn,
+.actionBtnPrimary {
+  inline-size: 100%;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding-block: 7px;
+  padding-inline: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    opacity 0.15s;
+}
+
+.actionBtn {
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+.actionBtn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.actionBtnPrimary {
+  border: none;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 700;
+}
+
+.actionBtnPrimary:hover {
+  opacity: 0.88;
+}
+
+.actionBtn:focus-visible,
+.actionBtnPrimary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .legendSwatch {
@@ -118,32 +326,6 @@
 
 .checkPromptBtn:hover {
   opacity: 0.7;
-}
-
-.newGameBtn {
-  margin-block-start: 40px;
-  align-self: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  font-family: inherit;
-  padding: 10px 28px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.newGameBtn:hover {
-  opacity: 0.88;
-}
-.newGameBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .confirmOverlay {
@@ -276,23 +458,33 @@
   padding: 14px 40px;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 1024px) {
+  /* Desktop: board and controls sit side by side. The board renders at natural
+     height (no frame cap) and the right column is content-sized. Restoring the
+     min-content floors opts the page out of the mobile shrink chain: a short
+     window scrolls instead of squeezing the board. */
+  .mainContent,
+  .gamePage,
+  .gameLayout,
+  .gameLeft,
+  .boardFrame {
+    min-block-size: auto;
+  }
+
   .gameLayout {
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+    flex-direction: row;
+    gap: 48px;
+  }
+
+  .boardFrame {
+    block-size: auto;
   }
 
   .gameLeft {
-    align-items: center;
-    width: 100%;
-  }
-
-  .variantLegend {
-    text-align: center;
+    width: auto;
   }
 
   .gameRight {
-    width: 100%;
+    width: auto;
   }
 }

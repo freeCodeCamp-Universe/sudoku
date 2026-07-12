@@ -1,7 +1,7 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
 import { gridCells } from '@/engine/grid';
 import type { Values } from '@/engine/types';
@@ -39,6 +39,12 @@ function renderGamePage(variantId = 'classic') {
   );
 }
 
+// jsdom defaults to a 1024px width (desktop layout). Tests that need the mobile
+// layout set window.innerWidth before rendering; reset it between tests.
+afterEach(() => {
+  window.innerWidth = 1024;
+});
+
 describe('GamePage - Classic integration', () => {
   it('should render the sudoku grid', () => {
     renderGamePage();
@@ -58,10 +64,28 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('button', { name: '5' })).toBeTruthy();
   });
 
-  it('should render the Reveal Cell button', () => {
+  it('should show the Reveal Cell button in the desktop toolbar', () => {
     renderGamePage();
 
     expect(screen.getByRole('button', { name: /reveal/i })).toBeTruthy();
+  });
+
+  it('should not render the minimap, zoom controls, or Controls tab at desktop width', () => {
+    window.innerWidth = 1024;
+    renderGamePage();
+
+    expect(screen.queryByRole('img', { name: /board overview/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /fit whole board/i })).toBeNull();
+    expect(screen.queryByRole('tab', { name: 'Controls' })).toBeNull();
+  });
+
+  it('should render the minimap, zoom controls, and Controls tab below tablet width', () => {
+    window.innerWidth = 500;
+    renderGamePage();
+
+    expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Controls' })).toBeTruthy();
   });
 
   it('should throw when an unknown variantId is used', () => {
@@ -252,5 +276,42 @@ describe('GamePage - conflict interaction', () => {
     await user.click(screen.getByRole('button', { name: 'Erase' }));
 
     expect(screen.queryByRole('gridcell', { name: /in conflict/i })).not.toBeInTheDocument();
+  });
+});
+
+// Regression for the mobile fit clipping the board's outer border: the grid
+// draws its 3px frame border outside the cell canvas, so the fit scale must
+// divide the viewport by the framed extent (canvas + 2×3px), not the bare
+// canvas — fitting the canvas alone pushed the end-side borders past the clip.
+describe('GamePage - oversized board fit', () => {
+  const FRAME = { width: 370, height: 489 };
+
+  beforeEach(() => {
+    window.innerWidth = 390;
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: FRAME.width,
+      bottom: FRAME.height,
+      ...FRAME,
+      toJSON: () => ({}),
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should fit the framed board extent, not the bare cell canvas', () => {
+    renderGamePage('super');
+
+    // Super at mobile size: 16 × 40px canvas + one 3px border per side.
+    const framedWidth = 16 * 40 + 2 * 3;
+    const transform = screen.getByTestId('board-viewport-content').style.transform;
+    const scale = Number(/scale\((.+)\)/.exec(transform)?.[1]);
+
+    expect(scale).toBeCloseTo(FRAME.width / framedWidth, 10);
   });
 });

@@ -4,6 +4,10 @@
   align-items: stretch;
   width: 100%;
   max-width: 100%;
+  /* Lets the game page's board frame absorb vertical squeeze from the
+     viewport-height body; other pages' content keeps its natural
+     min-content protection and simply scrolls. */
+  min-block-size: 0;
 }
 
 .pageWrapper:focus {
