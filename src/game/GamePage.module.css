@@ -248,8 +248,8 @@
 
 .actionBtnPrimary {
   border: none;
-  background: var(--accent-yellow);
-  color: #0a0a23;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   font-weight: 700;
 }
 
