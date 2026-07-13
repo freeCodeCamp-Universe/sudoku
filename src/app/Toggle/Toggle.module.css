@@ -68,6 +68,13 @@
   border-color: var(--accent-green);
 }
 
+/* Light high-contrast: the ON label text is a hardcoded #2a6a2a (not the
+   --accent-green token), so match the border to it rather than inheriting the
+   dark near-black green from the .high-contrast rule above. */
+:global(.light.high-contrast) .on {
+  border-color: #2a6a2a;
+}
+
 .off {
   border-color: var(--border);
   background: var(--bg-secondary);
