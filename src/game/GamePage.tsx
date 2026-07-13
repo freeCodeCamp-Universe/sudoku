@@ -670,24 +670,26 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
                   onSelect={(id) => setNavTab(id as 'move' | 'map')}
                   ariaLabel="Board navigation"
                 />
-                <div
-                  role="tabpanel"
-                  id="nav-panel-move"
-                  aria-labelledby="move-tab"
-                  className={styles.panel}
-                  hidden={navTab !== 'move'}
-                >
-                  <DPad onMove={grid.moveSelection} />
-                </div>
-                <div
-                  role="tabpanel"
-                  id="nav-panel-map"
-                  aria-labelledby="map-tab"
-                  className={styles.panel}
-                  hidden={navTab !== 'map'}
-                >
-                  {minimap}
-                  {zoomControls}
+                <div className={styles.navPanels}>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-move"
+                    aria-labelledby="move-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'move'}
+                  >
+                    <DPad onMove={grid.moveSelection} />
+                  </div>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-map"
+                    aria-labelledby="map-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'map'}
+                  >
+                    {minimap}
+                    {zoomControls}
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,11 +1,8 @@
 .minimap {
   display: block;
-  /* Fills the map column but capped so its height (block-size follows the board
-     aspect) is bounded and predictable; the map column reserves a fixed height
-     for it (see .mapGroup in GamePage.module.css) so the Move/Map tab switch
-     never changes the control-area height. Centered by .navDock. */
+  /* Fills the map column (bounded by .mapGroup's max-inline-size), so it takes
+     ~1/3 of the controls row instead of being pinned to a fixed small width. */
   inline-size: 100%;
-  max-inline-size: 96px;
   block-size: auto;
   border: 1px solid var(--border);
   border-radius: 6px;

@@ -156,12 +156,12 @@
   inline-size: 100%;
   margin-block-start: 12px;
   margin-block-end: 8px;
-  /* Floor at the tallest column, the map column (see .mapGroup): nav tablist
-     ~32px + 8px column gap + the taller of its two panels (Map: 96px minimap +
-     8px + 40px zoom row = 144px). Keeps short-variant controls docked and,
-     with .mapGroup's matching reservation, stops the board moving on tab
-     switches. */
-  min-block-size: 184px;
+  /* Floor for short variants so their controls stay docked at a consistent
+     position (tablist ~30px + 10px column gap + two 44px numpad rows with a 6px
+     gap). Taller variants (e.g. Super's 16-symbol numpad) and the map column's
+     minimap grow the row past this naturally; the row is a flex box that sizes
+     to its tallest column. */
+  min-block-size: 134px;
 }
 
 .controlsMain {
@@ -183,10 +183,6 @@
      never clips; the numpad column absorbs the width. */
   min-inline-size: 136px;
   max-inline-size: 200px;
-  /* Reserve the taller panel's height (nav tablist ~32px + 8px gap + the Map
-     panel's 144px = 184px; the Move panel's 132px D-pad is shorter) so the
-     Move <-> Map switch never changes the column or control-area height. */
-  min-block-size: 184px;
 }
 
 .panel {
@@ -199,6 +195,27 @@
 
 .panel[hidden] {
   display: none;
+}
+
+/*
+ * The Move and Map panels stack in one grid cell so the map column always
+ * reserves the height of the taller panel (Map: minimap + zoom controls),
+ * whichever tab is active. Switching Move <-> Map therefore never changes the
+ * control-area height or moves the board, and the reservation tracks the
+ * minimap's responsive height automatically instead of a hand-tuned constant.
+ */
+.navPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.navPanel {
+  grid-area: 1 / 1;
+  justify-content: center;
+}
+
+.navPanel:not([data-active='true']) {
+  visibility: hidden;
 }
 
 .actionColumn {
