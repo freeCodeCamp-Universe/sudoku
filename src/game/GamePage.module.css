@@ -137,13 +137,16 @@
 }
 
 /*
- * Mobile controls (only rendered below 1024px): two columns. The main column
- * holds the Normal/Candidate/Controls tablist with the active panel beneath it;
- * the map column holds the minimap + zoom buttons on the inline-end. Keeping the
- * panel in the same column as the tabs stops the tall minimap from pushing the
- * number pad far down the screen. The 2:1 split gives the minimap ~1/3 of the
- * row; the 5-across numpad buttons stay pinned at their 44px max at these widths
- * so the wider map column costs the numpad no size, only reclaims dead space.
+ * Mobile controls (only rendered below 1024px): two columns, each its own tab
+ * group. The main column holds the Normal/Candidate/Controls tablist with the
+ * active panel (number pad or the reveal/clear/new-game actions) beneath it; the
+ * map column holds the Move/Map tablist with the D-pad (Move) or minimap + zoom
+ * buttons (Map) beneath it. Keeping each panel in the same column as its tabs
+ * stops the tall minimap or D-pad from pushing the number pad down the screen.
+ * The map column is sized to the 3-across 44px D-pad (136px); the 5-across
+ * numpad buttons flex below their 44px max under the resulting width pressure by
+ * design, so the wider map column costs a little numpad size at the narrowest
+ * viewports rather than leaving dead space.
  */
 .controlsRow {
   display: flex;
@@ -153,10 +156,11 @@
   inline-size: 100%;
   margin-block-start: 12px;
   margin-block-end: 8px;
-  /* Floor at the standard-variant controls height (tablist ~30px + 10px
-     column gap + two 44px numpad rows with a 6px gap) so variants with
-     shorter panels keep the controls docked at a consistent position. */
-  min-block-size: 134px;
+  /* Floor at the tallest column, now the map column's Move panel (nav tablist
+     ~30px + 8px column gap + the 3-row 44px D-pad with 2px gaps = 136px), so
+     variants with shorter panels keep the controls docked at a consistent
+     position and switching tabs never moves the board. */
+  min-block-size: 174px;
 }
 
 .controlsMain {
@@ -174,8 +178,13 @@
   align-items: center;
   gap: 8px;
   flex: 1 1 0;
-  min-inline-size: 88px;
+  /* Fit the 3-across 44px D-pad (3 * 44px + 2 * 2px gaps = 136px) so the Move
+     panel never clips; the numpad column absorbs the width. */
+  min-inline-size: 136px;
   max-inline-size: 200px;
+  /* Reserve the taller of the two panels (Move's nav tablist ~30px + 8px gap +
+     136px D-pad) so Move <-> Map switches never change the column height. */
+  min-block-size: 174px;
 }
 
 .panel {
