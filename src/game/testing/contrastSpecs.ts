@@ -335,6 +335,20 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
+  // Used/exhausted number-pad buttons stay focusable (aria-disabled + roving
+  // tabindex), so they are not covered by the WCAG inactive-control contrast
+  // exemption: the dimmed digit must clear 4.5:1 on the recessed page-bg fill
+  // the used state renders.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'numpad used text on page bg',
+      fg: '--numpad-used-text',
+      bg: '--bg-primary',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
   // Grid lines are graphical objects required to understand the puzzle
   // (WCAG 1.4.11): cell borders and box boundaries need 3:1 against every
   // cell fill they delimit. Only the high-contrast palettes are declared —

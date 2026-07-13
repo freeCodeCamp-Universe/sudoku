@@ -1,5 +1,5 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
@@ -55,7 +55,8 @@ describe('GamePage - Classic integration', () => {
   it('should render 81 cells', () => {
     renderGamePage();
 
-    expect(screen.getAllByRole('gridcell')).toHaveLength(81);
+    const board = screen.getByRole('grid', { name: /sudoku grid/i });
+    expect(within(board).getAllByRole('gridcell')).toHaveLength(81);
   });
 
   it('should render the number pad', () => {
@@ -95,8 +96,8 @@ describe('GamePage - Classic integration', () => {
   it('should render the jigsaw variant', () => {
     renderGamePage('jigsaw');
 
-    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
-    expect(screen.getAllByRole('gridcell')).toHaveLength(81);
+    const board = screen.getByRole('grid', { name: /sudoku grid/i });
+    expect(within(board).getAllByRole('gridcell')).toHaveLength(81);
   });
 
   it('should use color names in cell accessibility labels for the color variant', () => {
