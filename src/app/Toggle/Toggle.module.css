@@ -6,7 +6,7 @@
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   color: var(--text-subtle);
   white-space: nowrap;
 }
@@ -84,10 +84,6 @@
    toggle sits in the compact control column, so it reverts to the tighter
    design size. */
 @media (min-width: 1024px) {
-  .label {
-    font-size: 0.82rem;
-  }
-
   .toggleBtn {
     padding: 3px 0;
     width: 36px;
