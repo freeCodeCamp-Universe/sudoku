@@ -44,8 +44,8 @@
   --cell-peer-structural-bg: #2e2e44;
   --cell-same-value-bg: #1a4f4f;
   --cell-error-bg: #2a1515;
-  --numpad-chip-label: rgba(255, 255, 255, 0.9);
-  --numpad-chip-label-bright: rgba(255, 255, 255, 0.9);
+  --numpad-chip-label: #000000;
+  --numpad-chip-label-bright: #000000;
   --btn-primary-bg: #f1be32;
   --btn-primary-text: #0a0a23;
   --given-dot: rgba(255, 255, 255, 0.7);
