@@ -1,8 +1,13 @@
+/*
+ * A connected plus-shaped D-pad: four arms and a filled center hub meet with no
+ * gaps, so it reads as one physical control (with a dead center) rather than
+ * four scattered buttons. Only the outer corners round; the inner seams stay
+ * square so the arms visually join the hub.
+ */
 .dpad {
   display: grid;
   grid-template-columns: repeat(3, 44px);
   grid-template-rows: repeat(3, 44px);
-  gap: 2px;
   justify-content: center;
 }
 
@@ -16,31 +21,48 @@
   color: var(--text-bright);
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
   cursor: pointer;
+  /* Fire on tap without the legacy mobile click delay. */
+  touch-action: manipulation;
 }
 
 .key:focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.hub {
+  grid-column: 2;
+  grid-row: 2;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
 }
 
 .up {
   grid-column: 2;
   grid-row: 1;
+  border-start-start-radius: 8px;
+  border-start-end-radius: 8px;
 }
 
 .left {
   grid-column: 1;
   grid-row: 2;
+  border-start-start-radius: 8px;
+  border-end-start-radius: 8px;
 }
 
 .right {
   grid-column: 3;
   grid-row: 2;
+  border-start-end-radius: 8px;
+  border-end-end-radius: 8px;
 }
 
 .down {
   grid-column: 2;
   grid-row: 3;
+  border-end-start-radius: 8px;
+  border-end-end-radius: 8px;
 }

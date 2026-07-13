@@ -1,7 +1,9 @@
-/* The zoom buttons fill the map column: − and + split the width, Fit spans it. */
+/* The zoom buttons share one row across the map column: −, +, and Fit each take
+   a third, so the Map panel stays as short as the D-pad in the sibling Move
+   panel and switching tabs doesn't change the control-area height. */
 .controls {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   inline-size: 100%;
 }
@@ -16,10 +18,10 @@
   background: var(--bg-surface);
   color: var(--text-bright);
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .fit {
-  grid-column: 1 / -1;
   font-size: 0.8rem;
 }
 

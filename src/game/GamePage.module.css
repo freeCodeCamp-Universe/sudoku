@@ -156,11 +156,12 @@
   inline-size: 100%;
   margin-block-start: 12px;
   margin-block-end: 8px;
-  /* Floor at the tallest column, now the map column's Move panel (nav tablist
-     ~30px + 8px column gap + the 3-row 44px D-pad with 2px gaps = 136px), so
-     variants with shorter panels keep the controls docked at a consistent
-     position and switching tabs never moves the board. */
-  min-block-size: 174px;
+  /* Floor at the tallest column, the map column (see .mapGroup): nav tablist
+     ~32px + 8px column gap + the taller of its two panels (Map: 96px minimap +
+     8px + 40px zoom row = 144px). Keeps short-variant controls docked and,
+     with .mapGroup's matching reservation, stops the board moving on tab
+     switches. */
+  min-block-size: 184px;
 }
 
 .controlsMain {
@@ -178,19 +179,21 @@
   align-items: center;
   gap: 8px;
   flex: 1 1 0;
-  /* Fit the 3-across 44px D-pad (3 * 44px + 2 * 2px gaps = 136px) so the Move
-     panel never clips; the numpad column absorbs the width. */
+  /* Fit the 3-across 44px D-pad (3 * 44px = 132px, no gaps) so the Move panel
+     never clips; the numpad column absorbs the width. */
   min-inline-size: 136px;
   max-inline-size: 200px;
-  /* Reserve the taller of the two panels (Move's nav tablist ~30px + 8px gap +
-     136px D-pad) so Move <-> Map switches never change the column height. */
-  min-block-size: 174px;
+  /* Reserve the taller panel's height (nav tablist ~32px + 8px gap + the Map
+     panel's 144px = 184px; the Move panel's 132px D-pad is shorter) so the
+     Move <-> Map switch never changes the column or control-area height. */
+  min-block-size: 184px;
 }
 
 .panel {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 8px;
   inline-size: 100%;
 }
 

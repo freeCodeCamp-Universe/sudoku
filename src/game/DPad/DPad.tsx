@@ -26,6 +26,7 @@ export function DPad({ onMove }: DPadProps) {
           <span aria-hidden="true">{glyph}</span>
         </button>
       ))}
+      <span className={styles.hub} aria-hidden="true" />
     </div>
   );
 }
