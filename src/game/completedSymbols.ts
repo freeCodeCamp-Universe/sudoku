@@ -1,4 +1,4 @@
-import type { SymbolValue, Values } from '@/engine/types';
+import type { Values, SymbolValue } from '@/engine/types';
 
 export function findCompletedSymbols(
   values: Values,

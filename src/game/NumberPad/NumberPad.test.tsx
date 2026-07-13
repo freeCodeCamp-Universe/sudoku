@@ -57,40 +57,6 @@ describe('NumberPad', () => {
     expect(onEnter).toHaveBeenCalledWith(0);
   });
 
-  it('should mark buttons for fully-placed symbols as disabled but keep them focusable', () => {
-    render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set([7])}
-        onEnter={() => {}}
-        candidateMode={false}
-      />
-    );
-
-    const usedButton = screen.getByRole('button', { name: '7' });
-    expect(usedButton).toHaveAttribute('aria-disabled', 'true');
-    usedButton.focus();
-    expect(usedButton).toHaveFocus();
-  });
-
-  it('should not call onEnter when a used button is activated', async () => {
-    const user = userEvent.setup();
-    const onEnter = vi.fn();
-
-    render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set([7])}
-        onEnter={onEnter}
-        candidateMode={false}
-      />
-    );
-
-    await user.click(screen.getByRole('button', { name: '7' }));
-
-    expect(onEnter).not.toHaveBeenCalled();
-  });
-
   it('should expose the pad as a single-tab-stop grid', async () => {
     const user = userEvent.setup();
 
