@@ -60,6 +60,7 @@ export function renderVariantBoard(
         cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
         announcerRef: { current: null },
         announce: () => {},
+        moveSelection: () => {},
       }}
       renderSymbol={renderSymbol}
       parityMap={options.parityMap ?? fixture.parityMap}

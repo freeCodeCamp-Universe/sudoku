@@ -25,6 +25,7 @@ import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
+import { DPad } from '@/game/DPad';
 import { Tabs, type Tab } from './Tabs';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
@@ -62,6 +63,7 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [controlsOpen, setControlsOpen] = useState(false);
+  const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const [verifyMode, setVerifyMode] = useState(false);
@@ -482,6 +484,10 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
       toggleCandidateMode();
     }
   };
+  const navTabs: Tab[] = [
+    { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
+    { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
+  ];
   const controlsPanel = (
     <div className={styles.actionColumn}>
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
@@ -658,8 +664,31 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
                 </div>
               </div>
               <div className={styles.mapGroup}>
-                {minimap}
-                {zoomControls}
+                <Tabs
+                  tabs={navTabs}
+                  activeId={navTab}
+                  onSelect={(id) => setNavTab(id as 'move' | 'map')}
+                  ariaLabel="Board navigation"
+                />
+                <div
+                  role="tabpanel"
+                  id="nav-panel-move"
+                  aria-labelledby="move-tab"
+                  className={styles.panel}
+                  hidden={navTab !== 'move'}
+                >
+                  <DPad onMove={grid.moveSelection} />
+                </div>
+                <div
+                  role="tabpanel"
+                  id="nav-panel-map"
+                  aria-labelledby="map-tab"
+                  className={styles.panel}
+                  hidden={navTab !== 'map'}
+                >
+                  {minimap}
+                  {zoomControls}
+                </div>
               </div>
             </div>
           )}

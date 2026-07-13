@@ -80,13 +80,44 @@ describe('GamePage - Classic integration', () => {
     expect(screen.queryByRole('tab', { name: 'Controls' })).toBeNull();
   });
 
-  it('should render the minimap, zoom controls, and Controls tab below tablet width', () => {
+  it('should render the minimap, zoom controls, and Controls tab below tablet width', async () => {
+    const user = userEvent.setup();
     window.innerWidth = 500;
     renderGamePage();
 
+    expect(screen.getByRole('tab', { name: 'Controls' })).toBeTruthy();
+
+    await user.click(screen.getByRole('tab', { name: 'Map' }));
+
     expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
     expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
-    expect(screen.getByRole('tab', { name: 'Controls' })).toBeTruthy();
+  });
+
+  it('should render the Move and Map navigation tabs with the D-pad below tablet width', () => {
+    window.innerWidth = 500;
+    renderGamePage();
+
+    expect(screen.getByRole('tab', { name: 'Move' })).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Map' })).toBeTruthy();
+    expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeTruthy();
+  });
+
+  it('should reveal the minimap and zoom controls when the Map tab is selected', async () => {
+    const user = userEvent.setup();
+    window.innerWidth = 500;
+    renderGamePage();
+
+    await user.click(screen.getByRole('tab', { name: 'Map' }));
+
+    expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
+  });
+
+  it('should not render the navigation tabs at desktop width', () => {
+    renderGamePage();
+
+    expect(screen.queryByRole('tab', { name: 'Move' })).toBeNull();
+    expect(screen.queryByRole('tab', { name: 'Map' })).toBeNull();
   });
 
   it('should throw when an unknown variantId is used', () => {
