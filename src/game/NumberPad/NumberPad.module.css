@@ -72,10 +72,14 @@
   outline-offset: 2px;
 }
 
-.numBtn[data-used] {
-  opacity: 0.28;
-  cursor: default;
-  pointer-events: none;
+.numBtn[data-used],
+.numBtn[data-used]:hover,
+.candidate .numBtn[data-used]:not(.erase) {
+  color: var(--numpad-used-text);
+  background: var(--bg-primary);
+  border-color: var(--border);
+  border-block-end-color: transparent;
+  cursor: not-allowed;
 }
 
 .erase {
