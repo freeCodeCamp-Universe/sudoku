@@ -20,7 +20,7 @@ describe('color variant', () => {
     const tokens = readThemeTokens();
 
     expect(tokens['--color-1'].dark).toBe('#e03535');
-    expect(tokens['--color-9'].dark).toBe('#9898b0');
+    expect(tokens['--color-9'].dark).toBe('#808098');
   });
 
   it('should have 9x9 grid layout', () => {
@@ -35,8 +35,18 @@ describe('color variant', () => {
     expect(color.symbolKind).toBe('color');
   });
 
-  it('should include colorNames with 9 entries', () => {
-    expect(color.colorNames).toHaveLength(9);
+  it('should include the correct color names in order', () => {
+    expect(color.colorNames).toEqual([
+      'Red',
+      'Orange',
+      'Yellow',
+      'Green',
+      'Teal',
+      'Blue',
+      'Purple',
+      'Lavender',
+      'Silver',
+    ]);
   });
 
   it('should generate a uniquely solvable puzzle', () => {

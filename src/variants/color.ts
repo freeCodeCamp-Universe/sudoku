@@ -9,7 +9,7 @@ const COLOR_NAMES = [
   'Teal',
   'Blue',
   'Purple',
-  'Pink',
+  'Lavender',
   'Silver',
 ];
 

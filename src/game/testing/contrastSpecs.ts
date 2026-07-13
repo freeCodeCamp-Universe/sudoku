@@ -139,12 +139,12 @@ const ACCEPTED_FAILURES = new Set<string>([
   'light|even bg vs odd bg',
   'light|peer-even bg vs peer-odd bg',
   'light|error bg vs base',
-  // These four chips predate the contrast gate and sit below 3:1 on the white
-  // light-theme cells; the high-contrast palette carries the compliant set.
+  // These chips sit below 3:1 on the white light-theme cells; the
+  // high-contrast palette carries the compliant set.
   'light|chip --color-2 vs base',
   'light|chip --color-3 vs base',
   'light|chip --color-5 vs base',
-  'light|chip --color-9 vs base',
+  'light|chip --color-8 vs base',
   // The standard light primary button keeps its brand yellow, which sits too
   // close to the light page background; its 10:1+ label is what identifies
   // the control. The high-contrast palettes carry a compliant surface.

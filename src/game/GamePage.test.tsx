@@ -108,6 +108,12 @@ describe('GamePage - Classic integration', () => {
     ).toBeTruthy();
   });
 
+  it('should label the Lavender numpad button with the correct color name', () => {
+    renderGamePage('color');
+
+    expect(screen.getByRole('button', { name: 'Lavender' })).toBeTruthy();
+  });
+
   it('should render skyscraper gutters from derived structure', () => {
     renderGamePage('skyscraper');
 

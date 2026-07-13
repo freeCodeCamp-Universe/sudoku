@@ -18,8 +18,8 @@
   --color-5: #1aabaa;
   --color-6: #3a80e0;
   --color-7: #8e52e8;
-  --color-8: #d94080;
-  --color-9: #9898b0;
+  --color-8: #d3d3ff;
+  --color-9: #808098;
   --accent-green: #acd157;
   --accent-red: #ffadad;
   --focus-ring: #198eee;
@@ -207,7 +207,7 @@
   --color-5: #11acac;
   --color-6: #4080e8;
   --color-7: #9447ff;
-  --color-8: #ff98cc;
+  --color-8: #b0b0ff;
   --color-9: #d9d9d9;
   /* Chain lines render solid (ChainOverlay drops its 0.3 opacity in HC) and
      sit directly behind every text role a chain cell can render, so all
@@ -299,7 +299,7 @@
   --color-5: #006767;
   --color-6: #001cd1;
   --color-7: #380070;
-  --color-8: #950077;
+  --color-8: #5f23c8;
   --color-9: #939393;
   /* Chain lines: 3:1 below the white base from above, 4.5:1 over the darkest
      text role (--accent-red #4d0000) from below. Wider window than dark HC,
