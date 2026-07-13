@@ -138,22 +138,26 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   // when a mobile zoom level survives a resize across the 1024px breakpoint).
   const panZoomActive = !isDesktop && (oversized || boardViewport.transform.scale > 1);
 
+  // Cell rects are in canvas coordinates; the board's origin is the gutter
+  // layout's corner (when clue gutters exist), one gutter plus one frame edge
+  // before the canvas.
+  const cellOrigin = useMemo(() => {
+    const origin = gutterOrigin(gutters);
+    return { x: origin.x + frameEdge, y: origin.y + frameEdge };
+  }, [gutters, frameEdge]);
+
   const ensureCellVisible = useCallback(
     (id: CellId) => {
       const rect = rects.get(id);
       if (rect) {
-        // Cell rects are in canvas coordinates; the viewport's origin is the
-        // gutter layout's corner (when clue gutters exist), one gutter plus
-        // one frame edge before the canvas.
-        const origin = gutterOrigin(gutters);
         boardViewport.ensureVisible({
           ...rect,
-          x: rect.x + origin.x + frameEdge,
-          y: rect.y + origin.y + frameEdge,
+          x: rect.x + cellOrigin.x,
+          y: rect.y + cellOrigin.y,
         });
       }
     },
-    [boardViewport, rects, frameEdge, gutters]
+    [boardViewport, rects, cellOrigin]
   );
 
   const viewportState: BoardViewportState | undefined = panZoomActive
@@ -362,6 +366,7 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
         filled={filled}
         board={framedSize}
         viewport={viewportSize}
+        origin={cellOrigin}
         // Without the clip the board renders untransformed, so the indicator
         // must reflect identity even if the viewport state has drifted.
         transform={
