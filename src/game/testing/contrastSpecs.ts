@@ -335,10 +335,8 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
-  // Used/exhausted number-pad buttons stay focusable (aria-disabled + roving
-  // tabindex), so they are not covered by the WCAG inactive-control contrast
-  // exemption: the dimmed digit must clear 4.5:1 on the recessed page-bg fill
-  // the used state renders.
+  // Fully-placed numpad buttons render a dimmed digit on the recessed
+  // page-bg fill; the dimmed text must clear 4.5:1 (WCAG 1.4.3).
   ...THEMES.map(
     (theme): PairInput => ({
       label: 'numpad used text on page bg',

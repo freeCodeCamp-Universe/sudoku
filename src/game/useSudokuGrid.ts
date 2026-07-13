@@ -157,8 +157,7 @@ export function useSudokuGrid({
         given,
         revealed: revealed.has(id),
         selected: selectedId === id,
-        // A provably-correct cell is never flagged as a conflict.
-        conflict: conflictSet.has(id) && correct !== true,
+        conflict: conflictSet.has(id),
         correct,
         sameValue: selectedValue !== undefined && value === selectedValue,
         peer: peerIds.has(id),

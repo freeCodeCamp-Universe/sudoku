@@ -533,7 +533,7 @@ describe('useSudokuGrid', () => {
     );
   });
 
-  it('should not flag a correct cell as in conflict, but should flag the wrong cell it clashes with', () => {
+  it('should flag all cells in a conflict group, even if one holds the correct value', () => {
     const { result } = renderHook(() =>
       useSudokuGrid({
         cells,
@@ -553,10 +553,10 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    // r0c0 holds the correct 5; the clash is the wrong 5 in r0c4, so r0c0 is not flagged.
-    expect(result.current.cellState('r0c0').conflict).toBe(false);
+    // Both cells duplicate in the same row — both are flagged regardless of which is correct.
+    expect(result.current.cellState('r0c0').conflict).toBe(true);
     expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, correct'
+      'Row 1, column 1, box 1, 5, correct, in conflict'
     );
 
     expect(result.current.cellState('r0c4').conflict).toBe(true);

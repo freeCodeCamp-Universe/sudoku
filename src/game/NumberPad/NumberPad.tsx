@@ -131,11 +131,8 @@ export function NumberPad({
                   {...sharedProps}
                   className={styles.numBtn}
                   data-used={used || undefined}
-                  aria-disabled={used || undefined}
                   aria-label={describeSymbol(symbol)}
-                  onClick={() => {
-                    if (!used) onEnter(symbol);
-                  }}
+                  onClick={() => onEnter(symbol)}
                 >
                   {symbolKind === 'color' ? (
                     <span aria-hidden="true" className={styles.colorChip} data-color={symbol}>
