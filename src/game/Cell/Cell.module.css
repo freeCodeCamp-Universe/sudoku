@@ -374,7 +374,7 @@
   inset-block-end: 4px;
   inset-inline-end: 4px;
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 0.62rem;
+  font-size: 0.5rem;
   font-weight: 700;
   line-height: 1;
   color: var(--text-muted);
@@ -384,6 +384,14 @@
 /* High contrast keeps the stronger primary text color for the label. */
 :global(.high-contrast) .colorLabel {
   color: var(--text-primary);
+}
+
+/* Desktop cells have room for the label at its original size; mobile keeps
+   the smaller size above so the number stays clear of the color circle. */
+@media (min-width: 1024px) {
+  .colorLabel {
+    font-size: 0.62rem;
+  }
 }
 
 /* Given cells carry a small dot in the top-start corner so clue cells stay
