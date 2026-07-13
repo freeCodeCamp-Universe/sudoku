@@ -43,6 +43,7 @@ function renderGamePage(variantId = 'classic') {
 // layout set window.innerWidth before rendering; reset it between tests.
 afterEach(() => {
   window.innerWidth = 1024;
+  window.localStorage.clear();
 });
 
 describe('GamePage - Classic integration', () => {
@@ -112,6 +113,31 @@ describe('GamePage - Classic integration', () => {
     renderGamePage('color');
 
     expect(screen.getByRole('button', { name: 'Lavender' })).toBeTruthy();
+  });
+
+  it('should render a Show numbers switch for the color variant', () => {
+    renderGamePage('color');
+
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+  });
+
+  it('should not render a Show numbers switch for the classic variant', () => {
+    renderGamePage('classic');
+
+    expect(screen.queryByRole('switch', { name: 'Show numbers' })).toBeNull();
+  });
+
+  it('should show the digit label inside color cells when the Show numbers switch is toggled', async () => {
+    const user = userEvent.setup();
+    renderGamePage('color');
+
+    const toggle = screen.getByRole('switch', { name: 'Show numbers' });
+    expect(toggle).not.toBeChecked();
+
+    await user.click(toggle);
+
+    expect(toggle).toBeChecked();
+    expect(screen.getAllByTestId('cell-color-label').length).toBeGreaterThan(0);
   });
 
   it('should render skyscraper gutters from derived structure', () => {

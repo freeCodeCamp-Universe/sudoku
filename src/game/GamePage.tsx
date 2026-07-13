@@ -26,6 +26,7 @@ import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import { Tabs, type Tab } from './Tabs';
+import { Toggle } from '@/app/Toggle';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
@@ -52,12 +53,14 @@ interface GameInnerProps {
     checkEnabled: boolean;
     timerEnabled: boolean;
     highlightPeers: boolean;
+    showColorLabels: boolean;
   };
   onNewGame?: () => void;
   onFirstWin?: () => void;
+  onToggleColorLabels?: () => void;
 }
 
-function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
+function GameInner({ settings, onNewGame, onFirstWin, onToggleColorLabels }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
@@ -482,8 +485,19 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
       toggleCandidateMode();
     }
   };
+
+  const isColor = variant.symbolKind === 'color';
+  const colorLabelToggle = isColor ? (
+    <Toggle
+      label="Show numbers"
+      checked={settings.showColorLabels}
+      onChange={onToggleColorLabels ?? (() => {})}
+    />
+  ) : null;
+
   const controlsPanel = (
     <div className={styles.actionColumn}>
+      {colorLabelToggle}
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
       <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
         New Game
@@ -523,6 +537,7 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
               parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
               viewport={viewportState}
               checkEnabled={checkEnabled}
+              showColorLabel={settings.showColorLabels}
             />
           </div>
           {variant.id === 'wordoku' ? (
@@ -627,7 +642,15 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
               >
                 {numberPad}
               </div>
-              <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+              <div className={styles.actionStack}>
+                <Toolbar
+                  onClearAll={() => dispatch({ type: 'clearAll' })}
+                  onReveal={handleReveal}
+                />
+                {colorLabelToggle ? (
+                  <div className={styles.settingRow}>{colorLabelToggle}</div>
+                ) : null}
+              </div>
             </>
           ) : (
             <div className={styles.controlsRow}>
@@ -806,6 +829,7 @@ export function GamePage() {
     toggleCheck,
     toggleTimer,
     toggleHighlightPeers,
+    toggleColorLabels,
     onboardingShown,
     acknowledgeOnboarding,
   } = usePersistence(variantId);
@@ -844,6 +868,7 @@ export function GamePage() {
             settings={settings}
             onNewGame={() => setGenKey((k) => k + 1)}
             onFirstWin={onboardingShown ? undefined : () => setOnboardingOpen(true)}
+            onToggleColorLabels={toggleColorLabels}
           />
         </GameProvider>
       </main>

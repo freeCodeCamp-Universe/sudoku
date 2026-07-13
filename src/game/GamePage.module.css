@@ -196,6 +196,21 @@
   inline-size: 100%;
 }
 
+.settingRow {
+  inline-size: 100%;
+}
+
+/* Desktop control stack: sizes to its widest child (the Reveal/Clear button
+   row), so the trailing Show-numbers toggle stretches to exactly that width.
+   The gap sits on top of the button row's own 8px margin-block-end, giving the
+   toggle clear separation from the buttons above it. */
+.actionStack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
 @media (min-width: 600px) {
   .actionColumn {
     max-inline-size: 320px;

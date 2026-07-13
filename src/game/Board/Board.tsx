@@ -71,6 +71,7 @@ export function Board({
   parityMap,
   viewport,
   checkEnabled,
+  showColorLabel,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
   // Clue cells in the gutters must track the responsive cell size so each
@@ -144,6 +145,7 @@ export function Board({
                   peer={state.peer}
                   renderSymbol={renderSymbol}
                   symbolKind={variant.symbolKind}
+                  showColorLabel={showColorLabel}
                   boxBoundaryRight={
                     variant.id !== 'sujiken' &&
                     variant.id !== 'jigsaw' &&
