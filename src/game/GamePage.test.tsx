@@ -103,16 +103,6 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeTruthy();
   });
 
-  it('should show D-pad and minimap side by side on tablet widths without Move/Map tabs', () => {
-    window.innerWidth = 700;
-    renderGamePage();
-
-    expect(screen.queryByRole('tab', { name: 'Move' })).toBeNull();
-    expect(screen.queryByRole('tab', { name: 'Map' })).toBeNull();
-    expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeTruthy();
-    expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
-  });
-
   it('should keep the zoom controls visible while switching between Move and Map below tablet width', async () => {
     const user = userEvent.setup();
     window.innerWidth = 500;

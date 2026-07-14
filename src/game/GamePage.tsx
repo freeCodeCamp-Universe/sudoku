@@ -85,7 +85,6 @@ function GameInner({
   // Normal/Candidate tabs, a horizontal toolbar, and a standalone New Game
   // button, with no minimap.
   const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const isTablet = useMediaQuery('(min-width: 600px)');
   const { highContrast } = useTheme();
 
   useEffect(() => {
@@ -702,47 +701,33 @@ function GameInner({
                 </div>
               </div>
               <div className={styles.mapGroup}>
-                {isTablet ? (
-                  <>
-                    <div className={styles.mapRow}>
-                      <div className={styles.sidePanel}>
-                        <DPad onMove={grid.moveSelection} />
-                      </div>
-                      <div className={styles.sidePanel}>{minimap}</div>
-                    </div>
-                    <div className={styles.zoomRow}>{zoomControls}</div>
-                  </>
-                ) : (
-                  <>
-                    <Tabs
-                      tabs={navTabs}
-                      activeId={navTab}
-                      onSelect={(id) => setNavTab(id as 'move' | 'map')}
-                      ariaLabel="Board navigation"
-                    />
-                    <div className={styles.navPanels}>
-                      <div
-                        role="tabpanel"
-                        id="nav-panel-move"
-                        aria-labelledby="move-tab"
-                        className={`${styles.panel} ${styles.navPanel}`}
-                        data-active={navTab === 'move'}
-                      >
-                        <DPad onMove={grid.moveSelection} />
-                      </div>
-                      <div
-                        role="tabpanel"
-                        id="nav-panel-map"
-                        aria-labelledby="map-tab"
-                        className={`${styles.panel} ${styles.navPanel}`}
-                        data-active={navTab === 'map'}
-                      >
-                        {minimap}
-                      </div>
-                    </div>
-                    <div className={styles.zoomRow}>{zoomControls}</div>
-                  </>
-                )}
+                <Tabs
+                  tabs={navTabs}
+                  activeId={navTab}
+                  onSelect={(id) => setNavTab(id as 'move' | 'map')}
+                  ariaLabel="Board navigation"
+                />
+                <div className={styles.navPanels}>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-move"
+                    aria-labelledby="move-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'move'}
+                  >
+                    <DPad onMove={grid.moveSelection} />
+                  </div>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-map"
+                    aria-labelledby="map-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'map'}
+                  >
+                    {minimap}
+                  </div>
+                </div>
+                <div className={styles.zoomRow}>{zoomControls}</div>
               </div>
             </div>
           )}
