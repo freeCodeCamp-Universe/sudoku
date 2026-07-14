@@ -86,11 +86,11 @@ describe('GamePage - Classic integration', () => {
     renderGamePage();
 
     expect(screen.getByRole('tab', { name: 'Controls' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
 
     await user.click(screen.getByRole('tab', { name: 'Map' }));
 
     expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
   });
 
   it('should render the Move and Map navigation tabs with the D-pad below tablet width', () => {
@@ -102,10 +102,12 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeTruthy();
   });
 
-  it('should reveal the minimap and zoom controls when the Map tab is selected', async () => {
+  it('should keep the zoom controls visible while switching between Move and Map below tablet width', async () => {
     const user = userEvent.setup();
     window.innerWidth = 500;
     renderGamePage();
+
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
 
     await user.click(screen.getByRole('tab', { name: 'Map' }));
 

@@ -1,55 +1,45 @@
 /*
- * Four arrow keys laid out in a cross around an empty center. Each key mirrors
- * the NumberPad button style (bg-secondary, 1px border with a reserved 3px flat
- * bottom, near-square 2px corners) so the D-pad reads as the same kind of
- * control. The center cell is a transparent dead zone, so the arrows stay
- * visually distinct from the gap between them.
+ * Four arrow keys laid out in a cross around an empty center. The whole D-pad
+ * fills a square panel so it always matches the minimap footprint in the mobile
+ * map/move column.
  */
 .dpad {
-  --dpad-key: 44px;
   display: grid;
-  grid-template-columns: repeat(3, var(--dpad-key));
-  grid-template-rows: repeat(3, var(--dpad-key));
-  justify-content: center;
-}
-
-/* From small-tablet width up the nav column widens to a full third of the
-   control row, so the keys grow past the 44px phone minimum to fill it
-   comfortably. */
-@media (min-width: 600px) {
-  .dpad {
-    --dpad-key: 56px;
-  }
+  inline-size: 100%;
+  aspect-ratio: 1;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 }
 
 .key {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: var(--dpad-key);
-  min-block-size: var(--dpad-key);
+  min-inline-size: 44px;
+  min-block-size: 44px;
   font-size: 1.1rem;
-  color: var(--text-bright);
+  color: var(--text-muted);
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-block-end: 3px solid transparent;
   border-radius: 2px;
   cursor: pointer;
   /* Fire on tap without the legacy mobile click delay. */
   touch-action: manipulation;
   transition:
     border-color 0.15s,
+    color 0.15s,
     background 0.15s;
 }
 
+.key:hover,
 .key:active {
   border-color: var(--accent-blue);
-  background: var(--bg-surface);
+  color: var(--accent-blue);
 }
 
 .key:focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
+  outline-offset: 2px;
   z-index: 1;
 }
 

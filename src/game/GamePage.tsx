@@ -688,9 +688,9 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
                     data-active={navTab === 'map'}
                   >
                     {minimap}
-                    {zoomControls}
                   </div>
                 </div>
+                <div className={styles.zoomRow}>{zoomControls}</div>
               </div>
             </div>
           )}
