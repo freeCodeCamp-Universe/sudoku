@@ -61,7 +61,13 @@ interface GameInnerProps {
   onProgressChange?: (hasUnsaved: boolean) => void;
 }
 
-function GameInner({ settings, onNewGame, onFirstWin, onToggleColorLabels, onProgressChange }: GameInnerProps) {
+function GameInner({
+  settings,
+  onNewGame,
+  onFirstWin,
+  onToggleColorLabels,
+  onProgressChange,
+}: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
