@@ -72,16 +72,12 @@ export const samurai: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'Five grids',
-          text: 'One grid sits in the center, with four more positioned at each diagonal corner, forming an X shape overall.',
+          term: 'Board',
+          text: 'Five 9×9 boards arranged in an X shape, with one in the center and one at each diagonal corner, each sharing a 3×3 box with the center.',
         },
         {
-          term: 'Fill with 1–9',
-          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
-        },
-        {
-          term: 'Standard sudoku',
-          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+          term: 'Fill with 1 to 9',
+          text: 'Every cell in each 9×9 board must contain a symbol from 1 to 9. Each row, column, and 3×3 box within a single board must contain every symbol exactly once.',
         },
       ],
     },
@@ -90,16 +86,12 @@ export const samurai: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'Shared corners',
-          text: 'Where a corner grid overlaps the center, that 3×3 box belongs to both grids. Digits there must follow the rules of each one.',
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple boards simultaneously and must satisfy the rules of each one.',
         },
         {
           term: 'Solve as one',
-          text: 'Because the grids are linked through those shared boxes, you have to work across all five at the same time.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'All five boards are linked through their shared cells, so they must all be solved together.',
         },
       ],
     },

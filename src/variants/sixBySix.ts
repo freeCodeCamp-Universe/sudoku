@@ -12,32 +12,14 @@ export const sixBySix: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'The grid',
-          text: 'A 6×6 board split into six 2×3 boxes. Fill every cell with a digit from 1 to 6.',
+          term: 'The board',
+          text: 'A 6×6 board split into six 2×3 boxes. Fill every cell with a symbol from 1 to 6.',
         },
         {
           term: 'Rows and columns',
-          text: 'Every row and every column must contain each digit exactly once.',
+          text: 'Every row and every column must contain each symbol exactly once.',
         },
-        { term: 'Boxes', text: 'Each 2×3 box must also hold every digit exactly once.' },
-      ],
-    },
-    {
-      label: 'Additional Rules',
-      tone: 'extra',
-      rules: [
-        {
-          term: 'Given digits',
-          text: 'Pre-filled cells are fixed. Only the empty ones can be changed.',
-        },
-        {
-          term: 'Entering digits',
-          text: 'Click a cell to select it, then press a digit key or tap the numpad.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
-        },
+        { term: 'Boxes', text: 'Each 2×3 box must also hold every symbol exactly once.' },
       ],
     },
   ],

@@ -38,34 +38,20 @@ export const consecutiveVariant: Variant = {
     'Dots mark adjacent pairs that differ by exactly 1. Pairs without a dot must not be consecutive.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Dots',
-          text: 'A dot between two adjacent cells means those digits differ by exactly 1 (e.g. 4 and 5).',
-        },
-        {
-          term: 'No dot',
-          text: 'When two adjacent cells have no dot, their digits must not differ by exactly 1.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
-          term: 'Both directions matter',
-          text: 'Dots mark consecutive pairs and missing dots rule them out. Use both pieces of information to solve the puzzle.',
+          term: 'Dots',
+          text: 'A dot between two adjacent cells means those symbols differ by exactly 1 (e.g. 4 and 5).',
         },
         {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'No dot',
+          text: 'When two adjacent cells have no dot, their symbols must not differ by exactly 1.',
+        },
+        {
+          term: 'Both directions matter',
+          text: 'Dots mark consecutive pairs and missing dots rule them out. Use both pieces of information to solve the puzzle.',
         },
       ],
     },

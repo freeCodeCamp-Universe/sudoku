@@ -70,16 +70,12 @@ export const tripledoku: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'Three grids',
-          text: 'Three 9×9 sudoku grids are arranged diagonally, with each consecutive pair overlapping across four 3×3 boxes.',
+          term: 'Board',
+          text: 'Three 9×9 boards arranged diagonally in a chain, with each consecutive pair overlapping across four 3×3 boxes.',
         },
         {
-          term: 'Fill with 1–9',
-          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
-        },
-        {
-          term: 'Standard sudoku',
-          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+          term: 'Fill with 1 to 9',
+          text: 'Every cell in each 9×9 board must contain a symbol from 1 to 9. Each row, column, and 3×3 box within a single board must contain every symbol exactly once.',
         },
       ],
     },
@@ -88,16 +84,12 @@ export const tripledoku: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'Shared region',
-          text: "The first and second grids share four 3×3 boxes; the second and third share another four. Both grids' rules apply to all shared cells.",
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple boards simultaneously and must satisfy the rules of each one.',
         },
         {
           term: 'Solve as one',
-          text: 'The overlapping boxes chain all three grids together, so progress in any grid can unlock cells in the others.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'All three boards are linked through their shared cells, so they must all be solved together.',
         },
       ],
     },

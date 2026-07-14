@@ -93,12 +93,12 @@ export const sujiken: Variant = {
       rules: [
         {
           term: 'The shape',
-          text: 'A triangular grid built from the upper-left corner of a 9×9 board. Only the cells above and on the main diagonal are used.',
+          text: 'A triangular board built from the upper-left corner of a 9×9 square. Only the cells above and on the main diagonal are used.',
         },
-        { term: 'Rows', text: 'Each row must contain distinct digits with no repetition.' },
+        { term: 'Rows', text: 'Each row must contain distinct symbols with no repetition.' },
         {
           term: 'Columns',
-          text: 'Each column, counting downward from the diagonal, must also contain distinct digits.',
+          text: 'Each column, counting downward from the diagonal, must also contain distinct symbols.',
         },
       ],
     },
@@ -108,23 +108,19 @@ export const sujiken: Variant = {
       rules: [
         {
           term: 'All diagonals',
-          text: 'No digit may repeat along any diagonal in either direction, including lines parallel to the long diagonal and the crossing anti-diagonals.',
+          text: 'No symbol may repeat along any diagonal in either direction, including lines parallel to the long diagonal and the crossing anti-diagonals.',
         },
         {
           term: 'Variable range',
-          text: 'Shorter rows and columns hold fewer cells, so not every line needs all nine digits. Just no repeats within each.',
+          text: 'Shorter rows and columns hold fewer cells, so not every line needs all nine symbols. Just no repeats within each.',
         },
         {
           term: 'Three square regions',
-          text: 'The three full 3×3 square regions marked by thick borders must not repeat any digit.',
+          text: 'The three full 3×3 square regions marked by thick borders must not repeat any symbol.',
         },
         {
           term: 'Three triangular regions',
-          text: 'The three 3×3 triangular regions along the diagonal, also marked by thick borders, must not repeat any digit.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'The three 3×3 triangular regions along the diagonal, also marked by thick borders, must not repeat any symbol.',
         },
       ],
     },

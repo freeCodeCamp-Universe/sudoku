@@ -977,8 +977,8 @@ export function GamePage() {
       <HelpDialog
         open={helpOpen}
         onClose={() => setHelpOpen(false)}
-        help={variant.help}
-        description={variant.description}
+        basicRules={variant.help?.find((s) => s.tone === 'basic')?.rules}
+        help={variant.help?.filter((s) => s.tone === 'extra')}
       />
       <OnboardingDialog
         open={onboardingOpen}
