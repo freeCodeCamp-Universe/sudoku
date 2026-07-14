@@ -176,7 +176,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 3 1 0;
   /* The narrower 3-part map column makes its square panels track the numpad's
      button size, while the freed width becomes extra space between columns. */
