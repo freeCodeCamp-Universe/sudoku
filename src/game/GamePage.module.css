@@ -243,6 +243,22 @@
   }
 }
 
+/* Small tablets and up: the control row has room to breathe, so give the two
+   tab groups a clean 2/3 (numpad) : 1/3 (nav) split with a wider gutter between
+   them. Lifting the map column's phone-era 200px cap lets its flex: 1 reach a
+   true third, and the raised min-inline-size fits the larger 56px D-pad
+   (3 * 56px = 168px). */
+@media (min-width: 600px) {
+  .controlsRow {
+    gap: 24px;
+  }
+
+  .mapGroup {
+    min-inline-size: 168px;
+    max-inline-size: none;
+  }
+}
+
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside
    the Controls tab instead). */
 .newGameBtn {

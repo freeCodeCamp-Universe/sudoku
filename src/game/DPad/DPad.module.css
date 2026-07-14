@@ -6,18 +6,28 @@
  * visually distinct from the gap between them.
  */
 .dpad {
+  --dpad-key: 44px;
   display: grid;
-  grid-template-columns: repeat(3, 44px);
-  grid-template-rows: repeat(3, 44px);
+  grid-template-columns: repeat(3, var(--dpad-key));
+  grid-template-rows: repeat(3, var(--dpad-key));
   justify-content: center;
+}
+
+/* From small-tablet width up the nav column widens to a full third of the
+   control row, so the keys grow past the 44px phone minimum to fill it
+   comfortably. */
+@media (min-width: 600px) {
+  .dpad {
+    --dpad-key: 56px;
+  }
 }
 
 .key {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: 44px;
-  min-block-size: 44px;
+  min-inline-size: var(--dpad-key);
+  min-block-size: var(--dpad-key);
   font-size: 1.1rem;
   color: var(--text-bright);
   background: var(--bg-secondary);
