@@ -11,6 +11,7 @@ import {
   gutterOrigin,
   isOversized,
 } from '@/game/boardViewport';
+import { Button } from '@/game/Button';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
@@ -516,9 +517,9 @@ function GameInner({
     <div className={styles.actionColumn}>
       {colorLabelToggle}
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
-      <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
+      <Button variant="primary" onClick={handleNewGame}>
         New Game
-      </button>
+      </Button>
     </div>
   );
 
@@ -583,7 +584,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
               </svg>
@@ -600,7 +601,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
               </svg>
@@ -610,7 +611,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#5060a0" />
               </svg>
@@ -678,23 +679,25 @@ function GameInner({
                   onSelect={selectControlTab}
                   ariaLabel="Input mode and controls"
                 />
-                <div
-                  role="tabpanel"
-                  id="control-panel-input"
-                  aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                  className={styles.panel}
-                  hidden={controlsOpen}
-                >
-                  {numberPad}
-                </div>
-                <div
-                  role="tabpanel"
-                  id="control-panel-controls"
-                  aria-labelledby="controls-tab"
-                  className={styles.panel}
-                  hidden={!controlsOpen}
-                >
-                  {controlsPanel}
+                <div className={styles.inputPanels}>
+                  <div
+                    role="tabpanel"
+                    id="control-panel-input"
+                    aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
+                    className={styles.panel}
+                    data-active={!controlsOpen}
+                  >
+                    {numberPad}
+                  </div>
+                  <div
+                    role="tabpanel"
+                    id="control-panel-controls"
+                    aria-labelledby="controls-tab"
+                    className={styles.panel}
+                    data-active={controlsOpen}
+                  >
+                    {controlsPanel}
+                  </div>
                 </div>
               </div>
               <div className={styles.mapGroup}>
@@ -731,9 +734,9 @@ function GameInner({
         </div>
       </div>
       {isDesktop ? (
-        <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
+        <Button variant="primary" className={styles.desktopNewGame} onClick={handleNewGame}>
           New Game
-        </button>
+        </Button>
       ) : null}
       {showCheckPrompt ? (
         <div className={styles.checkPrompt}>

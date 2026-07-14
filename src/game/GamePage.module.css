@@ -194,8 +194,17 @@
   inline-size: 100%;
 }
 
-.panel[hidden] {
-  display: none;
+.inputPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.inputPanels > .panel {
+  grid-area: 1 / 1;
+}
+
+.inputPanels > .panel:not([data-active='true']) {
+  visibility: hidden;
 }
 
 /*
@@ -264,89 +273,25 @@
   }
 }
 
-/* Small tablets and up: lift the phone-era 200px cap so flex: 1 reaches a true
-   third, and raise the floor to 168px (168 / 3 = 56px keys, matching the numpad). */
+/* Small tablets and up: cap the map column at 200px so the D-pad and minimap
+   stay close to the numpad button size on wide tablets instead of stretching. */
 @media (min-width: 600px) {
   .controlsRow {
     gap: 24px;
+    padding-inline: 24px;
   }
 
   .mapGroup {
-    min-inline-size: 168px;
-    max-inline-size: none;
+    min-inline-size: 200px;
+    max-inline-size: 200px;
   }
 }
 
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside
    the Controls tab instead). */
-.newGameBtn {
+.desktopNewGame {
   margin-block-start: 40px;
   align-self: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  font-family: inherit;
-  padding: 10px 28px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.newGameBtn:hover {
-  opacity: 0.88;
-}
-
-.newGameBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.actionBtn,
-.actionBtnPrimary {
-  inline-size: 100%;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding-block: 7px;
-  padding-inline: 14px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s,
-    opacity 0.15s;
-}
-
-.actionBtn {
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-}
-
-.actionBtn:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-.actionBtnPrimary {
-  border: none;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  font-weight: 700;
-}
-
-.actionBtnPrimary:hover {
-  opacity: 0.88;
-}
-
-.actionBtn:focus-visible,
-.actionBtnPrimary:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .legendSwatch {

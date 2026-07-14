@@ -1,0 +1,49 @@
+.btn {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 44px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding-block: 0;
+  padding-inline: 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    opacity 0.15s;
+}
+
+.outline {
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+.outline:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.accentYellow:hover {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+.primary {
+  border: none;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 700;
+}
+
+.primary:hover {
+  opacity: 0.88;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
