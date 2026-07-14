@@ -10,6 +10,7 @@ import { BoardZoomControls } from './BoardZoomControls';
 function makeViewport(overrides: Partial<BoardViewport> = {}): BoardViewport {
   return {
     transform: { scale: 1, translateX: 0, translateY: 0 },
+    engaged: false,
     animated: false,
     panBy: vi.fn(),
     zoomBy: vi.fn(),

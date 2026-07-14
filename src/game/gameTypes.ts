@@ -74,6 +74,7 @@ export interface GridInteraction {
 export type MarkerEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
 export interface BoardViewportState {
+  active: boolean;
   transform: { scale: number; translateX: number; translateY: number };
   // Ease to the transform (programmatic moves) instead of jumping (gestures).
   animated: boolean;

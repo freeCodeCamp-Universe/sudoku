@@ -1,9 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useBoardViewport } from './useBoardViewport';
 import { fitScale } from './boardViewport';
 
 const board = { w: 840, h: 840 };
+const fittingBoard = { w: 300, h: 300 };
 const viewport = { w: 360, h: 360 };
 
 // Bring an oversized board from the initial fitted view to natural size so
@@ -11,6 +12,10 @@ const viewport = { w: 360, h: 360 };
 function zoomToNaturalSize(result: { current: ReturnType<typeof useBoardViewport> }) {
   act(() => result.current.zoomBy(1 / fitScale(board, viewport)));
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('useBoardViewport', () => {
   it('should start with the whole oversized board fitted into the viewport', () => {
@@ -21,10 +26,15 @@ describe('useBoardViewport', () => {
   });
 
   it('should start a fitting board at natural size, centered', () => {
-    const { result } = renderHook(() => useBoardViewport({ w: 300, h: 300 }, viewport));
+    const { result } = renderHook(() => useBoardViewport(fittingBoard, viewport));
     expect(result.current.transform.scale).toBe(1);
     expect(result.current.transform.translateX).toBe(30);
     expect(result.current.transform.translateY).toBe(30);
+  });
+
+  it('should start a fitting board disengaged', () => {
+    const { result } = renderHook(() => useBoardViewport(fittingBoard, viewport));
+    expect(result.current.engaged).toBe(false);
   });
 
   it('should start at the origin while the viewport is unmeasured', () => {
@@ -75,6 +85,57 @@ describe('useBoardViewport', () => {
     expect(result.current.animated).toBe(false);
   });
 
+  it('should stage the first zoom-in on a fitting board before animating', () => {
+    const rafCallbacks: FrameRequestCallback[] = [];
+    vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation(
+      (callback: FrameRequestCallback) => {
+        rafCallbacks.push(callback);
+        return rafCallbacks.length;
+      }
+    );
+    vi.spyOn(globalThis, 'cancelAnimationFrame').mockImplementation(() => {});
+
+    const { result } = renderHook(() => useBoardViewport(fittingBoard, viewport));
+
+    act(() => result.current.zoomOnPoint(1.5, { x: 150, y: 150 }));
+
+    expect(result.current.engaged).toBe(true);
+    expect(result.current.animated).toBe(false);
+    expect(result.current.transform.scale).toBe(1);
+    expect(result.current.transform.translateX).toBe(30);
+    expect(result.current.transform.translateY).toBe(0);
+
+    act(() => {
+      const first = rafCallbacks.shift();
+      first?.(0);
+    });
+
+    expect(result.current.transform.scale).toBe(1);
+    expect(result.current.animated).toBe(false);
+
+    act(() => {
+      const second = rafCallbacks.shift();
+      second?.(0);
+    });
+
+    expect(result.current.transform.scale).toBe(1.5);
+    expect(result.current.transform.translateX).toBeCloseTo(-45);
+    expect(result.current.transform.translateY).toBeCloseTo(-45);
+    expect(result.current.animated).toBe(true);
+  });
+
+  it('should ignore zoom-out on a fitting board before engagement', () => {
+    const { result } = renderHook(() => useBoardViewport(fittingBoard, viewport));
+
+    act(() => result.current.zoomOnPoint(0.9, { x: 150, y: 150 }));
+
+    expect(result.current.engaged).toBe(false);
+    expect(result.current.animated).toBe(false);
+    expect(result.current.transform.scale).toBe(1);
+    expect(result.current.transform.translateX).toBe(30);
+    expect(result.current.transform.translateY).toBe(30);
+  });
+
   it('should return to the fitted view on fitWhole', () => {
     const { result } = renderHook(() => useBoardViewport(board, viewport));
     zoomToNaturalSize(result);
@@ -83,6 +144,20 @@ describe('useBoardViewport', () => {
     expect(result.current.transform.scale).toBeCloseTo(fitScale(board, viewport));
     expect(result.current.transform.translateX).toBeCloseTo(0);
     expect(result.current.transform.translateY).toBeCloseTo(0);
+  });
+
+  it('should reset engagement on fitWhole', () => {
+    const { result } = renderHook(() => useBoardViewport(fittingBoard, viewport));
+
+    act(() => result.current.zoomBy(1.2));
+    expect(result.current.engaged).toBe(true);
+
+    act(() => result.current.fitWhole());
+
+    expect(result.current.engaged).toBe(false);
+    expect(result.current.transform.scale).toBe(1);
+    expect(result.current.transform.translateX).toBe(30);
+    expect(result.current.transform.translateY).toBe(30);
   });
 
   it('should center on a tapped minimap point', () => {

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Rect, Size } from '@/game/gameTypes';
 import {
   centerOnPoint,
@@ -6,6 +6,7 @@ import {
   clampTranslate,
   ensureVisibleTranslate,
   fitWholeScale,
+  isOversized,
   minimapPointToTranslate,
   zoomAbout,
   type Transform,
@@ -13,6 +14,7 @@ import {
 
 export interface BoardViewport {
   transform: Transform;
+  engaged: boolean;
   // True when the last change was programmatic (button zoom, minimap seek,
   // ensure-visible) rather than a direct gesture, so the view eases to the
   // new transform instead of jumping. Gestures must track the pointer
@@ -50,11 +52,23 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
   // is derived as the fitted view, so the board opens fully visible and stays
   // fitted through measurement updates and resizes until the first gesture.
   const [explicit, setExplicit] = useState<Transform | null>(null);
+  const [engaged, setEngaged] = useState(false);
   const [animated, setAnimated] = useState(false);
+  const zoomOnPointRafRef = useRef<number | null>(null);
   const transform = explicit ?? fitWholeTransform(board, viewport);
+
+  useEffect(
+    () => () => {
+      if (zoomOnPointRafRef.current !== null) {
+        cancelAnimationFrame(zoomOnPointRafRef.current);
+      }
+    },
+    []
+  );
 
   const panBy = useCallback(
     (dx: number, dy: number) => {
+      setEngaged(true);
       setAnimated(false);
       setExplicit((prev) => {
         const t = prev ?? fitWholeTransform(board, viewport);
@@ -68,6 +82,7 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
   const zoomBy = useCallback(
     (factor: number, focus?: { x: number; y: number }) => {
       const center = focus ?? { x: viewport.w / 2, y: viewport.h / 2 };
+      setEngaged(true);
       setAnimated(false);
       setExplicit((prev) => {
         const t = prev ?? fitWholeTransform(board, viewport);
@@ -81,23 +96,53 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
   // clamped to the board bounds so no empty space shows past an edge.
   const zoomOnPoint = useCallback(
     (factor: number, point: { x: number; y: number }) => {
-      setAnimated(true);
-      setExplicit((prev) => {
-        const t = prev ?? fitWholeTransform(board, viewport);
-        const scale = clampScale(t.scale * factor, board, viewport);
-        return centerOnPoint(point, scale, board, viewport);
+      const mounted = isOversized(board, viewport) || engaged;
+      if (mounted) {
+        setEngaged(true);
+        setAnimated(true);
+        setExplicit((prev) => {
+          const t = prev ?? fitWholeTransform(board, viewport);
+          const scale = clampScale(t.scale * factor, board, viewport);
+          return centerOnPoint(point, scale, board, viewport);
+        });
+        return;
+      }
+
+      const fitted = fitWholeTransform(board, viewport);
+      const targetScale = clampScale(fitted.scale * factor, board, viewport);
+      if (targetScale <= fitted.scale) {
+        return;
+      }
+
+      const start = {
+        scale: fitted.scale,
+        translateX: fitted.translateX,
+        translateY: 0,
+      };
+
+      setEngaged(true);
+      setAnimated(false);
+      setExplicit(start);
+      zoomOnPointRafRef.current = requestAnimationFrame(() => {
+        zoomOnPointRafRef.current = requestAnimationFrame(() => {
+          setAnimated(true);
+          setExplicit(centerOnPoint(point, targetScale, board, viewport));
+          zoomOnPointRafRef.current = null;
+        });
       });
     },
-    [board, viewport]
+    [board, viewport, engaged]
   );
 
   const fitWhole = useCallback(() => {
+    setEngaged(false);
     setAnimated(true);
     setExplicit(null);
   }, []);
 
   const panToMinimapPoint = useCallback(
     (point: { x: number; y: number }, minimap: Size) => {
+      setEngaged(true);
       setAnimated(true);
       setExplicit((prev) => {
         const t = prev ?? fitWholeTransform(board, viewport);
@@ -112,6 +157,7 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
 
   const ensureVisible = useCallback(
     (cell: Rect) => {
+      setEngaged(true);
       setAnimated(true);
       setExplicit((prev) => {
         const t = prev ?? fitWholeTransform(board, viewport);
@@ -124,6 +170,7 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
   return useMemo(
     () => ({
       transform,
+      engaged,
       animated,
       panBy,
       zoomBy,
@@ -132,6 +179,16 @@ export function useBoardViewport(board: Size, viewport: Size): BoardViewport {
       panToMinimapPoint,
       ensureVisible,
     }),
-    [transform, animated, panBy, zoomBy, zoomOnPoint, fitWhole, panToMinimapPoint, ensureVisible]
+    [
+      transform,
+      engaged,
+      animated,
+      panBy,
+      zoomBy,
+      zoomOnPoint,
+      fitWhole,
+      panToMinimapPoint,
+      ensureVisible,
+    ]
   );
 }

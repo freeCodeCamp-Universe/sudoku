@@ -132,11 +132,10 @@ function GameInner({
     [size, frameEdge, gutters]
   );
 
-  // Pan/zoom navigation for oversized boards (e.g. samurai, super) on small
-  // screens. `viewportRef` measures a stable, always-rendered board frame so
-  // measurement never deadlocks; `clipRef` belongs to the conditional
-  // BoardViewport clip. Gestures read `e.currentTarget`, so the separate clip
-  // ref is fine.
+  // Pan/zoom navigation for mobile boards. `viewportRef` measures the stable
+  // board frame; `clipRef` points at the mobile viewport wrapper that stays
+  // mounted even before pan/zoom engages, so fitting boards do not remount
+  // their cell subtree on first zoom.
   const viewportRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const viewportSize = useElementSize(viewportRef);
@@ -149,7 +148,7 @@ function GameInner({
   // percentage-width wrap has no intrinsic width, so mounting it inside the
   // shrink-to-fit desktop gameLeft column collapses the board to 0px (e.g.
   // when a mobile zoom level survives a resize across the 1024px breakpoint).
-  const panZoomActive = !isDesktop && (oversized || boardViewport.transform.scale > 1);
+  const panZoomActive = !isDesktop && (oversized || boardViewport.engaged);
 
   // Cell rects are in canvas coordinates; the board's origin is the gutter
   // layout's corner (when clue gutters exist), one gutter plus one frame edge
@@ -173,8 +172,9 @@ function GameInner({
     [boardViewport, rects, cellOrigin]
   );
 
-  const viewportState: BoardViewportState | undefined = panZoomActive
+  const viewportState: BoardViewportState | undefined = !isDesktop
     ? {
+        active: panZoomActive,
         transform: boardViewport.transform,
         animated: boardViewport.animated,
         viewportRef: clipRef,
