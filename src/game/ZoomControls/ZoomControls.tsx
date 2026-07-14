@@ -1,3 +1,4 @@
+import { Button } from '@/game/Button';
 import styles from './ZoomControls.module.css';
 
 interface ZoomControlsProps {
@@ -9,20 +10,15 @@ interface ZoomControlsProps {
 export function ZoomControls({ onZoomIn, onZoomOut, onFit }: ZoomControlsProps) {
   return (
     <div className={styles.controls}>
-      <button type="button" className={styles.btn} aria-label="Zoom out" onClick={onZoomOut}>
+      <Button aria-label="Zoom out" onClick={onZoomOut}>
         −
-      </button>
-      <button type="button" className={styles.btn} aria-label="Zoom in" onClick={onZoomIn}>
+      </Button>
+      <Button aria-label="Zoom in" onClick={onZoomIn}>
         +
-      </button>
-      <button
-        type="button"
-        className={`${styles.btn} ${styles.fit}`}
-        aria-label="Fit whole board"
-        onClick={onFit}
-      >
+      </Button>
+      <Button className={styles.fit} aria-label="Fit whole board" onClick={onFit}>
         Fit
-      </button>
+      </Button>
     </div>
   );
 }

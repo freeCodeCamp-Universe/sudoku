@@ -6,35 +6,8 @@
   inline-size: 100%;
 }
 
-.btn {
-  block-size: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 2px;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s,
-    background 0.15s;
-}
-
-.btn:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
 .fit {
   grid-column: 1 / -1;
-  font-size: 0.8rem;
 }
 
 @media (min-width: 600px) {
