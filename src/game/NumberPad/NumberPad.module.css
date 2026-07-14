@@ -165,7 +165,6 @@
   font-weight: 700;
   color: var(--numpad-chip-label);
   line-height: 1;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
 }
 
 /* Chips 3 and 9 sit on the two brightest ladder rungs in both high-contrast
@@ -174,13 +173,6 @@
 .colorChip[data-color='3'] .colorLabel,
 .colorChip[data-color='9'] .colorLabel {
   color: var(--numpad-chip-label-bright);
-}
-
-/* The shadow lifts the translucent standard-dark label off mid-tone chips;
-   the other palettes use solid label colors that clear AA on their own. */
-:global(.light) .colorLabel,
-:global(.high-contrast) .colorLabel {
-  text-shadow: none;
 }
 
 @media (min-width: 600px) {

@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@/app/ThemeProvider';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { Toggle } from '@/app/Toggle';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -105,95 +106,35 @@ export function Header({
                 aria-label="Settings"
               >
                 {onToggleCheck !== undefined ? (
-                  <div className={styles.dropdownRow}>
-                    <span id="settings-check-label" className={styles.dropdownLabel}>
-                      Check answers
-                    </span>
-                    <span className={styles.toggleControl}>
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        className={styles.toggleInput}
-                        checked={Boolean(checkEnabled)}
-                        aria-labelledby="settings-check-label"
-                        onChange={onToggleCheck}
-                      />
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.toggleBtn} ${checkEnabled ? styles.on : styles.off}`}
-                      >
-                        {checkEnabled ? 'On' : 'Off'}
-                      </span>
-                    </span>
-                  </div>
+                  <Toggle
+                    id="settings-check-label"
+                    label="Check answers"
+                    checked={Boolean(checkEnabled)}
+                    onChange={onToggleCheck}
+                  />
                 ) : null}
                 {onToggleTimer !== undefined ? (
-                  <div className={styles.dropdownRow}>
-                    <span id="settings-timer-label" className={styles.dropdownLabel}>
-                      Timer
-                    </span>
-                    <span className={styles.toggleControl}>
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        className={styles.toggleInput}
-                        checked={Boolean(timerEnabled)}
-                        aria-labelledby="settings-timer-label"
-                        onChange={onToggleTimer}
-                      />
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.toggleBtn} ${timerEnabled ? styles.on : styles.off}`}
-                      >
-                        {timerEnabled ? 'On' : 'Off'}
-                      </span>
-                    </span>
-                  </div>
+                  <Toggle
+                    id="settings-timer-label"
+                    label="Timer"
+                    checked={Boolean(timerEnabled)}
+                    onChange={onToggleTimer}
+                  />
                 ) : null}
                 {onToggleHighlightPeers !== undefined ? (
-                  <div className={styles.dropdownRow}>
-                    <span id="settings-highlight-peers-label" className={styles.dropdownLabel}>
-                      Highlight peers
-                    </span>
-                    <span className={styles.toggleControl}>
-                      <input
-                        type="checkbox"
-                        role="switch"
-                        className={styles.toggleInput}
-                        checked={Boolean(highlightPeersEnabled)}
-                        aria-labelledby="settings-highlight-peers-label"
-                        onChange={onToggleHighlightPeers}
-                      />
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.toggleBtn} ${highlightPeersEnabled ? styles.on : styles.off}`}
-                      >
-                        {highlightPeersEnabled ? 'On' : 'Off'}
-                      </span>
-                    </span>
-                  </div>
+                  <Toggle
+                    id="settings-highlight-peers-label"
+                    label="Highlight peers"
+                    checked={Boolean(highlightPeersEnabled)}
+                    onChange={onToggleHighlightPeers}
+                  />
                 ) : null}
-                <div className={styles.dropdownRow}>
-                  <span id="settings-high-contrast-label" className={styles.dropdownLabel}>
-                    High contrast
-                  </span>
-                  <span className={styles.toggleControl}>
-                    <input
-                      type="checkbox"
-                      role="switch"
-                      className={styles.toggleInput}
-                      checked={highContrast}
-                      aria-labelledby="settings-high-contrast-label"
-                      onChange={toggleHighContrast}
-                    />
-                    <span
-                      aria-hidden="true"
-                      className={`${styles.toggleBtn} ${highContrast ? styles.on : styles.off}`}
-                    >
-                      {highContrast ? 'On' : 'Off'}
-                    </span>
-                  </span>
-                </div>
+                <Toggle
+                  id="settings-high-contrast-label"
+                  label="High contrast"
+                  checked={highContrast}
+                  onChange={toggleHighContrast}
+                />
               </div>
             ) : null}
           </div>

@@ -276,10 +276,9 @@ export const contrastPairs: ContrastPair[] = [
     }))
   ),
 
-  // Number-pad chip labels. The standard dark label is a translucent rgba the
-  // math here cannot resolve, and the owner accepted its shortfall — so only
-  // the solid-label palettes are declared.
-  ...(['light', 'dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
+  // Number-pad chip labels. Every palette uses a solid label the math here can
+  // resolve, so all four are gated.
+  ...(['dark', 'light', 'dark-hc', 'light-hc'] as Theme[]).flatMap((theme): PairInput[] =>
     CHIP_TOKENS.map((chip) => ({
       label: `numpad label on chip ${chip}`,
       fg: chipLabelToken(chip),

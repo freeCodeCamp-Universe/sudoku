@@ -51,8 +51,8 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--cell-peer-structural-bg` | #2e2e44 | #d8d8f0 | #2e2e44 | #d8d8f0 |
 | `--cell-same-value-bg` | #1a4f4f | #cdeaea | #1a4f4f | #cdeaea |
 | `--cell-error-bg` | #2a1515 | #f8dede | #8a5252 | #cc7070 |
-| `--numpad-chip-label` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #ffffff |
-| `--numpad-chip-label-bright` | rgba(255, 255, 255, 0.9) | #000000 | #000000 | #000000 |
+| `--numpad-chip-label` | #000000 | #000000 | #000000 | #ffffff |
+| `--numpad-chip-label-bright` | #000000 | #000000 | #000000 | #000000 |
 | `--btn-primary-bg` | #f1be32 | #f1be32 | #f1be32 | #6b5300 |
 | `--btn-primary-text` | #0a0a23 | #0a0a23 | #0a0a23 | #ffffff |
 | `--given-dot` | rgba(255, 255, 255, 0.7) | rgba(0, 0, 0, 0.25) | #ffffff | #0a0a23 |

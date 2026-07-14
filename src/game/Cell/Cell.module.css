@@ -366,6 +366,34 @@
   background: var(--color-9);
 }
 
+/* The number label sits in the cell's bottom-inline-end corner (clear of the
+   top-start given/revealed dot), on the cell background rather than the color
+   chip, so it reads independently of the chip hue. */
+.colorLabel {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-end: 4px;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* High contrast keeps the stronger primary text color for the label. */
+:global(.high-contrast) .colorLabel {
+  color: var(--text-primary);
+}
+
+/* Desktop cells have room for the label at its original size; mobile keeps
+   the smaller size above so the number stays clear of the color circle. */
+@media (min-width: 1024px) {
+  .colorLabel {
+    font-size: 0.62rem;
+  }
+}
+
 /* Given cells carry a small dot in the top-start corner so clue cells stay
    distinguishable from player-filled ones once the value is shown as a plain
    color circle. Revealed cells use the same mark in the hint's golden hue. */
