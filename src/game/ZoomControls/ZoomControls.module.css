@@ -10,6 +10,11 @@
   grid-column: 1 / -1;
 }
 
+.zoomBtn {
+  color: var(--text-muted);
+  fill: currentColor;
+}
+
 @media (min-width: 600px) {
   .controls {
     gap: 8px;
