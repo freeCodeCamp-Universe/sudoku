@@ -37,6 +37,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   word?: boolean;
   even?: boolean;
   odd?: boolean;
+  showColorLabel?: boolean;
 }
 
 function parseCellCoordinates(id: string): { row: number; col: number } {
@@ -86,6 +87,7 @@ export function Cell({
   word = false,
   even = false,
   odd = false,
+  showColorLabel = false,
   className,
   ...rest
 }: CellProps) {
@@ -141,6 +143,11 @@ export function Cell({
               data-color={value}
               data-testid="cell-color-chip"
             />
+            {showColorLabel ? (
+              <span aria-hidden="true" className={styles.colorLabel} data-testid="cell-color-label">
+                {value}
+              </span>
+            ) : null}
             {given ? (
               <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
             ) : revealed ? (

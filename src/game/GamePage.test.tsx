@@ -43,6 +43,7 @@ function renderGamePage(variantId = 'classic') {
 // layout set window.innerWidth before rendering; reset it between tests.
 afterEach(() => {
   window.innerWidth = 1024;
+  window.localStorage.clear();
 });
 
 describe('GamePage - Classic integration', () => {
@@ -145,6 +146,31 @@ describe('GamePage - Classic integration', () => {
     renderGamePage('color');
 
     expect(screen.getByRole('button', { name: 'Lavender' })).toBeTruthy();
+  });
+
+  it('should render a Show numbers switch for the color variant', () => {
+    renderGamePage('color');
+
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+  });
+
+  it('should not render a Show numbers switch for the classic variant', () => {
+    renderGamePage('classic');
+
+    expect(screen.queryByRole('switch', { name: 'Show numbers' })).toBeNull();
+  });
+
+  it('should show the digit label inside color cells when the Show numbers switch is toggled', async () => {
+    const user = userEvent.setup();
+    renderGamePage('color');
+
+    const toggle = screen.getByRole('switch', { name: 'Show numbers' });
+    expect(toggle).not.toBeChecked();
+
+    await user.click(toggle);
+
+    expect(toggle).toBeChecked();
+    expect(screen.getAllByTestId('cell-color-label').length).toBeGreaterThan(0);
   });
 
   it('should render skyscraper gutters from derived structure', () => {
@@ -276,6 +302,69 @@ describe('GamePage - Classic integration', () => {
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('revealed');
     vi.useRealTimers();
+  });
+});
+
+describe('GamePage - leave confirmation dialog', () => {
+  it('should navigate immediately when Back is clicked with no progress', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: /back/i }));
+
+    expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
+  });
+
+  it('should show the leave dialog when Back is clicked after entering a value', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: /back/i }));
+
+    expect(screen.getByRole('dialog', { name: /leave puzzle/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Leave' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Keep Playing' })).toBeTruthy();
+  });
+
+  it('should close the leave dialog when Keep Playing is clicked', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(screen.getByRole('button', { name: 'Keep Playing' }));
+
+    expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
+  });
+
+  it('should close the leave dialog when Escape is pressed', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
+  });
+
+  it('should move focus into the dialog when it opens', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: /back/i }));
+
+    expect(screen.getByRole('dialog', { name: /leave puzzle/i })).toHaveFocus();
   });
 });
 

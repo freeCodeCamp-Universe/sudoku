@@ -1,0 +1,98 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  font-size: 0.82rem;
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+.toggleControl {
+  position: relative;
+  display: inline-flex;
+}
+
+.toggleInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggleInput:focus-visible + .toggleBtn {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.toggleBtn {
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 0;
+  width: 46px;
+  text-align: center;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.on {
+  border-color: #2a4a1a;
+  background: #0d2a0d;
+  color: var(--accent-green);
+}
+
+:global(.light) .on {
+  border-color: #90c090;
+  background: #d4ead4;
+  color: #2a6a2a;
+}
+
+/* In high contrast the fixed ON border is nearly invisible against the panel,
+   so match it to the ON text color for a clearly visible outline. */
+:global(.high-contrast) .on {
+  border-color: var(--accent-green);
+}
+
+/* Light high-contrast: the ON label text is a hardcoded #2a6a2a (not the
+   --accent-green token), so match the border to it rather than inheriting the
+   dark near-black green from the .high-contrast rule above. */
+:global(.light.high-contrast) .on {
+  border-color: #2a6a2a;
+}
+
+.off {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+:global(.light) .off {
+  border-color: var(--border);
+  background: var(--bg-secondary);
+  color: #6a6a7a;
+}
+
+/* The larger base sizing suits touch targets on mobile; at desktop width the
+   toggle sits in the compact control column, so it reverts to the tighter
+   design size. */
+@media (min-width: 1024px) {
+  .toggleBtn {
+    padding: 3px 0;
+    width: 36px;
+  }
+}

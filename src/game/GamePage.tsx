@@ -27,6 +27,7 @@ import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import { DPad } from '@/game/DPad';
 import { Tabs, type Tab } from './Tabs';
+import { Toggle } from '@/app/Toggle';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
@@ -53,12 +54,21 @@ interface GameInnerProps {
     checkEnabled: boolean;
     timerEnabled: boolean;
     highlightPeers: boolean;
+    showColorLabels: boolean;
   };
   onNewGame?: () => void;
   onFirstWin?: () => void;
+  onToggleColorLabels?: () => void;
+  onProgressChange?: (hasUnsaved: boolean) => void;
 }
 
-function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
+function GameInner({
+  settings,
+  onNewGame,
+  onFirstWin,
+  onToggleColorLabels,
+  onProgressChange,
+}: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
@@ -345,6 +355,10 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
   const hasProgress =
     state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;
 
+  useEffect(() => {
+    onProgressChange?.(hasProgress && !state.solved);
+  }, [hasProgress, onProgressChange, state.solved]);
+
   function formatElapsedSpaced(totalSeconds: number): string {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -488,8 +502,19 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
     { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
     { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
   ];
+
+  const isColor = variant.symbolKind === 'color';
+  const colorLabelToggle = isColor ? (
+    <Toggle
+      label="Show numbers"
+      checked={settings.showColorLabels}
+      onChange={onToggleColorLabels ?? (() => {})}
+    />
+  ) : null;
+
   const controlsPanel = (
     <div className={styles.actionColumn}>
+      {colorLabelToggle}
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
       <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
         New Game
@@ -529,6 +554,7 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
               parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
               viewport={viewportState}
               checkEnabled={checkEnabled}
+              showColorLabel={settings.showColorLabels}
             />
           </div>
           {variant.id === 'wordoku' ? (
@@ -633,7 +659,15 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
               >
                 {numberPad}
               </div>
-              <Toolbar onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+              <div className={styles.actionStack}>
+                <Toolbar
+                  onClearAll={() => dispatch({ type: 'clearAll' })}
+                  onReveal={handleReveal}
+                />
+                {colorLabelToggle ? (
+                  <div className={styles.settingRow}>{colorLabelToggle}</div>
+                ) : null}
+              </div>
             </>
           ) : (
             <div className={styles.controlsRow}>
@@ -824,8 +858,13 @@ function GameInner({ settings, onNewGame, onFirstWin }: GameInnerProps) {
 
 export function GamePage() {
   const { variantId } = useParams<{ variantId: string }>();
+  const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
+  const [gameHasProgress, setGameHasProgress] = useState(false);
+  const leaveDialogRef = useRef<HTMLDivElement>(null);
+  const leaveDialogTriggerRef = useRef<HTMLElement | null>(null);
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -837,6 +876,7 @@ export function GamePage() {
     toggleCheck,
     toggleTimer,
     toggleHighlightPeers,
+    toggleColorLabels,
     onboardingShown,
     acknowledgeOnboarding,
   } = usePersistence(variantId);
@@ -850,6 +890,15 @@ export function GamePage() {
   // recompute (StrictMode, Fast Refresh, dropped cache) yields the same puzzle
   // instead of a fresh one that would desync from the reducer's givens.
   const [seedBase] = useState(() => Math.floor(Math.random() * 0x7fffffff));
+  useEffect(() => {
+    if (leaveConfirmOpen) {
+      leaveDialogRef.current?.focus();
+    } else {
+      leaveDialogTriggerRef.current?.focus();
+      leaveDialogTriggerRef.current = null;
+    }
+  }, [leaveConfirmOpen]);
+
   const { model, gameVariant, givens, solution } = useMemo(
     () => buildPuzzle(variant, jigsawLayoutStart, genKey, seedBase),
     [variant, jigsawLayoutStart, genKey, seedBase]
@@ -859,7 +908,14 @@ export function GamePage() {
     <>
       <Header
         title={variant.name}
-        backHref="/"
+        onBack={() => {
+          if (gameHasProgress) {
+            leaveDialogTriggerRef.current = document.activeElement as HTMLElement;
+            setLeaveConfirmOpen(true);
+          } else {
+            navigate('/');
+          }
+        }}
         onHelpOpen={() => setHelpOpen(true)}
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
         checkEnabled={settings.checkEnabled}
@@ -875,10 +931,46 @@ export function GamePage() {
             settings={settings}
             onNewGame={() => setGenKey((k) => k + 1)}
             onFirstWin={onboardingShown ? undefined : () => setOnboardingOpen(true)}
+            onToggleColorLabels={toggleColorLabels}
+            onProgressChange={setGameHasProgress}
           />
         </GameProvider>
       </main>
 
+      {leaveConfirmOpen ? (
+        <div
+          ref={leaveDialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Leave puzzle?"
+          className={styles.confirmOverlay}
+          tabIndex={-1}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setLeaveConfirmOpen(false);
+          }}
+        >
+          <div className={styles.modal}>
+            <div className={styles.modalTitle}>Are you sure?</div>
+            <div className={styles.modalSub}>Your progress won&apos;t be saved.</div>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.primary}`}
+                onClick={() => navigate('/')}
+              >
+                Leave
+              </button>
+              <button
+                type="button"
+                className={`${styles.modalBtn} ${styles.secondary}`}
+                onClick={() => setLeaveConfirmOpen(false)}
+              >
+                Keep Playing
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <HelpDialog
         open={helpOpen}
         onClose={() => setHelpOpen(false)}

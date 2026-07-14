@@ -97,6 +97,7 @@ export interface BoardProps {
   parityMap?: Map<CellId, 0 | 1>;
   viewport?: BoardViewportState;
   checkEnabled?: boolean;
+  showColorLabel?: boolean;
 }
 
 export interface AnnotatorContext {

@@ -94,10 +94,10 @@ state backgrounds (peer/same-value highlights) the brightest chips dip below 3:1
 ## Number-pad chip labels
 
 `--numpad-chip-label` per palette, with `--numpad-chip-label-bright` on chips 3 and 9
-(see rule 5 above): standard dark keeps the translucent white (accepted shortfall — 8/9
-chips fail regardless of label polarity, and rgba cannot be measured by the gate);
-standard light is solid `#000000` (all 9 pass, gated); HC dark is `#000000` everywhere
-(bright chips); HC light is `#ffffff` with a `#000000` bright-chip label, both gated.
+(see rule 5 above): standard dark is solid `#000000` (all 9 pass, gated — the worst chip
+is purple `--color-7` at 4.52:1; a white label would fail 8 of 9); standard light is solid
+`#000000` (all 9 pass, gated); HC dark is `#000000` everywhere (bright chips); HC light is
+`#ffffff` with a `#000000` bright-chip label, both gated.
 
 ## Primary action button
 

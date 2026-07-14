@@ -183,6 +183,18 @@ describe('Cell', () => {
 
       expect(screen.queryByTestId('cell-color-chip')).toBeNull();
     });
+
+    it('should not render the color label when showColorLabel is false', () => {
+      render(<Cell {...colorProps} showColorLabel={false} />);
+
+      expect(screen.queryByTestId('cell-color-label')).toBeNull();
+    });
+
+    it('should render the color label when showColorLabel is true', () => {
+      render(<Cell {...colorProps} showColorLabel={true} />);
+
+      expect(screen.getByTestId('cell-color-label')).toHaveTextContent('3');
+    });
   });
 
   it('should render all available candidate slots for a 4x4 board', () => {
