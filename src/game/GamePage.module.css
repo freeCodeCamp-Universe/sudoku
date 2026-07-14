@@ -185,12 +185,21 @@
   max-inline-size: 200px;
 }
 
-.panel {
+.mapRow {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  inline-size: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.sidePanel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  inline-size: 100%;
+  flex: 1 1 0;
+  min-inline-size: 0;
 }
 
 .inputPanels {
@@ -273,8 +282,8 @@
   }
 }
 
-/* Small tablets and up: cap the map column at 200px so the D-pad and minimap
-   stay close to the numpad button size on wide tablets instead of stretching. */
+/* Small tablets and up: widen the map column to hold the D-pad and minimap
+   side by side while letting it wrap on very narrow tablet widths. */
 @media (min-width: 600px) {
   .controlsRow {
     gap: 24px;
@@ -282,8 +291,13 @@
   }
 
   .mapGroup {
-    min-inline-size: 200px;
-    max-inline-size: 200px;
+    min-inline-size: 320px;
+    max-inline-size: 400px;
+  }
+
+  .zoomRow {
+    max-inline-size: 50%;
+    margin-inline: auto;
   }
 }
 
