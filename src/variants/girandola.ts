@@ -30,34 +30,20 @@ export const girandola: Variant = {
     'A pinwheel-shaped extra region of nine cells must contain each of the digits 1–9 exactly once.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'The girandola',
-          text: 'Nine specific cells form a pinwheel shape across the grid, marked by highlighting.',
-        },
-        {
-          term: 'Girandola rule',
-          text: 'The nine highlighted cells must together contain each digit from 1 to 9 exactly once.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
-          term: 'Double duty',
-          text: 'Each girandola cell still belongs to its own row, column, and box, so it must satisfy all standard constraints as well as the girandola.',
+          term: 'The girandola',
+          text: 'Nine specific cells form a pinwheel shape across the board, marked by highlighting.',
         },
         {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Girandola rule',
+          text: 'The nine highlighted cells must together contain each symbol from 1 to 9 exactly once.',
+        },
+        {
+          term: 'Double duty',
+          text: 'Each girandola cell still belongs to its own row, column, and box, so it must satisfy all standard constraints as well as the girandola.',
         },
       ],
     },

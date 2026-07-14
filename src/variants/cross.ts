@@ -72,16 +72,12 @@ export const cross: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'Five grids',
-          text: 'A center grid sits in the middle with four more extending outward in a cross pattern.',
+          term: 'Board',
+          text: 'Five 9×9 boards in a plus shape, with one center board and four extending outward, each sharing a 3×3 box with the center.',
         },
         {
-          term: 'Fill with 1–9',
-          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
-        },
-        {
-          term: 'Standard sudoku',
-          text: 'Each row, column, and 3×3 box within a single grid must contain every digit exactly once.',
+          term: 'Fill with 1 to 9',
+          text: 'Every cell in each 9×9 board must contain a symbol from 1 to 9. Each row, column, and 3×3 box within a single board must contain every symbol exactly once.',
         },
       ],
     },
@@ -90,16 +86,12 @@ export const cross: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'Shared boxes',
-          text: 'Where an arm grid meets the center, those 3×3 boxes belong to both grids and must satisfy both sets of rules.',
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple boards simultaneously and must satisfy the rules of each one.',
         },
         {
           term: 'Solve as one',
-          text: 'The five grids are linked through their shared boxes, so all of them must be solved at the same time.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'All five boards are linked through their shared cells, so they must all be solved together.',
         },
       ],
     },

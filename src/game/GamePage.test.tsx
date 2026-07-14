@@ -171,15 +171,14 @@ describe('GamePage - Classic integration', () => {
     await user.click(screen.getByRole('button', { name: /how to play/i }));
 
     expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'Basic Rules', level: 3 })).toBeTruthy();
-    expect(screen.getByText('The grid:')).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Basic Rules', level: 3 })).toBeNull();
+    expect(screen.getByText('The board:')).toBeTruthy();
     expect(
       screen.getByText(
-        'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a digit from 1 to 9.'
+        'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
       )
     ).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
-    expect(screen.getByText('Given digits:')).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Additional Rules', level: 3 })).toBeNull();
   });
 
   it('should render samurai additional rules from the upstream dialog content', async () => {
@@ -189,7 +188,7 @@ describe('GamePage - Classic integration', () => {
     await user.click(screen.getByRole('button', { name: /how to play/i }));
 
     expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
-    expect(screen.getByText('Shared corners:')).toBeTruthy();
+    expect(screen.getByText('Shared regions:')).toBeTruthy();
     expect(screen.getByText('Solve as one:')).toBeTruthy();
   });
 

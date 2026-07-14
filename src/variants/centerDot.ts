@@ -30,31 +30,17 @@ export const centerDot: Variant = {
     'All nine center cells, one per 3×3 box, must together contain each of the digits 1–9 once.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        { term: 'Center cells', text: 'The nine center cells (one per box) are highlighted.' },
-        {
-          term: 'Center rule',
-          text: 'The nine highlighted cells must together contain each digit from 1 to 9 exactly once.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
+        { term: 'Center cells', text: 'The nine center cells (one per box) are highlighted.' },
+        {
+          term: 'Center rule',
+          text: 'The nine highlighted cells must together contain each symbol from 1 to 9 exactly once.',
+        },
         {
           term: 'Double duty',
           text: 'Each center cell still belongs to its own row, column, and box, so it must satisfy all standard constraints as well as the center group.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
         },
       ],
     },

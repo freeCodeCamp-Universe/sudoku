@@ -74,29 +74,14 @@ export const super16: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'The grid',
-          text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using digits 1–9 and letters A–G.',
+          term: 'The board',
+          text: 'A 16×16 board divided into sixteen 4×4 boxes. Fill every cell using symbols 1 to 9 and A to G.',
         },
         {
           term: 'Rows and columns',
           text: 'Every row and column must contain all 16 symbols exactly once.',
         },
         { term: 'Boxes', text: 'Each 4×4 box must also hold all 16 symbols exactly once.' },
-      ],
-    },
-    {
-      label: 'Additional Rules',
-      tone: 'extra',
-      rules: [
-        {
-          term: 'Given symbols',
-          text: 'Pre-filled cells are fixed. Build your solution around them.',
-        },
-        { term: 'Entering symbols', text: 'Use the on-screen pad to enter digits or letters.' },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
-        },
       ],
     },
   ],

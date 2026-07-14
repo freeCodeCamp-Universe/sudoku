@@ -71,16 +71,12 @@ export const butterfly: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'The layout',
-          text: 'Four 9×9 grids are placed on a 12×12 board, overlapping at the corners to create a butterfly shape.',
+          term: 'Board',
+          text: 'Four 9×9 boards arranged in a butterfly shape, overlapping at the corners.',
         },
         {
-          term: 'Fill with 1–9',
-          text: 'Every cell within each 9×9 grid must contain a digit from 1 to 9.',
-        },
-        {
-          term: 'Standard sudoku',
-          text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.',
+          term: 'Fill with 1 to 9',
+          text: 'Every cell in each 9×9 board must contain a symbol from 1 to 9. Each row, column, and 3×3 box within a single board must contain every symbol exactly once.',
         },
       ],
     },
@@ -89,16 +85,12 @@ export const butterfly: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'Shared corners',
-          text: 'Where grids overlap, shared boxes must satisfy the rules of all grids at the same time.',
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple boards simultaneously and must satisfy the rules of each one.',
         },
         {
-          term: 'Solve together',
-          text: 'The four grids are linked through their overlapping corners. None can be solved in isolation.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Solve as one',
+          text: 'All four boards are linked through their shared cells, so they must all be solved together.',
         },
       ],
     },

@@ -125,38 +125,20 @@ export const chainVariant: Variant = {
     'Colored chains of cells must each hold a complete set of consecutive digits in any order.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Chains',
-          text: 'Groups of connected cells are linked by a colored chain running through the grid.',
-        },
-        {
-          term: 'Chain rule',
-          text: 'The digits within a chain must be consecutive, forming an unbroken sequence of numbers in any order.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
+          term: 'Chains',
+          text: 'Groups of connected cells are linked by a colored chain running through the board.',
+        },
+        {
+          term: 'Chain rule',
+          text: 'The symbols within a chain must be consecutive, forming an unbroken run placed in any order.',
+        },
+        {
           term: 'Sequence length',
-          text: "A chain of cells holds consecutive digits, such as 4, 5, and 6. The order within the chain doesn't matter.",
-        },
-        {
-          term: 'Sudoku still applies',
-          text: 'Every chain cell must also satisfy its row, column, and box.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: "A chain of cells holds consecutive symbols, such as 4, 5, and 6. The order within the chain doesn't matter.",
         },
       ],
     },

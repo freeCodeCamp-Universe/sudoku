@@ -69,16 +69,12 @@ export const twodoku: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'Two grids',
-          text: 'Two standard 9×9 sudoku grids are placed diagonally, overlapping at one corner.',
+          term: 'Board',
+          text: 'Two 9×9 boards placed diagonally, overlapping at one corner 3×3 box.',
         },
         {
-          term: 'Fill with 1–9',
-          text: 'Every cell in each 9×9 grid must contain a digit from 1 to 9.',
-        },
-        {
-          term: 'Standard sudoku',
-          text: 'Within each grid, every row, column, and 3×3 box must hold each digit exactly once.',
+          term: 'Fill with 1 to 9',
+          text: 'Every cell in each 9×9 board must contain a symbol from 1 to 9. Each row, column, and 3×3 box within a single board must contain every symbol exactly once.',
         },
       ],
     },
@@ -87,16 +83,12 @@ export const twodoku: Variant = {
       tone: 'extra',
       rules: [
         {
-          term: 'Shared corner',
-          text: 'The overlapping 3×3 box belongs to both grids and must satisfy the rules of each simultaneously.',
+          term: 'Shared regions',
+          text: 'Cells in the overlap belong to multiple boards simultaneously and must satisfy the rules of each one.',
         },
         {
-          term: 'Solve together',
-          text: 'The shared box links the two grids, so neither can be solved in isolation.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Solve as one',
+          text: 'Both boards are linked through their shared cells, so they must both be solved together.',
         },
       ],
     },

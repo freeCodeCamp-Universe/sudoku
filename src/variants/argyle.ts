@@ -63,35 +63,21 @@ export const argyle: Variant = {
     'The grid is overlaid with an argyle diamond. Each marked diagonal stripe must contain distinct digits.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Argyle pattern',
-          text: 'Diagonal lines are drawn across the grid forming an argyle diamond pattern. The marked cells belong to diagonal stripes.',
-        },
-        { term: 'Diagonal rule', text: 'No digit may repeat within any single diagonal stripe.' },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
+          term: 'Argyle pattern',
+          text: 'Diagonal lines are drawn across the board forming an argyle diamond pattern. The marked cells belong to diagonal stripes.',
+        },
+        { term: 'Diagonal rule', text: 'No symbol may repeat within any single diagonal stripe.' },
+        {
           term: 'Variable lengths',
-          text: 'Stripes vary in length. Shorter ones near the corners need fewer digits, but repeats are still forbidden within each stripe.',
+          text: 'Stripes vary in length. Shorter ones near the corners need fewer symbols, but repeats are still forbidden within each stripe.',
         },
         {
           term: 'Empty diamonds',
           text: 'Cells inside the empty diamond shapes are not part of any diagonal stripe and only follow the standard row, column, and box rules.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
         },
       ],
     },

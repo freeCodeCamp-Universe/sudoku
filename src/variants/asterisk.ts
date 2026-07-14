@@ -30,34 +30,20 @@ export const asterisk: Variant = {
     'Nine cells in a star pattern form an extra region that must contain each of the digits 1–9.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'The asterisk',
-          text: 'Nine specific cells form a star shape across the grid, marked by highlighting.',
-        },
-        {
-          term: 'Star rule',
-          text: 'The nine asterisk cells must together contain each digit from 1 to 9 exactly once.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
-          term: 'Double duty',
-          text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.',
+          term: 'The asterisk',
+          text: 'Nine specific cells form a star shape across the board, marked by highlighting.',
         },
         {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Star rule',
+          text: 'The nine asterisk cells must together contain each symbol from 1 to 9 exactly once.',
+        },
+        {
+          term: 'Double duty',
+          text: 'Each asterisk cell still belongs to its own row, column, and box, so it must satisfy all those constraints as well as the star.',
         },
       ],
     },

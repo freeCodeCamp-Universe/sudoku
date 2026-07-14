@@ -50,38 +50,24 @@ export const sandwich: Variant = {
     'Edge clues give the sum of all digits sandwiched between the 1 and 9 in each row and column.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Sandwich clues',
-          text: 'Numbers on the right and bottom tell you the sum of all digits that sit between the 1 and the 9 in that row or column.',
-        },
-        {
-          term: 'The bread',
-          text: 'The 1 and 9 act as the two slices of bread. Every digit placed between them must add up to the clue.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
+          term: 'Sandwich clues',
+          text: 'Clues on the right and bottom tell you the sum of all symbols that sit between the 1 and the 9 in that row or column.',
+        },
+        {
+          term: 'The bread',
+          text: 'The 1 and 9 act as the two slices of bread. Every symbol placed between them must add up to the clue.',
+        },
+        {
           term: 'Zero is valid',
-          text: 'A clue of 0 means the 1 and the 9 are adjacent with no digits between them.',
+          text: 'A clue of 0 means the 1 and the 9 are adjacent with no symbols between them.',
         },
         {
           term: 'Any order',
-          text: 'The digits between the 1 and 9 can appear in any order, but they must sum to the clue.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'The symbols between the 1 and 9 can appear in any order, but they must sum to the clue.',
         },
       ],
     },

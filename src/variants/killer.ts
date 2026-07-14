@@ -191,38 +191,20 @@ export const killer: Variant = {
     'Cells are grouped into cages, each with a target sum. No digit may repeat within a cage.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Cages',
-          text: 'Cells are grouped into dashed cages, each with a small target number in its corner.',
-        },
-        {
-          term: 'Sum rule',
-          text: 'The digits inside each dashed cage must add up to that target exactly.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
+          term: 'Cages',
+          text: 'Cells are grouped into dashed cages, each with a target sum in its corner.',
+        },
+        {
+          term: 'Sum rule',
+          text: 'The symbols inside each dashed cage must add up to that target exactly.',
+        },
+        {
           term: 'No repeats in cages',
-          text: 'A digit may not appear twice within the same cage, even if sudoku rules would otherwise allow it.',
-        },
-        {
-          term: 'Starting clues',
-          text: 'A few cells are pre-filled to help you get started. The cage sums provide the rest of the constraints.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          text: 'A symbol may not appear twice within the same cage, even if sudoku rules would otherwise allow it.',
         },
       ],
     },

@@ -5,34 +5,16 @@ export const evenOdd: Variant = {
   id: 'even-odd',
   name: 'Even-Odd Sudoku',
   description:
-    'Shaded cells must contain even digits and unshaded cells must contain odd digits across the grid.',
+    'Shaded cells must contain even digits and unshaded cells must contain odd digits across the board.',
   help: [
-    {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        { term: 'Shaded cells', text: 'Shaded cells must contain an even digit (2, 4, 6, or 8).' },
-        {
-          term: 'Unshaded cells',
-          text: 'Unshaded cells must contain an odd digit (1, 3, 5, 7, or 9).',
-        },
-      ],
-    },
     {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
+        { term: 'Shaded cells', text: 'Shaded cells must contain an even symbol (2, 4, 6, or 8).' },
         {
-          term: 'Fixed parity',
-          text: "The even/odd pattern is set by the puzzle. Every cell's parity is determined before you start.",
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Unshaded cells',
+          text: 'Unshaded cells must contain an odd symbol (1, 3, 5, 7, or 9).',
         },
       ],
     },

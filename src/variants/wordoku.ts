@@ -83,16 +83,16 @@ export const wordoku: Variant = {
       tone: 'basic',
       rules: [
         {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku grid. Fill every row, column, and 3×3 box with each of nine letters exactly once.',
+          term: 'The board',
+          text: 'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from A to Z.',
         },
         {
-          term: 'The letters',
-          text: 'All nine letters come from a hidden word shown below the grid.',
+          term: 'Rows and columns',
+          text: 'Every row and every column must contain each symbol exactly once.',
         },
         {
-          term: 'Same logic',
-          text: 'Placement rules are identical to classic sudoku, just with letters instead of digits.',
+          term: 'Boxes',
+          text: 'Each of the nine 3×3 boxes must also hold every symbol exactly once.',
         },
       ],
     },
@@ -103,14 +103,6 @@ export const wordoku: Variant = {
         {
           term: 'Find the word',
           text: 'Once solved, one complete row or column spells out the hidden word in order. See if you can spot it.',
-        },
-        {
-          term: 'Entering letters',
-          text: 'Use the letter buttons on screen or type the letters directly on your keyboard.',
-        },
-        {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
         },
       ],
     },

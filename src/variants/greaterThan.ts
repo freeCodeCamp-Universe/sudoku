@@ -50,34 +50,20 @@ export const greaterThanVariant: Variant = {
     'Triangles between every pair of adjacent cells point toward the smaller of the two digits.',
   help: [
     {
-      label: 'Basic Rules',
-      tone: 'basic',
-      rules: [
-        {
-          term: 'The grid',
-          text: 'A standard 9×9 sudoku. Fill every row, column, and 3×3 box with digits 1–9.',
-        },
-        {
-          term: 'Triangles',
-          text: 'A small triangle appears between every pair of adjacent cells across the entire grid.',
-        },
-        {
-          term: 'Direction',
-          text: 'Each triangle points toward the smaller digit. The wide base faces the larger one.',
-        },
-      ],
-    },
-    {
       label: 'Additional Rules',
       tone: 'extra',
       rules: [
         {
-          term: 'All pairs covered',
-          text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.',
+          term: 'Triangles',
+          text: 'A small triangle appears between every pair of adjacent cells across the entire board.',
         },
         {
-          term: 'Candidate mode',
-          text: 'Candidates are small numbers you pencil into a cell to track which values are possible there.',
+          term: 'Direction',
+          text: 'Each triangle points toward the smaller symbol. The wide base faces the larger one.',
+        },
+        {
+          term: 'All pairs covered',
+          text: 'Every adjacent pair has a triangle with no exceptions, so there are no unmarked gaps to guess.',
         },
       ],
     },
