@@ -143,16 +143,15 @@
  * map column holds the Move/Map tablist with the D-pad (Move) or minimap + zoom
  * buttons (Map) beneath it. Keeping each panel in the same column as its tabs
  * stops the tall minimap or D-pad from pushing the number pad down the screen.
- * The map column is sized to the 3-across 44px D-pad (136px); the 5-across
- * numpad buttons flex below their 44px max under the resulting width pressure by
- * design, so the wider map column costs a little numpad size at the narrowest
- * viewports rather than leaving dead space.
+ * A 5:3 flex split keeps the map column narrower so its D-pad keys shrink in
+ * step with the 5-across numpad buttons, which also opens a wider gap between
+ * the two control groups on narrow mobile widths.
  */
 .controlsRow {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 8px;
+  gap: 16px;
   inline-size: 100%;
   margin-block-start: 12px;
   margin-block-end: 8px;
@@ -169,7 +168,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
-  flex: 2 1 0;
+  flex: 5 1 0;
   min-inline-size: 0;
 }
 
@@ -178,11 +177,9 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  flex: 1 1 0;
-  /* Floor the map column so its square nav panels (D-pad / minimap) stay large
-     enough for a 44px tap target: 136px / 3 ≈ 45px per D-pad key. The numpad
-     column absorbs the remaining width. */
-  min-inline-size: 136px;
+  flex: 3 1 0;
+  /* The narrower 3-part map column makes its square panels track the numpad's
+     button size, while the freed width becomes extra space between columns. */
   max-inline-size: 200px;
 }
 

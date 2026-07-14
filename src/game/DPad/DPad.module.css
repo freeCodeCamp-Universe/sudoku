@@ -1,22 +1,26 @@
 /*
  * Four arrow keys laid out in a cross around an empty center. The whole D-pad
- * fills a square panel so it always matches the minimap footprint in the mobile
- * map/move column.
+ * still fills a square panel in the mobile map/move column, but it caps at
+ * 144px, centers within that panel, and keeps its key size in step with the
+ * numpad.
  */
 .dpad {
+  --dpad-gap: 6px;
+  --dpad-key-size: 44px;
   display: grid;
   inline-size: 100%;
   aspect-ratio: 1;
+  gap: var(--dpad-gap);
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  max-inline-size: calc(3 * var(--dpad-key-size) + 2 * var(--dpad-gap));
+  margin-inline: auto;
 }
 
 .key {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-inline-size: 44px;
-  min-block-size: 44px;
   font-size: 1.1rem;
   color: var(--text-muted);
   background: var(--bg-secondary);
