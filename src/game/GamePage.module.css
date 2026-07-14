@@ -148,6 +148,7 @@
  * the two control groups on narrow mobile widths.
  */
 .controlsRow {
+  --control-btn-size: 44px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -178,6 +179,7 @@
   align-items: center;
   gap: 10px;
   flex: 3 1 0;
+  align-self: stretch;
   /* The narrower 3-part map column makes its square panels track the numpad's
      button size, while the freed width becomes extra space between columns. */
   max-inline-size: 200px;
@@ -228,6 +230,7 @@
 
 .zoomRow {
   inline-size: 100%;
+  margin-block-start: auto;
 }
 
 .actionColumn {
@@ -281,6 +284,12 @@
   .mapGroup {
     min-inline-size: 200px;
     max-inline-size: 200px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .controlsRow {
+    --control-btn-size: 52px;
   }
 }
 

@@ -6,6 +6,10 @@
   inline-size: 100%;
 }
 
+.controls button {
+  block-size: var(--control-btn-size, 44px);
+}
+
 .fit {
   grid-column: 1 / -1;
 }
