@@ -6,7 +6,7 @@
  */
 .dpad {
   --dpad-gap: 6px;
-  --dpad-key-size: var(--control-btn-size, 44px);
+  --dpad-key-size: 44px;
   display: grid;
   inline-size: 100%;
   aspect-ratio: 1;

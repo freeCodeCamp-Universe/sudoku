@@ -1,6 +1,6 @@
 .numpad {
   --numpad-gap: 6px;
-  --numpad-btn-size: var(--control-btn-size, 44px);
+  --numpad-btn-size: 44px;
 
   display: flex;
   flex-direction: column;
