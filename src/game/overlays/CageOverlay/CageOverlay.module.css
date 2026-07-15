@@ -13,12 +13,16 @@
   stroke-dasharray: 4 3;
 }
 
+.sumKnockout {
+  fill: var(--bg-secondary);
+}
+
 .sumLabel {
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;
   font-weight: 700;
   fill: var(--overlay-cage-sum);
-  dominant-baseline: hanging;
+  dominant-baseline: central;
 }
 
 @media (min-width: 768px) {

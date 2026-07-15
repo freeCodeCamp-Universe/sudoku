@@ -1,7 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { BOX_BOUNDARY_WIDTH, BOX_BOUNDARY_WIDTH_HIGH_CONTRAST, GUTTER_SIZE } from './cellSizes';
+import {
+  BOX_BOUNDARY_WIDTH,
+  BOX_BOUNDARY_WIDTH_HIGH_CONTRAST,
+  CAGE_RING,
+  CAGE_RING_RATIO,
+  CELL_SIZE_SPACIOUS,
+  CELL_SIZE_STANDARD,
+  GUTTER_SIZE,
+} from './cellSizes';
 
 // The responsive cell-size fit math assumes the frame widths declared in
 // layers.css. This drift test keeps the TS constants and the CSS custom
@@ -40,5 +48,13 @@ describe('cellSizes CSS drift', () => {
       throw new Error('no .gutterCorner width declaration found');
     }
     expect(Number(match[1])).toBe(GUTTER_SIZE);
+  });
+
+  it('should define the spacious cell size as the standard content box plus two cage rings', () => {
+    expect(CELL_SIZE_SPACIOUS).toBe(CELL_SIZE_STANDARD + 2 * CAGE_RING);
+  });
+
+  it('should define the cage ring ratio from the spacious base size', () => {
+    expect(CAGE_RING_RATIO).toBe(CAGE_RING / CELL_SIZE_SPACIOUS);
   });
 });

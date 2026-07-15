@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Variant } from '@/engine/types';
 import { gridLayout } from './grid';
+import { CELL_SIZE_COMPACT, CELL_SIZE_SPACIOUS, CELL_SIZE_STANDARD } from './cellSizes';
 
 const classicVariant: Variant = {
   id: 'classic',
@@ -35,17 +36,32 @@ const megaVariant: Variant = {
   constraintIds: [],
 };
 
+const killerVariant: Variant = {
+  id: 'killer',
+  name: 'Killer Sudoku',
+  description: 'Test variant.',
+  popularity: 0,
+  difficulty: 'intermediate',
+  layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 }, cellSize: 'spacious' },
+  symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  constraintIds: [],
+};
+
 describe('gridLayout strategy', () => {
   it('should base a 9x9 grid at 52px', () => {
-    expect(gridLayout.baseCellSize(classicVariant)).toBe(52);
+    expect(gridLayout.baseCellSize(classicVariant)).toBe(CELL_SIZE_STANDARD);
   });
 
   it('should base a 4x4 mini grid at 52px', () => {
-    expect(gridLayout.baseCellSize(miniVariant)).toBe(52);
+    expect(gridLayout.baseCellSize(miniVariant)).toBe(CELL_SIZE_STANDARD);
+  });
+
+  it('should base a spacious 9x9 grid at 68px', () => {
+    expect(gridLayout.baseCellSize(killerVariant)).toBe(CELL_SIZE_SPACIOUS);
   });
 
   it('should base a 16x16 grid at 30px', () => {
-    expect(gridLayout.baseCellSize(megaVariant)).toBe(30);
+    expect(gridLayout.baseCellSize(megaVariant)).toBe(CELL_SIZE_COMPACT);
   });
 
   it('should return 81 cell rects for a 9x9 grid', () => {

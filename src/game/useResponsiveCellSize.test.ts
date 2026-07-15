@@ -3,7 +3,12 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
 import type { Variant } from '@/engine/types';
 import { COMFORTABLE_CELL_SIZE } from './boardViewport';
-import { boardFrameWidth, GUTTER_SIZE } from './layouts/cellSizes';
+import {
+  boardFrameWidth,
+  CELL_SIZE_SPACIOUS,
+  CELL_SIZE_STANDARD,
+  GUTTER_SIZE,
+} from './layouts/cellSizes';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 
 const originalWidth = window.innerWidth;
@@ -30,6 +35,10 @@ const mini = {
 
 const sixBySix = {
   layout: { kind: 'grid', size: 6, box: { rows: 2, cols: 3 } },
+} as Variant;
+
+const killer = {
+  layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 }, cellSize: 'spacious' },
 } as Variant;
 
 const super16 = {
@@ -91,6 +100,20 @@ describe('useResponsiveCellSize', () => {
 
     it('should keep the 6×6 board at its base size on the smallest viewport', () => {
       expect(cellAt(320, sixBySix)).toBe(52);
+    });
+  });
+
+  describe('desktop keeps non-oversized boards at their natural size', () => {
+    it('should keep the classic 9x9 grid at 52px on desktop', () => {
+      expect(cellAt(1024, classic)).toBe(CELL_SIZE_STANDARD);
+    });
+
+    it('should keep the spacious killer grid at 68px on desktop', () => {
+      expect(cellAt(1024, killer)).toBe(CELL_SIZE_SPACIOUS);
+    });
+
+    it('should still down-step the spacious killer grid below desktop', () => {
+      expect(cellAt(520, killer)).toBe(CELL_SIZE_STANDARD);
     });
   });
 

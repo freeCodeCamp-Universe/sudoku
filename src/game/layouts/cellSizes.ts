@@ -8,11 +8,35 @@
 /** Default cell size for boards with no space pressure (9x9, 4x4, triangular). */
 export const CELL_SIZE_STANDARD = 52;
 
+/** Killer-style cells with an 8px cage chrome ring around the 52px content box. */
+export const CELL_SIZE_SPACIOUS = 68;
+
 /** Cell size for mid-density boards (12-col multigrids like Butterfly). */
 export const CELL_SIZE_ROOMY = 40;
 
 /** Cell size for dense boards (16x16 grid, 21/15-col multigrids like Samurai). */
 export const CELL_SIZE_COMPACT = 30;
+
+/** Cage chrome ring per side at the spacious base size. */
+export const CAGE_RING = 8;
+
+/** Proportional cage ring so overlay/candidate geometry scales with responsive steps. */
+export const CAGE_RING_RATIO = CAGE_RING / CELL_SIZE_SPACIOUS;
+
+/** Proportional inset from the cell border to the cage line. */
+export const CAGE_RING_INSET_RATIO = 0.75;
+
+/** Small nudge from the cage line to the sum text start. */
+export const CAGE_SUM_LABEL_X_OFFSET = 2;
+
+/** Approximate monospace glyph width for cage-sum knockouts. */
+export const CAGE_SUM_LABEL_CHAR_WIDTH = 6;
+
+/** Total horizontal padding added to the knockout behind cage sums. */
+export const CAGE_SUM_LABEL_PADDING = 4;
+
+/** Knockout height for the cage-sum label, centered on the cage line. */
+export const CAGE_SUM_LABEL_HEIGHT = 10;
 
 /**
  * Multigrid fallback for canvas widths without a dedicated size:

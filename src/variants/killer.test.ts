@@ -17,7 +17,12 @@ function seeded(seed: number): () => number {
 
 describe('killer variant', () => {
   it('should have 9x9 grid layout', () => {
-    expect(killer.layout).toEqual({ kind: 'grid', size: 9, box: { rows: 3, cols: 3 } });
+    expect(killer.layout).toEqual({
+      kind: 'grid',
+      size: 9,
+      box: { rows: 3, cols: 3 },
+      cellSize: 'spacious',
+    });
   });
 
   it('should include uniqueness and cageSum constraint ids', () => {

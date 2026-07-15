@@ -8,6 +8,7 @@ import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { gridLayout } from '@/game/layouts/grid';
 import { multigridLayout } from '@/game/layouts/multigrid';
 import { butterfly } from '@/variants/butterfly';
+import { killer } from '@/variants/killer';
 import { samurai } from '@/variants/samurai';
 import { Board } from './Board';
 import { isBoxBoundary } from './boxBoundary';
@@ -103,6 +104,20 @@ function makeSamuraiBoardProps(overrides: Partial<BoardProps> = {}): BoardProps 
   );
 }
 
+function makeKillerBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
+  const cells: CellType[] = gridCells(9);
+
+  return makeBoardProps(
+    {
+      variant: killer,
+      cells,
+      rects: gridLayout.cellRects(killer),
+      size: gridLayout.canvasSize(killer),
+    },
+    overrides
+  );
+}
+
 describe('Board', () => {
   it('should render a grid element with aria-label', () => {
     render(<Board {...makeClassicBoardProps()} />);
@@ -191,6 +206,12 @@ describe('Board', () => {
     expect(getRenderedCell('r0c8')).not.toHaveAttribute('data-box-right');
     expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-bottom', 'true');
     expect(getRenderedCell('r8c8')).toHaveAttribute('data-box-right', 'true');
+  });
+
+  it('should tag killer cells as caged when the variant uses the cage overlay', () => {
+    render(<Board {...makeKillerBoardProps()} />);
+
+    expect(getRenderedCell('r0c0')).toHaveAttribute('data-caged', 'true');
   });
 });
 

@@ -1,13 +1,21 @@
 import { cellId, range } from '@/engine/grid';
 import type { LayoutStrategy, Rect } from '@/game/gameTypes';
-import { CELL_SIZE_COMPACT, CELL_SIZE_STANDARD } from './cellSizes';
+import { CELL_SIZE_COMPACT, CELL_SIZE_SPACIOUS, CELL_SIZE_STANDARD } from './cellSizes';
 
 function baseCellSize(variant: Parameters<LayoutStrategy['baseCellSize']>[0]): number {
   if (variant.layout.kind !== 'grid') {
     throw new Error(`Unsupported layout kind: ${variant.layout.kind}`);
   }
 
-  return variant.layout.size === 16 ? CELL_SIZE_COMPACT : CELL_SIZE_STANDARD;
+  if (variant.layout.size === 16) {
+    return CELL_SIZE_COMPACT;
+  }
+
+  if (variant.layout.cellSize === 'spacious') {
+    return CELL_SIZE_SPACIOUS;
+  }
+
+  return CELL_SIZE_STANDARD;
 }
 
 export const gridLayout: LayoutStrategy = {

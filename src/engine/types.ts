@@ -61,6 +61,7 @@ export interface GridLayout {
   kind: 'grid';
   size: number;
   box: { rows: number; cols: number };
+  cellSize?: 'spacious';
 }
 
 export interface MultiGridLayout {
