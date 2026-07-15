@@ -837,7 +837,7 @@ function GameInner({
               View Puzzle
             </button>
             <Link to="/" className={`${styles.modalBtn} ${styles.secondary}`}>
-              Start Page
+              Home
             </Link>
           </div>
         </div>
