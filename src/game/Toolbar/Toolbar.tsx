@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '@/game/Button';
 import styles from './Toolbar.module.css';
 
 interface ToolbarProps {
@@ -13,17 +14,20 @@ export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps
   return (
     <>
       <div className={`${styles.buttonRow}${vertical ? ` ${styles.buttonRowVertical}` : ''}`}>
-        <button type="button" className={styles.revealBtn} onClick={onReveal}>
+        <Button
+          accent="yellow"
+          className={vertical ? styles.fullWidth : undefined}
+          onClick={onReveal}
+        >
           Reveal Cell
-        </button>
-        <button
-          type="button"
-          className={styles.toolBtn}
+        </Button>
+        <Button
+          className={vertical ? styles.fullWidth : undefined}
           onClick={() => setClearConfirmOpen(true)}
           aria-label="Clear All"
         >
           Clear All
-        </button>
+        </Button>
       </div>
 
       {clearConfirmOpen ? (

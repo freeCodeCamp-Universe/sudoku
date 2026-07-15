@@ -11,6 +11,7 @@ import {
   gutterOrigin,
   isOversized,
 } from '@/game/boardViewport';
+import { Button } from '@/game/Button';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
@@ -25,6 +26,7 @@ import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
+import { DPad } from '@/game/DPad';
 import { Tabs, type Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findCompletedSymbols } from './completedSymbols';
@@ -72,6 +74,7 @@ function GameInner({
   const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [controlsOpen, setControlsOpen] = useState(false);
+  const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const [verifyMode, setVerifyMode] = useState(false);
@@ -129,11 +132,10 @@ function GameInner({
     [size, frameEdge, gutters]
   );
 
-  // Pan/zoom navigation for oversized boards (e.g. samurai, super) on small
-  // screens. `viewportRef` measures a stable, always-rendered board frame so
-  // measurement never deadlocks; `clipRef` belongs to the conditional
-  // BoardViewport clip. Gestures read `e.currentTarget`, so the separate clip
-  // ref is fine.
+  // Pan/zoom navigation for mobile boards. `viewportRef` measures the stable
+  // board frame; `clipRef` points at the mobile viewport wrapper that stays
+  // mounted even before pan/zoom engages, so fitting boards do not remount
+  // their cell subtree on first zoom.
   const viewportRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const viewportSize = useElementSize(viewportRef);
@@ -146,7 +148,7 @@ function GameInner({
   // percentage-width wrap has no intrinsic width, so mounting it inside the
   // shrink-to-fit desktop gameLeft column collapses the board to 0px (e.g.
   // when a mobile zoom level survives a resize across the 1024px breakpoint).
-  const panZoomActive = !isDesktop && (oversized || boardViewport.transform.scale > 1);
+  const panZoomActive = !isDesktop && (oversized || boardViewport.engaged);
 
   // Cell rects are in canvas coordinates; the board's origin is the gutter
   // layout's corner (when clue gutters exist), one gutter plus one frame edge
@@ -170,8 +172,9 @@ function GameInner({
     [boardViewport, rects, cellOrigin]
   );
 
-  const viewportState: BoardViewportState | undefined = panZoomActive
+  const viewportState: BoardViewportState | undefined = !isDesktop
     ? {
+        active: panZoomActive,
         transform: boardViewport.transform,
         animated: boardViewport.animated,
         viewportRef: clipRef,
@@ -496,6 +499,10 @@ function GameInner({
       toggleCandidateMode();
     }
   };
+  const navTabs: Tab[] = [
+    { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
+    { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
+  ];
 
   const isColor = variant.symbolKind === 'color';
   const colorLabelToggle = isColor ? (
@@ -510,9 +517,9 @@ function GameInner({
     <div className={styles.actionColumn}>
       {colorLabelToggle}
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
-      <button type="button" className={styles.actionBtnPrimary} onClick={handleNewGame}>
+      <Button variant="primary" onClick={handleNewGame}>
         New Game
-      </button>
+      </Button>
     </div>
   );
 
@@ -577,7 +584,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
               </svg>
@@ -594,7 +601,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
               </svg>
@@ -604,7 +611,7 @@ function GameInner({
                 height="10"
                 viewBox="0 0 10 10"
                 aria-hidden="true"
-                style={{ flexShrink: 0 }}
+                className={styles.legendIcon}
               >
                 <circle cx="5" cy="5" r="4" fill="#5060a0" />
               </svg>
@@ -672,37 +679,64 @@ function GameInner({
                   onSelect={selectControlTab}
                   ariaLabel="Input mode and controls"
                 />
-                <div
-                  role="tabpanel"
-                  id="control-panel-input"
-                  aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                  className={styles.panel}
-                  hidden={controlsOpen}
-                >
-                  {numberPad}
-                </div>
-                <div
-                  role="tabpanel"
-                  id="control-panel-controls"
-                  aria-labelledby="controls-tab"
-                  className={styles.panel}
-                  hidden={!controlsOpen}
-                >
-                  {controlsPanel}
+                <div className={styles.inputPanels}>
+                  <div
+                    role="tabpanel"
+                    id="control-panel-input"
+                    aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
+                    className={styles.panel}
+                    data-active={!controlsOpen}
+                  >
+                    {numberPad}
+                  </div>
+                  <div
+                    role="tabpanel"
+                    id="control-panel-controls"
+                    aria-labelledby="controls-tab"
+                    className={styles.panel}
+                    data-active={controlsOpen}
+                  >
+                    {controlsPanel}
+                  </div>
                 </div>
               </div>
               <div className={styles.mapGroup}>
-                {minimap}
-                {zoomControls}
+                <Tabs
+                  tabs={navTabs}
+                  activeId={navTab}
+                  onSelect={(id) => setNavTab(id as 'move' | 'map')}
+                  ariaLabel="Board navigation"
+                />
+                <div className={styles.navPanels}>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-move"
+                    aria-labelledby="move-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'move'}
+                  >
+                    <DPad onMove={grid.moveSelection} />
+                  </div>
+                  <div
+                    role="tabpanel"
+                    id="nav-panel-map"
+                    aria-labelledby="map-tab"
+                    className={`${styles.panel} ${styles.navPanel}`}
+                    data-active={navTab === 'map'}
+                  >
+                    {minimap}
+                  </div>
+                </div>
+                <div className={styles.zoomRow}>{zoomControls}</div>
               </div>
             </div>
           )}
         </div>
       </div>
       {isDesktop ? (
-        <button type="button" className={styles.newGameBtn} onClick={handleNewGame}>
+        <Button variant="primary" className={styles.desktopNewGame} onClick={handleNewGame}>
           New Game
-        </button>
+        </Button>
       ) : null}
       {showCheckPrompt ? (
         <div className={styles.checkPrompt}>

@@ -9,11 +9,12 @@ export function BoardViewport({
   viewport: BoardViewportState;
   children: ReactNode;
 }) {
-  const { transform } = viewport;
+  const { active, transform } = viewport;
   return (
     <div
+      data-testid="board-viewport"
       ref={viewport.viewportRef}
-      className={styles.viewport}
+      className={active ? styles.viewport : styles.passthrough}
       onPointerDown={viewport.onPointerDown}
       onPointerMove={viewport.onPointerMove}
       onPointerUp={viewport.onPointerUp}
@@ -22,11 +23,19 @@ export function BoardViewport({
       <div
         data-testid="board-viewport-content"
         className={
-          viewport.animated ? `${styles.content} ${styles.contentAnimated}` : styles.content
+          active
+            ? viewport.animated
+              ? `${styles.content} ${styles.contentAnimated}`
+              : styles.content
+            : styles.passthrough
         }
-        style={{
-          transform: `translate(${transform.translateX}px, ${transform.translateY}px) scale(${transform.scale})`,
-        }}
+        style={
+          active
+            ? {
+                transform: `translate(${transform.translateX}px, ${transform.translateY}px) scale(${transform.scale})`,
+              }
+            : undefined
+        }
       >
         {children}
       </div>

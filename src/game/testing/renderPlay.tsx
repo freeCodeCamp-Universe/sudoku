@@ -38,7 +38,7 @@ function usePlay(checkEnabled: boolean) {
     checkEnabled,
   });
 
-  return { state, dispatch, cellState: grid.cellState };
+  return { state, dispatch, cellState: grid.cellState, moveSelection: grid.moveSelection };
 }
 
 export function renderPlay(

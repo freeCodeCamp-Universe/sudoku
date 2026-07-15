@@ -4,6 +4,8 @@ import type { Cell, CellId, SymbolValue, Values, Variant, VariantModel } from '@
 export type Rect = { x: number; y: number; w: number; h: number };
 export type Size = { w: number; h: number };
 
+export type Direction = 'up' | 'down' | 'left' | 'right';
+
 export interface GutterCell {
   id: string;
   row?: number;
@@ -60,6 +62,7 @@ export interface GridInteraction {
   cellProps(id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId };
   announcerRef: React.RefObject<HTMLDivElement | null>;
   announce: (message: string) => void;
+  moveSelection(direction: Direction): void;
 }
 
 /**
@@ -71,6 +74,7 @@ export interface GridInteraction {
 export type MarkerEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
 export interface BoardViewportState {
+  active: boolean;
   transform: { scale: number; translateX: number; translateY: number };
   // Ease to the transform (programmatic moves) instead of jumping (gestures).
   animated: boolean;

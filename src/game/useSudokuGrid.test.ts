@@ -750,6 +750,77 @@ describe('useSudokuGrid', () => {
   });
 });
 
+describe('useSudokuGrid moveSelection', () => {
+  it('should select the first cell on the first move when nothing is selected', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.moveSelection('down');
+    });
+
+    expect(result.current.cellState('r0c0').selected).toBe(true);
+  });
+
+  it('should move the selection one cell in the given direction', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.moveSelection('down');
+    });
+    act(() => {
+      result.current.moveSelection('down');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+
+    expect(result.current.cellState('r1c1').selected).toBe(true);
+  });
+
+  it('should not move past the edge of the board', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.moveSelection('down');
+    });
+    act(() => {
+      result.current.moveSelection('up');
+    });
+    act(() => {
+      result.current.moveSelection('up');
+    });
+
+    expect(result.current.cellState('r0c0').selected).toBe(true);
+  });
+});
+
 describe('useSudokuGrid cell labels for Sujiken', () => {
   it('should omit box number from Sujiken cell labels', () => {
     const sujikenModel = buildModel(sujiken);

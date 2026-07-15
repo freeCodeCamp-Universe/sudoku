@@ -137,25 +137,29 @@
 }
 
 /*
- * Mobile controls (only rendered below 1024px): two columns. The main column
- * holds the Normal/Candidate/Controls tablist with the active panel beneath it;
- * the map column holds the minimap + zoom buttons on the inline-end. Keeping the
- * panel in the same column as the tabs stops the tall minimap from pushing the
- * number pad far down the screen. The 2:1 split gives the minimap ~1/3 of the
- * row; the 5-across numpad buttons stay pinned at their 44px max at these widths
- * so the wider map column costs the numpad no size, only reclaims dead space.
+ * Mobile controls (only rendered below 1024px): two columns, each its own tab
+ * group. The main column holds the Normal/Candidate/Controls tablist with the
+ * active panel (number pad or the reveal/clear/new-game actions) beneath it; the
+ * map column holds the Move/Map tablist with the D-pad (Move) or minimap + zoom
+ * buttons (Map) beneath it. Keeping each panel in the same column as its tabs
+ * stops the tall minimap or D-pad from pushing the number pad down the screen.
+ * A 5:3 flex split keeps the map column narrower so its D-pad keys shrink in
+ * step with the 5-across numpad buttons, which also opens a wider gap between
+ * the two control groups on narrow mobile widths.
  */
 .controlsRow {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 8px;
+  gap: 16px;
   inline-size: 100%;
   margin-block-start: 12px;
   margin-block-end: 8px;
-  /* Floor at the standard-variant controls height (tablist ~30px + 10px
-     column gap + two 44px numpad rows with a 6px gap) so variants with
-     shorter panels keep the controls docked at a consistent position. */
+  /* Floor for short variants so their controls stay docked at a consistent
+     position (tablist ~30px + 10px column gap + two 44px numpad rows with a 6px
+     gap). Taller variants (e.g. Super's 16-symbol numpad) and the map column's
+     minimap grow the row past this naturally; the row is a flex box that sizes
+     to its tallest column. */
   min-block-size: 134px;
 }
 
@@ -164,7 +168,7 @@
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
-  flex: 2 1 0;
+  flex: 5 1 0;
   min-inline-size: 0;
 }
 
@@ -172,9 +176,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  flex: 1 1 0;
-  min-inline-size: 88px;
+  gap: 10px;
+  flex: 3 1 0;
+  /* The narrower 3-part map column makes its square panels track the numpad's
+     button size, while the freed width becomes extra space between columns. */
   max-inline-size: 200px;
 }
 
@@ -182,11 +187,47 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 8px;
   inline-size: 100%;
 }
 
-.panel[hidden] {
-  display: none;
+.inputPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.inputPanels > .panel {
+  grid-area: 1 / 1;
+}
+
+.inputPanels > .panel:not([data-active='true']) {
+  visibility: hidden;
+}
+
+/*
+ * The Move and Map panels stack in one grid cell so the map column always
+ * reserves the height of the taller panel (Map: minimap + zoom controls),
+ * whichever tab is active. Switching Move <-> Map therefore never changes the
+ * control-area height or moves the board, and the reservation tracks the
+ * minimap's responsive height automatically instead of a hand-tuned constant.
+ */
+.navPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.navPanel {
+  grid-area: 1 / 1;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.navPanel:not([data-active='true']) {
+  visibility: hidden;
+}
+
+.zoomRow {
+  inline-size: 100%;
 }
 
 .actionColumn {
@@ -229,76 +270,25 @@
   }
 }
 
+/* Small tablets and up: cap the map column at 200px so the D-pad and minimap
+   stay close to the numpad button size on wide tablets instead of stretching. */
+@media (min-width: 600px) {
+  .controlsRow {
+    gap: 24px;
+    padding-inline: 24px;
+  }
+
+  .mapGroup {
+    min-inline-size: 200px;
+    max-inline-size: 200px;
+  }
+}
+
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside
    the Controls tab instead). */
-.newGameBtn {
+.desktopNewGame {
   margin-block-start: 40px;
   align-self: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  font-family: inherit;
-  padding: 10px 28px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.newGameBtn:hover {
-  opacity: 0.88;
-}
-
-.newGameBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-.actionBtn,
-.actionBtnPrimary {
-  inline-size: 100%;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding-block: 7px;
-  padding-inline: 14px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s,
-    opacity 0.15s;
-}
-
-.actionBtn {
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-}
-
-.actionBtn:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-.actionBtnPrimary {
-  border: none;
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  font-weight: 700;
-}
-
-.actionBtnPrimary:hover {
-  opacity: 0.88;
-}
-
-.actionBtn:focus-visible,
-.actionBtnPrimary:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .legendSwatch {

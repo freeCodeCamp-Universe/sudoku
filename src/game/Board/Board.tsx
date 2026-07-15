@@ -219,7 +219,7 @@ export function Board({
   // When the board is wrapped in a clipping viewport, the wrapper must fill the
   // sized frame so the clip's percentage dimensions resolve against it; the
   // default `width: max-content` collapses around the absolutely-positioned clip.
-  const boardWrapClass = viewport
+  const boardWrapClass = viewport?.active
     ? `${styles.boardWrap} ${styles.boardWrapViewport}`
     : styles.boardWrap;
 

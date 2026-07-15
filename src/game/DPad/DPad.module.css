@@ -1,0 +1,68 @@
+/*
+ * Four arrow keys laid out in a cross around an empty center. The whole D-pad
+ * still fills a square panel in the mobile map/move column, but it caps at
+ * 144px, centers within that panel, and keeps its key size in step with the
+ * numpad.
+ */
+.dpad {
+  --dpad-gap: 6px;
+  --dpad-key-size: 44px;
+  display: grid;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  gap: var(--dpad-gap);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  max-inline-size: calc(3 * var(--dpad-key-size) + 2 * var(--dpad-gap));
+  margin-inline: auto;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  /* Fire on tap without the legacy mobile click delay. */
+  touch-action: manipulation;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+
+.key:hover,
+.key:active {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.down {
+  grid-column: 2;
+  grid-row: 3;
+}

@@ -2,7 +2,20 @@ import type React from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { validate } from '@/engine/validate';
 import type { Cell, CellId, SymbolValue, Values, VariantModel } from '@/engine/types';
-import type { CellAnnotator, CellState, GridInteraction } from './gameTypes';
+import type { CellAnnotator, CellState, Direction, GridInteraction } from './gameTypes';
+
+function stepCellId(cell: { row: number; col: number }, direction: Direction): CellId {
+  switch (direction) {
+    case 'up':
+      return `r${cell.row - 1}c${cell.col}`;
+    case 'down':
+      return `r${cell.row + 1}c${cell.col}`;
+    case 'left':
+      return `r${cell.row}c${cell.col - 1}`;
+    case 'right':
+      return `r${cell.row}c${cell.col + 1}`;
+  }
+}
 
 interface UseSudokuGridOptions {
   cells: Cell[];
@@ -235,16 +248,16 @@ export function useSudokuGrid({
 
       switch (key) {
         case 'ArrowUp':
-          nextId = `r${cell.row - 1}c${cell.col}`;
+          nextId = stepCellId(cell, 'up');
           break;
         case 'ArrowDown':
-          nextId = `r${cell.row + 1}c${cell.col}`;
+          nextId = stepCellId(cell, 'down');
           break;
         case 'ArrowLeft':
-          nextId = `r${cell.row}c${cell.col - 1}`;
+          nextId = stepCellId(cell, 'left');
           break;
         case 'ArrowRight':
-          nextId = `r${cell.row}c${cell.col + 1}`;
+          nextId = stepCellId(cell, 'right');
           break;
         case 'Home':
           nextId = `r${cell.row}c${Math.min(...rowCols)}`;
@@ -365,6 +378,35 @@ export function useSudokuGrid({
 
   const firstCellId = cells[0]?.id ?? null;
 
+  const moveSelection = useCallback(
+    (direction: Direction) => {
+      if (!selectedId) {
+        if (firstCellId) {
+          selectCell(firstCellId);
+          document
+            .querySelector<HTMLElement>(`[data-cell="${firstCellId}"]`)
+            ?.focus({ preventScroll: true });
+          onCellNavigate?.(firstCellId);
+        }
+        return;
+      }
+      const cell = cellsById.get(selectedId);
+      if (!cell) {
+        return;
+      }
+      const nextId = stepCellId(cell, direction);
+      if (!cellsById.has(nextId)) {
+        return;
+      }
+      selectCell(nextId);
+      document
+        .querySelector<HTMLElement>(`[data-cell="${nextId}"]`)
+        ?.focus({ preventScroll: true });
+      onCellNavigate?.(nextId);
+    },
+    [selectedId, firstCellId, cellsById, selectCell, onCellNavigate]
+  );
+
   const cellProps = useCallback(
     (id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId } => ({
       'data-cell': id,
@@ -398,5 +440,6 @@ export function useSudokuGrid({
     cellProps,
     announcerRef,
     announce,
+    moveSelection,
   };
 }

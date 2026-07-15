@@ -21,7 +21,8 @@
 
 .numpad[data-cols] {
   max-inline-size: calc(
-    var(--numpad-cols) * var(--numpad-btn-size) + (var(--numpad-cols) - 1) * var(--numpad-gap)
+    var(--numpad-cols) * min(var(--numpad-btn-size), (100% - 4 * var(--numpad-gap)) / 5) +
+      (var(--numpad-cols) - 1) * var(--numpad-gap)
   );
   margin-inline: auto;
 }
@@ -197,6 +198,12 @@
 @media (min-width: 1024px) {
   .numpad {
     --numpad-btn-size: 52px;
+  }
+
+  .numpad[data-cols] {
+    max-inline-size: calc(
+      var(--numpad-cols) * var(--numpad-btn-size) + (var(--numpad-cols) - 1) * var(--numpad-gap)
+    );
   }
 
   .numCell:not(.eraseFullWidth) {

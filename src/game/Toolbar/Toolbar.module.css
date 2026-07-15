@@ -59,40 +59,8 @@
   margin-block-end: 0;
 }
 
-.buttonRowVertical .revealBtn,
-.buttonRowVertical .toolBtn {
+.fullWidth {
   inline-size: 100%;
-}
-
-.toolBtn,
-.revealBtn {
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 7px 20px;
-  border-radius: 2px;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s;
-}
-
-.revealBtn:hover {
-  border-color: var(--accent-yellow);
-  color: var(--accent-yellow);
-}
-
-.toolBtn:hover {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-}
-
-.toolBtn:focus-visible,
-.revealBtn:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .confirmOverlay {

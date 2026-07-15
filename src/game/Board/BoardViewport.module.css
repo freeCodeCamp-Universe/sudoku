@@ -16,6 +16,10 @@
   will-change: transform;
 }
 
+.passthrough {
+  display: contents;
+}
+
 /* Programmatic moves (button zoom, minimap seek, ensure-visible) ease into
    place so the view doesn't lurch; gesture-driven transforms drop this class
    to track the pointer instantly. */

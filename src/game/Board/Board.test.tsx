@@ -40,6 +40,7 @@ function makeBoardProps(
       cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
       announcerRef: { current: null },
       announce: () => {},
+      moveSelection: () => {},
     },
     renderSymbol: (value) => String(value),
     ...overrides,
