@@ -592,7 +592,7 @@ function GameInner({
               >
                 <polygon points="10,5 0,0 0,10" className={styles.legendTriangle} />
               </svg>
-              <span>Triangle points toward the smaller of the two adjacent numbers.</span>
+              <span>Triangle points toward the smaller of the two adjacent digits.</span>
             </div>
           ) : null}
           {variant.id === 'consecutive' ? (
@@ -607,7 +607,7 @@ function GameInner({
                 <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
               </svg>
               <span>
-                A dot between two cells means those numbers differ by exactly 1. Cells without a dot
+                A dot between two cells means those digits differ by exactly 1. Cells without a dot
                 must not differ by 1.
               </span>
             </div>
@@ -657,7 +657,7 @@ function GameInner({
                 <polyline points="17,9 66,9" fill="none" stroke="#9898b8" strokeWidth="1.5" />
                 <polygon points="73,9 65,5 65,13" fill="#9898b8" />
               </svg>
-              <span>Numbers along each arrow sum to the number in the circle.</span>
+              <span>Digits along each arrow sum to the number in the circle.</span>
             </div>
           ) : null}
         </div>
