@@ -13,7 +13,6 @@ const GRID_LABELS = {
 
 interface NumberPadProps {
   symbols: SymbolValue[];
-  usedSymbols: Set<SymbolValue>;
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
   columns?: number;
@@ -24,7 +23,6 @@ interface NumberPadProps {
 
 export function NumberPad({
   symbols,
-  usedSymbols,
   onEnter,
   candidateMode,
   columns,
@@ -124,13 +122,11 @@ export function NumberPad({
               );
             }
             const symbol = item.value;
-            const used = usedSymbols.has(symbol);
             return (
               <div key={symbol} role="gridcell" className={styles.numCell}>
                 <button
                   {...sharedProps}
                   className={styles.numBtn}
-                  data-used={used || undefined}
                   aria-label={describeSymbol(symbol)}
                   onClick={() => onEnter(symbol)}
                 >

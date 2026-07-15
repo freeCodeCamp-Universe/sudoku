@@ -73,15 +73,6 @@
   outline-offset: 2px;
 }
 
-.numBtn[data-used],
-.numBtn[data-used]:hover,
-.candidate .numBtn[data-used]:not(.erase) {
-  color: var(--numpad-used-text);
-  background: var(--bg-primary);
-  border-color: var(--border);
-  border-block-end-color: transparent;
-}
-
 .erase {
   font-size: 0.72rem;
   font-weight: 400;

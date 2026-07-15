@@ -30,7 +30,6 @@ import { Board } from './Board';
 import { DPad } from '@/game/DPad';
 import { Tabs, type Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
-import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -356,11 +355,6 @@ function GameInner({
     dispatch({ type: 'newGame' });
   }
 
-  const usedSymbols = useMemo(
-    () => findCompletedSymbols(state.values, solution, model.symbols),
-    [model.symbols, solution, state.values]
-  );
-
   const wordCellIds = useMemo((): Set<CellId> => {
     if (!state.solved || variant.id !== 'wordoku') return new Set();
     for (let r = 0; r < 9; r++) {
@@ -496,7 +490,6 @@ function GameInner({
   const numberPad = (
     <NumberPad
       symbols={displaySymbols}
-      usedSymbols={usedSymbols}
       columns={
         model.symbols.length === 16
           ? 4

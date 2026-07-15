@@ -6,12 +6,7 @@ import { NumberPad } from './NumberPad';
 describe('NumberPad', () => {
   it('should render digit buttons 1-9 plus an erase button', () => {
     render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
-        onEnter={() => {}}
-        candidateMode={false}
-      />
+      <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={() => {}} candidateMode={false} />
     );
 
     for (let value = 1; value <= 9; value += 1) {
@@ -26,12 +21,7 @@ describe('NumberPad', () => {
     const onEnter = vi.fn();
 
     render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
-        onEnter={onEnter}
-        candidateMode={false}
-      />
+      <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={onEnter} candidateMode={false} />
     );
 
     await user.click(screen.getByRole('button', { name: '5' }));
@@ -44,12 +34,7 @@ describe('NumberPad', () => {
     const onEnter = vi.fn();
 
     render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
-        onEnter={onEnter}
-        candidateMode={false}
-      />
+      <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={onEnter} candidateMode={false} />
     );
 
     await user.click(screen.getByRole('button', { name: /erase/i }));
@@ -62,12 +47,7 @@ describe('NumberPad', () => {
 
     render(
       <>
-        <NumberPad
-          symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          usedSymbols={new Set()}
-          onEnter={() => {}}
-          candidateMode={false}
-        />
+        <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={() => {}} candidateMode={false} />
         <button type="button">After</button>
       </>
     );
@@ -85,12 +65,7 @@ describe('NumberPad', () => {
     const user = userEvent.setup();
 
     render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
-        onEnter={() => {}}
-        candidateMode={false}
-      />
+      <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={() => {}} candidateMode={false} />
     );
 
     // Default layout: rows of 5, Erase appended to the last row.
@@ -117,12 +92,7 @@ describe('NumberPad', () => {
     const user = userEvent.setup();
 
     render(
-      <NumberPad
-        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
-        onEnter={() => {}}
-        candidateMode={false}
-      />
+      <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={() => {}} candidateMode={false} />
     );
 
     await user.tab();
@@ -135,12 +105,7 @@ describe('NumberPad', () => {
 
     render(
       <>
-        <NumberPad
-          symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          usedSymbols={new Set()}
-          onEnter={() => {}}
-          candidateMode={false}
-        />
+        <NumberPad symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]} onEnter={() => {}} candidateMode={false} />
         <button type="button">After</button>
       </>
     );
@@ -160,7 +125,6 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3]}
-        usedSymbols={new Set()}
         onEnter={() => {}}
         candidateMode={false}
         renderSymbol={() => '#d4a828'}
