@@ -304,7 +304,7 @@ describe('GamePage - Classic integration', () => {
   });
 });
 
-describe('GamePage - leave confirmation dialog', () => {
+describe('GamePage - back navigation', () => {
   it('should navigate immediately when Back is clicked with no progress', async () => {
     const user = userEvent.setup();
     renderGamePage();
@@ -314,7 +314,7 @@ describe('GamePage - leave confirmation dialog', () => {
     expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
   });
 
-  it('should show the leave dialog when Back is clicked after entering a value', async () => {
+  it('should navigate immediately when Back is clicked after entering a value', async () => {
     const user = userEvent.setup();
     renderGamePage();
 
@@ -322,48 +322,24 @@ describe('GamePage - leave confirmation dialog', () => {
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
     await user.click(screen.getByRole('button', { name: /back/i }));
-
-    expect(screen.getByRole('dialog', { name: /leave puzzle/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Leave' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Keep Playing' })).toBeTruthy();
-  });
-
-  it('should close the leave dialog when Keep Playing is clicked', async () => {
-    const user = userEvent.setup();
-    renderGamePage();
-
-    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
-    await user.click(emptyCell);
-    await user.click(screen.getByRole('button', { name: '5' }));
-    await user.click(screen.getByRole('button', { name: /back/i }));
-    await user.click(screen.getByRole('button', { name: 'Keep Playing' }));
 
     expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
   });
+});
 
-  it('should close the leave dialog when Escape is pressed', async () => {
+describe('GamePage - progress persistence', () => {
+  it('should save progress to localStorage after entering a value', async () => {
     const user = userEvent.setup();
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
-    await user.click(screen.getByRole('button', { name: /back/i }));
-    await user.keyboard('{Escape}');
 
-    expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
-  });
-
-  it('should move focus into the dialog when it opens', async () => {
-    const user = userEvent.setup();
-    renderGamePage();
-
-    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
-    await user.click(emptyCell);
-    await user.click(screen.getByRole('button', { name: '5' }));
-    await user.click(screen.getByRole('button', { name: /back/i }));
-
-    expect(screen.getByRole('dialog', { name: /leave puzzle/i })).toHaveFocus();
+    const saved = localStorage.getItem('sudoku-progress-classic');
+    expect(saved).not.toBeNull();
+    const parsed = JSON.parse(saved!);
+    expect(parsed.values.length).toBeGreaterThan(0);
   });
 });
 

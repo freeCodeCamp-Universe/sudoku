@@ -1,12 +1,14 @@
 import { useMemo, useReducer } from 'react';
 import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
 import { GameContext, type GameAction, type GameState, type HistoryEntry } from './GameContext';
+import type { SavedProgress } from './useProgressPersistence';
 
 interface GameProviderProps {
   variant: Variant;
   model: VariantModel;
   givens: Values;
   solution: Values;
+  initialProgress?: SavedProgress | null;
   children: React.ReactNode;
 }
 
@@ -198,10 +200,37 @@ function createReducer(initialGivens: Values, solution: Values) {
   };
 }
 
-export function GameProvider({ variant, model, givens, solution, children }: GameProviderProps) {
+function createStateFromProgress(
+  givens: Values,
+  solution: Values,
+  progress: SavedProgress
+): GameState {
+  const savedValues = new Map(progress.values);
+  const values = new Map([...givens, ...savedValues]);
+  return {
+    values,
+    candidates: new Map(progress.candidates),
+    history: [],
+    elapsedSeconds: progress.elapsedSeconds,
+    solved: isSolved(values, solution),
+    revealed: new Set(progress.revealed),
+    timerStarted: progress.elapsedSeconds > 0,
+  };
+}
+
+export function GameProvider({
+  variant,
+  model,
+  givens,
+  solution,
+  initialProgress,
+  children,
+}: GameProviderProps) {
   const reducer = useMemo(() => createReducer(givens, solution), [givens, solution]);
   const [state, dispatch] = useReducer(reducer, undefined, () =>
-    createInitialState(givens, solution)
+    initialProgress
+      ? createStateFromProgress(givens, solution, initialProgress)
+      : createInitialState(givens, solution)
   );
 
   return (

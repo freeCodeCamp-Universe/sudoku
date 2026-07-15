@@ -43,6 +43,7 @@ import { resolveOverlays } from './overlays/registry';
 import { Timer } from './Timer';
 import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
+import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
 import { useSudokuGrid } from './useSudokuGrid';
 import styles from './GamePage.module.css';
 
@@ -60,7 +61,9 @@ interface GameInnerProps {
   onNewGame?: () => void;
   onFirstWin?: () => void;
   onToggleColorLabels?: () => void;
-  onProgressChange?: (hasUnsaved: boolean) => void;
+  seedBase: number;
+  jigsawLayoutStart: number;
+  genKey: number;
 }
 
 function GameInner({
@@ -68,7 +71,9 @@ function GameInner({
   onNewGame,
   onFirstWin,
   onToggleColorLabels,
-  onProgressChange,
+  seedBase,
+  jigsawLayoutStart,
+  genKey,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const navigate = useNavigate();
@@ -322,6 +327,7 @@ function GameInner({
       setNewGameConfirmOpen(true);
       return;
     }
+    clearProgress(variant.id);
     onNewGame?.();
     dispatch({ type: 'newGame' });
   }
@@ -357,8 +363,20 @@ function GameInner({
     state.values.size > givens.size || state.candidates.size > 0 || state.revealed.size > 0;
 
   useEffect(() => {
-    onProgressChange?.(hasProgress && !state.solved);
-  }, [hasProgress, onProgressChange, state.solved]);
+    if (state.solved || !hasProgress) {
+      clearProgress(variant.id);
+      return;
+    }
+    saveProgress(variant.id, {
+      seedBase,
+      jigsawLayoutStart,
+      genKey,
+      values: [...state.values],
+      candidates: [...state.candidates],
+      revealed: [...state.revealed],
+      elapsedSeconds: state.elapsedSeconds,
+    });
+  }, [state, hasProgress, variant.id, seedBase, jigsawLayoutStart, genKey]);
 
   function formatElapsedSpaced(totalSeconds: number): string {
     const minutes = Math.floor(totalSeconds / 60);
@@ -793,6 +811,7 @@ function GameInner({
                 type="button"
                 className={`${styles.modalBtn} ${styles.primary}`}
                 onClick={() => {
+                  clearProgress(variant.id);
                   setWinOpen(false);
                   onFirstWin?.();
                   onNewGame?.();
@@ -831,12 +850,13 @@ function GameInner({
         >
           <div className={styles.modal}>
             <div className={styles.modalTitle}>Start a new game?</div>
-            <div className={styles.modalSub}>Your current progress will be lost.</div>
+            <div className={styles.modalSub}>Your progress on this puzzle will be lost.</div>
             <div className={styles.modalActions}>
               <button
                 type="button"
                 className={`${styles.modalBtn} ${styles.primary}`}
                 onClick={() => {
+                  clearProgress(variant.id);
                   setNewGameConfirmOpen(false);
                   onNewGame?.();
                   dispatch({ type: 'newGame' });
@@ -864,10 +884,6 @@ export function GamePage() {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
-  const [gameHasProgress, setGameHasProgress] = useState(false);
-  const leaveDialogRef = useRef<HTMLDivElement>(null);
-  const leaveDialogTriggerRef = useRef<HTMLElement | null>(null);
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -884,23 +900,17 @@ export function GamePage() {
     acknowledgeOnboarding,
   } = usePersistence(variantId);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
-  const [genKey, setGenKey] = useState(0);
-  // Randomize which jigsaw region layout a session starts on; rotating by genKey
-  // then guarantees a different layout on every New Game.
-  const [jigsawLayoutStart] = useState(() => Math.floor(Math.random() * PRESET_LAYOUTS.length));
-  // One random seed per session, captured once. buildPuzzle is then a pure
-  // function of (variant, jigsawLayoutStart, genKey, seedBase), so any memo
-  // recompute (StrictMode, Fast Refresh, dropped cache) yields the same puzzle
-  // instead of a fresh one that would desync from the reducer's givens.
-  const [seedBase] = useState(() => Math.floor(Math.random() * 0x7fffffff));
-  useEffect(() => {
-    if (leaveConfirmOpen) {
-      leaveDialogRef.current?.focus();
-    } else {
-      leaveDialogTriggerRef.current?.focus();
-      leaveDialogTriggerRef.current = null;
-    }
-  }, [leaveConfirmOpen]);
+
+  const savedProgress = useMemo(() => loadProgress(variantId), [variantId]);
+
+  // Restore the puzzle seed from saved progress so the same puzzle is resumed.
+  const [jigsawLayoutStart] = useState(
+    () => savedProgress?.jigsawLayoutStart ?? Math.floor(Math.random() * PRESET_LAYOUTS.length)
+  );
+  const [seedBase] = useState(
+    () => savedProgress?.seedBase ?? Math.floor(Math.random() * 0x7fffffff)
+  );
+  const [genKey, setGenKey] = useState(() => savedProgress?.genKey ?? 0);
 
   const { model, gameVariant, givens, solution } = useMemo(
     () => buildPuzzle(variant, jigsawLayoutStart, genKey, seedBase),
@@ -911,14 +921,7 @@ export function GamePage() {
     <>
       <Header
         title={variant.name}
-        onBack={() => {
-          if (gameHasProgress) {
-            leaveDialogTriggerRef.current = document.activeElement as HTMLElement;
-            setLeaveConfirmOpen(true);
-          } else {
-            navigate('/');
-          }
-        }}
+        onBack={() => navigate('/')}
         onHelpOpen={() => setHelpOpen(true)}
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
         checkEnabled={settings.checkEnabled}
@@ -929,51 +932,24 @@ export function GamePage() {
         onToggleHighlightPeers={toggleHighlightPeers}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
-        <GameProvider variant={gameVariant} model={model} givens={givens} solution={solution}>
+        <GameProvider
+          variant={gameVariant}
+          model={model}
+          givens={givens}
+          solution={solution}
+          initialProgress={savedProgress}
+        >
           <GameInner
             settings={settings}
             onNewGame={() => setGenKey((k) => k + 1)}
             onFirstWin={onboardingShown ? undefined : () => setOnboardingOpen(true)}
             onToggleColorLabels={toggleColorLabels}
-            onProgressChange={setGameHasProgress}
+            seedBase={seedBase}
+            jigsawLayoutStart={jigsawLayoutStart}
+            genKey={genKey}
           />
         </GameProvider>
       </main>
-
-      {leaveConfirmOpen ? (
-        <div
-          ref={leaveDialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Leave puzzle?"
-          className={styles.confirmOverlay}
-          tabIndex={-1}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') setLeaveConfirmOpen(false);
-          }}
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalTitle}>Are you sure?</div>
-            <div className={styles.modalSub}>Your progress won&apos;t be saved.</div>
-            <div className={styles.modalActions}>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={() => navigate('/')}
-              >
-                Leave
-              </button>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => setLeaveConfirmOpen(false)}
-              >
-                Keep Playing
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
       <HelpDialog
         open={helpOpen}
         onClose={() => setHelpOpen(false)}
