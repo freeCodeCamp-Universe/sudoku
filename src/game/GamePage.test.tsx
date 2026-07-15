@@ -184,7 +184,7 @@ describe('GamePage - Classic integration', () => {
     renderGamePage('arrow');
 
     expect(
-      screen.getByText('Digits along each arrow sum to the number in the circle.')
+      screen.getByText('Numbers along each arrow sum to the number in the circle.')
     ).toBeTruthy();
     expect(screen.getByLabelText('Arrow rule legend')).toBeTruthy();
   });
@@ -193,7 +193,7 @@ describe('GamePage - Classic integration', () => {
     renderGamePage('classic');
 
     expect(
-      screen.queryByText('Digits along each arrow sum to the number in the circle.')
+      screen.queryByText('Numbers along each arrow sum to the number in the circle.')
     ).toBeNull();
   });
 

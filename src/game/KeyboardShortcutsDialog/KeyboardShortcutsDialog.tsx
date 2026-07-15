@@ -3,7 +3,7 @@ import styles from './KeyboardShortcutsDialog.module.css';
 
 export interface ShortcutEntry {
   keys: string[];
-  separator?: 'or';
+  separator?: 'or' | 'and';
   description: string;
 }
 
@@ -49,7 +49,7 @@ export function KeyboardShortcutsDialog({
                 <td className={styles.keys}>
                   {s.keys.map((k, i) => (
                     <span key={k}>
-                      {i > 0 && s.separator === 'or' && <span className={styles.sep}>or</span>}
+                      {i > 0 && s.separator && <span className={styles.sep}>{s.separator}</span>}
                       <kbd className={styles.kbd}>{k}</kbd>
                     </span>
                   ))}

@@ -14,7 +14,7 @@
 }
 
 .regionLine {
-  stroke: var(--board-frame);
+  stroke: var(--overlay-jigsaw-stroke);
   stroke-width: var(--box-boundary-width, 3px);
   stroke-linecap: square;
 }
