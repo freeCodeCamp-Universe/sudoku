@@ -34,6 +34,10 @@ interface UseSudokuGridOptions {
   annotators?: CellAnnotator[];
   renderSymbol?: (value: SymbolValue) => string;
   describeSymbol?: (value: SymbolValue) => string;
+  // Order the number pad displays symbols in; digit keys pick by pad
+  // position rather than internal value, so letter variants don't let
+  // typing 1-9 spell out the hidden word.
+  displaySymbols?: SymbolValue[];
 }
 
 function getCellLabel(
@@ -101,6 +105,7 @@ export function useSudokuGrid({
   annotators = [],
   renderSymbol = (value) => String(value),
   describeSymbol = renderSymbol,
+  displaySymbols,
 }: UseSudokuGridOptions): GridInteraction {
   const [selectedId, setSelectedId] = useState<CellId | null>(null);
   const announcerRef = useRef<HTMLDivElement | null>(null);
@@ -310,9 +315,15 @@ export function useSudokuGrid({
 
         return label.length === 1 && label === normalizedKey;
       });
-      const digit = renderedSymbol ?? Number.parseInt(key, 10);
+      const keyIndex = Number.parseInt(key, 10);
+      const digit = renderedSymbol ?? (displaySymbols ? displaySymbols[keyIndex - 1] : keyIndex);
 
-      if (Number.isNaN(digit) || digit < 1 || !model.symbols.includes(digit)) {
+      if (
+        digit === undefined ||
+        Number.isNaN(digit) ||
+        digit < 1 ||
+        !model.symbols.includes(digit)
+      ) {
         return;
       }
 
@@ -363,6 +374,7 @@ export function useSudokuGrid({
       cellsById,
       checkEnabled,
       describeSymbol,
+      displaySymbols,
       givens,
       model,
       onCellNavigate,

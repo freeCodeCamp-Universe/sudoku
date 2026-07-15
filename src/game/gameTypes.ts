@@ -93,6 +93,10 @@ export interface BoardProps {
   overlays?: React.ReactNode[];
   grid: GridInteraction;
   renderSymbol: (value: SymbolValue) => string;
+  // Order candidate slots are laid out in; defaults to variant.symbols.
+  // Letter variants pass a shuffled order shared with the number pad so
+  // candidate placement matches the pad without spelling the hidden word.
+  displaySymbols?: SymbolValue[];
   markerGaps?: Map<CellId, MarkerEdge[]>;
   wordCells?: Set<CellId>;
   parityMap?: Map<CellId, 0 | 1>;

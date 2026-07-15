@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
+import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, SymbolValue } from '@/engine/types';
 import { validate } from '@/engine/validate';
 import {
@@ -50,6 +51,20 @@ import styles from './GamePage.module.css';
 type VariantWithColorNames = {
   colorNames?: string[];
 };
+
+// Letter variants can't show symbols in value order — for wordoku, values
+// 1-9 spell the hidden word, so value order on the pad would give it away.
+// A seeded shuffle keeps the order stable for the lifetime of the puzzle
+// (including restores from saved progress) without revealing anything.
+function shuffledDisplayOrder(symbols: SymbolValue[], seed: number): SymbolValue[] {
+  const rng = createSeededRng(seed);
+  const order = [...symbols];
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
 
 interface GameInnerProps {
   settings: {
@@ -241,6 +256,14 @@ function GameInner({
     [dispatch]
   );
 
+  const displaySymbols = useMemo(
+    () =>
+      variant.symbolKind === 'letter'
+        ? shuffledDisplayOrder(model.symbols, hashSeed(seedBase, variant.id, 'display-order'))
+        : model.symbols,
+    [variant.symbolKind, variant.id, model.symbols, seedBase]
+  );
+
   const grid = useSudokuGrid({
     cells: model.cells,
     model,
@@ -257,6 +280,7 @@ function GameInner({
     annotators,
     renderSymbol,
     describeSymbol,
+    displaySymbols,
     onCellNavigate: panZoomActive ? ensureCellVisible : undefined,
   });
 
@@ -471,11 +495,7 @@ function GameInner({
 
   const numberPad = (
     <NumberPad
-      symbols={
-        variant.symbolKind === 'letter'
-          ? [...model.symbols].sort((a, b) => renderSymbol(a).localeCompare(renderSymbol(b)))
-          : model.symbols
-      }
+      symbols={displaySymbols}
       usedSymbols={usedSymbols}
       columns={
         model.symbols.length === 16
@@ -568,6 +588,7 @@ function GameInner({
               overlays={overlays}
               grid={grid}
               renderSymbol={renderSymbol}
+              displaySymbols={displaySymbols}
               markerGaps={markerGaps}
               wordCells={wordCellIds}
               parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}

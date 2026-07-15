@@ -66,6 +66,7 @@ export function Board({
   overlays,
   grid,
   renderSymbol,
+  displaySymbols,
   markerGaps,
   wordCells,
   parityMap,
@@ -135,7 +136,7 @@ export function Board({
                   id={cell.id}
                   value={state.value}
                   candidates={state.candidates}
-                  symbols={variant.symbols}
+                  symbols={displaySymbols ?? variant.symbols}
                   given={state.given}
                   revealed={state.revealed}
                   selected={state.selected}
