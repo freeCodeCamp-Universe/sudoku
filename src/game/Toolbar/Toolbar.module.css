@@ -63,34 +63,15 @@
   inline-size: 100%;
 }
 
-.confirmOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgb(10 10 35 / 85%);
-  z-index: var(--layer-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 40px 48px;
-  text-align: center;
+/* Inner wrapper for the clear-confirm dialog: the shared Dialog owns the box,
+   backdrop, and centering, so this only re-centers the content column (the
+   shared .content is start-aligned) and sets the 14px rhythm. */
+.modalBody {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 14px;
-  max-width: 340px;
-  width: 90%;
-}
-
-.modalTitle {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text-bright);
 }
 
 .modalSub {

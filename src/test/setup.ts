@@ -55,6 +55,8 @@ if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
 }
 
 if (typeof HTMLDialogElement !== 'undefined') {
+  const needsPolyfill = typeof HTMLDialogElement.prototype.showModal !== 'function';
+
   if (typeof HTMLDialogElement.prototype.showModal !== 'function') {
     HTMLDialogElement.prototype.showModal = function showModal() {
       this.setAttribute('open', '');
@@ -66,5 +68,21 @@ if (typeof HTMLDialogElement !== 'undefined') {
       this.removeAttribute('open');
       this.dispatchEvent(new Event('close'));
     };
+  }
+
+  // jsdom implements no top layer, so pressing Escape on an open modal dialog
+  // does nothing. Mirror the spec (keydown Escape → cancelable `cancel` event →
+  // if not prevented, `close()`) so tests can drive a real keypress via
+  // `userEvent` instead of dispatching a fake `close` event. Only bridge when we
+  // polyfilled the element; a native implementation handles this itself.
+  if (needsPolyfill) {
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const openDialogs = document.querySelectorAll('dialog[open]');
+      const topmost = openDialogs[openDialogs.length - 1] as HTMLDialogElement | undefined;
+      if (!topmost) return;
+      const notPrevented = topmost.dispatchEvent(new Event('cancel', { cancelable: true }));
+      if (notPrevented) topmost.close();
+    });
   }
 }

@@ -1,33 +1,3 @@
-.dialog {
-  color: var(--text-muted);
-  inline-size: 90%;
-  max-inline-size: 420px;
-  margin: auto;
-  padding-block: 32px;
-  padding-inline: 36px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg-surface);
-}
-
-.dialog::backdrop {
-  background: rgb(10 10 35 / 85%);
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.title {
-  align-self: center;
-  color: var(--text-bright);
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0;
-}
-
 .table {
   width: 100%;
   border-collapse: collapse;

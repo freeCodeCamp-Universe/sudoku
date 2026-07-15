@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
@@ -13,6 +13,7 @@ import {
   isOversized,
 } from '@/game/boardViewport';
 import { Button } from '@/game/Button';
+import { Dialog } from '@/game/Dialog';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
@@ -91,12 +92,12 @@ function GameInner({
   genKey,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
-  const navigate = useNavigate();
   const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
+  const winTitleId = useId();
   const [verifyMode, setVerifyMode] = useState(false);
   const [isVisible, setIsVisible] = useState(!document.hidden);
   // At desktop width and up (aligned with VIEWPORT_DESKTOP in cellSizes.ts)
@@ -792,110 +793,85 @@ function GameInner({
           </button>
         </div>
       ) : null}
-      {winOpen ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Puzzle solved"
-          className={styles.confirmOverlay}
-        >
-          <div className={styles.modal}>
+      <Dialog
+        open={winOpen}
+        onClose={() => {
+          setWinOpen(false);
+          onFirstWin?.();
+        }}
+        labelledBy={winTitleId}
+      >
+        <div className={styles.modalBody}>
+          <div className={styles.winEmoji} aria-hidden="true">
+            🎉
+          </div>
+          <div id={winTitleId} className={styles.winTitle}>
+            Great job, puzzle master!
+          </div>
+          <div className={styles.winSub}>
+            {settings.timerEnabled
+              ? `You solved ${variant.name} in:`
+              : `You solved ${variant.name}`}
+          </div>
+          {settings.timerEnabled ? (
+            <div className={styles.winTimeBox}>{formatElapsedSpaced(state.elapsedSeconds)}</div>
+          ) : null}
+          <div className={styles.modalActions}>
             <button
               type="button"
-              className={styles.winClose}
-              aria-label="Close"
+              className={`${styles.modalBtn} ${styles.primary}`}
               onClick={() => {
+                clearProgress(variant.id);
                 setWinOpen(false);
-                onFirstWin?.();
+                onNewGame?.();
+                dispatch({ type: 'newGame' });
               }}
             >
-              ×
+              Play Again
             </button>
-            <div className={styles.winEmoji} aria-hidden="true">
-              🎉
-            </div>
-            <div className={styles.winTitle}>
-              Great job,
-              <br />
-              puzzle master!
-            </div>
-            <div className={styles.winSub}>
-              {settings.timerEnabled
-                ? `You solved ${variant.name} in:`
-                : `You solved ${variant.name}`}
-            </div>
-            {settings.timerEnabled ? (
-              <div className={styles.winTimeBox}>{formatElapsedSpaced(state.elapsedSeconds)}</div>
-            ) : null}
-            <div className={styles.modalActions}>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={() => {
-                  clearProgress(variant.id);
-                  setWinOpen(false);
-                  onFirstWin?.();
-                  onNewGame?.();
-                  dispatch({ type: 'newGame' });
-                }}
-              >
-                Play Again
-              </button>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => {
-                  setWinOpen(false);
-                  onFirstWin?.();
-                }}
-              >
-                View Puzzle
-              </button>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => navigate('/')}
-              >
-                Start Page
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`${styles.modalBtn} ${styles.secondary}`}
+              onClick={() => setWinOpen(false)}
+            >
+              View Puzzle
+            </button>
+            <Link to="/" className={`${styles.modalBtn} ${styles.secondary}`}>
+              Start Page
+            </Link>
           </div>
         </div>
-      ) : null}
-      {newGameConfirmOpen ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Start a new game?"
-          className={styles.confirmOverlay}
-        >
-          <div className={styles.modal}>
-            <div className={styles.modalTitle}>Start a new game?</div>
-            <div className={styles.modalSub}>Your progress on this puzzle will be lost.</div>
-            <div className={styles.modalActions}>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.primary}`}
-                onClick={() => {
-                  clearProgress(variant.id);
-                  setNewGameConfirmOpen(false);
-                  onNewGame?.();
-                  dispatch({ type: 'newGame' });
-                }}
-              >
-                Start New Game
-              </button>
-              <button
-                type="button"
-                className={`${styles.modalBtn} ${styles.secondary}`}
-                onClick={() => setNewGameConfirmOpen(false)}
-              >
-                Keep Playing
-              </button>
-            </div>
+      </Dialog>
+      <Dialog
+        open={newGameConfirmOpen}
+        onClose={() => setNewGameConfirmOpen(false)}
+        title="Start a new game?"
+      >
+        <div className={styles.modalBody}>
+          <div className={styles.modalSub}>Your progress on this puzzle will be lost.</div>
+          <div className={styles.modalActions}>
+            <button
+              type="button"
+              className={`${styles.modalBtn} ${styles.primary}`}
+              onClick={() => {
+                clearProgress(variant.id);
+                setNewGameConfirmOpen(false);
+                onNewGame?.();
+                dispatch({ type: 'newGame' });
+              }}
+            >
+              Start New Game
+            </button>
+            <button
+              type="button"
+              className={`${styles.modalBtn} ${styles.secondary}`}
+              onClick={() => setNewGameConfirmOpen(false)}
+            >
+              Keep Playing
+            </button>
           </div>
         </div>
-      ) : null}
+      </Dialog>
     </div>
   );
 }

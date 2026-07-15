@@ -333,36 +333,17 @@
   opacity: 0.7;
 }
 
-.confirmOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgb(10 10 35 / 85%);
-  z-index: var(--layer-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 40px 48px;
-  position: relative;
-  text-align: center;
+/* Inner wrapper for the win / confirm dialogs: the shared Dialog owns the box,
+   backdrop, and centering, so this only re-centers the content column (the
+   shared .content is start-aligned) and sets the celebratory 14px rhythm. */
+.modalBody {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 14px;
-  max-width: 400px;
-  width: 90%;
 }
 
-.modalTitle {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text-bright);
-}
 .modalSub {
   font-size: 0.88rem;
   color: var(--text-muted);
@@ -387,6 +368,7 @@
   align-items: center;
   justify-content: center;
   font-family: inherit;
+  text-decoration: none;
   transition: opacity 0.15s;
 }
 .modalBtn:hover {
@@ -410,27 +392,6 @@
 .secondary:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
-}
-
-.winClose {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px 6px;
-}
-
-.winClose:hover {
-  color: var(--text-bright);
-}
-.winClose:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }
 
 .winEmoji {
