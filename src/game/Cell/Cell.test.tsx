@@ -100,6 +100,12 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-odd', 'true');
   });
 
+  it('should apply the caged modifier when caged=true', () => {
+    render(<Cell {...baseProps} caged />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-caged', 'true');
+  });
+
   it('should not apply the peer modifier by default', () => {
     render(<Cell {...baseProps} />);
 

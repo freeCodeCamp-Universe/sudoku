@@ -212,7 +212,7 @@ export const killer: Variant = {
   popularity: 2,
   difficulty: 'intermediate',
   difficultyRank: 11,
-  layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
+  layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 }, cellSize: 'spacious' },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
   constraintIds: ['uniqueness', 'cageSum'],

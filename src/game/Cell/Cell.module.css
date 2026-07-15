@@ -309,10 +309,21 @@
   grid-template-columns: repeat(var(--candidate-columns, 3), 1fr);
   grid-template-rows: repeat(var(--candidate-columns, 3), 1fr);
   position: absolute;
-  inset: 2px;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  inset-block-end: 2px;
+  inset-inline-start: 2px;
   pointer-events: none;
   /* Above the chain overlay, like .value. */
   z-index: var(--layer-cell-content);
+}
+
+.cell[data-caged] .candidates {
+  /* 8 / 68 = 11.765%, matching the killer cage ring at the spacious base size. */
+  inset-block-start: 11.765%;
+  inset-inline-end: 11.765%;
+  inset-block-end: 11.765%;
+  inset-inline-start: 11.765%;
 }
 
 .candidate {

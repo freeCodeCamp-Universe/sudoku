@@ -75,6 +75,7 @@ export function Board({
   showColorLabel,
 }: BoardProps) {
   const hasGutters = Boolean(gutters?.top || gutters?.bottom || gutters?.start || gutters?.end);
+  const caged = variant.overlayIds?.includes('cage') ?? false;
   // Clue cells in the gutters must track the responsive cell size so each
   // clue stays centered on its row/column; gutters only exist on uniform
   // grid layouts, so any rect carries the size.
@@ -174,6 +175,7 @@ export function Board({
                   word={wordCells?.has(cell.id)}
                   even={parityMap?.get(cell.id) === 0}
                   odd={parityMap?.get(cell.id) === 1}
+                  caged={caged}
                   aria-colindex={cell.col + 1}
                   onClick={props.onClick ?? (() => {})}
                   {...props}

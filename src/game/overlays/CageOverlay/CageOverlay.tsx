@@ -1,5 +1,13 @@
 import type { CellId } from '@/engine/types';
 import type { Cage, Rect } from '@/game/gameTypes';
+import {
+  CAGE_RING_INSET_RATIO,
+  CAGE_RING_RATIO,
+  CAGE_SUM_LABEL_CHAR_WIDTH,
+  CAGE_SUM_LABEL_HEIGHT,
+  CAGE_SUM_LABEL_PADDING,
+  CAGE_SUM_LABEL_X_OFFSET,
+} from '@/game/layouts/cellSizes';
 import styles from './CageOverlay.module.css';
 
 interface CageOverlayProps {
@@ -28,8 +36,6 @@ function getNeighborId(id: CellId, deltaRow: number, deltaCol: number): CellId |
   return `r${coords.row + deltaRow}c${coords.col + deltaCol}`;
 }
 
-const INSET = 2;
-
 /**
  * Compute the start or end coordinate for one end of a cage boundary segment.
  * sign = -1 for the "near" end (start of line), +1 for the "far" end.
@@ -43,10 +49,11 @@ function extent(
   sign: 1 | -1,
   perpCage: number | undefined,
   cageIndex: number,
-  diagCage: number | undefined
+  diagCage: number | undefined,
+  inset: number
 ): number {
-  if (perpCage !== cageIndex) return base - INSET * sign; // outer corner: truncate
-  if (diagCage === cageIndex) return base + INSET * sign; // inner corner: extend
+  if (perpCage !== cageIndex) return base - inset * sign; // outer corner: truncate
+  if (diagCage === cageIndex) return base + inset * sign; // inner corner: extend
   return base; // straight-through
 }
 
@@ -61,6 +68,7 @@ function cageBorderEdges(cages: Cage[], rects: Map<CellId, Rect>): Edge[] {
     if (ci === undefined) continue;
 
     const { x, y, w, h } = rect;
+    const inset = w * CAGE_RING_RATIO * CAGE_RING_INSET_RATIO;
     const cage = (id: CellId | null) => (id ? cellToCage.get(id) : undefined);
 
     const L = getNeighborId(cellId, 0, -1);
@@ -74,30 +82,30 @@ function cageBorderEdges(cages: Cage[], rects: Map<CellId, Rect>): Edge[] {
 
     // Right boundary
     if (cage(R) !== ci) {
-      const y1 = extent(y, -1, cage(T), ci, cage(TR));
-      const y2 = extent(y + h, 1, cage(B), ci, cage(BR));
-      edges.push({ x1: x + w - INSET, y1, x2: x + w - INSET, y2 });
+      const y1 = extent(y, -1, cage(T), ci, cage(TR), inset);
+      const y2 = extent(y + h, 1, cage(B), ci, cage(BR), inset);
+      edges.push({ x1: x + w - inset, y1, x2: x + w - inset, y2 });
     }
 
     // Bottom boundary
     if (cage(B) !== ci) {
-      const x1 = extent(x, -1, cage(L), ci, cage(BL));
-      const x2 = extent(x + w, 1, cage(R), ci, cage(BR));
-      edges.push({ x1, y1: y + h - INSET, x2, y2: y + h - INSET });
+      const x1 = extent(x, -1, cage(L), ci, cage(BL), inset);
+      const x2 = extent(x + w, 1, cage(R), ci, cage(BR), inset);
+      edges.push({ x1, y1: y + h - inset, x2, y2: y + h - inset });
     }
 
     // Left boundary
     if (cage(L) !== ci) {
-      const y1 = extent(y, -1, cage(T), ci, cage(TL));
-      const y2 = extent(y + h, 1, cage(B), ci, cage(BL));
-      edges.push({ x1: x + INSET, y1, x2: x + INSET, y2 });
+      const y1 = extent(y, -1, cage(T), ci, cage(TL), inset);
+      const y2 = extent(y + h, 1, cage(B), ci, cage(BL), inset);
+      edges.push({ x1: x + inset, y1, x2: x + inset, y2 });
     }
 
     // Top boundary
     if (cage(T) !== ci) {
-      const x1 = extent(x, -1, cage(L), ci, cage(TL));
-      const x2 = extent(x + w, 1, cage(R), ci, cage(TR));
-      edges.push({ x1, y1: y + INSET, x2, y2: y + INSET });
+      const x1 = extent(x, -1, cage(L), ci, cage(TL), inset);
+      const x2 = extent(x + w, 1, cage(R), ci, cage(TR), inset);
+      edges.push({ x1, y1: y + inset, x2, y2: y + inset });
     }
   }
 
@@ -144,6 +152,7 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
       {edges.map((edge, index) => (
         <line
           key={`${edge.x1}-${edge.y1}-${edge.x2}-${edge.y2}-${index}`}
+          data-testid="cage-line"
           x1={edge.x1}
           y1={edge.y1}
           x2={edge.x2}
@@ -158,16 +167,26 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
           return null;
         }
 
+        const inset = rect.w * CAGE_RING_RATIO * CAGE_RING_INSET_RATIO;
+        const label = String(cage.sum);
+        const labelX = rect.x + inset + CAGE_SUM_LABEL_X_OFFSET;
+        const labelY = rect.y + inset;
+        const knockoutWidth = label.length * CAGE_SUM_LABEL_CHAR_WIDTH + CAGE_SUM_LABEL_PADDING;
+
         return (
-          <text
-            key={`${cage.sum}-${index}`}
-            x={rect.x + INSET + 1}
-            y={rect.y + INSET + 5}
-            className={styles.sumLabel}
-            data-testid="cage-sum-label"
-          >
-            {cage.sum}
-          </text>
+          <g key={`${cage.sum}-${index}`}>
+            <rect
+              data-testid="cage-sum-knockout"
+              x={labelX - CAGE_SUM_LABEL_PADDING / 2}
+              y={labelY - CAGE_SUM_LABEL_HEIGHT / 2}
+              width={knockoutWidth}
+              height={CAGE_SUM_LABEL_HEIGHT}
+              className={styles.sumKnockout}
+            />
+            <text x={labelX} y={labelY} className={styles.sumLabel} data-testid="cage-sum-label">
+              {label}
+            </text>
+          </g>
         );
       })}
     </svg>

@@ -41,6 +41,10 @@ export function useResponsiveCellSize(variant: Variant): number {
       return base;
     }
 
+    if (window.innerWidth >= VIEWPORT_DESKTOP) {
+      return base;
+    }
+
     const floor = bucketFloor(window.innerWidth);
     const frame = boardFrameWidth(highContrast);
     // Clue-gutter variants render a gutter column (or matching corner) on

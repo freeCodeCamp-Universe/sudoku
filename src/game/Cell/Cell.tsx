@@ -37,6 +37,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   word?: boolean;
   even?: boolean;
   odd?: boolean;
+  caged?: boolean;
   showColorLabel?: boolean;
 }
 
@@ -87,6 +88,7 @@ export function Cell({
   word = false,
   even = false,
   odd = false,
+  caged = false,
   showColorLabel = false,
   className,
   ...rest
@@ -127,6 +129,7 @@ export function Cell({
       data-word={word || undefined}
       data-even={even || undefined}
       data-odd={odd || undefined}
+      data-caged={caged || undefined}
       aria-selected={selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
