@@ -37,7 +37,7 @@ export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps
         title="Clear all entries?"
       >
         <div className={styles.modalBody}>
-          <div className={styles.modalSub}>All your entered digits will be removed.</div>
+          <div className={styles.modalSub}>All your entered symbols will be removed.</div>
           <div className={styles.modalActions}>
             <button
               type="button"
