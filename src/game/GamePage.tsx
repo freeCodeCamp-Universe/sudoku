@@ -333,8 +333,8 @@ function GameInner({
   }
 
   const usedSymbols = useMemo(
-    () => findCompletedSymbols(state.values, model.symbols, model.cells.length),
-    [model.cells.length, model.symbols, state.values]
+    () => findCompletedSymbols(state.values, solution, model.symbols),
+    [model.symbols, solution, state.values]
   );
 
   const wordCellIds = useMemo((): Set<CellId> => {
