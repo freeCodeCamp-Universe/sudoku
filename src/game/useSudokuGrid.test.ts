@@ -35,23 +35,29 @@ const classicVariant: Variant = {
 interface TestBoardProps {
   candidates?: Map<CellId, SymbolValue[]>;
   candidateMode?: boolean;
+  onEnterValue?: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate?: (id: CellId, value: SymbolValue) => void;
   describeSymbol?: (value: SymbolValue) => string;
+  renderSymbol?: (value: SymbolValue) => string;
   values?: Values;
   checkEnabled?: boolean;
   solution?: Values;
   onCellNavigate?: (id: CellId) => void;
+  onSetCandidateMode?: (candidate: boolean) => void;
 }
 
 function TestBoard({
   candidates = new Map(),
   candidateMode = false,
+  onEnterValue = noop,
   onToggleCandidate = noop,
   describeSymbol,
+  renderSymbol,
   values = emptyValues,
   checkEnabled = false,
   solution = new Map(),
   onCellNavigate,
+  onSetCandidateMode,
 }: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
@@ -60,12 +66,14 @@ function TestBoard({
     candidates,
     candidateMode,
     givens: new Set(),
-    onEnterValue: noop,
+    onEnterValue,
     onToggleCandidate,
     describeSymbol,
+    renderSymbol,
     checkEnabled,
     solution,
     onCellNavigate,
+    onSetCandidateMode,
   });
 
   return React.createElement(Board, {
@@ -215,6 +223,42 @@ describe('useSudokuGrid', () => {
     shouldAssert.exist(downCell);
     shouldAssert.equal(downCell?.getAttribute('data-cell'), 'r1c1');
     shouldAssert.equal(downCell?.getAttribute('aria-selected'), 'true');
+  });
+
+  it('should switch modes on Shift+C and Shift+N', () => {
+    const onSetCandidateMode = vi.fn();
+    render(React.createElement(TestBoard, { onSetCandidateMode }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    fireEvent.focus(cell);
+
+    fireEvent.keyDown(cell, { key: 'C', shiftKey: true });
+    expect(onSetCandidateMode).toHaveBeenLastCalledWith(true);
+
+    fireEvent.keyDown(cell, { key: 'N', shiftKey: true });
+    expect(onSetCandidateMode).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should prefer the mode switch over letter entry when Shift is held', () => {
+    const onSetCandidateMode = vi.fn();
+    const onEnterValue = vi.fn();
+    render(
+      React.createElement(TestBoard, {
+        onSetCandidateMode,
+        onEnterValue,
+        renderSymbol: (value) => 'ABCDEFGHI'[value - 1],
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    fireEvent.focus(cell);
+
+    fireEvent.keyDown(cell, { key: 'C', shiftKey: true });
+    expect(onSetCandidateMode).toHaveBeenCalledWith(true);
+    expect(onEnterValue).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(cell, { key: 'c' });
+    expect(onEnterValue).toHaveBeenCalledWith('r0c0', 3);
   });
 
   it('should keep a clicked cell selected after focus moves to it', () => {

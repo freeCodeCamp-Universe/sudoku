@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
@@ -92,7 +92,7 @@ function GameInner({
   genKey,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
-  const [candidateMode, toggleCandidateMode] = useReducer((mode: boolean) => !mode, false);
+  const [candidateMode, setCandidateMode] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
@@ -282,6 +282,7 @@ function GameInner({
     renderSymbol,
     describeSymbol,
     displaySymbols,
+    onSetCandidateMode: setCandidateMode,
     onCellNavigate: panZoomActive ? ensureCellVisible : undefined,
   });
 
@@ -534,9 +535,7 @@ function GameInner({
       return;
     }
     setControlsOpen(false);
-    if ((id === 'candidate') !== candidateMode) {
-      toggleCandidateMode();
-    }
+    setCandidateMode(id === 'candidate');
   };
   const navTabs: Tab[] = [
     { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
@@ -974,6 +973,8 @@ export function GamePage() {
               ]),
           { keys: ['Backspace', 'Delete'], separator: 'or' as const, description: 'Erase' },
           { keys: ['↑', '↓', '←', '→'], description: 'Move between cells' },
+          { keys: ['Shift + N'], description: 'Normal mode' },
+          { keys: ['Shift + C'], description: 'Candidate mode' },
           { keys: ['Escape'], description: 'Deselect cell' },
         ]}
       />

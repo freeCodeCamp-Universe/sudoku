@@ -38,6 +38,7 @@ interface UseSudokuGridOptions {
   // position rather than internal value, so letter variants don't let
   // typing 1-9 spell out the hidden word.
   displaySymbols?: SymbolValue[];
+  onSetCandidateMode?: (candidate: boolean) => void;
 }
 
 function getCellLabel(
@@ -106,6 +107,7 @@ export function useSudokuGrid({
   renderSymbol = (value) => String(value),
   describeSymbol = renderSymbol,
   displaySymbols,
+  onSetCandidateMode,
 }: UseSudokuGridOptions): GridInteraction {
   const [selectedId, setSelectedId] = useState<CellId | null>(null);
   const announcerRef = useRef<HTMLDivElement | null>(null);
@@ -292,6 +294,18 @@ export function useSudokuGrid({
         return;
       }
 
+      // Mode switching stays on the board, so it must run before the givens
+      // guard (any focused cell counts) and before symbol matching (Shift+C
+      // wins over entering C in letter variants; a plain C still enters the
+      // value).
+      if (event.shiftKey && (key === 'N' || key === 'C')) {
+        event.preventDefault();
+        const toCandidate = key === 'C';
+        onSetCandidateMode?.(toCandidate);
+        announce(toCandidate ? 'Candidate mode' : 'Normal mode');
+        return;
+      }
+
       if (givens.has(currentId) || revealed.has(currentId)) {
         return;
       }
@@ -379,6 +393,7 @@ export function useSudokuGrid({
       model,
       onCellNavigate,
       onEnterValue,
+      onSetCandidateMode,
       onToggleCandidate,
       renderSymbol,
       revealed,
