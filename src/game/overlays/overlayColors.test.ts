@@ -16,9 +16,11 @@ describe('overlay color tokens', () => {
     const tokens = readThemeTokens();
     expect(tokens['--overlay-cage-stroke']).toMatchObject({ dark: '#9898b8', light: '#5555aa' });
     expect(tokens['--overlay-argyle-stroke']).toMatchObject({ dark: '#9898b8', light: '#8080a8' });
+    // Light matches --board-frame so jigsaw/sujiken inner region lines read
+    // as one system with the outer border.
     expect(tokens['--overlay-jigsaw-stroke']).toMatchObject({
       dark: '#9898b8',
-      light: '#6060a0',
+      light: '#8080a8',
       darkHc: '#ffffff',
       lightHc: '#0a0a23',
     });
