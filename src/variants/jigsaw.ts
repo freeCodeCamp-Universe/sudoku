@@ -1,4 +1,6 @@
+import { buildModel } from '@/engine/buildModel';
 import { cellId, range, shuffle } from '@/engine/grid';
+import { findSolution } from '@/engine/solve';
 import type {
   BoardLayout,
   Difficulty,
@@ -183,3 +185,172 @@ export function makePlayableJigsawVariant(regions: number[][]): Variant {
 }
 
 export const jigsaw: Variant = makePlayableJigsawVariant(PRESET_LAYOUTS[0]);
+
+// --- Random region generation ---
+// Start from the standard 3×3 boxes and scramble with boundary-pair swaps:
+// a cell of region A on the border with region B trades places with a cell
+// of B on the border with A (the two cells need not be adjacent to each
+// other). Region sizes stay at nine by construction; connectivity is
+// re-checked after every swap and broken swaps are reverted. A scrambled
+// partition is only returned once a bounded solve proves it admits at least
+// one valid filling — a partition with no filling would send puzzle
+// generation into its restart tail.
+
+const REGION_SWAP_TARGET = 150;
+const REGION_SWAP_MAX_TRIES = 4000;
+// Below this many accepted swaps the board still reads as slightly bent
+// boxes; scrap the attempt and rescramble instead of shipping it.
+const REGION_MIN_SWAPS = 40;
+const REGION_ATTEMPTS = 20;
+const REGION_FILL_NODE_BUDGET = 20_000;
+const REGION_FILL_RESTARTS = 5;
+
+const DIRECTIONS: [number, number][] = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1],
+];
+
+function isRegionConnected(regions: number[][], region: number): boolean {
+  const cells: [number, number][] = [];
+
+  for (let row = 0; row < JIGSAW_SIZE; row += 1) {
+    for (let col = 0; col < JIGSAW_SIZE; col += 1) {
+      if (regions[row][col] === region) {
+        cells.push([row, col]);
+      }
+    }
+  }
+
+  if (cells.length === 0) {
+    return false;
+  }
+
+  const key = (row: number, col: number) => row * JIGSAW_SIZE + col;
+  const inRegion = new Set(cells.map(([row, col]) => key(row, col)));
+  const seen = new Set([key(cells[0][0], cells[0][1])]);
+  const queue: [number, number][] = [cells[0]];
+
+  while (queue.length > 0) {
+    const [row, col] = queue.pop()!;
+    const neighbors: [number, number][] = [
+      [row - 1, col],
+      [row + 1, col],
+      [row, col - 1],
+      [row, col + 1],
+    ];
+
+    for (const [nextRow, nextCol] of neighbors) {
+      if (nextRow < 0 || nextRow >= JIGSAW_SIZE || nextCol < 0 || nextCol >= JIGSAW_SIZE) {
+        continue;
+      }
+
+      const nextKey = key(nextRow, nextCol);
+      if (inRegion.has(nextKey) && !seen.has(nextKey)) {
+        seen.add(nextKey);
+        queue.push([nextRow, nextCol]);
+      }
+    }
+  }
+
+  return seen.size === cells.length;
+}
+
+function bordersRegion(regions: number[][], row: number, col: number, region: number): boolean {
+  return DIRECTIONS.some(([deltaRow, deltaCol]) => {
+    const nextRow = row + deltaRow;
+    const nextCol = col + deltaCol;
+
+    return (
+      nextRow >= 0 &&
+      nextRow < JIGSAW_SIZE &&
+      nextCol >= 0 &&
+      nextCol < JIGSAW_SIZE &&
+      regions[nextRow][nextCol] === region
+    );
+  });
+}
+
+function scrambleRegions(rng: () => number): number[][] | null {
+  const regions = range(JIGSAW_SIZE).map((row) =>
+    range(JIGSAW_SIZE).map((col) => Math.floor(row / 3) * 3 + Math.floor(col / 3))
+  );
+  let swaps = 0;
+
+  for (let tries = 0; tries < REGION_SWAP_MAX_TRIES && swaps < REGION_SWAP_TARGET; tries += 1) {
+    const rowA = Math.floor(rng() * JIGSAW_SIZE);
+    const colA = Math.floor(rng() * JIGSAW_SIZE);
+    const [deltaRow, deltaCol] = DIRECTIONS[Math.floor(rng() * DIRECTIONS.length)];
+    const neighborRow = rowA + deltaRow;
+    const neighborCol = colA + deltaCol;
+
+    if (
+      neighborRow < 0 ||
+      neighborRow >= JIGSAW_SIZE ||
+      neighborCol < 0 ||
+      neighborCol >= JIGSAW_SIZE
+    ) {
+      continue;
+    }
+
+    const a = regions[rowA][colA];
+    const b = regions[neighborRow][neighborCol];
+
+    if (a === b) {
+      continue;
+    }
+
+    const candidates: [number, number][] = [];
+    for (let row = 0; row < JIGSAW_SIZE; row += 1) {
+      for (let col = 0; col < JIGSAW_SIZE; col += 1) {
+        if (regions[row][col] === b && bordersRegion(regions, row, col, a)) {
+          candidates.push([row, col]);
+        }
+      }
+    }
+
+    if (candidates.length === 0) {
+      continue;
+    }
+
+    const [rowB, colB] = candidates[Math.floor(rng() * candidates.length)];
+    regions[rowA][colA] = b;
+    regions[rowB][colB] = a;
+
+    if (isRegionConnected(regions, a) && isRegionConnected(regions, b)) {
+      swaps += 1;
+    } else {
+      regions[rowA][colA] = a;
+      regions[rowB][colB] = b;
+    }
+  }
+
+  return swaps >= REGION_MIN_SWAPS ? regions : null;
+}
+
+function admitsFilling(regions: number[][], rng: () => number): boolean {
+  const model = buildModel(makeJigsawVariant(regions));
+
+  for (let attempt = 0; attempt < REGION_FILL_RESTARTS; attempt += 1) {
+    if (findSolution(model, new Map(), { rng, nodeBudget: REGION_FILL_NODE_BUDGET })) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function generateJigsawRegions(rng: () => number): number[][] {
+  for (let attempt = 0; attempt < REGION_ATTEMPTS; attempt += 1) {
+    const regions = scrambleRegions(rng);
+
+    if (regions && admitsFilling(regions, rng)) {
+      return regions;
+    }
+  }
+
+  // Practically unreachable — scrambled partitions almost always admit a
+  // filling — but a known-good preset keeps generation total either way.
+  return PRESET_LAYOUTS[0];
+}

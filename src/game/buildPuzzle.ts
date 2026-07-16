@@ -2,7 +2,7 @@ import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { Values, Variant, VariantModel } from '@/engine/types';
-import { makePlayableJigsawVariant, PRESET_LAYOUTS } from '@/variants/jigsaw';
+import { generateJigsawRegions, makePlayableJigsawVariant } from '@/variants/jigsaw';
 
 export interface BuiltPuzzle {
   model: VariantModel;
@@ -17,10 +17,15 @@ export function buildPuzzle(
   genKey: number,
   seedBase: number
 ): BuiltPuzzle {
+  // Jigsaw regions are generated per puzzle from their own seed stream, kept
+  // separate from the solution rng so the same regions always reproduce for a
+  // saved (jigsawLayoutStart, genKey) pair regardless of generation internals.
   const activeVariant =
     variant.id === 'jigsaw'
       ? makePlayableJigsawVariant(
-          PRESET_LAYOUTS[(jigsawLayoutStart + genKey) % PRESET_LAYOUTS.length]
+          generateJigsawRegions(
+            createSeededRng(hashSeed('jigsaw-layout', jigsawLayoutStart, genKey))
+          )
         )
       : variant;
   const model = buildModel(activeVariant);

@@ -23,7 +23,7 @@ import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
 import { useMediaQuery } from '@/game/useMediaQuery';
 import { getVariant } from '@/variants/registry';
-import { isJigsawStructure, PRESET_LAYOUTS } from '@/variants/jigsaw';
+import { isJigsawStructure } from '@/variants/jigsaw';
 import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
@@ -901,7 +901,7 @@ export function GamePage() {
 
   // Restore the puzzle seed from saved progress so the same puzzle is resumed.
   const [jigsawLayoutStart] = useState(
-    () => savedProgress?.jigsawLayoutStart ?? Math.floor(Math.random() * PRESET_LAYOUTS.length)
+    () => savedProgress?.jigsawLayoutStart ?? Math.floor(Math.random() * 0x7fffffff)
   );
   const [seedBase] = useState(
     () => savedProgress?.seedBase ?? Math.floor(Math.random() * 0x7fffffff)

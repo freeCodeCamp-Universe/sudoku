@@ -1,5 +1,11 @@
 import type { CellId, SymbolValue } from '@/engine/types';
 
+// Bumped when the mapping from the saved seeds to a generated board changes
+// (schema 2: jigsaw regions generated from the seed instead of preset
+// layouts). A save written under an older schema would restore its values
+// onto a different board, so it is discarded instead.
+const JIGSAW_LAYOUT_SCHEMA = 2;
+
 export interface SavedProgress {
   seedBase: number;
   jigsawLayoutStart: number;
@@ -8,6 +14,7 @@ export interface SavedProgress {
   candidates: [CellId, SymbolValue[]][];
   revealed: CellId[];
   elapsedSeconds: number;
+  layoutSchema?: number;
 }
 
 function storageKey(variantId: string): string {
@@ -17,7 +24,13 @@ function storageKey(variantId: string): string {
 export function loadProgress(variantId: string): SavedProgress | null {
   try {
     const raw = localStorage.getItem(storageKey(variantId));
-    return raw ? (JSON.parse(raw) as SavedProgress) : null;
+    const data = raw ? (JSON.parse(raw) as SavedProgress) : null;
+
+    if (data && variantId === 'jigsaw' && data.layoutSchema !== JIGSAW_LAYOUT_SCHEMA) {
+      return null;
+    }
+
+    return data;
   } catch {
     return null;
   }
@@ -25,7 +38,10 @@ export function loadProgress(variantId: string): SavedProgress | null {
 
 export function saveProgress(variantId: string, data: SavedProgress): void {
   try {
-    localStorage.setItem(storageKey(variantId), JSON.stringify(data));
+    localStorage.setItem(
+      storageKey(variantId),
+      JSON.stringify({ ...data, layoutSchema: JIGSAW_LAYOUT_SCHEMA })
+    );
   } catch {
     // storage quota exceeded — skip silently
   }

@@ -1,9 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
 import { generate, generateSolution } from '@/engine/generate';
+import { range } from '@/engine/grid';
 import { solve } from '@/engine/solve';
 import { validate } from '@/engine/validate';
-import { jigsaw, makeJigsawVariant, makePlayableJigsawVariant, PRESET_LAYOUTS } from './jigsaw';
+import {
+  generateJigsawRegions,
+  jigsaw,
+  makeJigsawVariant,
+  makePlayableJigsawVariant,
+  PRESET_LAYOUTS,
+} from './jigsaw';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -63,23 +70,79 @@ describe('jigsaw generate + solve (preset A)', () => {
   });
 });
 
-describe('jigsaw region variety', () => {
-  it('should define pairwise-distinct presets so rotating layouts changes regions', () => {
-    for (let a = 0; a < PRESET_LAYOUTS.length; a += 1) {
-      for (let b = a + 1; b < PRESET_LAYOUTS.length; b += 1) {
-        expect(JSON.stringify(PRESET_LAYOUTS[a])).not.toBe(JSON.stringify(PRESET_LAYOUTS[b]));
+describe('generateJigsawRegions', () => {
+  function regionCells(regions: number[][], region: number): [number, number][] {
+    const cells: [number, number][] = [];
+    regions.forEach((rowValues, row) =>
+      rowValues.forEach((value, col) => {
+        if (value === region) cells.push([row, col]);
+      })
+    );
+    return cells;
+  }
+
+  function isConnected(cells: [number, number][]): boolean {
+    const keys = new Set(cells.map(([row, col]) => `${row},${col}`));
+    const seen = new Set([`${cells[0][0]},${cells[0][1]}`]);
+    const queue = [cells[0]];
+    while (queue.length > 0) {
+      const [row, col] = queue.pop()!;
+      for (const [nextRow, nextCol] of [
+        [row - 1, col],
+        [row + 1, col],
+        [row, col - 1],
+        [row, col + 1],
+      ]) {
+        const key = `${nextRow},${nextCol}`;
+        if (keys.has(key) && !seen.has(key)) {
+          seen.add(key);
+          queue.push([nextRow, nextCol]);
+        }
       }
+    }
+    return seen.size === cells.length;
+  }
+
+  it('should produce nine connected regions of nine cells each', () => {
+    const regions = generateJigsawRegions(seeded(42));
+
+    for (let region = 0; region < 9; region += 1) {
+      const cells = regionCells(regions, region);
+      expect(cells).toHaveLength(9);
+      expect(isConnected(cells)).toBe(true);
     }
   });
 
-  it('should rotate to a different layout for each consecutive round', () => {
-    const pick = (start: number, genKey: number) =>
-      PRESET_LAYOUTS[(start + genKey) % PRESET_LAYOUTS.length];
+  it('should be deterministic for the same seed', () => {
+    expect(generateJigsawRegions(seeded(7))).toEqual(generateJigsawRegions(seeded(7)));
+  });
 
-    for (let start = 0; start < PRESET_LAYOUTS.length; start += 1) {
-      for (let genKey = 0; genKey < PRESET_LAYOUTS.length; genKey += 1) {
-        expect(pick(start, genKey)).not.toBe(pick(start, genKey + 1));
-      }
+  it('should produce different layouts for different seeds', () => {
+    const layouts = new Set(
+      range(6).map((seed) => JSON.stringify(generateJigsawRegions(seeded(seed + 1))))
+    );
+
+    expect(layouts.size).toBeGreaterThan(1);
+  });
+
+  it('should produce irregular regions, not the standard boxes it scrambles from', () => {
+    const regions = generateJigsawRegions(seeded(11));
+    const standardBoxes = range(9).map((row) =>
+      range(9).map((col) => Math.floor(row / 3) * 3 + Math.floor(col / 3))
+    );
+
+    expect(regions).not.toEqual(standardBoxes);
+  });
+
+  it('should generate a playable puzzle quickly on generated regions', () => {
+    for (let seed = 1; seed <= 5; seed += 1) {
+      const regions = generateJigsawRegions(seeded(seed * 31));
+      const model = buildModel(makePlayableJigsawVariant(regions));
+      const start = Date.now();
+      const { givens } = generate(model, 'intermediate', seeded(seed));
+
+      expect(Date.now() - start).toBeLessThan(1000);
+      expect(givens.size).toBe(31);
     }
   });
 });
