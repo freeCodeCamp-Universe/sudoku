@@ -173,6 +173,29 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getAllByTestId('cell-color-label').length).toBeGreaterThan(0);
   });
 
+  it('should render the Show numbers switch in the color variant input panel below tablet width', () => {
+    window.innerWidth = 500;
+    renderGamePage('color');
+
+    // The toggle now lives in the Normal/Candidate input panel, so it is present
+    // without opening the Controls tab.
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+  });
+
+  it('should keep the Show numbers switch visible when switching between Normal and Candidate below tablet width', async () => {
+    const user = userEvent.setup();
+    window.innerWidth = 500;
+    renderGamePage('color');
+
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+
+    await user.click(screen.getByRole('tab', { name: 'Candidate' }));
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+
+    await user.click(screen.getByRole('tab', { name: 'Normal' }));
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+  });
+
   it('should render skyscraper gutters from derived structure', () => {
     renderGamePage('skyscraper');
 
