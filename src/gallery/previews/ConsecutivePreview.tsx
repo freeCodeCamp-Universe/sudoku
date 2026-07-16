@@ -45,17 +45,20 @@ export function ConsecutivePreview() {
           [1, 0, 'v'],
         ];
 
+        // Drawn as real circles, not a '▪' glyph — mobile fonts give that
+        // code point emoji presentation, which shows as a ◾ emoji and
+        // ignores the theme color.
         ctx.fillStyle = markerColor;
-        ctx.font = 'bold 9px sans-serif';
+        markers.forEach(([row, col, direction]) => {
+          const x = direction === 'h' ? col * cell + cell : col * cell + cell / 2;
+          const y = direction === 'h' ? row * cell + cell / 2 : row * cell + cell;
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        markers.forEach(([row, col, direction]) => {
-          if (direction === 'h') {
-            ctx.fillText('▪', col * cell + cell, row * cell + cell / 2);
-          } else {
-            ctx.fillText('▪', col * cell + cell / 2, row * cell + cell);
-          }
-        });
 
         ctx.fillStyle = digitColor;
         ctx.font = 'bold 10px sans-serif';
