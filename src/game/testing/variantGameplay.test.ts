@@ -185,6 +185,21 @@ describe('variant gameplay: reducer actions', () => {
     }
   );
 
+  it.each(allVariants())('should clear revealed cells on clearAll for $id', (variant) => {
+    const { result, fixture } = renderPlay(variant);
+    const cell = firstOpenCell(fixture);
+    const solutionValue = fixture.solution.get(cell)!;
+
+    act(() => result.current.dispatch({ type: 'reveal', cellId: cell, solutionValue }));
+
+    expect(result.current.cellState(cell).revealed).toBe(true);
+
+    act(() => result.current.dispatch({ type: 'clearAll' }));
+
+    expect(result.current.cellState(cell).value).toBeUndefined();
+    expect(result.current.cellState(cell).revealed).toBe(false);
+  });
+
   it.each(allVariants())('should reset to givens on newGame for $id', (variant) => {
     const { result, fixture } = renderPlay(variant);
     const cell = firstOpenCell(fixture);

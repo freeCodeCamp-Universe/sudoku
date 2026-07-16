@@ -137,7 +137,7 @@ function createReducer(initialGivens: Values, solution: Values) {
         const clearedValues = new Map(state.values);
         const clearedCandidates = cloneCandidates(state.candidates);
         for (const cellId of clearedValues.keys()) {
-          if (!givenSet.has(cellId) && !state.revealed.has(cellId)) {
+          if (!givenSet.has(cellId)) {
             clearedValues.delete(cellId);
           }
         }
@@ -148,6 +148,7 @@ function createReducer(initialGivens: Values, solution: Values) {
           ...state,
           values: clearedValues,
           candidates: clearedCandidates,
+          revealed: new Set(),
           history: [...state.history, snapshotState(state)],
           solved: false,
         };
