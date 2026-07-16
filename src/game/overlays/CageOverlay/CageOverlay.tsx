@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { CellId } from '@/engine/types';
 import type { Cage, Rect } from '@/game/gameTypes';
 import {
@@ -130,6 +131,7 @@ function topLeftRect(cage: Cage, rects: Map<CellId, Rect>): Rect | undefined {
 }
 
 export function CageOverlay({ rects, structure }: CageOverlayProps) {
+  const maskId = useId();
   const cages = (structure as { cages?: Cage[] } | undefined)?.cages ?? [];
   const allRects = [...rects.values()];
 
@@ -141,6 +143,27 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
   const maxY = Math.max(...allRects.map((rect) => rect.y + rect.h));
   const edges = cageBorderEdges(cages, rects);
 
+  const labels = cages.flatMap((cage, index) => {
+    const rect = topLeftRect(cage, rects);
+
+    if (!rect) {
+      return [];
+    }
+
+    const inset = rect.w * CAGE_RING_RATIO * CAGE_RING_INSET_RATIO;
+    const label = String(cage.sum);
+
+    return [
+      {
+        key: `${cage.sum}-${index}`,
+        label,
+        x: rect.x + inset + CAGE_SUM_LABEL_X_OFFSET,
+        y: rect.y + inset,
+        knockoutWidth: label.length * CAGE_SUM_LABEL_CHAR_WIDTH + CAGE_SUM_LABEL_PADDING,
+      },
+    ];
+  });
+
   return (
     <svg
       aria-hidden="true"
@@ -149,46 +172,49 @@ export function CageOverlay({ rects, structure }: CageOverlayProps) {
       width={maxX}
       height={maxY}
     >
-      {edges.map((edge, index) => (
-        <line
-          key={`${edge.x1}-${edge.y1}-${edge.x2}-${edge.y2}-${index}`}
-          data-testid="cage-line"
-          x1={edge.x1}
-          y1={edge.y1}
-          x2={edge.x2}
-          y2={edge.y2}
-          className={styles.cageLine}
-        />
-      ))}
-      {cages.map((cage, index) => {
-        const rect = topLeftRect(cage, rects);
-
-        if (!rect) {
-          return null;
-        }
-
-        const inset = rect.w * CAGE_RING_RATIO * CAGE_RING_INSET_RATIO;
-        const label = String(cage.sum);
-        const labelX = rect.x + inset + CAGE_SUM_LABEL_X_OFFSET;
-        const labelY = rect.y + inset;
-        const knockoutWidth = label.length * CAGE_SUM_LABEL_CHAR_WIDTH + CAGE_SUM_LABEL_PADDING;
-
-        return (
-          <g key={`${cage.sum}-${index}`}>
+      {/* The label area is erased from the cage lines with a mask instead of
+          painted over, so each sum sits on the live cell background and every
+          highlight state (peer, selection, same-value) shows through. */}
+      <defs>
+        <mask id={maskId}>
+          <rect x={0} y={0} width={maxX} height={maxY} fill="white" />
+          {labels.map((entry) => (
             <rect
+              key={entry.key}
               data-testid="cage-sum-knockout"
-              x={labelX - CAGE_SUM_LABEL_PADDING / 2}
-              y={labelY - CAGE_SUM_LABEL_HEIGHT / 2}
-              width={knockoutWidth}
+              x={entry.x - CAGE_SUM_LABEL_PADDING / 2}
+              y={entry.y - CAGE_SUM_LABEL_HEIGHT / 2}
+              width={entry.knockoutWidth}
               height={CAGE_SUM_LABEL_HEIGHT}
-              className={styles.sumKnockout}
+              fill="black"
             />
-            <text x={labelX} y={labelY} className={styles.sumLabel} data-testid="cage-sum-label">
-              {label}
-            </text>
-          </g>
-        );
-      })}
+          ))}
+        </mask>
+      </defs>
+      <g mask={`url(#${maskId})`}>
+        {edges.map((edge, index) => (
+          <line
+            key={`${edge.x1}-${edge.y1}-${edge.x2}-${edge.y2}-${index}`}
+            data-testid="cage-line"
+            x1={edge.x1}
+            y1={edge.y1}
+            x2={edge.x2}
+            y2={edge.y2}
+            className={styles.cageLine}
+          />
+        ))}
+      </g>
+      {labels.map((entry) => (
+        <text
+          key={entry.key}
+          x={entry.x}
+          y={entry.y}
+          className={styles.sumLabel}
+          data-testid="cage-sum-label"
+        >
+          {entry.label}
+        </text>
+      ))}
     </svg>
   );
 }

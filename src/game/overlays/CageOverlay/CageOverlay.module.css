@@ -13,10 +13,6 @@
   stroke-dasharray: 4 3;
 }
 
-.sumKnockout {
-  fill: var(--bg-secondary);
-}
-
 .sumLabel {
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 9px;
