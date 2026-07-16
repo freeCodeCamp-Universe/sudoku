@@ -41,6 +41,12 @@ interface UseSudokuGridOptions {
   onSetCandidateMode?: (candidate: boolean) => void;
 }
 
+function formatLocation(cell: Cell, boxNumber: number | undefined): string {
+  return `Row ${cell.row + 1}, column ${cell.col + 1}${
+    boxNumber !== undefined ? `, box ${boxNumber}` : ''
+  }`;
+}
+
 function getCellLabel(
   cell: Cell,
   boxNumber: number | undefined,
@@ -52,9 +58,7 @@ function getCellLabel(
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
-  const location = `Row ${cell.row + 1}, column ${cell.col + 1}${
-    boxNumber !== undefined ? `, box ${boxNumber}` : ''
-  }`;
+  const location = formatLocation(cell, boxNumber);
 
   let base: string;
 
@@ -231,16 +235,66 @@ export function useSudokuGrid({
     [annotators, boxNumberByCell, cellsById, describeSymbol, getCellState, model, values]
   );
 
-  const selectCell = useCallback(
-    (id: CellId | null, shouldAnnounce = true) => {
-      setSelectedId(id);
+  // Announce an in-place change (value entry, deletion) with the same builder
+  // and projected state that navigation uses, so the spoken description matches
+  // arrowing onto the cell. `values` still holds the pre-change state when this
+  // runs, so callers pass the projected `nextValues` and the already-resolved
+  // correctness/conflict flags (which encode intentional rules such as
+  // suppressing "in conflict" on a correct entry).
+  const announceCellState = useCallback(
+    (id: CellId, nextValues: Values, flags: { correct?: boolean; conflict: boolean }) => {
+      const cell = cellsById.get(id);
 
-      if (id && shouldAnnounce) {
-        announce(describeCell(id));
+      if (!cell) {
+        return;
       }
+
+      const value = nextValues.get(id);
+      const sortedCandidates =
+        value === undefined
+          ? model.symbols.filter((s) => (candidates.get(id) ?? []).includes(s))
+          : [];
+      const extras = annotators
+        .map((annotator) =>
+          annotator.describe(id, { values: nextValues, model, cellState: getCellState })
+        )
+        .filter((message): message is string => message !== null);
+
+      announce(
+        getCellLabel(
+          cell,
+          boxNumberByCell.get(id),
+          value,
+          sortedCandidates,
+          extras,
+          flags.correct,
+          flags.conflict,
+          givens.has(id) || revealed.has(id),
+          describeSymbol
+        )
+      );
     },
-    [announce, describeCell]
+    [
+      announce,
+      annotators,
+      boxNumberByCell,
+      candidates,
+      cellsById,
+      describeSymbol,
+      getCellState,
+      givens,
+      model,
+      revealed,
+    ]
   );
+
+  // Selection only moves DOM focus; the focused cell's accessible name is what
+  // the screen reader speaks. Pushing the same description into the live region
+  // here would double-announce every move, so navigation stays silent and the
+  // live region is reserved for in-place changes (value entry, mode switch).
+  const selectCell = useCallback((id: CellId | null) => {
+    setSelectedId(id);
+  }, []);
 
   const handleKey = useCallback(
     (key: string, currentId: CellId, event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -274,7 +328,7 @@ export function useSudokuGrid({
           break;
         case 'Escape':
           event.preventDefault();
-          selectCell(null, false);
+          selectCell(null);
           return;
         default:
           break;
@@ -318,7 +372,10 @@ export function useSudokuGrid({
         if (!isCorrectCell) {
           event.preventDefault();
           onEnterValue(currentId, 0);
-          announce(`Row ${cell.row + 1}, column ${cell.col + 1}, empty`);
+
+          const nextValues = new Map(values);
+          nextValues.delete(currentId);
+          announceCellState(currentId, nextValues, { conflict: false });
         }
         return;
       }
@@ -359,7 +416,7 @@ export function useSudokuGrid({
 
         const action = adding ? 'added' : 'removed';
         announce(
-          `Row ${cell.row + 1}, column ${cell.col + 1}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
+          `${formatLocation(cell, boxNumberByCell.get(currentId))}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
         );
       } else {
         onEnterValue(currentId, digit as SymbolValue);
@@ -368,20 +425,19 @@ export function useSudokuGrid({
         nextValues.set(currentId, digit as SymbolValue);
         const isCorrect =
           checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
-        const correctness =
-          checkEnabled && solution.has(currentId) ? (isCorrect ? ', correct' : ', incorrect') : '';
+        const correct = checkEnabled && solution.has(currentId) ? isCorrect : undefined;
         const inConflict =
           !isCorrect &&
           checkEnabled &&
           validate(nextValues, model).some((c) => c.cells.includes(currentId));
 
-        announce(
-          `Row ${cell.row + 1}, column ${cell.col + 1}, ${describeSymbol(digit as SymbolValue)}${correctness}${inConflict ? ', in conflict' : ''}`
-        );
+        announceCellState(currentId, nextValues, { correct, conflict: inConflict });
       }
     },
     [
       announce,
+      announceCellState,
+      boxNumberByCell,
       candidateMode,
       candidates,
       cells,
@@ -438,7 +494,6 @@ export function useSudokuGrid({
     (id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId } => ({
       'data-cell': id,
       tabIndex: selectedId === id || (selectedId === null && firstCellId === id) ? 0 : -1,
-      'aria-label': describeCell(id),
       onMouseDown() {
         mouseDownSelectionRef.current = { active: true, selectedId };
       },
@@ -452,19 +507,20 @@ export function useSudokuGrid({
       },
       onFocus() {
         if (selectedId !== id) {
-          selectCell(id, false);
+          selectCell(id);
         }
       },
       onKeyDown(event) {
         handleKey(event.key, id, event);
       },
     }),
-    [describeCell, firstCellId, handleKey, selectCell, selectedId]
+    [firstCellId, handleKey, selectCell, selectedId]
   );
 
   return {
     cellState: getCellState,
     cellProps,
+    describeCell,
     announcerRef,
     announce,
     moveSelection,

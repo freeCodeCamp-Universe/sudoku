@@ -60,6 +60,7 @@ export interface CellState {
 export interface GridInteraction {
   cellState(id: CellId): CellState;
   cellProps(id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId };
+  describeCell(id: CellId): string;
   announcerRef: React.RefObject<HTMLDivElement | null>;
   announce: (message: string) => void;
   moveSelection(direction: Direction): void;

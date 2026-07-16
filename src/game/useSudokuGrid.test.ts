@@ -195,7 +195,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, Yellow');
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, Yellow');
   });
 
   it('should move focus with arrow-key navigation in the rendered board', () => {
@@ -288,9 +288,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, candidates 2, 5, 7'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, candidates 2, 5, 7');
   });
 
   it('should use singular "candidate" for exactly one candidate', () => {
@@ -306,9 +304,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, candidate 4'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, candidate 4');
   });
 
   it('should render candidates through describeSymbol', () => {
@@ -325,7 +321,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+    expect(result.current.describeCell('r0c0')).toBe(
       'Row 1, column 1, box 1, candidates Red, Yellow'
     );
   });
@@ -344,7 +340,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 9');
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 9');
   });
 
   it('should announce candidate added/removed when toggling', async () => {
@@ -366,7 +362,7 @@ describe('useSudokuGrid', () => {
     });
 
     expect(onToggleCandidate).toHaveBeenCalledWith('r0c0', 5);
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, candidate 5 added');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, candidate 5 added');
 
     // Test removal
     rerender(
@@ -388,7 +384,7 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, candidate 5 removed');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, candidate 5 removed');
     vi.useRealTimers();
   });
 
@@ -408,13 +404,9 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, in conflict'
-    );
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
-      'Row 1, column 5, box 2, 5, in conflict'
-    );
-    expect(result.current.cellProps('r0c1')['aria-label']).toBe('Row 1, column 2, box 1, empty');
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 5, in conflict');
+    expect(result.current.describeCell('r0c4')).toBe('Row 1, column 5, box 2, 5, in conflict');
+    expect(result.current.describeCell('r0c1')).toBe('Row 1, column 2, box 1, empty');
   });
 
   it('should include "in conflict" in the cell label even when checkEnabled is false', () => {
@@ -434,9 +426,7 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, in conflict'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 5, in conflict');
   });
 
   it('should include "in conflict" in the label for a given cell that a user entry conflicts with', () => {
@@ -454,12 +444,10 @@ describe('useSudokuGrid', () => {
       })
     );
 
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+    expect(result.current.describeCell('r0c0')).toBe(
       'Row 1, column 1, box 1, 5, in conflict, readonly'
     );
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
-      'Row 1, column 5, box 2, 5, in conflict'
-    );
+    expect(result.current.describeCell('r0c4')).toBe('Row 1, column 5, box 2, 5, in conflict');
   });
 
   it('should announce conflict immediately when a value entry creates one', async () => {
@@ -477,7 +465,7 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, in conflict');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, in conflict');
     vi.useRealTimers();
   });
 
@@ -495,7 +483,33 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5');
+    vi.useRealTimers();
+  });
+
+  it('should announce surfacing candidates when a value is deleted', async () => {
+    vi.useFakeTimers();
+    const onEnterValue = vi.fn();
+    render(
+      React.createElement(TestBoard, {
+        values: new Map([['r0c0', 5]]),
+        candidates: new Map([['r0c0', [5, 2, 7]]]),
+        onEnterValue,
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, 5' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: 'Backspace' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(onEnterValue).toHaveBeenCalledWith('r0c0', 0);
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, candidates 2, 5, 7');
     vi.useRealTimers();
   });
 
@@ -514,9 +528,7 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBe(true);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, correct'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 5, correct');
   });
 
   it('should mark a filled cell incorrect when it does not match the solution', () => {
@@ -534,9 +546,7 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBe(false);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 3, incorrect'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 3, incorrect');
   });
 
   it('should not mark correctness when checking is off', () => {
@@ -554,7 +564,7 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBeUndefined();
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, box 1, 3');
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 3');
   });
 
   it('should not mark correctness for given cells', () => {
@@ -572,9 +582,7 @@ describe('useSudokuGrid', () => {
     );
 
     expect(result.current.cellState('r0c0').correct).toBeUndefined();
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
-      'Row 1, column 1, box 1, 5, readonly'
-    );
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 5, readonly');
   });
 
   it('should flag all cells in a conflict group, even if one holds the correct value', () => {
@@ -599,12 +607,12 @@ describe('useSudokuGrid', () => {
 
     // Both cells duplicate in the same row — both are flagged regardless of which is correct.
     expect(result.current.cellState('r0c0').conflict).toBe(true);
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe(
+    expect(result.current.describeCell('r0c0')).toBe(
       'Row 1, column 1, box 1, 5, correct, in conflict'
     );
 
     expect(result.current.cellState('r0c4').conflict).toBe(true);
-    expect(result.current.cellProps('r0c4')['aria-label']).toBe(
+    expect(result.current.describeCell('r0c4')).toBe(
       'Row 1, column 5, box 2, 5, incorrect, in conflict'
     );
   });
@@ -625,7 +633,7 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, correct');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, correct');
     vi.useRealTimers();
   });
 
@@ -645,7 +653,7 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 3, incorrect');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 3, incorrect');
     vi.useRealTimers();
   });
 
@@ -789,7 +797,7 @@ describe('useSudokuGrid', () => {
       vi.runAllTimers();
     });
 
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, 5, correct');
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, correct');
     vi.useRealTimers();
   });
 });
@@ -881,7 +889,7 @@ describe('useSudokuGrid cell labels for Sujiken', () => {
     );
 
     // Sujiken houses are tri-region-*, not box-*; no "box N" should appear
-    expect(result.current.cellProps('r0c0')['aria-label']).toBe('Row 1, column 1, empty');
-    expect(result.current.cellProps('r4c2')['aria-label']).toBe('Row 5, column 3, empty');
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, empty');
+    expect(result.current.describeCell('r4c2')).toBe('Row 5, column 3, empty');
   });
 });

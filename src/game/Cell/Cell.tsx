@@ -5,6 +5,11 @@ import styles from './Cell.module.css';
 
 interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
   id: string;
+  // Full spoken description of the cell (location, value/candidates, flags).
+  // Rendered as visually hidden text so it becomes the gridcell's accessible
+  // name from real content. Using aria-label instead makes VoiceOver append
+  // "blank" because the visible glyph/candidates are all aria-hidden.
+  description: string;
   value?: SymbolValue;
   candidates: SymbolValue[];
   symbols: SymbolValue[];
@@ -56,6 +61,7 @@ function parseCellCoordinates(id: string): { row: number; col: number } {
 
 export function Cell({
   id,
+  description,
   value,
   candidates,
   symbols,
@@ -136,6 +142,7 @@ export function Cell({
       onClick={onClick}
       {...rest}
     >
+      <span className={styles.srOnly}>{description}</span>
       {value !== undefined ? (
         symbolKind === 'color' ? (
           <>
