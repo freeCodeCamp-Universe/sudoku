@@ -559,44 +559,30 @@ describe('GamePage - oversized board fit', () => {
 });
 
 describe('GamePage - landscape mobile controls', () => {
-  it('should render one Game controls tablist with five tabs in landscape mobile', () => {
+  it('should render the two-group controls in landscape mobile', () => {
     installMatchMedia({ width: 852, orientation: 'landscape' });
     renderGamePage();
 
-    const tablist = screen.getByRole('tablist', { name: 'Game controls' });
-    const tabs = within(tablist).getAllByRole('tab');
+    const controlTablist = screen.getByRole('tablist', { name: 'Input mode and controls' });
+    const navTablist = screen.getByRole('tablist', { name: 'Board navigation' });
 
-    expect(tabs).toHaveLength(5);
-    expect(screen.getByRole('tab', { name: 'Normal' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Candidate' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Controls' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Move' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Map' })).toBeInTheDocument();
-    expect(screen.queryByRole('tablist', { name: 'Input mode and controls' })).toBeNull();
-    expect(screen.queryByRole('tablist', { name: 'Board navigation' })).toBeNull();
+    expect(within(controlTablist).getAllByRole('tab')).toHaveLength(3);
+    expect(within(navTablist).getAllByRole('tab')).toHaveLength(2);
+    expect(screen.queryByRole('tablist', { name: 'Game controls' })).toBeNull();
   });
 
-  it('should keep the landscape panels mutually exclusive through write-through tab selection', async () => {
+  it('should keep the input panel visible while using the nav tabs in landscape mobile', async () => {
     const user = userEvent.setup();
     installMatchMedia({ width: 852, orientation: 'landscape' });
     renderGamePage();
 
-    const moveTab = screen.getByRole('tab', { name: 'Move' });
-    const candidateTab = screen.getByRole('tab', { name: 'Candidate' });
+    const mapTab = screen.getByRole('tab', { name: 'Map' });
     const inputPanel = screen.getByRole('tabpanel', { name: 'Normal' });
 
-    await user.click(moveTab);
+    await user.click(mapTab);
 
-    expect(moveTab).toHaveAttribute('aria-selected', 'true');
-    expect(inputPanel).toHaveAttribute('data-active', 'false');
-
-    await user.click(candidateTab);
-
-    expect(candidateTab).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('tabpanel', { name: 'Candidate' })).toHaveAttribute(
-      'data-active',
-      'true'
-    );
+    expect(mapTab).toHaveAttribute('aria-selected', 'true');
+    expect(inputPanel).toHaveAttribute('data-active', 'true');
   });
 
   it('should preserve candidate mode when rotating from landscape to portrait', async () => {

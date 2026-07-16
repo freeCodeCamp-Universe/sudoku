@@ -19,6 +19,12 @@ interface PortraitControlsProps {
   onMoveSelection: (direction: Direction) => void;
   minimap: ReactNode;
   zoomControls: ReactNode;
+  /*
+   * The landscape-mobile right column is only ~320-420px wide, but the
+   * >= 600px media block keys off viewport width and matches every landscape
+   * phone. This flag re-scopes those wide-viewport rules to the column.
+   */
+  landscape?: boolean;
 }
 
 export function PortraitControls({
@@ -36,9 +42,14 @@ export function PortraitControls({
   onMoveSelection,
   minimap,
   zoomControls,
+  landscape = false,
 }: PortraitControlsProps) {
   return (
-    <div className={styles.controlsRow}>
+    <div
+      className={
+        landscape ? `${styles.controlsRow} ${styles.controlsRowLandscape}` : styles.controlsRow
+      }
+    >
       <div className={styles.controlsMain}>
         <Tabs
           tabs={controlTabs}

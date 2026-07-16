@@ -19,13 +19,7 @@ import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { BoardZoomControls } from '@/game/BoardZoomControls';
 import { DesktopControls } from '@/game/GameControls/DesktopControls';
-import { LandscapeControls } from '@/game/GameControls/LandscapeControls';
 import { PortraitControls } from '@/game/GameControls/PortraitControls';
-import {
-  deriveLandscapeTab,
-  selectLandscapeTab,
-  type LandscapeTabId,
-} from '@/game/GameControls/landscapeTabState';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
@@ -102,7 +96,6 @@ function GameInner({
   const [candidateMode, setCandidateMode] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [navTab, setNavTab] = useState<'move' | 'map'>('move');
-  const [activeGroup, setActiveGroup] = useState<'input' | 'nav'>('input');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const winTitleId = useId();
@@ -560,32 +553,6 @@ function GameInner({
     { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
     { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
   ];
-  const activeLandscapeTab = deriveLandscapeTab({
-    candidateMode,
-    controlsOpen,
-    navTab,
-    activeGroup,
-  });
-  const selectLandscapeControlTab = (id: LandscapeTabId) => {
-    const patch = selectLandscapeTab(id);
-
-    if (patch.candidateMode !== undefined) {
-      setCandidateMode(patch.candidateMode);
-    }
-
-    if (patch.controlsOpen !== undefined) {
-      setControlsOpen(patch.controlsOpen);
-    }
-
-    if (patch.navTab !== undefined) {
-      setNavTab(patch.navTab);
-    }
-
-    if (patch.activeGroup !== undefined) {
-      setActiveGroup(patch.activeGroup);
-    }
-  };
-
   const isColor = variant.symbolKind === 'color';
   const colorLabelToggle = isColor ? (
     <Toggle
@@ -732,20 +699,7 @@ function GameInner({
           {isLandscapeMobile ? null : variantLegend}
         </div>
         <div className={styles.gameRight}>
-          {isLandscapeMobile ? (
-            <LandscapeControls
-              activeTab={activeLandscapeTab}
-              onSelectTab={selectLandscapeControlTab}
-              inputTabLabelledBy={inputTabLabelledBy}
-              variantLegend={variantLegend}
-              numberPad={numberPad}
-              colorLabelToggle={colorLabelToggle}
-              controlsPanel={controlsPanel}
-              minimap={minimap}
-              zoomControls={zoomControls}
-              onMoveSelection={grid.moveSelection}
-            />
-          ) : isDesktop ? (
+          {isDesktop ? (
             <DesktopControls
               controlTabs={controlTabs}
               activeControlTab={activeControlTab}
@@ -772,8 +726,10 @@ function GameInner({
               onMoveSelection={grid.moveSelection}
               minimap={minimap}
               zoomControls={zoomControls}
+              landscape={isLandscapeMobile}
             />
           )}
+          {isLandscapeMobile ? variantLegend : null}
         </div>
       </div>
       {isDesktop ? (
