@@ -777,21 +777,23 @@ function GameInner({
           New Game
         </Button>
       ) : null}
-      {showCheckPrompt ? (
-        <div className={styles.checkPrompt}>
-          Looks like you&apos;re done!
-          <button
-            type="button"
-            className={styles.checkPromptBtn}
-            onClick={() => {
-              setVerifyMode(true);
-              grid.announce('Answers checked');
-            }}
-          >
-            Check your answers
-          </button>
-        </div>
-      ) : null}
+      <div role="status" aria-live="polite">
+        {showCheckPrompt ? (
+          <div className={styles.checkPrompt}>
+            Looks like you&apos;re done!
+            <button
+              type="button"
+              className={styles.checkPromptBtn}
+              onClick={() => {
+                setVerifyMode(true);
+                grid.announce('Answers checked');
+              }}
+            >
+              Check your answers
+            </button>
+          </div>
+        ) : null}
+      </div>
       <Dialog
         open={winOpen}
         onClose={() => {
