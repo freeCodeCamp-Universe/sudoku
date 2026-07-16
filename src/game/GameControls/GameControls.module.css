@@ -104,6 +104,57 @@
   inline-size: 100%;
 }
 
+.landscapeControls {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  inline-size: 100%;
+}
+
+.landscapePanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.landscapePanel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  inline-size: 100%;
+}
+
+.landscapePanel:not([data-active='true']) {
+  visibility: hidden;
+}
+
+.landscapeInputToggle {
+  inline-size: 100%;
+  margin-block-start: 12px;
+}
+
+.landscapeMapPanel {
+  /* The four landscape panels stack in one grid cell, so that cell reserves
+     the tallest panel's height. Without the 200px cap the hidden Map panel's
+     full-width minimap becomes column-width tall, inflating the controls
+     column and clipping the tablist. */
+  max-inline-size: 200px;
+  justify-content: center;
+  justify-self: center;
+}
+
+.landscapeZoomRow {
+  inline-size: 100%;
+}
+
+.landscapeLegendSlot {
+  display: flex;
+  justify-content: center;
+  min-block-size: 0;
+}
+
 @media (min-width: 600px) {
   .controlsRow {
     gap: 24px;

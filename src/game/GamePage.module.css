@@ -161,6 +161,44 @@
   }
 }
 
+.gamePage.landscapeMobile {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+
+.gamePage.landscapeMobile .gameLayout {
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.gamePage.landscapeMobile .gameLeft,
+.gamePage.landscapeMobile .gameRight {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+.gamePage.landscapeMobile .gameLeft {
+  justify-content: center;
+}
+
+.gamePage.landscapeMobile .boardFrame {
+  justify-content: flex-start;
+}
+
+.gamePage.landscapeMobile .gameRight {
+  align-self: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  min-block-size: 0;
+}
+
+.gamePage.landscapeMobile .boardFrame,
+.gamePage.landscapeMobile .boardFrame.boardFrameOversized {
+  block-size: 100dvh;
+}
+
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside
    the Controls tab instead). */
 .desktopNewGame {

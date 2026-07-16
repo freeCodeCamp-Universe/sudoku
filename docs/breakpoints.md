@@ -13,3 +13,9 @@ The only breakpoints allowed in `min-width` queries:
 | `2560px`   | Large / high-resolution desktop                                |
 
 Do not introduce other breakpoint values. If a component needs an adjustment at a width not on this list, reconsider the layout rather than adding a new breakpoint.
+
+## Compound Gates
+
+When a layout depends on more than one condition, such as "landscape and sub-desktop", compute that gate in JavaScript with `useMediaQuery` and apply a class from that single source of truth. Do not recreate the same gate in CSS with orientation queries or banned `max-width` terms.
+
+Orientation queries stay out of CSS in this repo. If orientation affects layout, branch in JS and scope the CSS under the applied class.
