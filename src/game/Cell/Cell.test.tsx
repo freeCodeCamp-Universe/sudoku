@@ -5,6 +5,7 @@ import { Cell } from './Cell';
 
 const baseProps = {
   id: 'r0c0',
+  description: 'Row 1, column 1, box 1, empty',
   value: undefined as number | undefined,
   candidates: [] as number[],
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9] as number[],

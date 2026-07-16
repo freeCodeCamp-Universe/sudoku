@@ -58,6 +58,7 @@ export function renderVariantBoard(
       grid={{
         cellState: (id: CellId) => ({ ...defaultCellState(), ...options.cellState?.(id) }),
         cellProps: (id: CellId) => ({ 'data-cell': id, onClick: () => {} }),
+        describeCell: (id: CellId) => id,
         announcerRef: { current: null },
         announce: () => {},
         moveSelection: () => {},

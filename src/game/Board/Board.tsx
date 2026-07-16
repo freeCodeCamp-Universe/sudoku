@@ -135,6 +135,7 @@ export function Board({
               >
                 <Cell
                   id={cell.id}
+                  description={grid.describeCell(cell.id)}
                   value={state.value}
                   candidates={state.candidates}
                   symbols={displaySymbols ?? variant.symbols}
