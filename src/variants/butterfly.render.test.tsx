@@ -45,6 +45,7 @@ describe('Butterfly Board renders correct cell count', () => {
           describeCell: (id: CellId) => id,
           announcerRef: { current: null },
           announce: () => {},
+          announceCellState: () => {},
           moveSelection: () => {},
         }}
         renderSymbol={(value) => String(value)}
@@ -76,6 +77,7 @@ describe('Butterfly Board renders correct cell count', () => {
           describeCell: (id: CellId) => id,
           announcerRef: { current: null },
           announce: () => {},
+          announceCellState: () => {},
           moveSelection: () => {},
         }}
         renderSymbol={(value) => String(value)}

@@ -32,7 +32,7 @@ import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
-import { findCompletedSymbols } from './completedSymbols';
+import { findOverusedSymbols } from './overusedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -370,8 +370,8 @@ function GameInner({
     dispatch({ type: 'newGame' });
   }
 
-  const usedSymbols = useMemo(
-    () => findCompletedSymbols(state.values, solution, model.symbols),
+  const overusedSymbols = useMemo(
+    () => findOverusedSymbols(state.values, solution, model.symbols),
     [model.symbols, solution, state.values]
   );
 
@@ -486,31 +486,22 @@ function GameInner({
     }
 
     onEnterValue(selectedCellId, value);
-    if (loc) {
-      const nextValues = new Map(state.values);
-      nextValues.set(selectedCellId, value);
-      const isCorrect =
-        checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
-      const correctness =
-        checkEnabled && solution.has(selectedCellId)
-          ? isCorrect
-            ? ', correct'
-            : ', incorrect'
-          : '';
-      const inConflict =
-        !isCorrect &&
-        checkEnabled &&
-        validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-      grid.announce(
-        `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-      );
-    }
+    const nextValues = new Map(state.values);
+    nextValues.set(selectedCellId, value);
+    const isCorrect =
+      checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
+    const correct = checkEnabled && solution.has(selectedCellId) ? isCorrect : undefined;
+    const inConflict =
+      !isCorrect &&
+      checkEnabled &&
+      validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
+    grid.announceCellState(selectedCellId, nextValues, { correct, conflict: inConflict });
   };
 
   const numberPad = (
     <NumberPad
       symbols={displaySymbols}
-      usedSymbols={usedSymbols}
+      overusedSymbols={overusedSymbols}
       columns={
         model.symbols.length === 16
           ? 4

@@ -42,6 +42,7 @@ function makeBoardProps(
       describeCell: (id: CellId) => id,
       announcerRef: { current: null },
       announce: () => {},
+      announceCellState: () => {},
       moveSelection: () => {},
     },
     renderSymbol: (value) => String(value),

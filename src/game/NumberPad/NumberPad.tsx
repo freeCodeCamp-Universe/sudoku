@@ -13,7 +13,7 @@ const GRID_LABELS = {
 
 interface NumberPadProps {
   symbols: SymbolValue[];
-  usedSymbols: Set<SymbolValue>;
+  overusedSymbols: Set<SymbolValue>;
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
   columns?: number;
@@ -24,7 +24,7 @@ interface NumberPadProps {
 
 export function NumberPad({
   symbols,
-  usedSymbols,
+  overusedSymbols,
   onEnter,
   candidateMode,
   columns,
@@ -124,14 +124,17 @@ export function NumberPad({
               );
             }
             const symbol = item.value;
-            const used = usedSymbols.has(symbol);
+            const overused = overusedSymbols.has(symbol);
+            const label = overused
+              ? `${describeSymbol(symbol)}, more placed than needed`
+              : describeSymbol(symbol);
             return (
               <div key={symbol} role="gridcell" className={styles.numCell}>
                 <button
                   {...sharedProps}
                   className={styles.numBtn}
-                  data-used={used || undefined}
-                  aria-label={describeSymbol(symbol)}
+                  data-overused={overused || undefined}
+                  aria-label={label}
                   onClick={() => onEnter(symbol)}
                 >
                   {symbolKind === 'color' ? (

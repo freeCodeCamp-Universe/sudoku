@@ -73,13 +73,8 @@
   outline-offset: 2px;
 }
 
-.numBtn[data-used],
-.numBtn[data-used]:hover,
-.candidate .numBtn[data-used]:not(.erase) {
-  color: var(--numpad-used-text);
-  background: var(--bg-primary);
-  border-color: var(--border);
-  border-block-end-color: transparent;
+.numBtn[data-overused] {
+  border-block-end-color: var(--accent-red);
 }
 
 .erase {

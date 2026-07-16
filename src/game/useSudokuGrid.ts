@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { validate } from '@/engine/validate';
 import type { Cell, CellId, SymbolValue, Values, VariantModel } from '@/engine/types';
 import type { CellAnnotator, CellState, Direction, GridInteraction } from './gameTypes';
+import { findOverusedSymbols } from './overusedSymbols';
 
 function stepCellId(cell: { row: number; col: number }, direction: Direction): CellId {
   switch (direction) {
@@ -55,6 +56,7 @@ function getCellLabel(
   extras: string[],
   correct: boolean | undefined,
   inConflict: boolean,
+  overused: boolean,
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
@@ -82,6 +84,10 @@ function getCellLabel(
 
   if (inConflict) {
     flags.push('in conflict');
+  }
+
+  if (overused) {
+    flags.push('more placed than needed');
   }
 
   flags.push(...extras);
@@ -228,6 +234,7 @@ export function useSudokuGrid({
         extras,
         state.correct,
         state.conflict,
+        false,
         state.given,
         describeSymbol
       );
@@ -260,6 +267,9 @@ export function useSudokuGrid({
         )
         .filter((message): message is string => message !== null);
 
+      const overused =
+        value !== undefined && findOverusedSymbols(nextValues, solution, model.symbols).has(value);
+
       announce(
         getCellLabel(
           cell,
@@ -269,6 +279,7 @@ export function useSudokuGrid({
           extras,
           flags.correct,
           flags.conflict,
+          overused,
           givens.has(id) || revealed.has(id),
           describeSymbol
         )
@@ -285,6 +296,7 @@ export function useSudokuGrid({
       givens,
       model,
       revealed,
+      solution,
     ]
   );
 
@@ -523,6 +535,7 @@ export function useSudokuGrid({
     describeCell,
     announcerRef,
     announce,
+    announceCellState,
     moveSelection,
   };
 }

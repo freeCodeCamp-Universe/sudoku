@@ -8,7 +8,7 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={() => {}}
         candidateMode={false}
       />
@@ -28,7 +28,7 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={onEnter}
         candidateMode={false}
       />
@@ -46,7 +46,7 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={onEnter}
         candidateMode={false}
       />
@@ -64,7 +64,7 @@ describe('NumberPad', () => {
       <>
         <NumberPad
           symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          usedSymbols={new Set()}
+          overusedSymbols={new Set()}
           onEnter={() => {}}
           candidateMode={false}
         />
@@ -87,7 +87,7 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={() => {}}
         candidateMode={false}
       />
@@ -119,7 +119,7 @@ describe('NumberPad', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={() => {}}
         candidateMode={false}
       />
@@ -137,7 +137,7 @@ describe('NumberPad', () => {
       <>
         <NumberPad
           symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          usedSymbols={new Set()}
+          overusedSymbols={new Set()}
           onEnter={() => {}}
           candidateMode={false}
         />
@@ -156,11 +156,25 @@ describe('NumberPad', () => {
     expect(screen.getByRole('button', { name: '3' })).toHaveFocus();
   });
 
+  it('should flag overused symbols in the button label', () => {
+    render(
+      <NumberPad
+        symbols={[5, 6]}
+        overusedSymbols={new Set([6])}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: '5' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '6, more placed than needed' })).toBeTruthy();
+  });
+
   it('should use descriptive aria-labels for color symbols', () => {
     render(
       <NumberPad
         symbols={[1, 2, 3]}
-        usedSymbols={new Set()}
+        overusedSymbols={new Set()}
         onEnter={() => {}}
         candidateMode={false}
         renderSymbol={() => '#d4a828'}

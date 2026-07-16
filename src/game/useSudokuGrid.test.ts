@@ -487,6 +487,31 @@ describe('useSudokuGrid', () => {
     vi.useRealTimers();
   });
 
+  it('should announce when a value entry overuses a symbol', async () => {
+    vi.useFakeTimers();
+    // The solution needs a single 5, but one is already placed elsewhere, so
+    // entering another 5 pushes the count past what the puzzle needs.
+    render(
+      React.createElement(TestBoard, {
+        values: new Map([['r0c4', 5]]),
+        solution: new Map([['r1c1', 5]]),
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '5' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, more placed than needed');
+    vi.useRealTimers();
+  });
+
   it('should announce surfacing candidates when a value is deleted', async () => {
     vi.useFakeTimers();
     const onEnterValue = vi.fn();
@@ -780,9 +805,12 @@ describe('useSudokuGrid', () => {
       React.createElement(TestBoard, {
         checkEnabled: true,
         values: new Map([['r0c4', 5]]),
+        // Two 5s in the solution so the clashing extra 5 does not also overuse
+        // the symbol; this test is about the correct-vs-conflict flag only.
         solution: new Map([
           ['r0c0', 5],
           ['r0c4', 2],
+          ['r1c1', 5],
         ]),
       })
     );

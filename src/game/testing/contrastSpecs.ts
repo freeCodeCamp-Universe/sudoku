@@ -334,14 +334,14 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
-  // Fully-placed numpad buttons render a dimmed digit on the recessed
-  // page-bg fill; the dimmed text must clear 4.5:1 (WCAG 1.4.3).
+  // The numpad overused edge is a graphical indicator on the button face
+  // (WCAG 1.4.11): it must be visible at 3:1 against the secondary button surface.
   ...THEMES.map(
     (theme): PairInput => ({
-      label: 'numpad used text on page bg',
-      fg: '--numpad-used-text',
-      bg: '--bg-primary',
-      threshold: TEXT_AA,
+      label: 'numpad overused edge on button bg',
+      fg: '--accent-red',
+      bg: '--bg-secondary',
+      threshold: UI_AA,
       theme,
     })
   ),

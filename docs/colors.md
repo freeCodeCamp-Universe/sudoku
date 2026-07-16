@@ -11,7 +11,6 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--bg-surface` | #2a2a40 | #e0e0db | #2a2a40 | #e0e0db |
 | `--border` | #3b3b4f | #c8c8d8 | #9898b0 | #55556d |
 | `--text-muted` | #939393 | #626262 | #d0d0d5 | #2a2a40 |
-| `--numpad-used-text` | #858591 | #626262 | #858591 | #626262 |
 | `--text-subtle` | #d0d0d5 | #2a2a40 | #ffffff | #0a0a23 |
 | `--text-primary` | #f5f6f7 | #1a1a2e | #f5f6f7 | #1a1a2e |
 | `--text-bright` | #ffffff | #0a0a23 | #ffffff | #0a0a23 |
