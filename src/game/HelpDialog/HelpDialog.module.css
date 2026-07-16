@@ -46,6 +46,28 @@
   border-color: #8cb1d9;
 }
 
+/* In high contrast the fixed badge borders are nearly invisible against the
+   panel, so match each border to its badge's text color for a clearly
+   visible outline (same treatment as the Toggle ON state). */
+:global(.high-contrast) .basic {
+  border-color: var(--accent-green);
+}
+
+:global(.high-contrast) .extra {
+  border-color: var(--accent-blue);
+}
+
+/* Light high-contrast: the badge text colors are hardcoded (not accent
+   tokens), so match the borders to them rather than inheriting the dark
+   high-contrast values from the rules above. */
+:global(.light.high-contrast) .basic {
+  border-color: #355617;
+}
+
+:global(.light.high-contrast) .extra {
+  border-color: #1d4f85;
+}
+
 .rules {
   display: flex;
   flex-direction: column;
