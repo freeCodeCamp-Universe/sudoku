@@ -159,20 +159,6 @@
   background: var(--cell-peer-bg) !important;
 }
 
-.cell[data-peer][data-overlay-borders],
-.cell[data-peer][data-butterfly],
-.cell[data-peer][data-cross],
-.cell[data-peer][data-flower] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
-:global(.light) .cell[data-peer][data-overlay-borders],
-:global(.light) .cell[data-peer][data-butterfly],
-:global(.light) .cell[data-peer][data-cross],
-:global(.light) .cell[data-peer][data-flower] {
-  background: var(--cell-peer-structural-bg) !important;
-}
-
 /* Window cells keep a distinct, lighter peer shade so the selected cell's
    window stays visible instead of dropping to the darker outer-cell peer. */
 .cell[data-peer][data-window] {
