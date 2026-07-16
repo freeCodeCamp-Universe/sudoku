@@ -86,6 +86,53 @@
   gap: 10px;
 }
 
+/* Favorites toggle and sort control share one line at every width. */
+.filterRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+}
+
+.favoritesFilter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.favoritesFilter:hover {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+.favoritesFilter:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.favoritesFilter[aria-pressed='true'] {
+  color: var(--accent-yellow);
+  border-color: var(--accent-yellow);
+}
+
+.favoritesFilterStar {
+  inline-size: 14px;
+  block-size: 14px;
+  fill: currentColor;
+}
+
 .sortLabel {
   font-size: 0.72rem;
   font-weight: 600;
@@ -135,6 +182,10 @@
   .controls {
     grid-template-columns: 1fr auto;
     align-items: center;
+  }
+
+  .filterRow {
+    justify-content: flex-end;
   }
 
   .searchWrap {
