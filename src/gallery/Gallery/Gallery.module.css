@@ -103,6 +103,13 @@
   outline: none;
   cursor: pointer;
   transition: border-color 0.15s;
+  /* The dropdown arrow is browser-drawn; without a declared color-scheme
+     the browser assumes light mode and paints it black. */
+  color-scheme: dark;
+}
+
+:global(.light) .sortSelect {
+  color-scheme: light;
 }
 
 .sortSelect:focus,
