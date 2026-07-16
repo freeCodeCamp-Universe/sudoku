@@ -18,6 +18,8 @@ import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { BoardZoomControls } from '@/game/BoardZoomControls';
+import { DesktopControls } from '@/game/GameControls/DesktopControls';
+import { PortraitControls } from '@/game/GameControls/PortraitControls';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
@@ -28,8 +30,7 @@ import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
-import { DPad } from '@/game/DPad';
-import { Tabs, type Tab } from './Tabs';
+import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
@@ -568,6 +569,7 @@ function GameInner({
       </Button>
     </div>
   );
+  const inputTabLabelledBy = `${candidateMode ? 'candidate' : 'normal'}-tab`;
 
   return (
     <div className={styles.gamePage}>
@@ -692,94 +694,33 @@ function GameInner({
         </div>
         <div className={styles.gameRight}>
           {isDesktop ? (
-            <>
-              <Tabs
-                tabs={controlTabs}
-                activeId={activeControlTab}
-                onSelect={selectControlTab}
-                ariaLabel="Input mode"
-              />
-              <div
-                role="tabpanel"
-                id="control-panel-input"
-                aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                className={styles.panel}
-              >
-                {numberPad}
-              </div>
-              <div className={styles.actionStack}>
-                <Toolbar
-                  onClearAll={() => dispatch({ type: 'clearAll' })}
-                  onReveal={handleReveal}
-                />
-                {colorLabelToggle ? (
-                  <div className={styles.settingRow}>{colorLabelToggle}</div>
-                ) : null}
-              </div>
-            </>
+            <DesktopControls
+              controlTabs={controlTabs}
+              activeControlTab={activeControlTab}
+              onSelectControlTab={selectControlTab}
+              inputTabLabelledBy={inputTabLabelledBy}
+              numberPad={numberPad}
+              onClearAll={() => dispatch({ type: 'clearAll' })}
+              onReveal={handleReveal}
+              colorLabelToggle={colorLabelToggle}
+            />
           ) : (
-            <div className={styles.controlsRow}>
-              <div className={styles.controlsMain}>
-                <Tabs
-                  tabs={controlTabs}
-                  activeId={activeControlTab}
-                  onSelect={selectControlTab}
-                  ariaLabel="Input mode and controls"
-                />
-                <div className={styles.inputPanels}>
-                  <div
-                    role="tabpanel"
-                    id="control-panel-input"
-                    aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                    className={styles.panel}
-                    data-active={!controlsOpen}
-                  >
-                    {numberPad}
-                    {colorLabelToggle ? (
-                      <div className={styles.inputPanelToggle}>{colorLabelToggle}</div>
-                    ) : null}
-                  </div>
-                  <div
-                    role="tabpanel"
-                    id="control-panel-controls"
-                    aria-labelledby="controls-tab"
-                    className={styles.panel}
-                    data-active={controlsOpen}
-                  >
-                    {controlsPanel}
-                  </div>
-                </div>
-              </div>
-              <div className={styles.mapGroup}>
-                <Tabs
-                  tabs={navTabs}
-                  activeId={navTab}
-                  onSelect={(id) => setNavTab(id as 'move' | 'map')}
-                  ariaLabel="Board navigation"
-                />
-                <div className={styles.navPanels}>
-                  <div
-                    role="tabpanel"
-                    id="nav-panel-move"
-                    aria-labelledby="move-tab"
-                    className={`${styles.panel} ${styles.navPanel}`}
-                    data-active={navTab === 'move'}
-                  >
-                    <DPad onMove={grid.moveSelection} />
-                  </div>
-                  <div
-                    role="tabpanel"
-                    id="nav-panel-map"
-                    aria-labelledby="map-tab"
-                    className={`${styles.panel} ${styles.navPanel}`}
-                    data-active={navTab === 'map'}
-                  >
-                    {minimap}
-                  </div>
-                </div>
-                <div className={styles.zoomRow}>{zoomControls}</div>
-              </div>
-            </div>
+            <PortraitControls
+              controlTabs={controlTabs}
+              activeControlTab={activeControlTab}
+              onSelectControlTab={selectControlTab}
+              inputTabLabelledBy={inputTabLabelledBy}
+              controlsOpen={controlsOpen}
+              numberPad={numberPad}
+              controlsPanel={controlsPanel}
+              colorLabelToggle={colorLabelToggle}
+              navTabs={navTabs}
+              navTab={navTab}
+              onSelectNavTab={setNavTab}
+              onMoveSelection={grid.moveSelection}
+              minimap={minimap}
+              zoomControls={zoomControls}
+            />
           )}
         </div>
       </div>
