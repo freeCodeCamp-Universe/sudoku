@@ -125,6 +125,15 @@ function GameInner({
   const effectiveSolved = state.solved && checkEnabled;
   const showCheckPrompt = isBoardFull && !checkEnabled;
 
+  // The check prompt's one-time verify only applies to the completed board that
+  // triggered it. Once the board is no longer full (cleared or a cell erased),
+  // drop verify mode so entries aren't auto-checked when the global setting is off.
+  useEffect(() => {
+    if (!isBoardFull) {
+      setVerifyMode(false);
+    }
+  }, [isBoardFull]);
+
   const { model, structure } = useMemo(
     () => assemblePuzzle(variant, baseModel, solution),
     [baseModel, solution, variant]

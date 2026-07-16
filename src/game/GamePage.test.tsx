@@ -345,6 +345,42 @@ describe('GamePage - check prompt', () => {
 
     expect(screen.queryByText(/looks like you're done/i)).not.toBeInTheDocument();
   });
+
+  it('should re-show the check prompt after the board is edited and refilled, not keep checking', async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem('sudoku-check-answers', 'false');
+    // Seed a full but incorrect board (one wrong cell) so checking does not mark
+    // it solved and open the win dialog, which would block board interaction.
+    const values = [...makeSolution()];
+    const wrongCell = values.find(([id]) => id === 'r8c8');
+    if (wrongCell) wrongCell[1] = 1;
+    window.localStorage.setItem(
+      'sudoku-progress-classic',
+      JSON.stringify({
+        seedBase: 1,
+        jigsawLayoutStart: 0,
+        genKey: 0,
+        values,
+        candidates: [],
+        revealed: [],
+        elapsedSeconds: 0,
+      })
+    );
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: /check your answers/i }));
+    expect(screen.queryByText(/looks like you're done/i)).not.toBeInTheDocument();
+
+    // Editing the board so it is no longer full drops the one-shot verify mode.
+    await user.click(screen.getByRole('gridcell', { name: /Row 9, column 9,/i }));
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+
+    // Refilling it brings back the completion prompt instead of auto-checking,
+    // because global checking is still off and verify mode did not persist.
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    expect(screen.getByText(/looks like you're done/i)).toBeInTheDocument();
+  });
 });
 
 describe('GamePage - back navigation', () => {
