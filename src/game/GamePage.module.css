@@ -241,6 +241,13 @@
   inline-size: 100%;
 }
 
+/* Toggle appended below the number pad in the mobile Normal/Candidate panel;
+   the top gap separates it from the pad without affecting other settingRows. */
+.inputPanelToggle {
+  inline-size: 100%;
+  margin-block-start: 12px;
+}
+
 /* Desktop control stack: sizes to its widest child (the Reveal/Clear button
    row), so the trailing Show-numbers toggle stretches to exactly that width.
    The gap sits on top of the button row's own 8px margin-block-end, giving the
