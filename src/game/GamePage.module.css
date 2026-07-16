@@ -241,8 +241,6 @@
   inline-size: 100%;
 }
 
-/* Toggle appended below the number pad in the mobile Normal/Candidate panel;
-   the top gap separates it from the pad without affecting other settingRows. */
 .inputPanelToggle {
   inline-size: 100%;
   margin-block-start: 12px;

@@ -177,8 +177,6 @@ describe('GamePage - Classic integration', () => {
     window.innerWidth = 500;
     renderGamePage('color');
 
-    // The toggle now lives in the Normal/Candidate input panel, so it is present
-    // without opening the Controls tab.
     expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
   });
 
