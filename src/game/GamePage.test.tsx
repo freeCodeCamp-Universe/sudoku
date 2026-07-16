@@ -304,6 +304,49 @@ describe('GamePage - Classic integration', () => {
   });
 });
 
+describe('GamePage - check prompt', () => {
+  // The prompt only appears when the board is full but checking is off, so seed
+  // a completed board via saved progress and turn checking off before rendering.
+  function seedCompletedBoardWithCheckingOff() {
+    window.localStorage.setItem('sudoku-check-answers', 'false');
+    window.localStorage.setItem(
+      'sudoku-progress-classic',
+      JSON.stringify({
+        seedBase: 1,
+        jigsawLayoutStart: 0,
+        genKey: 0,
+        values: [...makeSolution()],
+        candidates: [],
+        revealed: [],
+        elapsedSeconds: 0,
+      })
+    );
+  }
+
+  it('should render the check prompt inside a polite live region when the board is full and checking is off', () => {
+    seedCompletedBoardWithCheckingOff();
+    renderGamePage();
+
+    const promptRegion = screen
+      .getAllByRole('status')
+      .find((region) => /looks like you're done/i.test(region.textContent ?? ''));
+
+    expect(promptRegion).toBeDefined();
+    expect(promptRegion).toHaveAttribute('aria-live', 'polite');
+    expect(within(promptRegion!).getByRole('button', { name: /check your answers/i })).toBeTruthy();
+  });
+
+  it('should remove the check prompt once the user checks their answers', async () => {
+    const user = userEvent.setup();
+    seedCompletedBoardWithCheckingOff();
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: /check your answers/i }));
+
+    expect(screen.queryByText(/looks like you're done/i)).not.toBeInTheDocument();
+  });
+});
+
 describe('GamePage - back navigation', () => {
   it('should navigate immediately when Back is clicked with no progress', async () => {
     const user = userEvent.setup();
