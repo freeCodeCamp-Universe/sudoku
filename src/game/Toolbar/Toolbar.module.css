@@ -101,9 +101,12 @@
   transition: opacity 0.15s;
 }
 
-.primary {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
+/* Solid destructive fill. --bg-primary flips with the theme, so the label
+   stays high-contrast: dark navy on the light red of dark mode, near-white
+   on the deep red of light mode. */
+.danger {
+  background: var(--accent-red);
+  color: var(--bg-primary);
   border: none;
 }
 

@@ -31,6 +31,11 @@
   color: var(--accent-yellow);
 }
 
+.accentRed:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
 .primary {
   border: none;
   background: var(--btn-primary-bg);

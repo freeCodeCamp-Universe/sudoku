@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'outline';
-type ButtonAccent = 'blue' | 'yellow';
+type ButtonAccent = 'blue' | 'yellow' | 'red';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -20,6 +20,10 @@ export function Button({
 
   if (variant === 'outline' && accent === 'yellow') {
     classes.push(styles.accentYellow);
+  }
+
+  if (variant === 'outline' && accent === 'red') {
+    classes.push(styles.accentRed);
   }
 
   if (className) {

@@ -23,6 +23,7 @@ export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps
           Reveal Cell
         </Button>
         <Button
+          accent="red"
           className={vertical ? styles.fullWidth : undefined}
           onClick={() => setClearConfirmOpen(true)}
           aria-label="Clear All"
@@ -41,7 +42,7 @@ export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps
           <div className={styles.modalActions}>
             <button
               type="button"
-              className={`${styles.modalBtn} ${styles.primary}`}
+              className={`${styles.modalBtn} ${styles.danger}`}
               onClick={() => {
                 onClearAll();
                 setClearConfirmOpen(false);
