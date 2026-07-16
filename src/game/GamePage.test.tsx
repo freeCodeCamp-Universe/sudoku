@@ -50,7 +50,7 @@ describe('GamePage - Classic integration', () => {
   it('should render the sudoku grid', () => {
     renderGamePage();
 
-    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
+    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeInTheDocument();
   });
 
   it('should render 81 cells', () => {
@@ -63,13 +63,13 @@ describe('GamePage - Classic integration', () => {
   it('should render the number pad', () => {
     renderGamePage();
 
-    expect(screen.getByRole('button', { name: '5' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '5' })).toBeInTheDocument();
   });
 
   it('should show the Reveal Cell button in the desktop toolbar', () => {
     renderGamePage();
 
-    expect(screen.getByRole('button', { name: /reveal/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /reveal/i })).toBeInTheDocument();
   });
 
   it('should not render the minimap, zoom controls, or Controls tab at desktop width', () => {
@@ -86,21 +86,21 @@ describe('GamePage - Classic integration', () => {
     window.innerWidth = 500;
     renderGamePage();
 
-    expect(screen.getByRole('tab', { name: 'Controls' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Controls' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeInTheDocument();
 
     await user.click(screen.getByRole('tab', { name: 'Map' }));
 
-    expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
+    expect(screen.getByRole('img', { name: /board overview/i })).toBeInTheDocument();
   });
 
   it('should render the Move and Map navigation tabs with the D-pad below tablet width', () => {
     window.innerWidth = 500;
     renderGamePage();
 
-    expect(screen.getByRole('tab', { name: 'Move' })).toBeTruthy();
-    expect(screen.getByRole('tab', { name: 'Map' })).toBeTruthy();
-    expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeTruthy();
+    expect(screen.getByRole('tab', { name: 'Move' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Map' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Move selected cell' })).toBeInTheDocument();
   });
 
   it('should keep the zoom controls visible while switching between Move and Map below tablet width', async () => {
@@ -108,12 +108,12 @@ describe('GamePage - Classic integration', () => {
     window.innerWidth = 500;
     renderGamePage();
 
-    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeInTheDocument();
 
     await user.click(screen.getByRole('tab', { name: 'Map' }));
 
-    expect(screen.getByRole('img', { name: /board overview/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeTruthy();
+    expect(screen.getByRole('img', { name: /board overview/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /fit whole board/i })).toBeInTheDocument();
   });
 
   it('should not render the navigation tabs at desktop width', () => {
@@ -139,19 +139,19 @@ describe('GamePage - Classic integration', () => {
 
     expect(
       screen.getByRole('gridcell', { name: /Row 1, column 1, box 1, Red, readonly/i })
-    ).toBeTruthy();
+    ).toBeInTheDocument();
   });
 
   it('should label the Lavender numpad button with the correct color name', () => {
     renderGamePage('color');
 
-    expect(screen.getByRole('button', { name: 'Lavender' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Lavender' })).toBeInTheDocument();
   });
 
   it('should render a Show numbers switch for the color variant', () => {
     renderGamePage('color');
 
-    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
   });
 
   it('should not render a Show numbers switch for the classic variant', () => {
@@ -177,7 +177,7 @@ describe('GamePage - Classic integration', () => {
     window.innerWidth = 500;
     renderGamePage('color');
 
-    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
   });
 
   it('should keep the Show numbers switch visible when switching between Normal and Candidate below tablet width', async () => {
@@ -185,13 +185,13 @@ describe('GamePage - Classic integration', () => {
     window.innerWidth = 500;
     renderGamePage('color');
 
-    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('tab', { name: 'Candidate' }));
-    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('tab', { name: 'Normal' }));
-    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeTruthy();
+    expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
   });
 
   it('should render skyscraper gutters from derived structure', () => {
@@ -206,8 +206,8 @@ describe('GamePage - Classic integration', () => {
 
     expect(
       screen.getByText('Digits along each arrow sum to the number in the circle.')
-    ).toBeTruthy();
-    expect(screen.getByLabelText('Arrow rule legend')).toBeTruthy();
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Arrow rule legend')).toBeInTheDocument();
   });
 
   it('should not render the arrow rule legend for non-arrow variants', () => {
@@ -224,14 +224,14 @@ describe('GamePage - Classic integration', () => {
     renderGamePage();
     await user.click(screen.getByRole('button', { name: /how to play/i }));
 
-    expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeTruthy();
+    expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Basic Rules', level: 3 })).toBeNull();
-    expect(screen.getByText('The board:')).toBeTruthy();
+    expect(screen.getByText('The board:')).toBeInTheDocument();
     expect(
       screen.getByText(
         'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
       )
-    ).toBeTruthy();
+    ).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Additional Rules', level: 3 })).toBeNull();
   });
 
@@ -241,9 +241,9 @@ describe('GamePage - Classic integration', () => {
     renderGamePage('samurai');
     await user.click(screen.getByRole('button', { name: /how to play/i }));
 
-    expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeTruthy();
-    expect(screen.getByText('Shared regions:')).toBeTruthy();
-    expect(screen.getByText('Solve as one:')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Additional Rules', level: 3 })).toBeInTheDocument();
+    expect(screen.getByText('Shared regions:')).toBeInTheDocument();
+    expect(screen.getByText('Solve as one:')).toBeInTheDocument();
   });
 
   it('should announce the entered value when a numpad button is clicked', () => {
@@ -354,7 +354,9 @@ describe('GamePage - check prompt', () => {
 
     expect(promptRegion).toBeDefined();
     expect(promptRegion).toHaveAttribute('aria-live', 'polite');
-    expect(within(promptRegion!).getByRole('button', { name: /check your answers/i })).toBeTruthy();
+    expect(
+      within(promptRegion!).getByRole('button', { name: /check your answers/i })
+    ).toBeInTheDocument();
   });
 
   it('should remove the check prompt once the user checks their answers', async () => {
