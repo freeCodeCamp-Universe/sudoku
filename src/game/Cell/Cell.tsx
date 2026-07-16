@@ -151,14 +151,14 @@ export function Cell({
                 {value}
               </span>
             ) : null}
-            {given ? (
-              <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
-            ) : revealed ? (
+            {revealed ? (
               <span
                 aria-hidden="true"
                 className={styles.revealedDot}
                 data-testid="cell-revealed-dot"
               />
+            ) : given ? (
+              <span aria-hidden="true" className={styles.givenDot} data-testid="cell-given-dot" />
             ) : null}
           </>
         ) : (

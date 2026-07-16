@@ -184,6 +184,15 @@ describe('Cell', () => {
       expect(screen.queryByTestId('cell-given-dot')).toBeNull();
     });
 
+    // The grid marks revealed cells as given too (they become readonly), so
+    // the revealed dot must win over the given dot.
+    it('should render the revealed dot, not the given dot, when a color cell is revealed', () => {
+      render(<Cell {...colorProps} given revealed />);
+
+      expect(screen.getByTestId('cell-revealed-dot')).toBeTruthy();
+      expect(screen.queryByTestId('cell-given-dot')).toBeNull();
+    });
+
     it('should not render a color chip for symbolKind digit', () => {
       render(<Cell {...colorProps} symbolKind="digit" renderSymbol={(value) => String(value)} />);
 
