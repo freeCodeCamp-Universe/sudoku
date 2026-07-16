@@ -1,0 +1,135 @@
+.controlsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  inline-size: 100%;
+  margin-block-start: 12px;
+  margin-block-end: 8px;
+  /*
+   * Floor for short variants so controls dock at a consistent position:
+   * tablist ~30px + 10px column gap + two 44px numpad rows with a 6px gap.
+   * Taller variants (for example Super's 16-symbol numpad) and the map
+   * column's minimap grow the row past it naturally.
+   */
+  min-block-size: 134px;
+}
+
+.controlsMain {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  flex: 5 1 0;
+  min-inline-size: 0;
+}
+
+.mapGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /*
+   * 5:3 flex split with a 200px cap so the narrower map column tracks
+   * the numpad button size. The extra width becomes gap between the two
+   * control groups. The tablet media block pins the column at exactly
+   * 200px to keep the D-pad/minimap near the numpad button size on wide
+   * tablets instead of letting it stretch.
+   */
+  flex: 3 1 0;
+  max-inline-size: 200px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  inline-size: 100%;
+}
+
+.inputPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.inputPanels > .panel {
+  grid-area: 1 / 1;
+}
+
+.inputPanels > .panel:not([data-active='true']) {
+  visibility: hidden;
+}
+
+.inputPanelToggle {
+  inline-size: 100%;
+  margin-block-start: 12px;
+}
+
+/*
+ * Height reservation for stacked Move / Map panels in one grid cell.
+ * The column always reserves the taller panel's height (Map: minimap +
+ * zoom) regardless of which tab is active, so switching Move <-> Map
+ * does not change control-area height or move the board. The reservation
+ * tracks the minimap's responsive height automatically instead of using a
+ * hand-tuned constant.
+ */
+.navPanels {
+  display: grid;
+  inline-size: 100%;
+}
+
+.navPanel {
+  grid-area: 1 / 1;
+  justify-content: center;
+  aspect-ratio: 1;
+}
+
+.navPanel:not([data-active='true']) {
+  visibility: hidden;
+}
+
+.zoomRow {
+  inline-size: 100%;
+}
+
+.actionStack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.settingRow {
+  inline-size: 100%;
+}
+
+@media (min-width: 600px) {
+  .controlsRow {
+    gap: 24px;
+    padding-inline: 24px;
+  }
+
+  .mapGroup {
+    min-inline-size: 200px;
+    max-inline-size: 200px;
+  }
+}
+
+/*
+ * Landscape-mobile modifier (set by PortraitControls' landscape prop). The
+ * >= 600px block above keys off viewport width, so it matches every landscape
+ * phone even though the controls live in a ~320-420px column there. Restore
+ * the narrow-column values; declared after the media block so equal
+ * specificity resolves by source order.
+ */
+.controlsRowLandscape {
+  gap: 16px;
+  padding-inline: 0;
+  margin-block-start: 0;
+}
+
+.controlsRowLandscape .mapGroup {
+  min-inline-size: 0;
+  max-inline-size: 200px;
+}

@@ -18,6 +18,8 @@ import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
 import { BoardZoomControls } from '@/game/BoardZoomControls';
+import { DesktopControls } from '@/game/GameControls/DesktopControls';
+import { PortraitControls } from '@/game/GameControls/PortraitControls';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
@@ -28,8 +30,7 @@ import { assemblePuzzle } from './assemblePuzzle';
 import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
-import { DPad } from '@/game/DPad';
-import { Tabs, type Tab } from './Tabs';
+import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findCompletedSymbols } from './completedSymbols';
 import { buildPuzzle } from './buildPuzzle';
@@ -106,6 +107,8 @@ function GameInner({
   // Normal/Candidate tabs, a horizontal toolbar, and a standalone New Game
   // button, with no minimap.
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isLandscape = useMediaQuery('(orientation: landscape)');
+  const isLandscapeMobile = !isDesktop && isLandscape;
   const { highContrast } = useTheme();
 
   useEffect(() => {
@@ -550,7 +553,6 @@ function GameInner({
     { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
     { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
   ];
-
   const isColor = variant.symbolKind === 'color';
   const colorLabelToggle = isColor ? (
     <Toggle
@@ -568,15 +570,104 @@ function GameInner({
       </Button>
     </div>
   );
+  const inputTabLabelledBy = `${candidateMode ? 'candidate' : 'normal'}-tab`;
+  const timer = (
+    <Timer
+      elapsedSeconds={state.elapsedSeconds}
+      running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
+      visible={settings.timerEnabled}
+      done={effectiveSolved}
+      compact={isLandscapeMobile}
+    />
+  );
+  const variantLegend =
+    variant.id === 'wordoku' ? (
+      <div className={styles.variantLegend} aria-label="Wordoku rule legend">
+        <span>There is a hidden word somewhere. Try to find it!</span>
+      </div>
+    ) : variant.id === 'greater-than' ? (
+      <div className={styles.variantLegend} aria-label="Greater-than rule legend">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+          className={styles.legendIcon}
+        >
+          <polygon points="10,5 0,0 0,10" className={styles.legendTriangle} />
+        </svg>
+        <span>Triangle points toward the smaller of the two adjacent digits.</span>
+      </div>
+    ) : variant.id === 'consecutive' ? (
+      <div className={styles.variantLegend} aria-label="Consecutive rule legend">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+          className={styles.legendIcon}
+        >
+          <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
+        </svg>
+        <span>
+          A dot between two cells means those digits differ by exactly 1. Cells without a dot must
+          not differ by 1.
+        </span>
+      </div>
+    ) : variant.id === 'kropki' ? (
+      <div className={styles.variantLegend} aria-label="Kropki rule legend">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+          className={styles.legendIcon}
+        >
+          <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
+        </svg>
+        <span>Consecutive (differ by 1)</span>
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+          className={styles.legendIcon}
+        >
+          <circle cx="5" cy="5" r="4" fill="#5060a0" />
+        </svg>
+        <span>One is double the other</span>
+      </div>
+    ) : variant.id === 'even-odd' ? (
+      <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
+        <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
+        <span>Even (2, 4, 6, 8)</span>
+        <span className={`${styles.legendSwatch} ${styles.legendSwatchOdd}`} />
+        <span>Odd (1, 3, 5, 7, 9)</span>
+      </div>
+    ) : variant.id === 'arrow' ? (
+      <div className={styles.variantLegend} aria-label="Arrow rule legend">
+        <svg
+          width="44"
+          height="18"
+          viewBox="0 0 80 18"
+          aria-hidden="true"
+          className={styles.legendIcon}
+        >
+          <circle cx="9" cy="9" r="8" fill="none" stroke="#9898b8" strokeWidth="1.5" />
+          <polyline points="17,9 66,9" fill="none" stroke="#9898b8" strokeWidth="1.5" />
+          <polygon points="73,9 65,5 65,13" fill="#9898b8" />
+        </svg>
+        <span>Digits along each arrow sum to the number in the circle.</span>
+      </div>
+    ) : null;
 
   return (
-    <div className={styles.gamePage}>
-      <Timer
-        elapsedSeconds={state.elapsedSeconds}
-        running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
-        visible={settings.timerEnabled}
-        done={effectiveSolved}
-      />
+    <div
+      className={[styles.gamePage, isLandscapeMobile ? styles.landscapeMobile : null]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
           <div
@@ -605,182 +696,40 @@ function GameInner({
               showColorLabel={settings.showColorLabels}
             />
           </div>
-          {variant.id === 'wordoku' ? (
-            <div className={styles.variantLegend} aria-label="Wordoku rule legend">
-              <span>There is a hidden word somewhere. Try to find it!</span>
-            </div>
-          ) : null}
-          {variant.id === 'greater-than' ? (
-            <div className={styles.variantLegend} aria-label="Greater-than rule legend">
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                aria-hidden="true"
-                className={styles.legendIcon}
-              >
-                <polygon points="10,5 0,0 0,10" className={styles.legendTriangle} />
-              </svg>
-              <span>Triangle points toward the smaller of the two adjacent digits.</span>
-            </div>
-          ) : null}
-          {variant.id === 'consecutive' ? (
-            <div className={styles.variantLegend} aria-label="Consecutive rule legend">
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                aria-hidden="true"
-                className={styles.legendIcon}
-              >
-                <circle cx="5" cy="5" r="4" fill="#d0d0e8" stroke="#1b1b32" strokeWidth="1.5" />
-              </svg>
-              <span>
-                A dot between two cells means those digits differ by exactly 1. Cells without a dot
-                must not differ by 1.
-              </span>
-            </div>
-          ) : null}
-          {variant.id === 'kropki' ? (
-            <div className={styles.variantLegend} aria-label="Kropki rule legend">
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                aria-hidden="true"
-                className={styles.legendIcon}
-              >
-                <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
-              </svg>
-              <span>Consecutive (differ by 1)</span>
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                aria-hidden="true"
-                className={styles.legendIcon}
-              >
-                <circle cx="5" cy="5" r="4" fill="#5060a0" />
-              </svg>
-              <span>One is double the other</span>
-            </div>
-          ) : null}
-          {variant.id === 'even-odd' ? (
-            <div className={styles.variantLegend} aria-label="Even-Odd rule legend">
-              <span className={`${styles.legendSwatch} ${styles.legendSwatchEven}`} />
-              <span>Even (2, 4, 6, 8)</span>
-              <span className={`${styles.legendSwatch} ${styles.legendSwatchOdd}`} />
-              <span>Odd (1, 3, 5, 7, 9)</span>
-            </div>
-          ) : null}
-          {variant.id === 'arrow' ? (
-            <div className={styles.variantLegend} aria-label="Arrow rule legend">
-              <svg
-                width="44"
-                height="18"
-                viewBox="0 0 80 18"
-                aria-hidden="true"
-                className={styles.legendIcon}
-              >
-                <circle cx="9" cy="9" r="8" fill="none" stroke="#9898b8" strokeWidth="1.5" />
-                <polyline points="17,9 66,9" fill="none" stroke="#9898b8" strokeWidth="1.5" />
-                <polygon points="73,9 65,5 65,13" fill="#9898b8" />
-              </svg>
-              <span>Digits along each arrow sum to the number in the circle.</span>
-            </div>
-          ) : null}
+          {isLandscapeMobile ? null : variantLegend}
         </div>
         <div className={styles.gameRight}>
           {isDesktop ? (
-            <>
-              <Tabs
-                tabs={controlTabs}
-                activeId={activeControlTab}
-                onSelect={selectControlTab}
-                ariaLabel="Input mode"
-              />
-              <div
-                role="tabpanel"
-                id="control-panel-input"
-                aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                className={styles.panel}
-              >
-                {numberPad}
-              </div>
-              <div className={styles.actionStack}>
-                <Toolbar
-                  onClearAll={() => dispatch({ type: 'clearAll' })}
-                  onReveal={handleReveal}
-                />
-                {colorLabelToggle ? (
-                  <div className={styles.settingRow}>{colorLabelToggle}</div>
-                ) : null}
-              </div>
-            </>
+            <DesktopControls
+              controlTabs={controlTabs}
+              activeControlTab={activeControlTab}
+              onSelectControlTab={selectControlTab}
+              inputTabLabelledBy={inputTabLabelledBy}
+              numberPad={numberPad}
+              onClearAll={() => dispatch({ type: 'clearAll' })}
+              onReveal={handleReveal}
+              colorLabelToggle={colorLabelToggle}
+            />
           ) : (
-            <div className={styles.controlsRow}>
-              <div className={styles.controlsMain}>
-                <Tabs
-                  tabs={controlTabs}
-                  activeId={activeControlTab}
-                  onSelect={selectControlTab}
-                  ariaLabel="Input mode and controls"
-                />
-                <div className={styles.inputPanels}>
-                  <div
-                    role="tabpanel"
-                    id="control-panel-input"
-                    aria-labelledby={`${candidateMode ? 'candidate' : 'normal'}-tab`}
-                    className={styles.panel}
-                    data-active={!controlsOpen}
-                  >
-                    {numberPad}
-                    {colorLabelToggle ? (
-                      <div className={styles.inputPanelToggle}>{colorLabelToggle}</div>
-                    ) : null}
-                  </div>
-                  <div
-                    role="tabpanel"
-                    id="control-panel-controls"
-                    aria-labelledby="controls-tab"
-                    className={styles.panel}
-                    data-active={controlsOpen}
-                  >
-                    {controlsPanel}
-                  </div>
-                </div>
-              </div>
-              <div className={styles.mapGroup}>
-                <Tabs
-                  tabs={navTabs}
-                  activeId={navTab}
-                  onSelect={(id) => setNavTab(id as 'move' | 'map')}
-                  ariaLabel="Board navigation"
-                />
-                <div className={styles.navPanels}>
-                  <div
-                    role="tabpanel"
-                    id="nav-panel-move"
-                    aria-labelledby="move-tab"
-                    className={`${styles.panel} ${styles.navPanel}`}
-                    data-active={navTab === 'move'}
-                  >
-                    <DPad onMove={grid.moveSelection} />
-                  </div>
-                  <div
-                    role="tabpanel"
-                    id="nav-panel-map"
-                    aria-labelledby="map-tab"
-                    className={`${styles.panel} ${styles.navPanel}`}
-                    data-active={navTab === 'map'}
-                  >
-                    {minimap}
-                  </div>
-                </div>
-                <div className={styles.zoomRow}>{zoomControls}</div>
-              </div>
-            </div>
+            <PortraitControls
+              controlTabs={controlTabs}
+              activeControlTab={activeControlTab}
+              onSelectControlTab={selectControlTab}
+              inputTabLabelledBy={inputTabLabelledBy}
+              controlsOpen={controlsOpen}
+              numberPad={numberPad}
+              controlsPanel={controlsPanel}
+              colorLabelToggle={colorLabelToggle}
+              navTabs={navTabs}
+              navTab={navTab}
+              onSelectNavTab={setNavTab}
+              onMoveSelection={grid.moveSelection}
+              minimap={minimap}
+              zoomControls={zoomControls}
+              landscape={isLandscapeMobile}
+            />
           )}
+          {isLandscapeMobile ? variantLegend : null}
         </div>
       </div>
       {isDesktop ? (
@@ -893,6 +842,9 @@ export function GamePage() {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isLandscape = useMediaQuery('(orientation: landscape)');
+  const isLandscapeMobile = !isDesktop && isLandscape;
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -930,6 +882,7 @@ export function GamePage() {
     <>
       <Header
         title={variant.name}
+        compact={isLandscapeMobile}
         onBack={() => navigate('/')}
         onHelpOpen={() => setHelpOpen(true)}
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}

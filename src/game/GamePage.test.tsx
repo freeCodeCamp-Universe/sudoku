@@ -7,6 +7,37 @@ import { gridCells } from '@/engine/grid';
 import type { Values } from '@/engine/types';
 import { GamePage } from './GamePage';
 
+function installMatchMedia({
+  width = window.innerWidth,
+  orientation = 'portrait',
+}: {
+  width?: number;
+  orientation?: 'portrait' | 'landscape';
+}) {
+  window.innerWidth = width;
+  window.matchMedia = ((query: string): MediaQueryList => {
+    const min = /\(min-width:\s*(\d+(?:\.\d+)?)px\)/.exec(query);
+    const max = /\(max-width:\s*(\d+(?:\.\d+)?)px\)/.exec(query);
+    const orientationMatch = /\(orientation:\s*(portrait|landscape)\)/.exec(query);
+    const currentWidth = window.innerWidth;
+    const matches =
+      (min === null || currentWidth >= Number(min[1])) &&
+      (max === null || currentWidth <= Number(max[1])) &&
+      (orientationMatch === null || orientationMatch[1] === orientation);
+
+    return {
+      matches,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    } as MediaQueryList;
+  }) as typeof window.matchMedia;
+}
+
 function makeSolution(): Values {
   return new Map(
     gridCells(9).map((cell) => [
@@ -42,8 +73,13 @@ function renderGamePage(variantId = 'classic') {
 // jsdom defaults to a 1024px width (desktop layout). Tests that need the mobile
 // layout set window.innerWidth before rendering; reset it between tests.
 afterEach(() => {
+  installMatchMedia({ width: 1024, orientation: 'portrait' });
   window.innerWidth = 1024;
   window.localStorage.clear();
+});
+
+beforeEach(() => {
+  installMatchMedia({ width: window.innerWidth, orientation: 'portrait' });
 });
 
 describe('GamePage - Classic integration', () => {
@@ -519,5 +555,75 @@ describe('GamePage - oversized board fit', () => {
     const scale = Number(/scale\((.+)\)/.exec(transform)?.[1]);
 
     expect(scale).toBeCloseTo(FRAME.width / framedWidth, 10);
+  });
+});
+
+describe('GamePage - landscape mobile controls', () => {
+  it('should render the two-group controls in landscape mobile', () => {
+    installMatchMedia({ width: 852, orientation: 'landscape' });
+    renderGamePage();
+
+    const controlTablist = screen.getByRole('tablist', { name: 'Input mode and controls' });
+    const navTablist = screen.getByRole('tablist', { name: 'Board navigation' });
+
+    expect(within(controlTablist).getAllByRole('tab')).toHaveLength(3);
+    expect(within(navTablist).getAllByRole('tab')).toHaveLength(2);
+    expect(screen.queryByRole('tablist', { name: 'Game controls' })).toBeNull();
+  });
+
+  it('should keep the input panel visible while using the nav tabs in landscape mobile', async () => {
+    const user = userEvent.setup();
+    installMatchMedia({ width: 852, orientation: 'landscape' });
+    renderGamePage();
+
+    const mapTab = screen.getByRole('tab', { name: 'Map' });
+    const inputPanel = screen.getByRole('tabpanel', { name: 'Normal' });
+
+    await user.click(mapTab);
+
+    expect(mapTab).toHaveAttribute('aria-selected', 'true');
+    expect(inputPanel).toHaveAttribute('data-active', 'true');
+  });
+
+  it('should preserve candidate mode when rotating from landscape to portrait', async () => {
+    const user = userEvent.setup();
+    installMatchMedia({ width: 852, orientation: 'landscape' });
+    const view = renderGamePage();
+
+    await user.click(screen.getByRole('tab', { name: 'Candidate' }));
+
+    installMatchMedia({ width: 500, orientation: 'portrait' });
+    view.rerender(
+      <MemoryRouter initialEntries={['/classic']}>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/:variantId" element={<GamePage />} />
+          </Routes>
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('tab', { name: 'Candidate' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should preserve the active nav tab when rotating from landscape to portrait', async () => {
+    const user = userEvent.setup();
+    installMatchMedia({ width: 852, orientation: 'landscape' });
+    const view = renderGamePage();
+
+    await user.click(screen.getByRole('tab', { name: 'Move' }));
+
+    installMatchMedia({ width: 500, orientation: 'portrait' });
+    view.rerender(
+      <MemoryRouter initialEntries={['/classic']}>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/:variantId" element={<GamePage />} />
+          </Routes>
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('tab', { name: 'Move' })).toHaveAttribute('aria-selected', 'true');
   });
 });

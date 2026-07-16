@@ -13,6 +13,11 @@
   }
 }
 
+.compact {
+  font-size: 1rem;
+  margin-block-end: 8px;
+}
+
 .running {
   color: var(--text-subtle);
 }

@@ -136,125 +136,11 @@
   inline-size: 100%;
 }
 
-/*
- * Mobile controls (only rendered below 1024px): two columns, each its own tab
- * group. The main column holds the Normal/Candidate/Controls tablist with the
- * active panel (number pad or the reveal/clear/new-game actions) beneath it; the
- * map column holds the Move/Map tablist with the D-pad (Move) or minimap + zoom
- * buttons (Map) beneath it. Keeping each panel in the same column as its tabs
- * stops the tall minimap or D-pad from pushing the number pad down the screen.
- * A 5:3 flex split keeps the map column narrower so its D-pad keys shrink in
- * step with the 5-across numpad buttons, which also opens a wider gap between
- * the two control groups on narrow mobile widths.
- */
-.controlsRow {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
-  inline-size: 100%;
-  margin-block-start: 12px;
-  margin-block-end: 8px;
-  /* Floor for short variants so their controls stay docked at a consistent
-     position (tablist ~30px + 10px column gap + two 44px numpad rows with a 6px
-     gap). Taller variants (e.g. Super's 16-symbol numpad) and the map column's
-     minimap grow the row past this naturally; the row is a flex box that sizes
-     to its tallest column. */
-  min-block-size: 134px;
-}
-
-.controlsMain {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-  flex: 5 1 0;
-  min-inline-size: 0;
-}
-
-.mapGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  flex: 3 1 0;
-  /* The narrower 3-part map column makes its square panels track the numpad's
-     button size, while the freed width becomes extra space between columns. */
-  max-inline-size: 200px;
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  inline-size: 100%;
-}
-
-.inputPanels {
-  display: grid;
-  inline-size: 100%;
-}
-
-.inputPanels > .panel {
-  grid-area: 1 / 1;
-}
-
-.inputPanels > .panel:not([data-active='true']) {
-  visibility: hidden;
-}
-
-/*
- * The Move and Map panels stack in one grid cell so the map column always
- * reserves the height of the taller panel (Map: minimap + zoom controls),
- * whichever tab is active. Switching Move <-> Map therefore never changes the
- * control-area height or moves the board, and the reservation tracks the
- * minimap's responsive height automatically instead of a hand-tuned constant.
- */
-.navPanels {
-  display: grid;
-  inline-size: 100%;
-}
-
-.navPanel {
-  grid-area: 1 / 1;
-  justify-content: center;
-  aspect-ratio: 1;
-}
-
-.navPanel:not([data-active='true']) {
-  visibility: hidden;
-}
-
-.zoomRow {
-  inline-size: 100%;
-}
-
 .actionColumn {
   display: flex;
   flex-direction: column;
   gap: 8px;
   inline-size: 100%;
-}
-
-.settingRow {
-  inline-size: 100%;
-}
-
-.inputPanelToggle {
-  inline-size: 100%;
-  margin-block-start: 12px;
-}
-
-/* Desktop control stack: sizes to its widest child (the Reveal/Clear button
-   row), so the trailing Show-numbers toggle stretches to exactly that width.
-   The gap sits on top of the button row's own 8px margin-block-end, giving the
-   toggle clear separation from the buttons above it. */
-.actionStack {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
 }
 
 @media (min-width: 600px) {
@@ -275,18 +161,56 @@
   }
 }
 
-/* Small tablets and up: cap the map column at 200px so the D-pad and minimap
-   stay close to the numpad button size on wide tablets instead of stretching. */
-@media (min-width: 600px) {
-  .controlsRow {
-    gap: 24px;
-    padding-inline: 24px;
-  }
+.gamePage.landscapeMobile {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
 
-  .mapGroup {
-    min-inline-size: 200px;
-    max-inline-size: 200px;
-  }
+.gamePage.landscapeMobile .gameLayout {
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+/* Mirrors .gameLayout's two equal columns (1:1 split, 16px gap) so the timer
+   in the first cell centers over the board column, while the controls column
+   below still starts level with the board's top edge. Keep the column split
+   and gap in sync with the landscape .gameLayout rules above. */
+.gamePage.landscapeMobile .landscapeTimerRow {
+  display: grid;
+  /* The second track mirrors .gameRight's 340px floor below. */
+  grid-template-columns: 1fr minmax(340px, 1fr);
+  gap: 16px;
+  inline-size: 100%;
+}
+
+.gamePage.landscapeMobile .gameLeft {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  justify-content: center;
+}
+
+.gamePage.landscapeMobile .boardFrame {
+  justify-content: flex-start;
+}
+
+.gamePage.landscapeMobile .gameRight {
+  flex: 1 1 0;
+  /* Floor for narrow landscape phones (e.g. iPhone SE at 667px, where a half
+     column is ~313px): the control tablist needs ~340px of column to render
+     its labels unclipped, and the board just pans in a narrower clip. Above
+     ~712px viewports the halves exceed the floor, so the 1:1 split holds. */
+  min-inline-size: 340px;
+  align-self: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  min-block-size: 0;
+}
+
+.gamePage.landscapeMobile .boardFrame,
+.gamePage.landscapeMobile .boardFrame.boardFrameOversized {
+  block-size: 100dvh;
 }
 
 /* Desktop standalone New Game button (the mobile layout keeps New Game inside

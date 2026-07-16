@@ -19,6 +19,12 @@
   }
 }
 
+/* Landscape-mobile modifier (set by the compact prop). Declared after the
+   media block so equal specificity resolves by source order. */
+.topBarCompact {
+  margin-block-end: 12px;
+}
+
 .title {
   flex: 1 1 auto;
   min-width: 0;

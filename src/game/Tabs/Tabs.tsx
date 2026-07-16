@@ -13,6 +13,12 @@ interface TabsProps {
   onSelect: (id: string) => void;
   ariaLabel: string;
   className?: string;
+  /*
+   * Landscape-mobile layouts pass this to keep the base (320px-column) tab
+   * font size: the >= 600px size bump keys off viewport width, so it matches
+   * landscape phones whose control column is far narrower than the viewport.
+   */
+  compact?: boolean;
 }
 
 /**
@@ -21,7 +27,14 @@ interface TabsProps {
  * step, so navigating the tablist never costs an extra Enter/Space keypress. A
  * click also selects.
  */
-export function Tabs({ tabs, activeId, onSelect, ariaLabel, className }: TabsProps) {
+export function Tabs({
+  tabs,
+  activeId,
+  onSelect,
+  ariaLabel,
+  className,
+  compact = false,
+}: TabsProps) {
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   function focusTab(index: number) {
@@ -57,7 +70,9 @@ export function Tabs({ tabs, activeId, onSelect, ariaLabel, className }: TabsPro
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={[styles.tablist, className].filter(Boolean).join(' ')}
+      className={[styles.tablist, compact ? styles.tablistCompact : null, className]
+        .filter(Boolean)
+        .join(' ')}
     >
       {tabs.map((tab, index) => {
         const selected = tab.id === activeId;
