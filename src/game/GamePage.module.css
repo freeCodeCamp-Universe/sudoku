@@ -173,6 +173,18 @@
   gap: 16px;
 }
 
+/* Mirrors .gameLayout's two equal columns (1:1 split, 16px gap) so the timer
+   in the first cell centers over the board column, while the controls column
+   below still starts level with the board's top edge. Keep the column split
+   and gap in sync with the landscape .gameLayout rules above. */
+.gamePage.landscapeMobile .landscapeTimerRow {
+  display: grid;
+  /* The second track mirrors .gameRight's 340px floor below. */
+  grid-template-columns: 1fr minmax(340px, 1fr);
+  gap: 16px;
+  inline-size: 100%;
+}
+
 .gamePage.landscapeMobile .gameLeft {
   flex: 1 1 0;
   min-inline-size: 0;
@@ -185,7 +197,11 @@
 
 .gamePage.landscapeMobile .gameRight {
   flex: 1 1 0;
-  min-inline-size: 0;
+  /* Floor for narrow landscape phones (e.g. iPhone SE at 667px, where a half
+     column is ~313px): the control tablist needs ~340px of column to render
+     its labels unclipped, and the board just pans in a narrower clip. Above
+     ~712px viewports the halves exceed the floor, so the 1:1 split holds. */
+  min-inline-size: 340px;
   align-self: stretch;
   justify-content: flex-start;
   overflow-y: auto;

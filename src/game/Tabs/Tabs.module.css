@@ -46,3 +46,10 @@
     font-size: 0.72rem;
   }
 }
+
+/* Landscape-mobile modifier (set by the compact prop): keep the base font
+   size sized for a ~320px column, since the >= 600px bump above matches
+   landscape phones whose control column is that narrow. */
+.tablistCompact .tab {
+  font-size: 0.8rem;
+}

@@ -577,6 +577,7 @@ function GameInner({
       running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
       visible={settings.timerEnabled}
       done={effectiveSolved}
+      compact={isLandscapeMobile}
     />
   );
   const variantLegend =
@@ -666,10 +667,9 @@ function GameInner({
         .filter(Boolean)
         .join(' ')}
     >
-      {isLandscapeMobile ? null : timer}
+      {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
-          {isLandscapeMobile ? timer : null}
           <div
             ref={viewportRef}
             className={
@@ -842,6 +842,9 @@ export function GamePage() {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isLandscape = useMediaQuery('(orientation: landscape)');
+  const isLandscapeMobile = !isDesktop && isLandscape;
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -879,6 +882,7 @@ export function GamePage() {
     <>
       <Header
         title={variant.name}
+        compact={isLandscapeMobile}
         onBack={() => navigate('/')}
         onHelpOpen={() => setHelpOpen(true)}
         onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}

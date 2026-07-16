@@ -56,6 +56,7 @@ export function PortraitControls({
           activeId={activeControlTab}
           onSelect={onSelectControlTab}
           ariaLabel="Input mode and controls"
+          compact={landscape}
         />
         <div className={styles.inputPanels}>
           <div
@@ -87,6 +88,7 @@ export function PortraitControls({
           activeId={navTab}
           onSelect={(id) => onSelectNavTab(id as 'move' | 'map')}
           ariaLabel="Board navigation"
+          compact={landscape}
         />
         <div className={styles.navPanels}>
           <div

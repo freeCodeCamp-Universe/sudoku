@@ -126,6 +126,7 @@
 .controlsRowLandscape {
   gap: 16px;
   padding-inline: 0;
+  margin-block-start: 0;
 }
 
 .controlsRowLandscape .mapGroup {

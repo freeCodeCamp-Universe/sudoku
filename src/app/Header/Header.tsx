@@ -7,6 +7,10 @@ import styles from './Header.module.css';
 
 interface HeaderProps {
   title: string;
+  /*
+   * Used for landscape mode
+   */
+  compact?: boolean;
   backHref?: string;
   onBack?: () => void;
   onHelpOpen?: () => void;
@@ -21,6 +25,7 @@ interface HeaderProps {
 
 export function Header({
   title,
+  compact = false,
   backHref,
   onBack,
   onHelpOpen,
@@ -60,7 +65,7 @@ export function Header({
     onToggleHighlightPeers !== undefined;
 
   return (
-    <header className={styles.topBar}>
+    <header className={compact ? `${styles.topBar} ${styles.topBarCompact}` : styles.topBar}>
       {onBack ? (
         <button type="button" className={styles.backBtn} onClick={onBack}>
           <svg
