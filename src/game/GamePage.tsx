@@ -562,7 +562,6 @@ function GameInner({
 
   const controlsPanel = (
     <div className={styles.actionColumn}>
-      {colorLabelToggle}
       <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
       <Button variant="primary" onClick={handleNewGame}>
         New Game
@@ -736,6 +735,9 @@ function GameInner({
                     data-active={!controlsOpen}
                   >
                     {numberPad}
+                    {colorLabelToggle ? (
+                      <div className={styles.inputPanelToggle}>{colorLabelToggle}</div>
+                    ) : null}
                   </div>
                   <div
                     role="tabpanel"
