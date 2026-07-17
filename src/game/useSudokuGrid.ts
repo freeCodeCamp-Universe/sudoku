@@ -260,9 +260,33 @@ export function useSudokuGrid({
         value === undefined
           ? model.symbols.filter((s) => (candidates.get(id) ?? []).includes(s))
           : [];
+      const projectedConflictSet = new Set(
+        validate(nextValues, model).flatMap((conflict) => conflict.cells)
+      );
+      const projectedSelectedValue = selectedId !== null ? nextValues.get(selectedId) : undefined;
+      const projectedCellState = (cellId: CellId): CellState => {
+        const isGiven = givens.has(cellId) || revealed.has(cellId);
+
+        return {
+          value: nextValues.get(cellId),
+          candidates: candidates.get(cellId) ?? [],
+          given: isGiven,
+          revealed: revealed.has(cellId),
+          selected: selectedId === cellId,
+          conflict: projectedConflictSet.has(cellId),
+          correct:
+            checkEnabled && !isGiven && nextValues.get(cellId) !== undefined && solution.has(cellId)
+              ? nextValues.get(cellId) === solution.get(cellId)
+              : undefined,
+          sameValue:
+            projectedSelectedValue !== undefined &&
+            nextValues.get(cellId) === projectedSelectedValue,
+          peer: peerIds.has(cellId),
+        };
+      };
       const extras = annotators
         .map((annotator) =>
-          annotator.describe(id, { values: nextValues, model, cellState: getCellState })
+          annotator.describe(id, { values: nextValues, model, cellState: projectedCellState })
         )
         .filter((message): message is string => message !== null);
 
@@ -271,10 +295,7 @@ export function useSudokuGrid({
           ? value === solution.get(id)
           : undefined;
       const inConflict =
-        value !== undefined &&
-        correct !== true &&
-        checkEnabled &&
-        validate(nextValues, model).some((c) => c.cells.includes(id));
+        value !== undefined && correct !== true && checkEnabled && projectedConflictSet.has(id);
       const overused =
         value !== undefined && findOverusedSymbols(nextValues, solution, model.symbols).has(value);
 
@@ -301,10 +322,11 @@ export function useSudokuGrid({
       cellsById,
       checkEnabled,
       describeSymbol,
-      getCellState,
       givens,
       model,
+      peerIds,
       revealed,
+      selectedId,
       solution,
     ]
   );

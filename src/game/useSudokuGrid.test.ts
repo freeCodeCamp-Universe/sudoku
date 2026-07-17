@@ -4,6 +4,7 @@ import { describe, expect, it, should, vi } from 'vitest';
 import { uniqueness } from '@/engine/constraints/uniqueness';
 import { gridCells, standardHouses } from '@/engine/grid';
 import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+import type { CellAnnotator } from '@/game/gameTypes';
 import { buildModel } from '@/engine/buildModel';
 import { Board } from '@/game/Board/Board';
 import { gridLayout } from '@/game/layouts/grid';
@@ -37,6 +38,7 @@ interface TestBoardProps {
   candidateMode?: boolean;
   onEnterValue?: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate?: (id: CellId, value: SymbolValue) => void;
+  annotators?: CellAnnotator[];
   describeSymbol?: (value: SymbolValue) => string;
   renderSymbol?: (value: SymbolValue) => string;
   values?: Values;
@@ -51,6 +53,7 @@ function TestBoard({
   candidateMode = false,
   onEnterValue = noop,
   onToggleCandidate = noop,
+  annotators,
   describeSymbol,
   renderSymbol,
   values = emptyValues,
@@ -68,6 +71,7 @@ function TestBoard({
     givens: new Set(),
     onEnterValue,
     onToggleCandidate,
+    annotators,
     describeSymbol,
     renderSymbol,
     checkEnabled,
@@ -509,6 +513,37 @@ describe('useSudokuGrid', () => {
     });
 
     expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, more placed than needed');
+    vi.useRealTimers();
+  });
+
+  it('should pass projected cell state to annotators when announcing state changes', async () => {
+    vi.useFakeTimers();
+    const annotator: CellAnnotator = {
+      id: 'projected-state',
+      describe(cellId, ctx) {
+        const projectedValue = ctx.cellState(cellId).value;
+        return projectedValue === 7 ? 'projected value 7' : null;
+      },
+    };
+
+    render(
+      React.createElement(TestBoard, {
+        values: new Map([['r0c0', 5]]),
+        annotators: [annotator],
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, 5' });
+    const getAnnouncer = () => screen.getByRole('status');
+
+    fireEvent.focus(cell);
+    fireEvent.keyDown(cell, { key: '7' });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 7, projected value 7');
     vi.useRealTimers();
   });
 
