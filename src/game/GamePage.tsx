@@ -4,7 +4,6 @@ import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, SymbolValue } from '@/engine/types';
-import { validate } from '@/engine/validate';
 import {
   boardFrameEdge,
   framedBoardSize,
@@ -488,14 +487,7 @@ function GameInner({
     onEnterValue(selectedCellId, value);
     const nextValues = new Map(state.values);
     nextValues.set(selectedCellId, value);
-    const isCorrect =
-      checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
-    const correct = checkEnabled && solution.has(selectedCellId) ? isCorrect : undefined;
-    const inConflict =
-      !isCorrect &&
-      checkEnabled &&
-      validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-    grid.announceCellState(selectedCellId, nextValues, { correct, conflict: inConflict });
+    grid.announceCellState(selectedCellId, nextValues);
   };
 
   const numberPad = (

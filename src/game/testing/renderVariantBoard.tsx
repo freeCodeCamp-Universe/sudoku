@@ -61,7 +61,7 @@ export function renderVariantBoard(
         describeCell: (id: CellId) => id,
         announcerRef: { current: null },
         announce: () => {},
-        announceCellState: () => {},
+        announceCellState: (_id: CellId, _nextValues: Values) => {},
         moveSelection: () => {},
       }}
       renderSymbol={renderSymbol}

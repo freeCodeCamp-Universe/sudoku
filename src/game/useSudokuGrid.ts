@@ -245,11 +245,10 @@ export function useSudokuGrid({
   // Announce an in-place change (value entry, deletion) with the same builder
   // and projected state that navigation uses, so the spoken description matches
   // arrowing onto the cell. `values` still holds the pre-change state when this
-  // runs, so callers pass the projected `nextValues` and the already-resolved
-  // correctness/conflict flags (which encode intentional rules such as
-  // suppressing "in conflict" on a correct entry).
+  // runs, so callers pass the projected `nextValues` and this helper computes the
+  // correct/conflict flags consistently for both keyboard and numpad paths.
   const announceCellState = useCallback(
-    (id: CellId, nextValues: Values, flags: { correct?: boolean; conflict: boolean }) => {
+    (id: CellId, nextValues: Values) => {
       const cell = cellsById.get(id);
 
       if (!cell) {
@@ -267,6 +266,15 @@ export function useSudokuGrid({
         )
         .filter((message): message is string => message !== null);
 
+      const correct =
+        checkEnabled && value !== undefined && solution.has(id)
+          ? value === solution.get(id)
+          : undefined;
+      const inConflict =
+        value !== undefined &&
+        correct !== true &&
+        checkEnabled &&
+        validate(nextValues, model).some((c) => c.cells.includes(id));
       const overused =
         value !== undefined && findOverusedSymbols(nextValues, solution, model.symbols).has(value);
 
@@ -277,8 +285,8 @@ export function useSudokuGrid({
           value,
           sortedCandidates,
           extras,
-          flags.correct,
-          flags.conflict,
+          correct,
+          inConflict,
           overused,
           givens.has(id) || revealed.has(id),
           describeSymbol
@@ -291,6 +299,7 @@ export function useSudokuGrid({
       boxNumberByCell,
       candidates,
       cellsById,
+      checkEnabled,
       describeSymbol,
       getCellState,
       givens,
@@ -387,7 +396,7 @@ export function useSudokuGrid({
 
           const nextValues = new Map(values);
           nextValues.delete(currentId);
-          announceCellState(currentId, nextValues, { conflict: false });
+          announceCellState(currentId, nextValues);
         }
         return;
       }
@@ -435,15 +444,8 @@ export function useSudokuGrid({
 
         const nextValues = new Map(values);
         nextValues.set(currentId, digit as SymbolValue);
-        const isCorrect =
-          checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
-        const correct = checkEnabled && solution.has(currentId) ? isCorrect : undefined;
-        const inConflict =
-          !isCorrect &&
-          checkEnabled &&
-          validate(nextValues, model).some((c) => c.cells.includes(currentId));
 
-        announceCellState(currentId, nextValues, { correct, conflict: inConflict });
+        announceCellState(currentId, nextValues);
       }
     },
     [
