@@ -346,6 +346,18 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
+  // On color pads the overused edge sits on the chip fill, not the button
+  // background, so the edge must pass against every chip color.
+  ...THEMES.flatMap((theme): PairInput[] =>
+    CHIP_TOKENS.map((chip) => ({
+      label: `numpad overused edge on ${chip}`,
+      fg: '--accent-red',
+      bg: chip,
+      threshold: UI_AA,
+      theme,
+    }))
+  ),
+
   // Grid lines are graphical objects required to understand the puzzle
   // (WCAG 1.4.11): cell borders and box boundaries need 3:1 against every
   // cell fill they delimit. Only the high-contrast palettes are declared —

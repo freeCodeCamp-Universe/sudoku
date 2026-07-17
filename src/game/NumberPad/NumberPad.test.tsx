@@ -185,4 +185,21 @@ describe('NumberPad', () => {
 
     expect(screen.getByRole('button', { name: 'Yellow' })).toBeTruthy();
   });
+
+  it('should render a color chip button with the overused edge applied', () => {
+    render(
+      <NumberPad
+        symbols={[2]}
+        overusedSymbols={new Set([2])}
+        onEnter={() => {}}
+        candidateMode={false}
+        renderSymbol={() => '#d4a828'}
+        describeSymbol={() => 'Orange'}
+        symbolKind="color"
+      />
+    );
+
+    const button = screen.getByRole('button', { name: 'Orange, more placed than needed' });
+    expect(button).toHaveAttribute('data-overused', 'true');
+  });
 });
