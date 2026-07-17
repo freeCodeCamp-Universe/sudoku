@@ -527,7 +527,7 @@ describe('GamePage - Classic integration', () => {
     }
   });
 
-  it('should restart the auto-dismiss countdown when another symbol crosses while the hint is open', () => {
+  it('should stack one toast per overused symbol, each with its own countdown', () => {
     vi.useFakeTimers();
 
     try {
@@ -539,16 +539,21 @@ describe('GamePage - Classic integration', () => {
       });
 
       placeSymbolIntoEmptyCells('2', 10);
+      expect(screen.getAllByRole('button', { name: 'Dismiss' })).toHaveLength(2);
+      // The live region announces the newest crossing.
       expect(queryOverusedEdgeHint()).toHaveTextContent(
         'Symbol 2 is placed more times than the puzzle needs.'
       );
 
-      // The first symbol's countdown would have expired 1s (+ exit) later; the
-      // second crossing must get the full duration instead.
+      // The first toast expires on its own schedule (1s + exit later) while
+      // the second sticks around for its full duration.
       act(() => {
-        vi.advanceTimersByTime(1200);
+        vi.advanceTimersByTime(1000);
       });
-      expect(queryOverusedEdgeHint()).not.toBeNull();
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(screen.getAllByRole('button', { name: 'Dismiss' })).toHaveLength(1);
 
       act(() => {
         vi.advanceTimersByTime(4800);
@@ -556,7 +561,39 @@ describe('GamePage - Classic integration', () => {
       act(() => {
         vi.advanceTimersByTime(200);
       });
+      expect(screen.queryAllByRole('button', { name: 'Dismiss' })).toHaveLength(0);
       expect(queryOverusedEdgeHint()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should replace the open toast instead of stacking a duplicate when the same symbol re-crosses', () => {
+    vi.useFakeTimers();
+
+    try {
+      // Checking off so the erase below cannot be blocked by the
+      // correctly-filled guard if the last placement happens to be right.
+      window.localStorage.setItem('sudoku-check-answers', 'false');
+
+      renderGamePage();
+
+      // Place 1s only until the toast first appears, so the board sits exactly
+      // one over the limit.
+      let placements = 0;
+      while (!queryOverusedEdgeHint() && placements < 15) {
+        placeSymbolIntoEmptyCells('1', 1);
+        placements += 1;
+      }
+
+      // Erase below the limit and re-cross while the first toast is still
+      // open: the toast is replaced, not duplicated.
+      fireEvent.click(screen.getByRole('button', { name: 'Erase' }));
+      const [, otherEmptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+      fireEvent.click(otherEmptyCell);
+      fireEvent.click(screen.getByRole('button', { name: /^1(,|$)/ }));
+
+      expect(screen.getAllByRole('button', { name: 'Dismiss' })).toHaveLength(1);
     } finally {
       vi.useRealTimers();
     }
