@@ -442,6 +442,33 @@ describe('GamePage - check prompt', () => {
   });
 });
 
+describe('GamePage - solved puzzle', () => {
+  it('should not reveal cells while viewing the solved puzzle', async () => {
+    const user = userEvent.setup();
+    // Seed a solved board (checking stays on by default), so the win dialog
+    // opens on mount and View Puzzle shows the finished board.
+    window.localStorage.setItem(
+      'sudoku-progress-classic',
+      JSON.stringify({
+        seedBase: 1,
+        jigsawLayoutStart: 0,
+        genKey: 0,
+        values: [...makeSolution()],
+        candidates: [],
+        revealed: [],
+        elapsedSeconds: 5,
+      })
+    );
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: 'View Puzzle' }));
+    await user.click(screen.getByRole('gridcell', { name: /Row 9, column 9,/i }));
+    await user.click(screen.getByRole('button', { name: /reveal/i }));
+
+    expect(screen.queryByRole('gridcell', { name: /revealed/i })).toBeNull();
+  });
+});
+
 describe('GamePage - back navigation', () => {
   it('should navigate immediately when Back is clicked with no progress', async () => {
     const user = userEvent.setup();
@@ -478,6 +505,90 @@ describe('GamePage - progress persistence', () => {
     expect(saved).not.toBeNull();
     const parsed = JSON.parse(saved!);
     expect(parsed.values.length).toBeGreaterThan(0);
+  });
+});
+
+describe('GamePage - pause', () => {
+  async function startGame(user: ReturnType<typeof userEvent.setup>) {
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+  }
+
+  it('should not offer pause before the timer has started', () => {
+    renderGamePage();
+
+    expect(screen.queryByRole('button', { name: 'Pause game' })).toBeNull();
+  });
+
+  it('should hide the puzzle and show the pause cover while paused', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+    await startGame(user);
+
+    await user.click(screen.getByRole('button', { name: 'Pause game' }));
+
+    expect(screen.queryByRole('grid', { name: /sudoku grid/i })).toBeNull();
+    expect(screen.getByText('Paused')).toBeInTheDocument();
+    expect(screen.getByText('Game paused, puzzle hidden.')).toBeInTheDocument();
+  });
+
+  it('should restore the puzzle when Resume is clicked on the cover', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+    await startGame(user);
+
+    await user.click(screen.getByRole('button', { name: 'Pause game' }));
+    await user.click(screen.getByRole('button', { name: 'Resume' }));
+
+    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeInTheDocument();
+    expect(screen.queryByText('Paused')).toBeNull();
+    expect(screen.getByText('Game resumed.')).toBeInTheDocument();
+  });
+
+  it('should restore the puzzle from the timer Resume game button', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+    await startGame(user);
+
+    await user.click(screen.getByRole('button', { name: 'Pause game' }));
+    await user.click(screen.getByRole('button', { name: 'Resume game' }));
+
+    expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeInTheDocument();
+  });
+
+  it('should not tick the timer while paused', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+    await startGame(user);
+
+    vi.useFakeTimers();
+    fireEvent.click(screen.getByRole('button', { name: 'Pause game' }));
+    const readTimer = () => screen.getAllByText(/\d+:\d{2}/)[0].textContent;
+    const displayed = readTimer();
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    expect(readTimer()).toBe(displayed);
+    vi.useRealTimers();
+  });
+
+  it('should ignore numpad entry while paused', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+
+    await user.click(screen.getByRole('button', { name: 'Pause game' }));
+    await user.click(screen.getByRole('button', { name: '7' }));
+    await user.click(screen.getByRole('button', { name: 'Resume game' }));
+
+    expect(screen.queryByRole('gridcell', { name: /Row 4, column 1, box 4, 7/ })).toBeNull();
   });
 });
 

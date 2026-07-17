@@ -100,6 +100,10 @@ function GameInner({
   const [winOpen, setWinOpen] = useState(false);
   const winTitleId = useId();
   const [verifyMode, setVerifyMode] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  // The board's own live region unmounts with the board while paused, so
+  // pause state changes are announced through this dedicated region instead.
+  const [pauseAnnouncement, setPauseAnnouncement] = useState('');
   const [isVisible, setIsVisible] = useState(!document.hidden);
   // At desktop width and up (aligned with VIEWPORT_DESKTOP in cellSizes.ts)
   // the board sits beside the controls, so the compact minimap + zoom +
@@ -113,6 +117,7 @@ function GameInner({
 
   useEffect(() => {
     setVerifyMode(false);
+    setIsPaused(false);
   }, [solution]);
 
   useEffect(() => {
@@ -299,7 +304,13 @@ function GameInner({
   });
 
   useEffect(() => {
-    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved || !isVisible) {
+    if (
+      !settings.timerEnabled ||
+      !state.timerStarted ||
+      effectiveSolved ||
+      !isVisible ||
+      isPaused
+    ) {
       return undefined;
     }
 
@@ -310,7 +321,7 @@ function GameInner({
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, effectiveSolved, isVisible, settings.timerEnabled, state.timerStarted]);
+  }, [dispatch, effectiveSolved, isPaused, isVisible, settings.timerEnabled, state.timerStarted]);
 
   useEffect(() => {
     if (!effectiveSolved || !grid.announcerRef.current) {
@@ -338,7 +349,13 @@ function GameInner({
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
   function handleReveal() {
-    if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
+    if (
+      isPaused ||
+      effectiveSolved ||
+      !selectedCellId ||
+      givensSet.has(selectedCellId) ||
+      state.revealed.has(selectedCellId)
+    ) {
       return;
     }
 
@@ -453,7 +470,7 @@ function GameInner({
   );
 
   const handleNumberEntry = (value: SymbolValue | 0) => {
-    if (!selectedCellId) {
+    if (isPaused || !selectedCellId) {
       return;
     }
 
@@ -571,13 +588,21 @@ function GameInner({
     </div>
   );
   const inputTabLabelledBy = `${candidateMode ? 'candidate' : 'normal'}-tab`;
+  const canPause = settings.timerEnabled && state.timerStarted && !effectiveSolved;
+  const togglePause = () => {
+    const next = !isPaused;
+    setIsPaused(next);
+    setPauseAnnouncement(next ? 'Game paused, puzzle hidden.' : 'Game resumed.');
+  };
   const timer = (
     <Timer
       elapsedSeconds={state.elapsedSeconds}
-      running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
+      running={settings.timerEnabled && state.timerStarted && !effectiveSolved && !isPaused}
       visible={settings.timerEnabled}
       done={effectiveSolved}
       compact={isLandscapeMobile}
+      paused={isPaused}
+      onTogglePause={canPause ? togglePause : undefined}
     />
   );
   const variantLegend =
@@ -678,23 +703,35 @@ function GameInner({
                 : styles.boardFrame
             }
           >
-            <Board
-              variant={variant}
-              cells={model.cells}
-              rects={rects}
-              size={size}
-              gutters={gutters}
-              overlays={overlays}
-              grid={grid}
-              renderSymbol={renderSymbol}
-              displaySymbols={displaySymbols}
-              markerGaps={markerGaps}
-              wordCells={wordCellIds}
-              parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
-              viewport={viewportState}
-              checkEnabled={checkEnabled}
-              showColorLabel={settings.showColorLabels}
-            />
+            {isPaused ? (
+              <div
+                className={styles.pauseCover}
+                style={{ width: framedSize.w, height: framedSize.h }}
+              >
+                <span className={styles.pauseTitle}>Paused</span>
+                <Button variant="primary" onClick={togglePause}>
+                  Resume
+                </Button>
+              </div>
+            ) : (
+              <Board
+                variant={variant}
+                cells={model.cells}
+                rects={rects}
+                size={size}
+                gutters={gutters}
+                overlays={overlays}
+                grid={grid}
+                renderSymbol={renderSymbol}
+                displaySymbols={displaySymbols}
+                markerGaps={markerGaps}
+                wordCells={wordCellIds}
+                parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+                viewport={viewportState}
+                checkEnabled={checkEnabled}
+                showColorLabel={settings.showColorLabels}
+              />
+            )}
           </div>
           {isLandscapeMobile ? null : variantLegend}
         </div>
@@ -737,6 +774,9 @@ function GameInner({
           New Game
         </Button>
       ) : null}
+      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+        {pauseAnnouncement}
+      </div>
       <div role="status" aria-live="polite">
         {showCheckPrompt ? (
           <div className={styles.checkPrompt}>

@@ -1,3 +1,5 @@
+import { PauseIcon } from './PauseIcon';
+import { PlayIcon } from './PlayIcon';
 import styles from './Timer.module.css';
 
 interface TimerProps {
@@ -11,6 +13,10 @@ interface TimerProps {
    * where vertical space is the scarce dimension.
    */
   compact?: boolean;
+  paused?: boolean;
+  // Renders the pause/resume button when provided; callers omit it while
+  // there is nothing to pause (timer disabled, not started, or solved).
+  onTogglePause?: () => void;
 }
 
 export function Timer({
@@ -19,6 +25,8 @@ export function Timer({
   visible,
   done = false,
   compact = false,
+  paused = false,
+  onTogglePause,
 }: TimerProps) {
   const minutes = Math.floor(elapsedSeconds / 60);
   const seconds = elapsedSeconds % 60;
@@ -39,6 +47,20 @@ export function Timer({
       aria-hidden={!visible}
     >
       {display}
+      {onTogglePause ? (
+        <button
+          type="button"
+          className={styles.pauseBtn}
+          aria-label={paused ? 'Resume game' : 'Pause game'}
+          onClick={onTogglePause}
+        >
+          {paused ? (
+            <PlayIcon className={styles.pauseBtnIcon} />
+          ) : (
+            <PauseIcon className={styles.pauseBtnIcon} />
+          )}
+        </button>
+      ) : null}
     </div>
   );
 }

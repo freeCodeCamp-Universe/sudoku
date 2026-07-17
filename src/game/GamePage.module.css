@@ -70,6 +70,41 @@
   min-block-size: 0;
 }
 
+/* While paused the puzzle must not be visible, so the cover renders in
+   place of the board (which is unmounted entirely). Its width/height are set
+   inline to the framed board extent, and the margin mirrors .boardWrap's
+   24px in Board.module.css, so surrounding controls keep their exact
+   positions even where the frame is content-sized (desktop). */
+.pauseCover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-block-end: 24px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pauseTitle {
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 /* The pan/zoom clip inside is absolutely positioned and sized off this box,
    so the frame must keep a bounded block-size whenever the modifier is on
    (an auto-height frame would collapse to nothing and hide the board). The

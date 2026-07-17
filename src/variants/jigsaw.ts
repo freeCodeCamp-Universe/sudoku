@@ -202,8 +202,13 @@ const REGION_SWAP_MAX_TRIES = 4000;
 // boxes; scrap the attempt and rescramble instead of shipping it.
 const REGION_MIN_SWAPS = 40;
 const REGION_ATTEMPTS = 20;
-const REGION_FILL_NODE_BUDGET = 20_000;
-const REGION_FILL_RESTARTS = 5;
+// Kept small on purpose: fillable partitions almost always solve within a
+// few thousand propagation nodes, while every rejected partition burns the
+// FULL budget × restarts before rescrambling. A generous budget here turned
+// unlucky seeds into ~1s synchronous stalls; treating a budget-abort as
+// "just scramble again" is far cheaper than proving a hard partition.
+const REGION_FILL_NODE_BUDGET = 4_000;
+const REGION_FILL_RESTARTS = 2;
 
 const DIRECTIONS: [number, number][] = [
   [-1, 0],

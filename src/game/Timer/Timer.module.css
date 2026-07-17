@@ -1,10 +1,49 @@
 .timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-family: 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 1.1rem;
   color: var(--text-muted);
   letter-spacing: 2px;
-  text-align: center;
   margin-block-end: 10px;
+}
+
+/* 36px target (comfortably above the WCAG 2.5.8 24px minimum); the negative
+   block margin keeps the timer row's height at the text's height so the
+   bigger target doesn't push the board down. */
+.pauseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
+  margin-block: -6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.pauseBtn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.pauseBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.pauseBtnIcon {
+  inline-size: 11px;
+  block-size: 11px;
+  fill: currentColor;
 }
 
 @media (min-width: 600px) {
