@@ -1,3 +1,4 @@
+import { withUnbreakableTokens } from '@/app/withUnbreakableTokens';
 import type { Variant } from '@/engine/types';
 import { Preview } from '@/gallery/previews';
 import { StarIcon } from '@/gallery/StarIcon';
@@ -48,7 +49,7 @@ export function VariantCard({ variant, isFavorite, onToggleFavorite }: VariantCa
       <div className={styles.preview}>
         <Preview variantId={variant.id} />
       </div>
-      <p className={styles.cardDesc}>{variant.description}</p>
+      <p className={styles.cardDesc}>{withUnbreakableTokens(variant.description)}</p>
     </article>
   );
 }

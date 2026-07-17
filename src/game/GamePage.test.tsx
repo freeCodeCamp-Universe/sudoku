@@ -263,11 +263,17 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('dialog', { name: 'How to Play' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Basic Rules', level: 3 })).toBeNull();
     expect(screen.getByText('The board:')).toBeInTheDocument();
+    // Rule text is interleaved with no-wrap token spans, so match on the
+    // list item's full text content instead of a single text node.
     expect(
-      screen.getByText(
-        'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
-      )
-    ).toBeInTheDocument();
+      screen
+        .getAllByRole('listitem')
+        .some(
+          (item) =>
+            item.textContent ===
+            'The board: A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
+        )
+    ).toBe(true);
     expect(screen.queryByRole('heading', { name: 'Additional Rules', level: 3 })).toBeNull();
   });
 

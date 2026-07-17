@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { withUnbreakableTokens } from '@/app/withUnbreakableTokens';
 import type { HelpRule, HelpSection } from '@/engine/types';
 import { Dialog } from '@/game/Dialog';
 import { Tabs } from '@/game/Tabs';
@@ -78,7 +79,7 @@ export function HelpDialog({ open, onClose, basicRules, help }: HelpDialogProps)
           <ul className={styles.rules}>
             {(basicRules ?? BASIC_RULES).map((rule) => (
               <li key={rule.term}>
-                <strong>{rule.term}:</strong> {rule.text}
+                <strong>{rule.term}:</strong> {withUnbreakableTokens(rule.text)}
               </li>
             ))}
           </ul>
@@ -91,10 +92,10 @@ export function HelpDialog({ open, onClose, basicRules, help }: HelpDialogProps)
                 <li key={`${rule.term}-${rule.text}`}>
                   {rule.term ? (
                     <>
-                      <strong>{rule.term}:</strong> {rule.text}
+                      <strong>{rule.term}:</strong> {withUnbreakableTokens(rule.text)}
                     </>
                   ) : (
-                    rule.text
+                    withUnbreakableTokens(rule.text)
                   )}
                 </li>
               ))}
@@ -113,7 +114,7 @@ export function HelpDialog({ open, onClose, basicRules, help }: HelpDialogProps)
         <ul className={styles.rules}>
           {GAMEPLAY_ITEMS.map((item) => (
             <li key={item.term}>
-              <strong>{item.term}:</strong> {item.text}
+              <strong>{item.term}:</strong> {withUnbreakableTokens(item.text)}
             </li>
           ))}
         </ul>
