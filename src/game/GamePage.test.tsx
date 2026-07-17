@@ -341,6 +341,26 @@ describe('GamePage - Classic integration', () => {
     vi.useRealTimers();
   });
 
+  it('should announce candidate added when Candidate mode is active and a numpad symbol is clicked', () => {
+    vi.useFakeTimers();
+    renderGamePage();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Candidate' }));
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(screen.getByRole('button', { name: '5' }));
+
+    act(() => {
+      vi.advanceTimersByTime(10);
+    });
+
+    const gridAnnouncer = screen
+      .getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    expect(gridAnnouncer.textContent).toMatch(/Row \d+, column \d+, box \d+, candidate 5 added/);
+    vi.useRealTimers();
+  });
+
   it('should announce the revealed value when the Reveal Cell button is clicked', () => {
     vi.useFakeTimers();
     renderGamePage();

@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
-import type { CellId, SymbolValue } from '@/engine/types';
+import type { Cell, CellId, SymbolValue } from '@/engine/types';
 import {
   boardFrameEdge,
   framedBoardSize,
@@ -334,7 +334,32 @@ function GameInner({
     }
   }, [effectiveSolved]);
 
+  const boxNumberByCell = useMemo(() => {
+    const map = new Map<CellId, number>();
+
+    model.houses
+      .filter((house) => /^box-\d+-\d+$/.test(house.id))
+      .forEach((house, index) => {
+        for (const id of house.cells) {
+          map.set(id, index + 1);
+        }
+      });
+
+    return map;
+  }, [model.houses]);
+
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
+
+  function formatLocation(cell: Cell | undefined): string {
+    if (!cell) {
+      return 'Unknown location';
+    }
+
+    const boxNumber = boxNumberByCell.get(cell.id);
+    return `Row ${cell.row + 1}, column ${cell.col + 1}${
+      boxNumber !== undefined ? `, box ${boxNumber}` : ''
+    }`;
+  }
 
   function handleReveal() {
     if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
@@ -466,11 +491,12 @@ function GameInner({
     }
 
     const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-    const loc = selectedCell ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}` : null;
 
     if (value === 0) {
       dispatch({ type: 'erase', cellId: selectedCellId });
-      if (loc) grid.announce(`${loc}, empty`);
+      const nextValues = new Map(state.values);
+      nextValues.delete(selectedCellId);
+      grid.announceCellState(selectedCellId, nextValues);
       return;
     }
 
@@ -478,8 +504,12 @@ function GameInner({
       const current = state.candidates.get(selectedCellId) ?? [];
       const adding = !current.includes(value);
       onToggleCandidate(selectedCellId, value);
-      if (loc) {
-        grid.announce(`${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`);
+      if (selectedCell) {
+        grid.announce(
+          `${formatLocation(selectedCell)}, candidate ${describeSymbol(value)} ${
+            adding ? 'added' : 'removed'
+          }`
+        );
       }
       return;
     }
