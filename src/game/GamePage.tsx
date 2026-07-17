@@ -648,7 +648,7 @@ function GameInner({
           aria-hidden="true"
           className={styles.legendIcon}
         >
-          <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
+          <circle cx="5" cy="5" r="4" className={styles.legendKropkiWhite} />
         </svg>
         <span>Consecutive (differ by 1)</span>
         <svg
@@ -658,7 +658,7 @@ function GameInner({
           aria-hidden="true"
           className={styles.legendIcon}
         >
-          <circle cx="5" cy="5" r="4" fill="#5060a0" />
+          <circle cx="5" cy="5" r="4" className={styles.legendKropkiBlack} />
         </svg>
         <span>One is double the other</span>
       </div>

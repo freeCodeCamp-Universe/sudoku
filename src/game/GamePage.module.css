@@ -140,6 +140,20 @@
   fill: var(--overlay-inequality-fill);
 }
 
+/* Same tokens and strokes as KropkiOverlay's dots, so the legend swatches
+   match the board's markers exactly in every theme. */
+.legendKropkiWhite {
+  fill: var(--overlay-kropki-light);
+  stroke: var(--overlay-kropki-ring);
+  stroke-width: 1.5px;
+}
+
+.legendKropkiBlack {
+  fill: var(--overlay-kropki-dark);
+  stroke: var(--overlay-kropki-light);
+  stroke-width: 1px;
+}
+
 .legendCircle {
   fill: none;
   stroke: #9898b8;
