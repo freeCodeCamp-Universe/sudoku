@@ -449,10 +449,9 @@ describe('GamePage - check prompt', () => {
 });
 
 describe('GamePage - solved puzzle', () => {
-  it('should not reveal cells while viewing the solved puzzle', async () => {
-    const user = userEvent.setup();
-    // Seed a solved board (checking stays on by default), so the win dialog
-    // opens on mount and View Puzzle shows the finished board.
+  // Seed a solved board (checking stays on by default), so the win dialog
+  // opens on mount and View Puzzle shows the finished board.
+  function seedSolvedBoard() {
     window.localStorage.setItem(
       'sudoku-progress-classic',
       JSON.stringify({
@@ -465,6 +464,11 @@ describe('GamePage - solved puzzle', () => {
         elapsedSeconds: 5,
       })
     );
+  }
+
+  it('should not reveal cells while viewing the solved puzzle', async () => {
+    const user = userEvent.setup();
+    seedSolvedBoard();
     renderGamePage();
 
     await user.click(screen.getByRole('button', { name: 'View Puzzle' }));
@@ -472,6 +476,60 @@ describe('GamePage - solved puzzle', () => {
     await user.click(screen.getByRole('button', { name: /reveal/i }));
 
     expect(screen.queryByRole('gridcell', { name: /revealed/i })).toBeNull();
+  });
+
+  it('should stay completed when the check toggle is flipped off afterwards', async () => {
+    const user = userEvent.setup();
+    seedSolvedBoard();
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: 'View Puzzle' }));
+    await user.click(screen.getByRole('button', { name: 'Settings' }));
+    await user.click(screen.getByRole('switch', { name: 'Check answers' }));
+
+    // Turning checking off must not resurrect the round: no completion
+    // prompt, no reveal, no editing.
+    expect(screen.queryByText(/looks like you're done/i)).toBeNull();
+
+    await user.click(screen.getByRole('gridcell', { name: /Row 9, column 9,/i }));
+    await user.click(screen.getByRole('button', { name: /reveal/i }));
+    expect(screen.queryByRole('gridcell', { name: /revealed/i })).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+    expect(screen.queryByRole('gridcell', { name: /Row 9, column 9,.*empty/i })).toBeNull();
+  });
+
+  it('should not reopen the win dialog when checking is toggled off and on', async () => {
+    const user = userEvent.setup();
+    seedSolvedBoard();
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: 'View Puzzle' }));
+    await user.click(screen.getByRole('button', { name: 'Settings' }));
+    await user.click(screen.getByRole('switch', { name: 'Check answers' }));
+    await user.click(screen.getByRole('switch', { name: 'Check answers' }));
+
+    expect(screen.queryByRole('dialog', { name: /great job/i })).toBeNull();
+  });
+
+  it('should allow replaying the same board after Clear All', async () => {
+    const user = userEvent.setup();
+    seedSolvedBoard();
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: 'View Puzzle' }));
+    await user.click(screen.getByRole('button', { name: 'Clear All' }));
+    await user.click(
+      within(screen.getByRole('dialog', { name: /clear all entries/i })).getByRole('button', {
+        name: 'Clear All',
+      })
+    );
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    expect(screen.getAllByRole('gridcell', { name: /, 5(,|$)/ }).length).toBeGreaterThan(0);
   });
 });
 
