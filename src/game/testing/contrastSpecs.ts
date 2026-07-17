@@ -334,6 +334,19 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
+  // The overused-edge toast names the offending symbol in accent-red body text
+  // on the secondary surface, so it must clear the 4.5:1 text threshold (not
+  // just the 3:1 graphical bar the numpad edge uses).
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'overused hint symbol text on toast bg',
+      fg: '--accent-red',
+      bg: '--bg-secondary',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
   // The numpad overused edge is a graphical indicator on the button face
   // (WCAG 1.4.11): it must be visible at 3:1 against the secondary button surface.
   ...THEMES.map(
@@ -346,16 +359,16 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
-  // On color pads the overused edge sits on the chip fill, not the button
-  // background, so the edge must pass against every chip color.
-  ...THEMES.flatMap((theme): PairInput[] =>
-    CHIP_TOKENS.map((chip) => ({
-      label: `numpad overused edge on ${chip}`,
+  // On color pads the button face is transparent, so the overused edge sits
+  // on the surrounding control surface rather than on the chip fill.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'numpad overused edge on page bg',
       fg: '--accent-red',
-      bg: chip,
+      bg: '--bg-primary',
       threshold: UI_AA,
       theme,
-    }))
+    })
   ),
 
   // Grid lines are graphical objects required to understand the puzzle

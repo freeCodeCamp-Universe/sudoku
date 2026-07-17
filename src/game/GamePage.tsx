@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
-import type { Cell, CellId, SymbolValue } from '@/engine/types';
+import type { CellId, SymbolValue } from '@/engine/types';
 import {
   boardFrameEdge,
   framedBoardSize,
@@ -48,6 +49,10 @@ import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
 import { useSudokuGrid } from './useSudokuGrid';
 import styles from './GamePage.module.css';
+
+const OVERUSED_EDGE_HINT_DURATION_MS = 6000;
+// Mirrors the exit transition duration in GamePage.module.css.
+const OVERUSED_EDGE_HINT_EXIT_MS = 200;
 
 type VariantWithColorNames = {
   colorNames?: string[];
@@ -99,6 +104,13 @@ function GameInner({
   const [winOpen, setWinOpen] = useState(false);
   const winTitleId = useId();
   const [verifyMode, setVerifyMode] = useState(false);
+  const [overusedEdgeHintOpen, setOverusedEdgeHintOpen] = useState(false);
+  const [overusedEdgeHintClosing, setOverusedEdgeHintClosing] = useState(false);
+  const [overusedEdgeHintSymbol, setOverusedEdgeHintSymbol] = useState<SymbolValue | null>(null);
+  // Bumped on every crossing so the auto-dismiss countdown restarts even when
+  // the hint is already open (a second symbol crossing, or the same symbol
+  // erased below the limit and crossed again, must get the full duration).
+  const [overusedEdgeHintNonce, setOverusedEdgeHintNonce] = useState(0);
   const [isVisible, setIsVisible] = useState(!document.hidden);
   // At desktop width and up (aligned with VIEWPORT_DESKTOP in cellSizes.ts)
   // the board sits beside the controls, so the compact minimap + zoom +
@@ -112,7 +124,50 @@ function GameInner({
 
   useEffect(() => {
     setVerifyMode(false);
+    setOverusedEdgeHintOpen(false);
+    setOverusedEdgeHintClosing(false);
   }, [solution]);
+
+  // Hovering or focusing the toast pauses the auto-dismiss timer (WCAG 2.2.1:
+  // give readers time); leaving restarts the full duration.
+  const [overusedEdgeHintPaused, setOverusedEdgeHintPaused] = useState(false);
+
+  // After the visible duration the toast enters its closing phase; hovering,
+  // focus, or an in-progress close stops the countdown.
+  useEffect(() => {
+    if (!overusedEdgeHintOpen || overusedEdgeHintPaused || overusedEdgeHintClosing) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setOverusedEdgeHintClosing(true);
+    }, OVERUSED_EDGE_HINT_DURATION_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    overusedEdgeHintOpen,
+    overusedEdgeHintPaused,
+    overusedEdgeHintClosing,
+    overusedEdgeHintNonce,
+  ]);
+
+  // Stay mounted through the exit transition, then unmount.
+  useEffect(() => {
+    if (!overusedEdgeHintClosing) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setOverusedEdgeHintOpen(false);
+      setOverusedEdgeHintClosing(false);
+    }, OVERUSED_EDGE_HINT_EXIT_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [overusedEdgeHintClosing]);
 
   useEffect(() => {
     function handleVisibilityChange() {
@@ -334,32 +389,7 @@ function GameInner({
     }
   }, [effectiveSolved]);
 
-  const boxNumberByCell = useMemo(() => {
-    const map = new Map<CellId, number>();
-
-    model.houses
-      .filter((house) => /^box-\d+-\d+$/.test(house.id))
-      .forEach((house, index) => {
-        for (const id of house.cells) {
-          map.set(id, index + 1);
-        }
-      });
-
-    return map;
-  }, [model.houses]);
-
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
-
-  function formatLocation(cell: Cell | undefined): string {
-    if (!cell) {
-      return 'Unknown location';
-    }
-
-    const boxNumber = boxNumberByCell.get(cell.id);
-    return `Row ${cell.row + 1}, column ${cell.col + 1}${
-      boxNumber !== undefined ? `, box ${boxNumber}` : ''
-    }`;
-  }
 
   function handleReveal() {
     if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
@@ -398,6 +428,29 @@ function GameInner({
     () => findOverusedSymbols(state.values, solution, model.symbols),
     [model.symbols, solution, state.values]
   );
+
+  // The hint fires each time a symbol crosses into the overused state, however
+  // the entry was made (numpad tap or keyboard on the board), so it watches the
+  // derived set instead of living in an input handler. Placing further copies
+  // of an already-overused symbol stays silent; erasing back under the limit
+  // and crossing it again re-arms the toast. The ref starts as the initial set
+  // so saved progress that is already overused does not fire on mount.
+  const prevOverusedSymbolsRef = useRef(overusedSymbols);
+  useEffect(() => {
+    const previous = prevOverusedSymbolsRef.current;
+    prevOverusedSymbolsRef.current = overusedSymbols;
+
+    // One entry sets one cell, so at most one symbol newly crosses per change.
+    const newlyOverused = [...overusedSymbols].find((symbol) => !previous.has(symbol));
+
+    if (newlyOverused !== undefined) {
+      setOverusedEdgeHintSymbol(newlyOverused);
+      setOverusedEdgeHintOpen(true);
+      setOverusedEdgeHintClosing(false);
+      setOverusedEdgeHintPaused(false);
+      setOverusedEdgeHintNonce((nonce) => nonce + 1);
+    }
+  }, [overusedSymbols]);
 
   const wordCellIds = useMemo((): Set<CellId> => {
     if (!state.solved || variant.id !== 'wordoku') return new Set();
@@ -490,8 +543,6 @@ function GameInner({
       return;
     }
 
-    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-
     if (value === 0) {
       dispatch({ type: 'erase', cellId: selectedCellId });
       const nextValues = new Map(state.values);
@@ -504,13 +555,7 @@ function GameInner({
       const current = state.candidates.get(selectedCellId) ?? [];
       const adding = !current.includes(value);
       onToggleCandidate(selectedCellId, value);
-      if (selectedCell) {
-        grid.announce(
-          `${formatLocation(selectedCell)}, candidate ${describeSymbol(value)} ${
-            adding ? 'added' : 'removed'
-          }`
-        );
-      }
+      grid.announceCandidateToggle(selectedCellId, value, adding);
       return;
     }
 
@@ -539,6 +584,53 @@ function GameInner({
       describeSymbol={describeSymbol}
       symbolKind={variant.symbolKind}
     />
+  );
+
+  // Portaled to <body>: the toast is fixed-positioned, and rendering it inside
+  // the game layout would let a transformed ancestor (the pan/zoom clip) become
+  // its containing block and anchor it to the board instead of the viewport.
+  // The status region stays mounted permanently and only its text changes:
+  // screen readers skip live regions that enter the DOM with content already in
+  // them, so mounting the region together with the toast would not announce.
+  // It is the sole overuse announcement (the persistent numpad label carries
+  // ongoing state), so no cell announcement duplicates it, and the visible copy
+  // is aria-hidden so it is not read twice.
+  const overusedEdgeHintMessage =
+    overusedEdgeHintOpen && overusedEdgeHintSymbol !== null
+      ? `Symbol ${describeSymbol(overusedEdgeHintSymbol)} is placed more times than the puzzle needs.`
+      : '';
+  const overusedEdgeHint = createPortal(
+    <>
+      <span role="status" className={styles.srOnly}>
+        {overusedEdgeHintMessage}
+      </span>
+      {overusedEdgeHintOpen && overusedEdgeHintSymbol !== null ? (
+        <div
+          className={styles.overusedHint}
+          data-closing={overusedEdgeHintClosing || undefined}
+          onMouseEnter={() => setOverusedEdgeHintPaused(true)}
+          onMouseLeave={() => setOverusedEdgeHintPaused(false)}
+          onFocus={() => setOverusedEdgeHintPaused(true)}
+          onBlur={() => setOverusedEdgeHintPaused(false)}
+        >
+          <span aria-hidden="true">
+            Symbol{' '}
+            <span className={styles.overusedHintSymbols}>
+              {describeSymbol(overusedEdgeHintSymbol)}
+            </span>{' '}
+            is placed more times than the puzzle needs.
+          </span>
+          <button
+            type="button"
+            className={styles.overusedHintDismiss}
+            onClick={() => setOverusedEdgeHintClosing(true)}
+          >
+            Dismiss
+          </button>
+        </div>
+      ) : null}
+    </>,
+    document.body
   );
 
   // Normal and Candidate share the input panel (the number pad) and differ only
@@ -680,6 +772,7 @@ function GameInner({
         .filter(Boolean)
         .join(' ')}
     >
+      {overusedEdgeHint}
       {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>

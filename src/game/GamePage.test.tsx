@@ -70,6 +70,33 @@ function renderGamePage(variantId = 'classic') {
   );
 }
 
+function placeSymbolIntoEmptyCells(symbolName: string, placements: number) {
+  // Prefix match: an overused symbol's button is named "1, more placed than
+  // needed", and these tests keep placing past that point.
+  const button = screen.getByRole('button', { name: new RegExp(`^${symbolName}(,|$)`) });
+
+  for (let i = 0; i < placements; i += 1) {
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    fireEvent.click(emptyCell);
+    fireEvent.click(button);
+  }
+}
+
+// The toast splits the offending symbol (accent-red) from the body text into
+// separate spans, so match the body copy the symbol name is folded into.
+const OVERUSED_EDGE_HINT_TEXT = /placed more times than the puzzle needs/;
+
+// The toast mirrors its visible text into a persistent sr-only status region,
+// so query that region: it asserts what screen readers actually hear, and its
+// text is empty whenever the toast is closed.
+function queryOverusedEdgeHint() {
+  return (
+    screen
+      .getAllByRole('status')
+      .find((region) => OVERUSED_EDGE_HINT_TEXT.test(region.textContent ?? '')) ?? null
+  );
+}
+
 // jsdom defaults to a 1024px width (desktop layout). Tests that need the mobile
 // layout set window.innerWidth before rendering; reset it between tests.
 afterEach(() => {
@@ -378,6 +405,209 @@ describe('GamePage - Classic integration', () => {
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
     expect(gridAnnouncer.textContent).toContain('revealed');
     vi.useRealTimers();
+  });
+
+  it('should show the overused edge hint when a symbol becomes overused, then auto-dismiss it', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      placeSymbolIntoEmptyCells('1', 10);
+
+      const message = queryOverusedEdgeHint();
+      expect(message).not.toBeNull();
+      expect(message).toHaveTextContent('Symbol 1 is placed more times than the puzzle needs.');
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+
+      // Duration timer starts the close; a second flush runs the exit timer.
+      act(() => {
+        vi.advanceTimersByTime(6000);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(queryOverusedEdgeHint()).toBeNull();
+      // The status region itself must stay mounted with its text cleared:
+      // screen readers do not announce live regions that enter the DOM with
+      // content already in them, so the next crossing relies on this region.
+      expect(message).toBeInTheDocument();
+      expect(message?.textContent).toBe('');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should show the overused edge hint when a symbol becomes overused via keyboard entry', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      for (let i = 0; i < 10; i += 1) {
+        const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+        fireEvent.focus(emptyCell);
+        fireEvent.keyDown(emptyCell, { key: '1' });
+      }
+
+      expect(queryOverusedEdgeHint()).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should not show the overused edge hint again while the symbol stays overused', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      placeSymbolIntoEmptyCells('1', 10);
+      // Duration timer starts the close; a second flush runs the exit timer.
+      act(() => {
+        vi.advanceTimersByTime(6000);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(queryOverusedEdgeHint()).toBeNull();
+
+      placeSymbolIntoEmptyCells('1', 1);
+
+      expect(queryOverusedEdgeHint()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should show the overused edge hint again after erasing below the limit and crossing it again', () => {
+    vi.useFakeTimers();
+
+    try {
+      // Checking off so the erase below cannot be blocked by the
+      // correctly-filled guard if the last placement happens to be right.
+      window.localStorage.setItem('sudoku-check-answers', 'false');
+
+      renderGamePage();
+
+      // Place 1s only until the toast first appears, so the board sits exactly
+      // one over the limit; blindly placing more would leave it overused even
+      // after the erase below.
+      let placements = 0;
+      while (!queryOverusedEdgeHint() && placements < 15) {
+        placeSymbolIntoEmptyCells('1', 1);
+        placements += 1;
+      }
+      expect(queryOverusedEdgeHint()).not.toBeNull();
+
+      // Duration timer starts the close; a second flush runs the exit timer.
+      act(() => {
+        vi.advanceTimersByTime(6000);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(queryOverusedEdgeHint()).toBeNull();
+
+      // The last-placed cell is still selected; erasing it drops the count
+      // back under the limit, so the next placement crosses it again.
+      fireEvent.click(screen.getByRole('button', { name: 'Erase' }));
+      expect(queryOverusedEdgeHint()).toBeNull();
+
+      // Place into a different empty cell: clicking the just-erased cell
+      // (still selected) would toggle the selection off instead.
+      const [, otherEmptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+      fireEvent.click(otherEmptyCell);
+      fireEvent.click(screen.getByRole('button', { name: /^1(,|$)/ }));
+
+      expect(queryOverusedEdgeHint()).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should restart the auto-dismiss countdown when another symbol crosses while the hint is open', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      placeSymbolIntoEmptyCells('1', 10);
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      placeSymbolIntoEmptyCells('2', 10);
+      expect(queryOverusedEdgeHint()).toHaveTextContent(
+        'Symbol 2 is placed more times than the puzzle needs.'
+      );
+
+      // The first symbol's countdown would have expired 1s (+ exit) later; the
+      // second crossing must get the full duration instead.
+      act(() => {
+        vi.advanceTimersByTime(1200);
+      });
+      expect(queryOverusedEdgeHint()).not.toBeNull();
+
+      act(() => {
+        vi.advanceTimersByTime(4800);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(queryOverusedEdgeHint()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should pause the auto-dismiss countdown while the dismiss button has focus', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      placeSymbolIntoEmptyCells('1', 10);
+      const dismissButton = screen.getByRole('button', { name: 'Dismiss' });
+
+      fireEvent.focus(dismissButton);
+      act(() => {
+        vi.advanceTimersByTime(60000);
+      });
+      expect(queryOverusedEdgeHint()).not.toBeNull();
+
+      // Leaving restarts the full duration.
+      fireEvent.blur(dismissButton);
+      act(() => {
+        vi.advanceTimersByTime(6000);
+      });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+      expect(queryOverusedEdgeHint()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should dismiss the overused edge hint with the dismiss button', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderGamePage();
+
+      placeSymbolIntoEmptyCells('1', 10);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(queryOverusedEdgeHint()).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

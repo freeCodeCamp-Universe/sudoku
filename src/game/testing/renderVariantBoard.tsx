@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import type { CellId, SymbolValue, Variant, VariantModel } from '@/engine/types';
+import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
 import type { CellState } from '@/game/gameTypes';
 import { Board } from '@/game/Board';
 import { resolveOverlays } from '@/game/overlays/registry';
@@ -62,6 +62,7 @@ export function renderVariantBoard(
         announcerRef: { current: null },
         announce: () => {},
         announceCellState: (_id: CellId, _nextValues: Values) => {},
+        announceCandidateToggle: () => {},
         moveSelection: () => {},
       }}
       renderSymbol={renderSymbol}

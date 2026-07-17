@@ -3,7 +3,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { validate } from '@/engine/validate';
 import type { Cell, CellId, SymbolValue, Values, VariantModel } from '@/engine/types';
 import type { CellAnnotator, CellState, Direction, GridInteraction } from './gameTypes';
-import { findOverusedSymbols } from './overusedSymbols';
 
 function stepCellId(cell: { row: number; col: number }, direction: Direction): CellId {
   switch (direction) {
@@ -56,7 +55,6 @@ function getCellLabel(
   extras: string[],
   correct: boolean | undefined,
   inConflict: boolean,
-  overused: boolean,
   isReadonly: boolean,
   describeSymbol: (value: SymbolValue) => string
 ): string {
@@ -84,10 +82,6 @@ function getCellLabel(
 
   if (inConflict) {
     flags.push('in conflict');
-  }
-
-  if (overused) {
-    flags.push('more placed than needed');
   }
 
   flags.push(...extras);
@@ -234,7 +228,6 @@ export function useSudokuGrid({
         extras,
         state.correct,
         state.conflict,
-        false,
         state.given,
         describeSymbol
       );
@@ -296,8 +289,6 @@ export function useSudokuGrid({
           : undefined;
       const inConflict =
         value !== undefined && correct !== true && checkEnabled && projectedConflictSet.has(id);
-      const overused =
-        value !== undefined && findOverusedSymbols(nextValues, solution, model.symbols).has(value);
 
       announce(
         getCellLabel(
@@ -308,7 +299,6 @@ export function useSudokuGrid({
           extras,
           correct,
           inConflict,
-          overused,
           givens.has(id) || revealed.has(id),
           describeSymbol
         )
@@ -329,6 +319,25 @@ export function useSudokuGrid({
       selectedId,
       solution,
     ]
+  );
+
+  // Shared by the keyboard path and the numpad so both speak the same
+  // location (box number included) and phrasing for candidate toggles.
+  const announceCandidateToggle = useCallback(
+    (id: CellId, value: SymbolValue, adding: boolean) => {
+      const cell = cellsById.get(id);
+
+      if (!cell) {
+        return;
+      }
+
+      announce(
+        `${formatLocation(cell, boxNumberByCell.get(id))}, candidate ${describeSymbol(value)} ${
+          adding ? 'added' : 'removed'
+        }`
+      );
+    },
+    [announce, boxNumberByCell, cellsById, describeSymbol]
   );
 
   // Selection only moves DOM focus; the focused cell's accessible name is what
@@ -456,11 +465,7 @@ export function useSudokuGrid({
         const adding = !current.includes(digit as SymbolValue);
 
         onToggleCandidate(currentId, digit as SymbolValue);
-
-        const action = adding ? 'added' : 'removed';
-        announce(
-          `${formatLocation(cell, boxNumberByCell.get(currentId))}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
-        );
+        announceCandidateToggle(currentId, digit as SymbolValue, adding);
       } else {
         onEnterValue(currentId, digit as SymbolValue);
 
@@ -472,14 +477,13 @@ export function useSudokuGrid({
     },
     [
       announce,
+      announceCandidateToggle,
       announceCellState,
-      boxNumberByCell,
       candidateMode,
       candidates,
       cells,
       cellsById,
       checkEnabled,
-      describeSymbol,
       displaySymbols,
       givens,
       model,
@@ -560,6 +564,7 @@ export function useSudokuGrid({
     announcerRef,
     announce,
     announceCellState,
+    announceCandidateToggle,
     moveSelection,
   };
 }

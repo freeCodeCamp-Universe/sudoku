@@ -31,6 +31,7 @@ describe('Sujiken Board renders correct cell count', () => {
           announcerRef: { current: null },
           announce: () => {},
           announceCellState: () => {},
+          announceCandidateToggle: () => {},
           moveSelection: () => {},
         }}
         renderSymbol={(value) => String(value)}

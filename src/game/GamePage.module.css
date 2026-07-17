@@ -258,6 +258,91 @@
   transition: opacity 0.15s;
 }
 
+.overusedHint {
+  position: fixed;
+  inset-block-start: 32px;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - 24px);
+  z-index: var(--layer-toast);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-inline: 14px;
+  padding-block: 9px;
+  border-inline-start: 3px solid var(--accent-red);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: start;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
+}
+
+.overusedHintSymbols {
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+/* Visually hidden but kept in the accessibility tree, so the toast's live
+   region can stay mounted while the visible toast mounts and unmounts. */
+.srOnly {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Fade out before unmount; the upward slide is added for motion-OK users below. */
+.overusedHint[data-closing] {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .overusedHint {
+    animation: overused-hint-in 0.2s ease-out;
+  }
+
+  .overusedHint[data-closing] {
+    transform: translateY(-8px);
+    transition:
+      opacity 0.2s ease-in,
+      transform 0.2s ease-in;
+  }
+}
+
+@keyframes overused-hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overusedHintDismiss {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding-inline: 0;
+  padding-block: 0;
+  text-decoration: underline;
+}
+
 .checkPromptBtn:hover {
   opacity: 0.7;
 }

@@ -491,31 +491,6 @@ describe('useSudokuGrid', () => {
     vi.useRealTimers();
   });
 
-  it('should announce when a value entry overuses a symbol', async () => {
-    vi.useFakeTimers();
-    // The solution needs a single 5, but one is already placed elsewhere, so
-    // entering another 5 pushes the count past what the puzzle needs.
-    render(
-      React.createElement(TestBoard, {
-        values: new Map([['r0c4', 5]]),
-        solution: new Map([['r1c1', 5]]),
-      })
-    );
-
-    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
-    const getAnnouncer = () => screen.getByRole('status');
-
-    fireEvent.focus(cell);
-    fireEvent.keyDown(cell, { key: '5' });
-
-    act(() => {
-      vi.runAllTimers();
-    });
-
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, 5, more placed than needed');
-    vi.useRealTimers();
-  });
-
   it('should pass projected cell state to annotators when announcing state changes', async () => {
     vi.useFakeTimers();
     const annotator: CellAnnotator = {
