@@ -62,19 +62,19 @@
 }
 
 .cell[data-peer][data-even] {
-  background: var(--cell-peer-even-bg) !important;
+  background: var(--cell-peer-even-bg);
 }
 
 .cell[data-peer][data-odd] {
-  background: var(--cell-peer-odd-bg) !important;
+  background: var(--cell-peer-odd-bg);
 }
 
 :global(.light) .cell[data-peer][data-even] {
-  background: var(--cell-peer-even-bg) !important;
+  background: var(--cell-peer-even-bg);
 }
 
 :global(.light) .cell[data-peer][data-odd] {
-  background: var(--cell-peer-odd-bg) !important;
+  background: var(--cell-peer-odd-bg);
 }
 
 .cell[data-window] {
@@ -98,6 +98,37 @@
 :global(.light) .cell[data-center-dot],
 :global(.light) .cell[data-girandola] {
   background: var(--cell-special-bg);
+}
+
+/* Multigrid subgrid-overlap tint: one rung per overlap count (2..5), painted
+   on the plain cell base with the digit above. Declared before the peer,
+   same-value, and check-mode error fills below so those still win at equal
+   specificity. The light rules repeat the tokens only to outrank the white
+   cell-base override (`:global(.light) .cell`). */
+.cell[data-overlap='2'] {
+  background: var(--board-overlap-2-bg);
+}
+.cell[data-overlap='3'] {
+  background: var(--board-overlap-3-bg);
+}
+.cell[data-overlap='4'] {
+  background: var(--board-overlap-4-bg);
+}
+.cell[data-overlap='5'] {
+  background: var(--board-overlap-5-bg);
+}
+
+:global(.light) .cell[data-overlap='2'] {
+  background: var(--board-overlap-2-bg);
+}
+:global(.light) .cell[data-overlap='3'] {
+  background: var(--board-overlap-3-bg);
+}
+:global(.light) .cell[data-overlap='4'] {
+  background: var(--board-overlap-4-bg);
+}
+:global(.light) .cell[data-overlap='5'] {
+  background: var(--board-overlap-5-bg);
 }
 
 /* Grid lines live on ::before rather than the cell's `border` property so
@@ -164,70 +195,58 @@
 /* Dim the selected cell's peers (its row, column, box, and any other house
    it shares). Subtler than the same-value highlight, which overrides it. */
 .cell[data-peer] {
-  background: var(--cell-peer-bg) !important;
+  background: var(--cell-peer-bg);
 }
 
 :global(.light) .cell[data-peer] {
-  background: var(--cell-peer-bg) !important;
+  background: var(--cell-peer-bg);
 }
 
 /* Window cells keep a distinct, lighter peer shade so the selected cell's
    window stays visible instead of dropping to the darker outer-cell peer. */
 .cell[data-peer][data-window] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 :global(.light) .cell[data-peer][data-window] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 .cell[data-peer][data-asterisk],
 .cell[data-peer][data-center-dot],
 .cell[data-peer][data-girandola] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 :global(.light) .cell[data-peer][data-asterisk],
 :global(.light) .cell[data-peer][data-center-dot],
 :global(.light) .cell[data-peer][data-girandola] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 /* Diagonal peers keep a distinct lighter shade so the selected cell's diagonals
    stay visible instead of dropping to the plain outer-cell peer. */
 .cell[data-peer][data-diagonal] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 :global(.light) .cell[data-peer][data-diagonal] {
-  background: var(--cell-peer-structural-bg) !important;
+  background: var(--cell-peer-structural-bg);
 }
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
    distinct from correct (green). */
-.cell[data-same-value],
-.cell[data-same-value][data-butterfly],
-.cell[data-same-value][data-cross],
-.cell[data-same-value][data-flower] {
-  background: var(--cell-same-value-bg) !important;
+.cell[data-same-value] {
+  background: var(--cell-same-value-bg);
 }
 
-:global(.light) .cell[data-same-value],
-:global(.light) .cell[data-same-value][data-butterfly],
-:global(.light) .cell[data-same-value][data-cross],
-:global(.light) .cell[data-same-value][data-flower] {
-  background: var(--cell-same-value-bg) !important;
+:global(.light) .cell[data-same-value] {
+  background: var(--cell-same-value-bg);
 }
 
 [data-check] .cell[data-conflict],
-[data-check] .cell[data-conflict][data-butterfly],
-[data-check] .cell[data-conflict][data-overlap='two'],
-[data-check] .cell[data-conflict][data-overlap='four'],
-[data-check] .cell[data-incorrect],
-[data-check] .cell[data-incorrect][data-butterfly],
-[data-check] .cell[data-incorrect][data-overlap='two'],
-[data-check] .cell[data-incorrect][data-overlap='four'] {
-  background: var(--cell-error-bg) !important;
+[data-check] .cell[data-incorrect] {
+  background: var(--cell-error-bg);
 }
 
 .cell[data-revealed] .value {
@@ -440,12 +459,6 @@
 }
 
 :global(.light) [data-check] .cell[data-conflict],
-:global(.light) [data-check] .cell[data-conflict][data-butterfly],
-:global(.light) [data-check] .cell[data-conflict][data-overlap='two'],
-:global(.light) [data-check] .cell[data-conflict][data-overlap='four'],
-:global(.light) [data-check] .cell[data-incorrect],
-:global(.light) [data-check] .cell[data-incorrect][data-butterfly],
-:global(.light) [data-check] .cell[data-incorrect][data-overlap='two'],
-:global(.light) [data-check] .cell[data-incorrect][data-overlap='four'] {
-  background: var(--cell-error-bg) !important;
+:global(.light) [data-check] .cell[data-incorrect] {
+  background: var(--cell-error-bg);
 }

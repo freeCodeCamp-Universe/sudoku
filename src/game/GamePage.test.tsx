@@ -257,6 +257,49 @@ describe('GamePage - Classic integration', () => {
     expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeInTheDocument();
   });
 
+  it('should render a Highlight overlaps switch, on by default, for a multigrid variant', () => {
+    renderGamePage('samurai');
+
+    const toggle = screen.getByRole('switch', { name: 'Highlight overlaps' });
+    expect(toggle).toBeChecked();
+  });
+
+  it('should not render a Highlight overlaps switch for a single-grid variant', () => {
+    renderGamePage('classic');
+
+    expect(screen.queryByRole('switch', { name: 'Highlight overlaps' })).toBeNull();
+  });
+
+  it('should tint overlap cells by default and drop the tint when the switch is toggled off', async () => {
+    const user = userEvent.setup();
+    renderGamePage('samurai');
+
+    const overlapCells = () =>
+      screen.getAllByRole('gridcell').filter((cell) => cell.hasAttribute('data-overlap'));
+
+    expect(overlapCells().length).toBeGreaterThan(0);
+
+    const toggle = screen.getByRole('switch', { name: 'Highlight overlaps' });
+
+    await user.click(toggle);
+    expect(toggle).not.toBeChecked();
+    expect(overlapCells()).toHaveLength(0);
+
+    await user.click(toggle);
+    expect(toggle).toBeChecked();
+    expect(overlapCells().length).toBeGreaterThan(0);
+  });
+
+  it('should not persist the Highlight overlaps state to localStorage', async () => {
+    const user = userEvent.setup();
+    renderGamePage('samurai');
+
+    await user.click(screen.getByRole('switch', { name: 'Highlight overlaps' }));
+
+    const stored = Object.entries(window.localStorage).map(([key, value]) => `${key}=${value}`);
+    expect(stored.some((entry) => /overlap/i.test(entry))).toBe(false);
+  });
+
   it('should render skyscraper gutters from derived structure', () => {
     renderGamePage('skyscraper');
 

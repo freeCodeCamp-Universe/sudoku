@@ -38,6 +38,10 @@
   --cell-overlap-3-bg: #272751;
   --cell-overlap-4-bg: #2c2c5a;
   --cell-overlap-5-bg: #313163;
+  --board-overlap-2-bg: #262652;
+  --board-overlap-3-bg: #2c2c60;
+  --board-overlap-4-bg: #32326c;
+  --board-overlap-5-bg: #383878;
   --cell-selected-border: #4a90d9;
   --cell-peer-bg: #272948;
   --cell-peer-structural-bg: #2e2e44;
@@ -108,6 +112,10 @@
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
   --cell-overlap-5-bg: #dfdff2;
+  --board-overlap-2-bg: #ececf8;
+  --board-overlap-3-bg: #e8e8f5;
+  --board-overlap-4-bg: #e4e4f2;
+  --board-overlap-5-bg: #e0e0ee;
   --cell-peer-bg: #ededf6;
   --cell-peer-structural-bg: #d8d8f0;
   --cell-same-value-bg: #cdeaea;
@@ -196,6 +204,13 @@
   --cell-peer-even-bg: #5e5e78;
   --cell-peer-odd-bg: #0b0b24;
   --cell-error-bg: #8a5252;
+  /* Overlap tint (multigrid subgrid overlaps). A luminance ladder rising from
+     the plain base toward the light-text 4.5:1 cap; the exact count is also
+     announced by the overlap screen-reader annotator. */
+  --board-overlap-2-bg: #45455f;
+  --board-overlap-3-bg: #525272;
+  --board-overlap-4-bg: #5c5c81;
+  --board-overlap-5-bg: #63638a;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;
   --color-1: #ff4d4d;
@@ -283,6 +298,14 @@
   --cell-peer-even-bg: #8989a2;
   --cell-peer-odd-bg: #fafafc;
   --cell-error-bg: #cc7070;
+  /* Overlap tint (multigrid subgrid overlaps). Light cells rest on white
+     (--cell-bg-light), so the ladder darkens toward the near-black text's
+     4.5:1 floor; only the darkest rung also clears 3:1 against white (gated),
+     and the overlap screen-reader annotator carries the exact count. */
+  --board-overlap-2-bg: #c8c8d6;
+  --board-overlap-3-bg: #b4b4c4;
+  --board-overlap-4-bg: #a0a0b2;
+  --board-overlap-5-bg: #8f8f9e;
   --cell-text-light: #0a2540;
   --numpad-chip-label: #ffffff;
   --numpad-chip-label-bright: #000000;

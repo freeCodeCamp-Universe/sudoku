@@ -1,6 +1,7 @@
 import type React from 'react';
 import type { SymbolValue } from '@/engine/types';
 import type { MarkerEdge } from '@/game/gameTypes';
+import type { OverlapCount } from '@/game/overlapCounts';
 import styles from './Cell.module.css';
 
 interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
@@ -29,9 +30,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   diagonal?: boolean;
   small?: boolean;
   medium?: boolean;
-  butterfly?: boolean;
-  cross?: boolean;
-  flower?: boolean;
+  overlap?: OverlapCount;
   window?: boolean;
   asterisk?: boolean;
   centerDot?: boolean;
@@ -81,9 +80,7 @@ export function Cell({
   diagonal = false,
   small = false,
   medium = false,
-  butterfly: isButterfly = false,
-  cross: isCross = false,
-  flower: isFlower = false,
+  overlap,
   window: isWindow = false,
   asterisk = false,
   centerDot = false,
@@ -123,9 +120,7 @@ export function Cell({
       data-diagonal={diagonal || undefined}
       data-small={small || undefined}
       data-medium={medium || undefined}
-      data-butterfly={isButterfly || undefined}
-      data-cross={isCross || undefined}
-      data-flower={isFlower || undefined}
+      data-overlap={overlap ?? undefined}
       data-window={isWindow || undefined}
       data-asterisk={asterisk || undefined}
       data-center-dot={centerDot || undefined}

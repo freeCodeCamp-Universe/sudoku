@@ -12,7 +12,7 @@ interface PortraitControlsProps {
   controlsOpen: boolean;
   numberPad: ReactNode;
   controlsPanel: ReactNode;
-  colorLabelToggle: ReactNode;
+  settingToggles: ReactNode;
   navTabs: Tab[];
   navTab: 'move' | 'map';
   onSelectNavTab: (id: 'move' | 'map') => void;
@@ -35,7 +35,7 @@ export function PortraitControls({
   controlsOpen,
   numberPad,
   controlsPanel,
-  colorLabelToggle,
+  settingToggles,
   navTabs,
   navTab,
   onSelectNavTab,
@@ -67,8 +67,8 @@ export function PortraitControls({
             data-active={!controlsOpen}
           >
             {numberPad}
-            {colorLabelToggle ? (
-              <div className={styles.inputPanelToggle}>{colorLabelToggle}</div>
+            {settingToggles ? (
+              <div className={styles.inputPanelToggle}>{settingToggles}</div>
             ) : null}
           </div>
           <div

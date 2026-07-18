@@ -11,7 +11,7 @@ interface DesktopControlsProps {
   numberPad: ReactNode;
   onClearAll: () => void;
   onReveal: () => void;
-  colorLabelToggle: ReactNode;
+  settingToggles: ReactNode;
 }
 
 export function DesktopControls({
@@ -22,7 +22,7 @@ export function DesktopControls({
   numberPad,
   onClearAll,
   onReveal,
-  colorLabelToggle,
+  settingToggles,
 }: DesktopControlsProps) {
   return (
     <>
@@ -42,7 +42,7 @@ export function DesktopControls({
       </div>
       <div className={styles.actionStack}>
         <Toolbar onClearAll={onClearAll} onReveal={onReveal} />
-        {colorLabelToggle ? <div className={styles.settingRow}>{colorLabelToggle}</div> : null}
+        {settingToggles ? <div className={styles.settingRow}>{settingToggles}</div> : null}
       </div>
     </>
   );

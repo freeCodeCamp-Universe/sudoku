@@ -47,6 +47,18 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-conflict', 'true');
   });
 
+  it('should set data-overlap to the overlap count when provided', () => {
+    render(<Cell {...baseProps} overlap={3} />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-overlap', '3');
+  });
+
+  it('should not set data-overlap when overlap is absent', () => {
+    render(<Cell {...baseProps} />);
+
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-overlap');
+  });
+
   it('should apply the correct modifier when correct=true', () => {
     render(<Cell {...baseProps} value={5} correct />);
 

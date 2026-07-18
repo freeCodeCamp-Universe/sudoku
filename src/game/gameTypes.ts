@@ -1,5 +1,6 @@
 import type React from 'react';
 import type { Cell, CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+import type { OverlapCount } from '@/game/overlapCounts';
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export type Size = { w: number; h: number };
@@ -91,6 +92,9 @@ export interface BoardProps {
   variant: Variant;
   cells: Cell[];
   rects: Map<CellId, Rect>;
+  // Multigrid subgrid-overlap counts per cell; drives the cell overlap tint.
+  // Absent for non-multigrid variants (and when the highlight is toggled off).
+  overlapCounts?: Map<CellId, OverlapCount>;
   size: Size;
   gutters?: GutterSlots;
   overlays?: React.ReactNode[];

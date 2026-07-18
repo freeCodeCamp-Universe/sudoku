@@ -32,6 +32,7 @@ import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findOverusedSymbols } from './overusedSymbols';
+import { overlapCounts } from './overlapCounts';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -94,6 +95,9 @@ function GameInner({
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const [candidateMode, setCandidateMode] = useState(false);
+  // Per-page "Highlight overlaps" state for multigrid variants: ON by default,
+  // session-only (deliberately outside usePersistence, so a fresh mount is ON).
+  const [highlightOverlaps, setHighlightOverlaps] = useState(true);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
@@ -172,6 +176,10 @@ function GameInner({
   const size = useMemo(
     () => layoutStrategy.canvasSize(variant, cellSize),
     [layoutStrategy, variant, cellSize]
+  );
+  const overlapMap = useMemo(
+    () => (variant.layout.kind === 'multigrid' ? overlapCounts(variant.layout) : undefined),
+    [variant.layout]
   );
 
   const gutters = useMemo(
@@ -633,13 +641,26 @@ function GameInner({
     { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
   ];
   const isColor = variant.symbolKind === 'color';
-  const colorLabelToggle = isColor ? (
-    <Toggle
-      label="Show numbers"
-      checked={settings.showColorLabels}
-      onChange={onToggleColorLabels ?? (() => {})}
-    />
-  ) : null;
+  const isMultigrid = variant.layout.kind === 'multigrid';
+  const settingToggles =
+    isColor || isMultigrid ? (
+      <>
+        {isColor ? (
+          <Toggle
+            label="Show numbers"
+            checked={settings.showColorLabels}
+            onChange={onToggleColorLabels ?? (() => {})}
+          />
+        ) : null}
+        {isMultigrid ? (
+          <Toggle
+            label="Highlight overlaps"
+            checked={highlightOverlaps}
+            onChange={() => setHighlightOverlaps((on) => !on)}
+          />
+        ) : null}
+      </>
+    ) : null;
 
   const controlsPanel = (
     <div className={styles.actionColumn}>
@@ -781,6 +802,7 @@ function GameInner({
                 variant={variant}
                 cells={model.cells}
                 rects={rects}
+                overlapCounts={highlightOverlaps ? overlapMap : undefined}
                 size={size}
                 gutters={gutters}
                 overlays={overlays}
@@ -808,7 +830,7 @@ function GameInner({
               numberPad={numberPad}
               onClearAll={handleClearAll}
               onReveal={handleReveal}
-              colorLabelToggle={colorLabelToggle}
+              settingToggles={settingToggles}
             />
           ) : (
             <PortraitControls
@@ -819,7 +841,7 @@ function GameInner({
               controlsOpen={controlsOpen}
               numberPad={numberPad}
               controlsPanel={controlsPanel}
-              colorLabelToggle={colorLabelToggle}
+              settingToggles={settingToggles}
               navTabs={navTabs}
               navTab={navTab}
               onSelectNavTab={setNavTab}

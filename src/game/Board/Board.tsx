@@ -61,6 +61,7 @@ export function Board({
   variant,
   cells,
   rects,
+  overlapCounts,
   size,
   gutters,
   overlays,
@@ -169,9 +170,7 @@ export function Board({
                   argyleD2={variant.id === 'argyle' && argyleD2Set.has(cell.id)}
                   small={rect.w <= 30}
                   medium={rect.w > 30 && rect.w <= 44}
-                  butterfly={variant.id === 'butterfly'}
-                  cross={variant.id === 'cross'}
-                  flower={variant.id === 'flower'}
+                  overlap={overlapCounts?.get(cell.id)}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
                   even={parityMap?.get(cell.id) === 0}
