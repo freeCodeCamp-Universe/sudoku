@@ -4,7 +4,6 @@ import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, SymbolValue } from '@/engine/types';
-import { validate } from '@/engine/validate';
 import {
   boardFrameEdge,
   framedBoardSize,
@@ -32,7 +31,7 @@ import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
-import { findCompletedSymbols } from './completedSymbols';
+import { findOverusedSymbols } from './overusedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -44,6 +43,7 @@ import { useResponsiveCellSize } from './useResponsiveCellSize';
 import { NumberPad } from './NumberPad';
 import { resolveOverlays } from './overlays/registry';
 import { Timer } from './Timer';
+import { ToastStack } from './ToastStack';
 import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
@@ -100,6 +100,10 @@ function GameInner({
   const [winOpen, setWinOpen] = useState(false);
   const winTitleId = useId();
   const [verifyMode, setVerifyMode] = useState(false);
+  // One toast per overused-symbol crossing; each carries a unique id so the
+  // stack can run an independent auto-dismiss countdown per toast.
+  const [overusedToasts, setOverusedToasts] = useState<{ id: number; symbol: SymbolValue }[]>([]);
+  const overusedToastIdRef = useRef(0);
   const [isPaused, setIsPaused] = useState(false);
   // Completion is terminal for this board: once the solve is confirmed,
   // flipping the check setting afterwards must not restart the timer,
@@ -121,6 +125,7 @@ function GameInner({
 
   useEffect(() => {
     setVerifyMode(false);
+    setOverusedToasts([]);
     setIsPaused(false);
     setCompleted(false);
   }, [solution]);
@@ -417,10 +422,38 @@ function GameInner({
     dispatch({ type: 'newGame' });
   }
 
-  const usedSymbols = useMemo(
-    () => findCompletedSymbols(state.values, solution, model.symbols),
+  const overusedSymbols = useMemo(
+    () => findOverusedSymbols(state.values, solution, model.symbols),
     [model.symbols, solution, state.values]
   );
+
+  // The hint fires each time a symbol crosses into the overused state, however
+  // the entry was made (numpad tap or keyboard on the board), so it watches the
+  // derived set instead of living in an input handler. Placing further copies
+  // of an already-overused symbol stays silent; erasing back under the limit
+  // and crossing it again re-arms the toast. The ref starts as the initial set
+  // so saved progress that is already overused does not fire on mount.
+  const prevOverusedSymbolsRef = useRef(overusedSymbols);
+  useEffect(() => {
+    const previous = prevOverusedSymbolsRef.current;
+    prevOverusedSymbolsRef.current = overusedSymbols;
+
+    const newlyOverused = [...overusedSymbols].filter((symbol) => !previous.has(symbol));
+
+    if (newlyOverused.length > 0) {
+      // Each crossing gets its own toast. A symbol that re-crosses while its
+      // toast is still open replaces that toast (fresh id restarts the
+      // countdown) instead of stacking a duplicate message.
+      setOverusedToasts((current) => [
+        ...current.filter((toast) => !newlyOverused.includes(toast.symbol)),
+        ...newlyOverused.map((symbol) => ({ id: (overusedToastIdRef.current += 1), symbol })),
+      ]);
+    }
+  }, [overusedSymbols]);
+
+  const dismissOverusedToast = useCallback((id: number) => {
+    setOverusedToasts((current) => current.filter((toast) => toast.id !== id));
+  }, []);
 
   const wordCellIds = useMemo((): Set<CellId> => {
     if (!state.solved || variant.id !== 'wordoku') return new Set();
@@ -513,12 +546,11 @@ function GameInner({
       return;
     }
 
-    const selectedCell = model.cells.find((c) => c.id === selectedCellId);
-    const loc = selectedCell ? `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}` : null;
-
     if (value === 0) {
       dispatch({ type: 'erase', cellId: selectedCellId });
-      if (loc) grid.announce(`${loc}, empty`);
+      const nextValues = new Map(state.values);
+      nextValues.delete(selectedCellId);
+      grid.announceCellState(selectedCellId, nextValues);
       return;
     }
 
@@ -526,38 +558,20 @@ function GameInner({
       const current = state.candidates.get(selectedCellId) ?? [];
       const adding = !current.includes(value);
       onToggleCandidate(selectedCellId, value);
-      if (loc) {
-        grid.announce(`${loc}, candidate ${describeSymbol(value)} ${adding ? 'added' : 'removed'}`);
-      }
+      grid.announceCandidateToggle(selectedCellId, value, adding);
       return;
     }
 
     onEnterValue(selectedCellId, value);
-    if (loc) {
-      const nextValues = new Map(state.values);
-      nextValues.set(selectedCellId, value);
-      const isCorrect =
-        checkEnabled && solution.has(selectedCellId) && value === solution.get(selectedCellId);
-      const correctness =
-        checkEnabled && solution.has(selectedCellId)
-          ? isCorrect
-            ? ', correct'
-            : ', incorrect'
-          : '';
-      const inConflict =
-        !isCorrect &&
-        checkEnabled &&
-        validate(nextValues, model).some((c) => c.cells.includes(selectedCellId));
-      grid.announce(
-        `${loc}, ${describeSymbol(value)}${correctness}${inConflict ? ', in conflict' : ''}`
-      );
-    }
+    const nextValues = new Map(state.values);
+    nextValues.set(selectedCellId, value);
+    grid.announceCellState(selectedCellId, nextValues);
   };
 
   const numberPad = (
     <NumberPad
       symbols={displaySymbols}
-      usedSymbols={usedSymbols}
+      overusedSymbols={overusedSymbols}
       columns={
         model.symbols.length === 16
           ? 4
@@ -572,6 +586,24 @@ function GameInner({
       renderSymbol={renderSymbol}
       describeSymbol={describeSymbol}
       symbolKind={variant.symbolKind}
+    />
+  );
+
+  // The stack's live region is the sole overuse announcement (the persistent
+  // numpad label carries ongoing state), so no cell announcement duplicates it.
+  const overusedEdgeHint = (
+    <ToastStack
+      toasts={overusedToasts.map(({ id, symbol }) => ({
+        id,
+        message: `Symbol ${describeSymbol(symbol)} is placed more times than the puzzle needs.`,
+        content: (
+          <>
+            Symbol <span className={styles.overusedHintSymbols}>{describeSymbol(symbol)}</span> is
+            placed more times than the puzzle needs.
+          </>
+        ),
+      }))}
+      onDismiss={dismissOverusedToast}
     />
   );
 
@@ -722,6 +754,7 @@ function GameInner({
         .filter(Boolean)
         .join(' ')}
     >
+      {overusedEdgeHint}
       {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>

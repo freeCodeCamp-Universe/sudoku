@@ -334,14 +334,39 @@ export const contrastPairs: ContrastPair[] = [
     })
   ),
 
-  // Fully-placed numpad buttons render a dimmed digit on the recessed
-  // page-bg fill; the dimmed text must clear 4.5:1 (WCAG 1.4.3).
+  // The overused-edge toast names the offending symbol in accent-red body text
+  // on the secondary surface, so it must clear the 4.5:1 text threshold (not
+  // just the 3:1 graphical bar the numpad edge uses).
   ...THEMES.map(
     (theme): PairInput => ({
-      label: 'numpad used text on page bg',
-      fg: '--numpad-used-text',
-      bg: '--bg-primary',
+      label: 'overused hint symbol text on toast bg',
+      fg: '--accent-red',
+      bg: '--bg-secondary',
       threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
+  // The numpad overused edge is a graphical indicator on the button face
+  // (WCAG 1.4.11): it must be visible at 3:1 against the secondary button surface.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'numpad overused edge on button bg',
+      fg: '--accent-red',
+      bg: '--bg-secondary',
+      threshold: UI_AA,
+      theme,
+    })
+  ),
+
+  // On color pads the button face is transparent, so the overused edge sits
+  // on the surrounding control surface rather than on the chip fill.
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'numpad overused edge on page bg',
+      fg: '--accent-red',
+      bg: '--bg-primary',
+      threshold: UI_AA,
       theme,
     })
   ),

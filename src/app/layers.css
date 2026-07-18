@@ -15,9 +15,11 @@
   --layer-clue-overlays: 4;
   --layer-selection: 10;
 
-  /* App chrome above the board: the header's settings dropdown, confirm
-     dialogs and their backdrops, and the skip link above everything. */
+  /* App chrome above the board: the header's settings dropdown, toasts
+     above the page but below confirm dialogs and their backdrops, and the
+     skip link above everything. */
   --layer-dropdown: 50;
+  --layer-toast: 90;
   --layer-modal: 100;
   --layer-skip-link: 1000;
 

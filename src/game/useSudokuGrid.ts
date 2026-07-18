@@ -238,11 +238,10 @@ export function useSudokuGrid({
   // Announce an in-place change (value entry, deletion) with the same builder
   // and projected state that navigation uses, so the spoken description matches
   // arrowing onto the cell. `values` still holds the pre-change state when this
-  // runs, so callers pass the projected `nextValues` and the already-resolved
-  // correctness/conflict flags (which encode intentional rules such as
-  // suppressing "in conflict" on a correct entry).
+  // runs, so callers pass the projected `nextValues` and this helper computes the
+  // correct/conflict flags consistently for both keyboard and numpad paths.
   const announceCellState = useCallback(
-    (id: CellId, nextValues: Values, flags: { correct?: boolean; conflict: boolean }) => {
+    (id: CellId, nextValues: Values) => {
       const cell = cellsById.get(id);
 
       if (!cell) {
@@ -254,11 +253,42 @@ export function useSudokuGrid({
         value === undefined
           ? model.symbols.filter((s) => (candidates.get(id) ?? []).includes(s))
           : [];
+      const projectedConflictSet = new Set(
+        validate(nextValues, model).flatMap((conflict) => conflict.cells)
+      );
+      const projectedSelectedValue = selectedId !== null ? nextValues.get(selectedId) : undefined;
+      const projectedCellState = (cellId: CellId): CellState => {
+        const isGiven = givens.has(cellId) || revealed.has(cellId);
+
+        return {
+          value: nextValues.get(cellId),
+          candidates: candidates.get(cellId) ?? [],
+          given: isGiven,
+          revealed: revealed.has(cellId),
+          selected: selectedId === cellId,
+          conflict: projectedConflictSet.has(cellId),
+          correct:
+            checkEnabled && !isGiven && nextValues.get(cellId) !== undefined && solution.has(cellId)
+              ? nextValues.get(cellId) === solution.get(cellId)
+              : undefined,
+          sameValue:
+            projectedSelectedValue !== undefined &&
+            nextValues.get(cellId) === projectedSelectedValue,
+          peer: peerIds.has(cellId),
+        };
+      };
       const extras = annotators
         .map((annotator) =>
-          annotator.describe(id, { values: nextValues, model, cellState: getCellState })
+          annotator.describe(id, { values: nextValues, model, cellState: projectedCellState })
         )
         .filter((message): message is string => message !== null);
+
+      const correct =
+        checkEnabled && value !== undefined && solution.has(id)
+          ? value === solution.get(id)
+          : undefined;
+      const inConflict =
+        value !== undefined && correct !== true && checkEnabled && projectedConflictSet.has(id);
 
       announce(
         getCellLabel(
@@ -267,8 +297,8 @@ export function useSudokuGrid({
           value,
           sortedCandidates,
           extras,
-          flags.correct,
-          flags.conflict,
+          correct,
+          inConflict,
           givens.has(id) || revealed.has(id),
           describeSymbol
         )
@@ -280,12 +310,34 @@ export function useSudokuGrid({
       boxNumberByCell,
       candidates,
       cellsById,
+      checkEnabled,
       describeSymbol,
-      getCellState,
       givens,
       model,
+      peerIds,
       revealed,
+      selectedId,
+      solution,
     ]
+  );
+
+  // Shared by the keyboard path and the numpad so both speak the same
+  // location (box number included) and phrasing for candidate toggles.
+  const announceCandidateToggle = useCallback(
+    (id: CellId, value: SymbolValue, adding: boolean) => {
+      const cell = cellsById.get(id);
+
+      if (!cell) {
+        return;
+      }
+
+      announce(
+        `${formatLocation(cell, boxNumberByCell.get(id))}, candidate ${describeSymbol(value)} ${
+          adding ? 'added' : 'removed'
+        }`
+      );
+    },
+    [announce, boxNumberByCell, cellsById, describeSymbol]
   );
 
   // Selection only moves DOM focus; the focused cell's accessible name is what
@@ -375,7 +427,7 @@ export function useSudokuGrid({
 
           const nextValues = new Map(values);
           nextValues.delete(currentId);
-          announceCellState(currentId, nextValues, { conflict: false });
+          announceCellState(currentId, nextValues);
         }
         return;
       }
@@ -413,37 +465,25 @@ export function useSudokuGrid({
         const adding = !current.includes(digit as SymbolValue);
 
         onToggleCandidate(currentId, digit as SymbolValue);
-
-        const action = adding ? 'added' : 'removed';
-        announce(
-          `${formatLocation(cell, boxNumberByCell.get(currentId))}, candidate ${describeSymbol(digit as SymbolValue)} ${action}`
-        );
+        announceCandidateToggle(currentId, digit as SymbolValue, adding);
       } else {
         onEnterValue(currentId, digit as SymbolValue);
 
         const nextValues = new Map(values);
         nextValues.set(currentId, digit as SymbolValue);
-        const isCorrect =
-          checkEnabled && solution.has(currentId) && digit === solution.get(currentId);
-        const correct = checkEnabled && solution.has(currentId) ? isCorrect : undefined;
-        const inConflict =
-          !isCorrect &&
-          checkEnabled &&
-          validate(nextValues, model).some((c) => c.cells.includes(currentId));
 
-        announceCellState(currentId, nextValues, { correct, conflict: inConflict });
+        announceCellState(currentId, nextValues);
       }
     },
     [
       announce,
+      announceCandidateToggle,
       announceCellState,
-      boxNumberByCell,
       candidateMode,
       candidates,
       cells,
       cellsById,
       checkEnabled,
-      describeSymbol,
       displaySymbols,
       givens,
       model,
@@ -523,6 +563,8 @@ export function useSudokuGrid({
     describeCell,
     announcerRef,
     announce,
+    announceCellState,
+    announceCandidateToggle,
     moveSelection,
   };
 }

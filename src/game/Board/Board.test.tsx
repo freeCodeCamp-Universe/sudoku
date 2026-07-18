@@ -2,7 +2,7 @@ import { describe, expect, it, should } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { buildModel } from '@/engine/buildModel';
 import { gridCells } from '@/engine/grid';
-import type { Cell as CellType, CellId } from '@/engine/types';
+import type { Cell as CellType, CellId, Values } from '@/engine/types';
 import type { BoardProps } from '@/game/Board/Board';
 import type { GutterCell, GutterSlots } from '@/game/gameTypes';
 import { gridLayout } from '@/game/layouts/grid';
@@ -42,6 +42,8 @@ function makeBoardProps(
       describeCell: (id: CellId) => id,
       announcerRef: { current: null },
       announce: () => {},
+      announceCellState: (_id: CellId, _nextValues: Values) => {},
+      announceCandidateToggle: () => {},
       moveSelection: () => {},
     },
     renderSymbol: (value) => String(value),

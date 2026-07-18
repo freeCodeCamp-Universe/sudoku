@@ -29,6 +29,8 @@ describe('Samurai Board renders correct cell count', () => {
           describeCell: (id: CellId) => id,
           announcerRef: { current: null },
           announce: () => {},
+          announceCellState: () => {},
+          announceCandidateToggle: () => {},
           moveSelection: () => {},
         }}
         renderSymbol={(value) => String(value)}

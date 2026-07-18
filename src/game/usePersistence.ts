@@ -34,7 +34,6 @@ export function usePersistence(_variantId: string): PersistenceResult {
   const [onboardingShown, setOnboardingShown] = useState(
     () => localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
   );
-
   const acknowledgeOnboarding = useCallback(() => {
     localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     setOnboardingShown(true);
