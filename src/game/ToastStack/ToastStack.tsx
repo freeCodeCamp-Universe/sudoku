@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './ToastStack.module.css';
 
 const TOAST_DURATION_MS = 6000;
 // Mirrors the exit transition duration in ToastStack.module.css.
 const TOAST_EXIT_MS = 200;
+// Matches the toast-in entrance duration in ToastStack.module.css, so a new
+// toast sliding in and the older toasts sliding down read as one motion.
+const TOAST_REFLOW_MS = 200;
 
 export interface ToastItem {
   /** Unique per push; a replaced toast must get a fresh id to restart it. */
@@ -29,13 +32,15 @@ interface ToastProps {
   onDismiss: (id: number) => void;
   durationMs: number;
   exitMs: number;
+  /** Registers/unregisters this toast's root node for the stack's FLIP pass. */
+  registerRef: (id: number, node: HTMLDivElement | null) => void;
 }
 
 // Each toast owns its auto-dismiss countdown; hovering or focusing it pauses
 // the countdown (WCAG 2.2.1: give readers time) and leaving restarts the full
 // duration. The visible copy is aria-hidden because the stack's live region
 // already speaks it, so it would otherwise be read twice.
-function Toast({ toast, onDismiss, durationMs, exitMs }: ToastProps) {
+function Toast({ toast, onDismiss, durationMs, exitMs, registerRef }: ToastProps) {
   const [closing, setClosing] = useState(false);
   const [paused, setPaused] = useState(false);
 
@@ -70,6 +75,7 @@ function Toast({ toast, onDismiss, durationMs, exitMs }: ToastProps) {
 
   return (
     <div
+      ref={(node) => registerRef(toast.id, node)}
       className={styles.toast}
       data-closing={closing || undefined}
       onMouseEnter={() => setPaused(true)}
@@ -99,6 +105,57 @@ export function ToastStack({
 }: ToastStackProps) {
   const [announced, setAnnounced] = useState('');
   const seenIdsRef = useRef(new Set<number>());
+  // Live map of mounted toast nodes and the offsetTop each occupied on the
+  // previous commit, so the FLIP pass can animate the ones that shifted.
+  const nodesRef = useRef(new Map<number, HTMLDivElement>());
+  const topsRef = useRef(new Map<number, number>());
+
+  const registerRef = (id: number, node: HTMLDivElement | null) => {
+    if (node) {
+      nodesRef.current.set(id, node);
+    } else {
+      // topsRef is deliberately left alone: React detaches and reattaches
+      // these callback refs on every commit, and clearing it here would erase
+      // the previous positions right before the FLIP pass reads them. The
+      // pass below rebuilds the map from live nodes, pruning dead entries.
+      nodesRef.current.delete(id);
+    }
+  };
+
+  // FLIP: after each commit, any toast whose layout position moved (an
+  // entering toast pushed the stack down, or a dismissed one let it slide up)
+  // is animated from its old position to its new one. offsetTop, not
+  // getBoundingClientRect, so in-flight entrance/exit transforms cannot skew
+  // the measurements; element.animate, not inline styles, so the slide
+  // composes with the CSS opacity/transform transitions instead of clobbering
+  // them and cleans itself up when it finishes. A no-op in jsdom (no animate,
+  // offsets all 0) and under reduced motion.
+  useLayoutEffect(() => {
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const nextTops = new Map<number, number>();
+
+    nodesRef.current.forEach((node, id) => {
+      const top = node.offsetTop;
+      nextTops.set(id, top);
+
+      const previousTop = topsRef.current.get(id);
+      if (
+        reduced ||
+        previousTop === undefined ||
+        previousTop === top ||
+        typeof node.animate !== 'function'
+      ) {
+        return;
+      }
+
+      node.animate(
+        [{ transform: `translateY(${previousTop - top}px)` }, { transform: 'translateY(0)' }],
+        { duration: TOAST_REFLOW_MS, easing: 'ease-out', composite: 'add' }
+      );
+    });
+
+    topsRef.current = nextTops;
+  }, [toasts]);
 
   // Announce each toast once, when it is first pushed; dismissing a newer
   // toast must not re-announce the older ones still on screen. A re-pushed
@@ -135,6 +192,7 @@ export function ToastStack({
               onDismiss={onDismiss}
               durationMs={durationMs}
               exitMs={exitMs}
+              registerRef={registerRef}
             />
           ))}
         </div>
