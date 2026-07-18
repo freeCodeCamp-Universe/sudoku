@@ -298,10 +298,10 @@
   --cell-peer-even-bg: #8989a2;
   --cell-peer-odd-bg: #fafafc;
   --cell-error-bg: #cc7070;
-  /* Overlap tint (multigrid subgrid overlaps). Multigrid cells rest on
-     --bg-secondary (#ebebe6), and a tint dark enough for 3:1 against it drops
-     the near-black text below 4.5:1 — infeasible, so the ladder sits above the
-     text floor and the overlap screen-reader annotator carries the count. */
+  /* Overlap tint (multigrid subgrid overlaps). Light cells rest on white
+     (--cell-bg-light), so the ladder darkens toward the near-black text's
+     4.5:1 floor; only the darkest rung also clears 3:1 against white (gated),
+     and the overlap screen-reader annotator carries the exact count. */
   --board-overlap-2-bg: #c8c8d6;
   --board-overlap-3-bg: #b4b4c4;
   --board-overlap-4-bg: #a0a0b2;

@@ -29,9 +29,10 @@ context; the retired `sudoku-colorblind` key migrates once).
   reported but not gated. A companion test asserts each accepted failure still fails, so
   an accidental fix must be promoted to gated.
 - **High-contrast palettes**: every pair is gated at AA, with one documented
-  exception — the overlap-tint _rung-vs-base_ pairs, which are provably
-  infeasible while the digit text keeps 4.5:1 (see "Overlap tint" below). Every
-  text-legibility pair is gated in all four palettes with no exceptions.
+  class of advisories — the lighter overlap-tint _rung-vs-base_ pairs, which
+  cannot clear 3:1 against the cell base while the digit text keeps 4.5:1 (see
+  "Overlap tint" below; the darkest rung is gated). Every text-legibility pair
+  is gated in all four palettes with no exceptions.
 - **Cascade guard**: `.high-contrast` is declared after `.light`, so a token overridden
   only in `.high-contrast` would leak its dark value into light high-contrast.
   `readThemeTokens()` throws unless `.light.high-contrast` overrides every token
@@ -258,38 +259,41 @@ are documented here rather than gated):
 
 `--board-overlap-2-bg` … `--board-overlap-5-bg` tint the cells where multigrid
 subgrids overlap (Board `data-overlap`), one rung per overlap count (2..5). The
-tint paints on the plain multigrid cell base — `--bg-secondary` in every
-palette (multigrid cells carry no parity/region attribute) — with the digit on
-top. It is a board-only ladder; the gallery's decorative `--cell-overlap-*` set
-is separate and untouched.
+tint paints on the plain multigrid cell base, which is the same background each
+theme renders behind a resting cell: `--bg-secondary` in the dark palettes, and
+`--cell-bg-light` (white) in the light palettes (`Cell.module.css` overrides the
+cell base to white under `.light`). The digit renders on top. This is a
+board-only ladder; the gallery's decorative `--cell-overlap-*` set is separate
+and untouched.
 
 Two bounds apply, and they pull against each other:
 
-- **Text legibility (gated, all four palettes, no exceptions)**: every cell
-  text role — value, given, correct, hint, candidate — keeps 4.5:1 on every
-  rung. This is the binding constraint and it caps how far each rung can travel
-  from the base.
+- **Text legibility (gated, all four palettes, no exceptions)**: every cell text
+  role (value, given, correct, hint, candidate) keeps 4.5:1 on every rung. This
+  is the binding constraint, and it caps how far each rung can travel from the
+  base.
 - **Rung vs base (WCAG 1.4.11, 3:1)**: gated where a legible rung also clears
-  3:1, advisory where it cannot. Only the darkest dark-HC rung
-  (`--board-overlap-5-bg`, 3.27:1) reaches it; the other fifteen rung-vs-base
-  pairs are accepted advisories.
+  3:1, advisory where it cannot. Only the darkest high-contrast rung reaches it
+  (dark HC 3.27:1, light HC 3.19:1); the other fourteen rung-vs-base pairs are
+  accepted advisories.
 
 The count is also announced by the overlap screen-reader annotator, so the tint
-is a reinforcing cue rather than the sole carrier — the same footing as the
+is a reinforcing cue rather than the sole carrier, on the same footing as the
 standard region-fill and even/odd shortfalls.
 
-**Why four legible 3:1 rungs are infeasible.** In the dark palettes the text is
-light, so a rung bright enough for 3:1 above the base still has to stay under
-the dimmest light text role's 4.5:1 cap; that window admits at most one rung
-(dark HC) and none in standard dark (base `#1b1b32`, candidate `#aaaacc` caps
-rungs near luminance 0.05, well below the 3:1 floor). In light HC the base is
-`#ebebe6`, not white: 3:1 against it needs rung luminance ≤ 0.23, while the
-near-black text (`--cell-text-light` `#0a2540`) needs ≥ 0.265 to keep 4.5:1 —
-disjoint, so no light-HC rung can clear 3:1 with legible text (the ladder tops
-out at 2.66:1). The standard-light ladder is tighter still: the base is already
-light, so the rungs compress into a subtle high-luminance band to keep the dark
-text at 4.5:1. Hence the ladders are legibility-first, and rung separation plus
-the SR annotator carry the count.
+**Why only the darkest rung reaches 3:1.** The legibility cap and the 3:1 floor
+leave a narrow luminance window, wide enough for at most one rung per palette,
+and only in high contrast. In the dark palettes the text is light, so a rung
+bright enough for 3:1 above the base must still stay under the dimmest light
+text role's 4.5:1 cap; standard dark has no feasible rung at all (base
+`#1b1b32`, candidate `#aaaacc` caps rungs near luminance 0.05, below the 3:1
+floor), while dark HC fits one. In the light palettes the base is white, so a
+rung dark enough for 3:1 (luminance ≤ 0.30) must keep the darkest text at 4.5:1:
+standard light's brightest text (`#7b5e2c`, luminance ≈ 0.115) needs the rung
+above luminance 0.69, far too light for 3:1, whereas light HC's near-black text
+(`--cell-text-light` `#0a2540`) only needs luminance ≥ 0.265, so its darkest
+rung fits the window. The remaining rungs stay advisory, and rung separation
+plus the SR annotator carry the count.
 
 ## Chain lines
 

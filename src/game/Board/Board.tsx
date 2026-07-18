@@ -61,6 +61,7 @@ export function Board({
   variant,
   cells,
   rects,
+  overlapCounts,
   size,
   gutters,
   overlays,
@@ -172,6 +173,7 @@ export function Board({
                   butterfly={variant.id === 'butterfly'}
                   cross={variant.id === 'cross'}
                   flower={variant.id === 'flower'}
+                  overlap={overlapCounts?.get(cell.id)}
                   markerEdges={markerGaps?.get(cell.id)}
                   word={wordCells?.has(cell.id)}
                   even={parityMap?.get(cell.id) === 0}

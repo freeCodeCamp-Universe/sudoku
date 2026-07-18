@@ -32,6 +32,7 @@ import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findOverusedSymbols } from './overusedSymbols';
+import { overlapCounts } from './overlapCounts';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -172,6 +173,10 @@ function GameInner({
   const size = useMemo(
     () => layoutStrategy.canvasSize(variant, cellSize),
     [layoutStrategy, variant, cellSize]
+  );
+  const overlapMap = useMemo(
+    () => (variant.layout.kind === 'multigrid' ? overlapCounts(variant.layout) : undefined),
+    [variant.layout]
   );
 
   const gutters = useMemo(
@@ -781,6 +786,7 @@ function GameInner({
                 variant={variant}
                 cells={model.cells}
                 rects={rects}
+                overlapCounts={overlapMap}
                 size={size}
                 gutters={gutters}
                 overlays={overlays}

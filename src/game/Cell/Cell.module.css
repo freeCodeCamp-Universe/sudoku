@@ -100,6 +100,37 @@
   background: var(--cell-special-bg);
 }
 
+/* Multigrid subgrid-overlap tint: one rung per overlap count (2..5), painted
+   on the plain cell base with the digit above. Deliberately not !important so
+   selection, peer, same-value, and the check-mode error fill (all declared
+   with !important below) still win. The light rules repeat the tokens only to
+   outrank the white cell-base override (`:global(.light) .cell`). */
+.cell[data-overlap='2'] {
+  background: var(--board-overlap-2-bg);
+}
+.cell[data-overlap='3'] {
+  background: var(--board-overlap-3-bg);
+}
+.cell[data-overlap='4'] {
+  background: var(--board-overlap-4-bg);
+}
+.cell[data-overlap='5'] {
+  background: var(--board-overlap-5-bg);
+}
+
+:global(.light) .cell[data-overlap='2'] {
+  background: var(--board-overlap-2-bg);
+}
+:global(.light) .cell[data-overlap='3'] {
+  background: var(--board-overlap-3-bg);
+}
+:global(.light) .cell[data-overlap='4'] {
+  background: var(--board-overlap-4-bg);
+}
+:global(.light) .cell[data-overlap='5'] {
+  background: var(--board-overlap-5-bg);
+}
+
 /* Grid lines live on ::before rather than the cell's `border` property so
    they carry a z-index above the chain overlay (--layer-chain) instead of
    being painted over wherever an opaque chain line crosses a cell. */
@@ -221,12 +252,8 @@
 
 [data-check] .cell[data-conflict],
 [data-check] .cell[data-conflict][data-butterfly],
-[data-check] .cell[data-conflict][data-overlap='two'],
-[data-check] .cell[data-conflict][data-overlap='four'],
 [data-check] .cell[data-incorrect],
-[data-check] .cell[data-incorrect][data-butterfly],
-[data-check] .cell[data-incorrect][data-overlap='two'],
-[data-check] .cell[data-incorrect][data-overlap='four'] {
+[data-check] .cell[data-incorrect][data-butterfly] {
   background: var(--cell-error-bg) !important;
 }
 
@@ -441,11 +468,7 @@
 
 :global(.light) [data-check] .cell[data-conflict],
 :global(.light) [data-check] .cell[data-conflict][data-butterfly],
-:global(.light) [data-check] .cell[data-conflict][data-overlap='two'],
-:global(.light) [data-check] .cell[data-conflict][data-overlap='four'],
 :global(.light) [data-check] .cell[data-incorrect],
-:global(.light) [data-check] .cell[data-incorrect][data-butterfly],
-:global(.light) [data-check] .cell[data-incorrect][data-overlap='two'],
-:global(.light) [data-check] .cell[data-incorrect][data-overlap='four'] {
+:global(.light) [data-check] .cell[data-incorrect][data-butterfly] {
   background: var(--cell-error-bg) !important;
 }

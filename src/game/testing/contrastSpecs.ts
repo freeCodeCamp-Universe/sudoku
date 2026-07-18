@@ -77,13 +77,14 @@ const REGION_FILLS = [
 
 /**
  * Multigrid subgrid-overlap tint (Board `data-overlap`). Four rungs, one per
- * overlap count (2..5), painted on the plain multigrid cell base
- * (--bg-secondary). Text legibility is the hard bound: every cell text role
- * keeps 4.5:1 on every rung in all four palettes. The rung-vs-base cue is a
- * secondary carrier — the overlap screen-reader annotator announces the exact
- * count — so where a legible rung cannot also clear 3:1 against the base
- * (light HC especially, where the base is #ebebe6, not white) the vs-base pair
- * is an accepted advisory, mirroring the standard region-fill shortfall.
+ * overlap count (2..5), painted on the plain multigrid cell base — the same
+ * base each theme renders behind a resting cell (`--bg-secondary` in the dark
+ * palettes, `--cell-bg-light` white in the light palettes). Text legibility is
+ * the hard bound: every cell text role keeps 4.5:1 on every rung in all four
+ * palettes. The rung-vs-base cue is a secondary carrier — the overlap
+ * screen-reader annotator announces the exact count — so where a legible rung
+ * cannot also clear 3:1 against the base the vs-base pair is an accepted
+ * advisory, mirroring the standard region-fill shortfall.
  */
 const OVERLAP_FILLS = [
   '--board-overlap-2-bg',
@@ -153,14 +154,14 @@ const ACCEPTED_FAILURES = new Set<string>([
     `dark|region fill ${fill} vs base`,
     `light|region fill ${fill} vs base`,
   ]),
-  // Overlap tint rung-vs-base (see OVERLAP_FILLS): a legible rung cannot also
-  // clear 3:1 against the multigrid cell base (--bg-secondary) in most
-  // palettes — in light HC the base is #ebebe6, and a rung dark enough for 3:1
-  // drops the near-black text under 4.5:1, so it is provably infeasible. These
-  // stay advisory and the overlap screen-reader annotator carries the count.
-  // Only the darkest dark-HC rung reaches 3:1 (gated, not listed here).
+  // Overlap tint rung-vs-base (see OVERLAP_FILLS): the digit-legibility cap
+  // leaves room for only the darkest rung to also clear 3:1 against the cell
+  // base, and only in the high-contrast palettes (whose base is a solid dark
+  // blue or white, with text headroom to spare). Both HC palettes gate their
+  // darkest rung (--board-overlap-5-bg, not listed here); every other rung is
+  // advisory and the overlap screen-reader annotator carries the count.
   ...THEMES.flatMap((theme) =>
-    OVERLAP_FILLS.filter((fill) => !(theme === 'dark-hc' && fill === '--board-overlap-5-bg')).map(
+    OVERLAP_FILLS.filter((fill) => !(theme.endsWith('-hc') && fill === '--board-overlap-5-bg')).map(
       (fill) => `${theme}|overlap fill ${fill} vs base`
     )
   ),
@@ -301,7 +302,7 @@ export const contrastPairs: ContrastPair[] = [
       {
         label: `overlap fill ${fill} vs base`,
         fg: fill,
-        bg: '--bg-secondary',
+        bg: refFor(BASE, theme),
         threshold: UI_AA,
         theme,
       },
