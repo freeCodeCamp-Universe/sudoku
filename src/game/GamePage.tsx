@@ -638,7 +638,7 @@ function GameInner({
     { id: 'map', label: 'Map', panelId: 'nav-panel-map' },
   ];
   const isColor = variant.symbolKind === 'color';
-  const colorLabelToggle = isColor ? (
+  const settingToggles = isColor ? (
     <Toggle
       label="Show numbers"
       checked={settings.showColorLabels}
@@ -814,7 +814,7 @@ function GameInner({
               numberPad={numberPad}
               onClearAll={handleClearAll}
               onReveal={handleReveal}
-              colorLabelToggle={colorLabelToggle}
+              settingToggles={settingToggles}
             />
           ) : (
             <PortraitControls
@@ -825,7 +825,7 @@ function GameInner({
               controlsOpen={controlsOpen}
               numberPad={numberPad}
               controlsPanel={controlsPanel}
-              colorLabelToggle={colorLabelToggle}
+              settingToggles={settingToggles}
               navTabs={navTabs}
               navTab={navTab}
               onSelectNavTab={setNavTab}
