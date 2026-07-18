@@ -25,19 +25,31 @@ describe('HelpDialog', () => {
 
     expect(screen.queryByRole('heading', { name: 'Basic Rules', level: 3 })).toBeNull();
     expect(screen.getByText('The board:')).toBeTruthy();
+    // Rule text is interleaved with no-wrap token spans, so match on the
+    // list item's full text content instead of a single text node.
     expect(
-      screen.getByText(
-        'A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
-      )
-    ).toBeTruthy();
+      screen
+        .getAllByRole('listitem')
+        .some(
+          (item) =>
+            item.textContent ===
+            'The board: A 9×9 board divided into nine 3×3 boxes. Fill every cell with a symbol from 1 to 9.'
+        )
+    ).toBe(true);
   });
 
   it('should override basic rules when basicRules prop is provided', () => {
     render(<HelpDialog open onClose={vi.fn()} basicRules={customBasicRules} />);
 
     expect(screen.queryByRole('heading', { name: 'Basic Rules', level: 3 })).toBeNull();
-    expect(screen.getByText('A 4×4 board split into four 2×2 boxes.')).toBeTruthy();
-    expect(screen.queryByText(/9×9 board/)).toBeNull();
+    expect(
+      screen
+        .getAllByRole('listitem')
+        .some((item) => item.textContent === 'The grid: A 4×4 board split into four 2×2 boxes.')
+    ).toBe(true);
+    expect(
+      screen.getAllByRole('listitem').some((item) => item.textContent?.includes('9×9 board'))
+    ).toBe(false);
   });
 
   it('should render extra help sections below basic rules', () => {

@@ -104,6 +104,14 @@ function GameInner({
   // stack can run an independent auto-dismiss countdown per toast.
   const [overusedToasts, setOverusedToasts] = useState<{ id: number; symbol: SymbolValue }[]>([]);
   const overusedToastIdRef = useRef(0);
+  const [isPaused, setIsPaused] = useState(false);
+  // Completion is terminal for this board: once the solve is confirmed,
+  // flipping the check setting afterwards must not restart the timer,
+  // reopen the win dialog, re-arm Reveal, or make the board editable again.
+  const [completed, setCompleted] = useState(false);
+  // The board's own live region unmounts with the board while paused, so
+  // pause state changes are announced through this dedicated region instead.
+  const [pauseAnnouncement, setPauseAnnouncement] = useState('');
   const [isVisible, setIsVisible] = useState(!document.hidden);
   // At desktop width and up (aligned with VIEWPORT_DESKTOP in cellSizes.ts)
   // the board sits beside the controls, so the compact minimap + zoom +
@@ -118,6 +126,8 @@ function GameInner({
   useEffect(() => {
     setVerifyMode(false);
     setOverusedToasts([]);
+    setIsPaused(false);
+    setCompleted(false);
   }, [solution]);
 
   useEffect(() => {
@@ -131,7 +141,14 @@ function GameInner({
   const checkEnabled = settings.checkEnabled || verifyMode;
   const isBoardFull = state.values.size === solution.size;
   const effectiveSolved = state.solved && checkEnabled;
-  const showCheckPrompt = isBoardFull && !checkEnabled;
+  const done = effectiveSolved || completed;
+  const showCheckPrompt = isBoardFull && !checkEnabled && !completed;
+
+  useEffect(() => {
+    if (effectiveSolved) {
+      setCompleted(true);
+    }
+  }, [effectiveSolved]);
 
   // The check prompt's one-time verify only applies to the completed board that
   // triggered it. Once the board is no longer full (cleared or a cell erased),
@@ -260,18 +277,26 @@ function GameInner({
     return set;
   }, [givensSet, state.values]);
 
+  // Board edits are gated on `completed` so that turning the check setting
+  // off after a confirmed solve does not make the finished board editable.
   const onEnterValue = useCallback(
     (cellId: CellId, value: SymbolValue | 0) => {
+      if (completed) {
+        return;
+      }
       dispatch({ type: 'enterValue', cellId, value });
     },
-    [dispatch]
+    [completed, dispatch]
   );
 
   const onToggleCandidate = useCallback(
     (cellId: CellId, value: SymbolValue) => {
+      if (completed) {
+        return;
+      }
       dispatch({ type: 'toggleCandidate', cellId, value });
     },
-    [dispatch]
+    [completed, dispatch]
   );
 
   const displaySymbols = useMemo(
@@ -304,7 +329,7 @@ function GameInner({
   });
 
   useEffect(() => {
-    if (!settings.timerEnabled || !state.timerStarted || effectiveSolved || !isVisible) {
+    if (!settings.timerEnabled || !state.timerStarted || done || !isVisible || isPaused) {
       return undefined;
     }
 
@@ -315,13 +340,22 @@ function GameInner({
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, effectiveSolved, isVisible, settings.timerEnabled, state.timerStarted]);
+  }, [dispatch, done, isPaused, isVisible, settings.timerEnabled, state.timerStarted]);
 
+  // Announce the solve itself, not the check toggle re-deriving
+  // effectiveSolved on an already-completed board. A ref (not the completed
+  // state) guards the re-announce so the latch flipping in the next commit
+  // does not re-run this effect and cancel the pending announcement.
+  const solvedAnnouncedRef = useRef(false);
   useEffect(() => {
-    if (!effectiveSolved || !grid.announcerRef.current) {
+    solvedAnnouncedRef.current = false;
+  }, [solution]);
+  useEffect(() => {
+    if (!effectiveSolved || solvedAnnouncedRef.current || !grid.announcerRef.current) {
       return;
     }
 
+    solvedAnnouncedRef.current = true;
     grid.announcerRef.current.textContent = '';
     const timeoutId = window.setTimeout(() => {
       if (grid.announcerRef.current) {
@@ -335,15 +369,21 @@ function GameInner({
   }, [grid.announcerRef, effectiveSolved]);
 
   useEffect(() => {
-    if (effectiveSolved) {
+    if (effectiveSolved && !completed) {
       setWinOpen(true);
     }
-  }, [effectiveSolved]);
+  }, [effectiveSolved, completed]);
 
   const selectedCellId = model.cells.find((cell) => grid.cellState(cell.id).selected)?.id ?? null;
 
   function handleReveal() {
-    if (!selectedCellId || givensSet.has(selectedCellId) || state.revealed.has(selectedCellId)) {
+    if (
+      isPaused ||
+      done ||
+      !selectedCellId ||
+      givensSet.has(selectedCellId) ||
+      state.revealed.has(selectedCellId)
+    ) {
       return;
     }
 
@@ -362,6 +402,13 @@ function GameInner({
         `Row ${selectedCell.row + 1}, column ${selectedCell.col + 1}, ${describeSymbol(solutionValue)}, revealed`
       );
     }
+  }
+
+  // Clearing a finished board is a deliberate restart of the same puzzle,
+  // so it lifts the completion latch (unlike the passive check toggle).
+  function handleClearAll() {
+    dispatch({ type: 'clearAll' });
+    setCompleted(false);
   }
 
   function handleNewGame() {
@@ -486,7 +533,7 @@ function GameInner({
   );
 
   const handleNumberEntry = (value: SymbolValue | 0) => {
-    if (!selectedCellId) {
+    if (isPaused || completed || !selectedCellId) {
       return;
     }
 
@@ -596,20 +643,28 @@ function GameInner({
 
   const controlsPanel = (
     <div className={styles.actionColumn}>
-      <Toolbar vertical onClearAll={() => dispatch({ type: 'clearAll' })} onReveal={handleReveal} />
+      <Toolbar vertical onClearAll={handleClearAll} onReveal={handleReveal} />
       <Button variant="primary" onClick={handleNewGame}>
         New Game
       </Button>
     </div>
   );
   const inputTabLabelledBy = `${candidateMode ? 'candidate' : 'normal'}-tab`;
+  const canPause = settings.timerEnabled && state.timerStarted && !done;
+  const togglePause = () => {
+    const next = !isPaused;
+    setIsPaused(next);
+    setPauseAnnouncement(next ? 'Game paused, puzzle hidden.' : 'Game resumed.');
+  };
   const timer = (
     <Timer
       elapsedSeconds={state.elapsedSeconds}
-      running={settings.timerEnabled && state.timerStarted && !effectiveSolved}
+      running={settings.timerEnabled && state.timerStarted && !done && !isPaused}
       visible={settings.timerEnabled}
-      done={effectiveSolved}
+      done={done}
       compact={isLandscapeMobile}
+      paused={isPaused}
+      onTogglePause={canPause ? togglePause : undefined}
     />
   );
   const variantLegend =
@@ -655,7 +710,7 @@ function GameInner({
           aria-hidden="true"
           className={styles.legendIcon}
         >
-          <circle cx="5" cy="5" r="4" fill="#f0f0fc" stroke="#5060a0" strokeWidth="1.5" />
+          <circle cx="5" cy="5" r="4" className={styles.legendKropkiWhite} />
         </svg>
         <span>Consecutive (differ by 1)</span>
         <svg
@@ -665,7 +720,7 @@ function GameInner({
           aria-hidden="true"
           className={styles.legendIcon}
         >
-          <circle cx="5" cy="5" r="4" fill="#5060a0" />
+          <circle cx="5" cy="5" r="4" className={styles.legendKropkiBlack} />
         </svg>
         <span>One is double the other</span>
       </div>
@@ -711,23 +766,35 @@ function GameInner({
                 : styles.boardFrame
             }
           >
-            <Board
-              variant={variant}
-              cells={model.cells}
-              rects={rects}
-              size={size}
-              gutters={gutters}
-              overlays={overlays}
-              grid={grid}
-              renderSymbol={renderSymbol}
-              displaySymbols={displaySymbols}
-              markerGaps={markerGaps}
-              wordCells={wordCellIds}
-              parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
-              viewport={viewportState}
-              checkEnabled={checkEnabled}
-              showColorLabel={settings.showColorLabels}
-            />
+            {isPaused ? (
+              <div
+                className={styles.pauseCover}
+                style={{ width: framedSize.w, height: framedSize.h }}
+              >
+                <span className={styles.pauseTitle}>Paused</span>
+                <Button variant="primary" onClick={togglePause}>
+                  Resume
+                </Button>
+              </div>
+            ) : (
+              <Board
+                variant={variant}
+                cells={model.cells}
+                rects={rects}
+                size={size}
+                gutters={gutters}
+                overlays={overlays}
+                grid={grid}
+                renderSymbol={renderSymbol}
+                displaySymbols={displaySymbols}
+                markerGaps={markerGaps}
+                wordCells={wordCellIds}
+                parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+                viewport={viewportState}
+                checkEnabled={checkEnabled}
+                showColorLabel={settings.showColorLabels}
+              />
+            )}
           </div>
           {isLandscapeMobile ? null : variantLegend}
         </div>
@@ -739,7 +806,7 @@ function GameInner({
               onSelectControlTab={selectControlTab}
               inputTabLabelledBy={inputTabLabelledBy}
               numberPad={numberPad}
-              onClearAll={() => dispatch({ type: 'clearAll' })}
+              onClearAll={handleClearAll}
               onReveal={handleReveal}
               colorLabelToggle={colorLabelToggle}
             />
@@ -770,6 +837,9 @@ function GameInner({
           New Game
         </Button>
       ) : null}
+      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+        {pauseAnnouncement}
+      </div>
       <div role="status" aria-live="polite">
         {showCheckPrompt ? (
           <div className={styles.checkPrompt}>
