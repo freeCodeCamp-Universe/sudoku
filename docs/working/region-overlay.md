@@ -181,7 +181,24 @@ function signature and Task 1's token names.
 
 (none — all resolved 2026-07-18; implement-here vs Copilot still undecided)
 
+## Outcomes and Lessons
+
+- **Tasks 1-6 complete.** All nine multigrid variants tint overlaps through
+  the single `data-overlap` scheme, gated behind the session-only "Highlight
+  overlaps" toggle.
+- **Task 6 was smaller than planned.** By the time Task 6 ran, the bespoke
+  `data-butterfly` / `data-cross` / `data-flower` attributes had already lost
+  their base tint rule during Task 3, leaving only redundant compound guard
+  selectors (`.cell[data-same-value][data-butterfly]`, the check-mode error
+  variants) that duplicated their plain forms. Removal was purely dead-code:
+  the Cell props/attributes, the Board wiring, and the compound CSS. No test
+  referenced the retired attributes, so no test edits were needed.
+- **Task 7 gate:** `pnpm build && pnpm test && pnpm lint` all green
+  (140 files, 2146 tests). Manual visual sweep (9 variants × dark/light × HC ×
+  toggle × check-mode error fill) is left for human review before merge.
+
 ## Status
 
-- [ ] Plan approved
-- [ ] Phase 1 · [ ] Checkpoint · [ ] Phase 2 · [ ] Checkpoint · [ ] Phase 3
+- [x] Plan approved
+- [x] Phase 1 · [x] Checkpoint · [x] Phase 2 · [x] Checkpoint · [x] Phase 3
+      (code complete; manual visual sweep pending human review)
