@@ -75,6 +75,23 @@ const REGION_FILLS = [
   '--overlay-special-fill',
 ] as const;
 
+/**
+ * Multigrid subgrid-overlap tint (Board `data-overlap`). Four rungs, one per
+ * overlap count (2..5), painted on the plain multigrid cell base
+ * (--bg-secondary). Text legibility is the hard bound: every cell text role
+ * keeps 4.5:1 on every rung in all four palettes. The rung-vs-base cue is a
+ * secondary carrier — the overlap screen-reader annotator announces the exact
+ * count — so where a legible rung cannot also clear 3:1 against the base
+ * (light HC especially, where the base is #ebebe6, not white) the vs-base pair
+ * is an accepted advisory, mirroring the standard region-fill shortfall.
+ */
+const OVERLAP_FILLS = [
+  '--board-overlap-2-bg',
+  '--board-overlap-3-bg',
+  '--board-overlap-4-bg',
+  '--board-overlap-5-bg',
+] as const;
+
 export const CHIP_TOKENS = Array.from({ length: 9 }, (_, i) => `--color-${i + 1}`);
 
 /**
@@ -136,6 +153,17 @@ const ACCEPTED_FAILURES = new Set<string>([
     `dark|region fill ${fill} vs base`,
     `light|region fill ${fill} vs base`,
   ]),
+  // Overlap tint rung-vs-base (see OVERLAP_FILLS): a legible rung cannot also
+  // clear 3:1 against the multigrid cell base (--bg-secondary) in most
+  // palettes — in light HC the base is #ebebe6, and a rung dark enough for 3:1
+  // drops the near-black text under 4.5:1, so it is provably infeasible. These
+  // stay advisory and the overlap screen-reader annotator carries the count.
+  // Only the darkest dark-HC rung reaches 3:1 (gated, not listed here).
+  ...THEMES.flatMap((theme) =>
+    OVERLAP_FILLS.filter((fill) => !(theme === 'dark-hc' && fill === '--board-overlap-5-bg')).map(
+      (fill) => `${theme}|overlap fill ${fill} vs base`
+    )
+  ),
   'light|even bg vs odd bg',
   'light|peer-even bg vs peer-odd bg',
   'light|error bg vs base',
@@ -262,6 +290,31 @@ export const contrastPairs: ContrastPair[] = [
       threshold: UI_AA,
       theme,
     }))
+  ),
+
+  // Overlap tint (see OVERLAP_FILLS). Text legibility is gated on every rung in
+  // every palette; the rung-vs-base cue is gated where a legible rung clears
+  // 3:1 and advisory where it cannot (the SR annotator carries the count). The
+  // base is the plain multigrid cell fill, --bg-secondary, in every theme.
+  ...THEMES.flatMap((theme): PairInput[] =>
+    OVERLAP_FILLS.flatMap((fill) => [
+      {
+        label: `overlap fill ${fill} vs base`,
+        fg: fill,
+        bg: '--bg-secondary',
+        threshold: UI_AA,
+        theme,
+      },
+      ...Object.keys(TEXT)
+        .filter((role) => role !== 'incorrect')
+        .map((role) => ({
+          label: `${role} text on ${fill}`,
+          fg: refFor(TEXT[role], theme),
+          bg: fill,
+          threshold: TEXT_AA,
+          theme,
+        })),
+    ])
   ),
 
   // Color-sudoku chips are the rendered symbol, so each chip needs 3:1
