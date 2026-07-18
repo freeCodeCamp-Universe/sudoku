@@ -30,9 +30,6 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   diagonal?: boolean;
   small?: boolean;
   medium?: boolean;
-  butterfly?: boolean;
-  cross?: boolean;
-  flower?: boolean;
   overlap?: OverlapCount;
   window?: boolean;
   asterisk?: boolean;
@@ -83,9 +80,6 @@ export function Cell({
   diagonal = false,
   small = false,
   medium = false,
-  butterfly: isButterfly = false,
-  cross: isCross = false,
-  flower: isFlower = false,
   overlap,
   window: isWindow = false,
   asterisk = false,
@@ -126,9 +120,6 @@ export function Cell({
       data-diagonal={diagonal || undefined}
       data-small={small || undefined}
       data-medium={medium || undefined}
-      data-butterfly={isButterfly || undefined}
-      data-cross={isCross || undefined}
-      data-flower={isFlower || undefined}
       data-overlap={overlap ?? undefined}
       data-window={isWindow || undefined}
       data-asterisk={asterisk || undefined}

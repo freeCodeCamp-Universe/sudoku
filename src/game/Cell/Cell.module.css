@@ -236,24 +236,16 @@
 
 /* Highlight every cell sharing the selected cell's value. Teal keeps it
    distinct from correct (green). */
-.cell[data-same-value],
-.cell[data-same-value][data-butterfly],
-.cell[data-same-value][data-cross],
-.cell[data-same-value][data-flower] {
+.cell[data-same-value] {
   background: var(--cell-same-value-bg) !important;
 }
 
-:global(.light) .cell[data-same-value],
-:global(.light) .cell[data-same-value][data-butterfly],
-:global(.light) .cell[data-same-value][data-cross],
-:global(.light) .cell[data-same-value][data-flower] {
+:global(.light) .cell[data-same-value] {
   background: var(--cell-same-value-bg) !important;
 }
 
 [data-check] .cell[data-conflict],
-[data-check] .cell[data-conflict][data-butterfly],
-[data-check] .cell[data-incorrect],
-[data-check] .cell[data-incorrect][data-butterfly] {
+[data-check] .cell[data-incorrect] {
   background: var(--cell-error-bg) !important;
 }
 
@@ -467,8 +459,6 @@
 }
 
 :global(.light) [data-check] .cell[data-conflict],
-:global(.light) [data-check] .cell[data-conflict][data-butterfly],
-:global(.light) [data-check] .cell[data-incorrect],
-:global(.light) [data-check] .cell[data-incorrect][data-butterfly] {
+:global(.light) [data-check] .cell[data-incorrect] {
   background: var(--cell-error-bg) !important;
 }
