@@ -112,8 +112,16 @@
   --cell-overlap-3-bg: #e9e9f6;
   --cell-overlap-4-bg: #e4e4f4;
   --cell-overlap-5-bg: #dfdff2;
-  --board-overlap-2-bg: #ececf8;
-  --board-overlap-3-bg: #e8e8f5;
+  /* Rungs 2-3 (the common, lightest overlap states) were only 2-7 RGB units
+     from --cell-peer-bg (#ededf6) — indistinguishable in practice. A first
+     fix pushed both toward white for clear separation, but that read as too
+     washed out. Settled on --cell-window-bg's own light value for rung 2 (a
+     proven, already-shipped fill that coexists with peer highlighting on
+     windoku boards without looking too pale) and a modest step down from it
+     for rung 3, rather than inventing new values. Rungs 4-5 were already far
+     enough from peer-bg (13+ units) and stay untouched. */
+  --board-overlap-2-bg: #e8e8fa;
+  --board-overlap-3-bg: #e3e3f7;
   --board-overlap-4-bg: #e4e4f2;
   --board-overlap-5-bg: #e0e0ee;
   --cell-peer-bg: #ededf6;
