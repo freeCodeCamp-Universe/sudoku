@@ -988,6 +988,33 @@ describe('GamePage - pause', () => {
   });
 });
 
+describe('GamePage - hidden timer', () => {
+  it('should keep accumulating elapsed time while the timer is hidden', () => {
+    vi.useFakeTimers();
+    window.localStorage.setItem('sudoku-timer', 'false');
+
+    try {
+      renderGamePage();
+
+      const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+      fireEvent.click(emptyCell);
+      fireEvent.click(screen.getByRole('button', { name: '5' }));
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+      fireEvent.click(screen.getByRole('switch', { name: 'Timer' }));
+
+      const [timerText] = screen.getAllByText(/^0:0[4-6]$/);
+      expect(timerText).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
 // Pass 3 (gap G2): clicking a real Cell + NumberPad digit that duplicates a peer
 // must surface the conflict in the rendered DOM. The mocked generate leaves rows
 // 4+ empty, so r3c0 and r3c1 (Row 4, columns 1-2) are guaranteed empty peers in

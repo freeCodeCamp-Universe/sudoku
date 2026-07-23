@@ -337,8 +337,14 @@ function GameInner({
     onCellNavigate: panZoomActive ? ensureCellVisible : undefined,
   });
 
+  // Ticks unconditionally (independent of settings.timerEnabled) so
+  // elapsed time keeps accumulating in the background while the timer is
+  // hidden. settings.timerEnabled only gates whether that time is *shown*
+  // (Timer's visible prop, the win dialog's time row) — otherwise turning
+  // the timer on mid-game would misleadingly "restart" from 0:00 instead of
+  // revealing the true time already spent solving.
   useEffect(() => {
-    if (!settings.timerEnabled || !state.timerStarted || done || !isVisible || isPaused) {
+    if (!state.timerStarted || done || !isVisible || isPaused) {
       return undefined;
     }
 
@@ -349,7 +355,7 @@ function GameInner({
     return () => {
       window.clearInterval(timerId);
     };
-  }, [dispatch, done, isPaused, isVisible, settings.timerEnabled, state.timerStarted]);
+  }, [dispatch, done, isPaused, isVisible, state.timerStarted]);
 
   // Announce the solve itself, not the check toggle re-deriving
   // effectiveSolved on an already-completed board. A ref (not the completed
