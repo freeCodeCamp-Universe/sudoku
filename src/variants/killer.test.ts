@@ -105,4 +105,30 @@ describe('killer variant', () => {
       expect(value).toBe(solution.get(cellId));
     }
   });
+
+  // GamePage re-derives structure from the solution on every mount
+  // (assemblePuzzle), including when resuming saved progress — deriveStructure
+  // must therefore be a pure function of the solution, not Math.random(), or
+  // resuming a saved game would carve a different cage layout than the one the
+  // saved values were entered against.
+  it('should derive the same cages every time for the same solution', () => {
+    const model = buildModel(killer);
+    const solution = generateSolution(model, seeded(66));
+
+    const first = killer.deriveStructure?.(solution, model) as { cages: Cage[] };
+    const second = killer.deriveStructure?.(solution, model) as { cages: Cage[] };
+
+    expect(second.cages).toEqual(first.cages);
+  });
+
+  it('should derive different cages for different solutions', () => {
+    const model = buildModel(killer);
+    const solutionA = generateSolution(model, seeded(67));
+    const solutionB = generateSolution(model, seeded(68));
+
+    const cagesA = killer.deriveStructure?.(solutionA, model) as { cages: Cage[] };
+    const cagesB = killer.deriveStructure?.(solutionB, model) as { cages: Cage[] };
+
+    expect(cagesB.cages).not.toEqual(cagesA.cages);
+  });
 });

@@ -1,4 +1,5 @@
 import { cellId, range, shuffle } from '@/engine/grid';
+import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
 import { makeGenerateGivens } from './generateGivens9x9';
 import type { Cage } from '@/game/gameTypes';
@@ -49,10 +50,10 @@ function cageHasUniqueDigits(cage: Cage, solution: Solution): boolean {
   return true;
 }
 
-function carveCagesOnce(solution: Solution): Cage[] {
+function carveCagesOnce(solution: Solution, rng: () => number): Cage[] {
   const assigned = new Set<string>();
   const cages: Cage[] = [];
-  const order = shuffle(range(N * N));
+  const order = shuffle(range(N * N), rng);
 
   for (const idx of order) {
     const startR = Math.floor(idx / N);
@@ -61,7 +62,7 @@ function carveCagesOnce(solution: Solution): Cage[] {
 
     if (assigned.has(startId)) continue;
 
-    const size = Math.random() < 0.3 ? 2 : Math.random() < 0.6 ? 3 : 4;
+    const size = rng() < 0.3 ? 2 : rng() < 0.6 ? 3 : 4;
     const cells: string[] = [startId];
     assigned.add(startId);
 
@@ -80,7 +81,7 @@ function carveCagesOnce(solution: Solution): Cage[] {
       }
 
       if (candidates.length === 0) break;
-      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      const pick = candidates[Math.floor(rng() * candidates.length)];
       cells.push(pick);
       assigned.add(pick);
     }
@@ -168,11 +169,26 @@ function allCagesHaveUniqueDigits(cages: Cage[], solution: Solution): boolean {
   return cages.every((cage) => cageHasUniqueDigits(cage, solution));
 }
 
+// Cages are derived client-side from the solution on every mount (assemblePuzzle
+// re-derives structure whenever it runs), so carving must be a pure function of
+// the solution rather than Math.random() — otherwise resuming saved progress
+// would carve a different cage layout than the one the saved values were
+// entered against. The solution's own digits, in a fixed cell order, make a
+// seed that is deterministic for a given puzzle without needing the seeds
+// GamePage threads through buildPuzzle.
+function seedFromSolution(solution: Solution): number {
+  const digitsInOrder = range(N).flatMap((row) =>
+    range(N).map((col) => solution.get(cellId(row, col)) ?? 0)
+  );
+  return hashSeed(...digitsInOrder);
+}
+
 function carveCages(solution: Solution, _model: VariantModel): { cages: Cage[] } {
+  const rng = createSeededRng(seedFromSolution(solution));
   let fallback: Cage[] | null = null;
 
   for (let attempt = 0; attempt < MAX_CARVE_ATTEMPTS; attempt += 1) {
-    const merged = mergeOrphans(carveCagesOnce(solution), solution);
+    const merged = mergeOrphans(carveCagesOnce(solution, rng), solution);
     if (!fallback) {
       fallback = merged;
     }
@@ -181,7 +197,7 @@ function carveCages(solution: Solution, _model: VariantModel): { cages: Cage[] }
     }
   }
 
-  return { cages: fallback ?? mergeOrphans(carveCagesOnce(solution), solution) };
+  return { cages: fallback ?? mergeOrphans(carveCagesOnce(solution, rng), solution) };
 }
 
 export const killer: Variant = {
