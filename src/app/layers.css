@@ -3,17 +3,28 @@
    lines sit above cell backgrounds but below the grid lines, box/region
    structure lines sit above the 1px grid lines (so neighboring cells' grid
    lines cannot cut across them), digits and marker gaps sit above the
-   structure lines, clue overlays (cages, kropki dots, inequality triangles)
-   sit above the digits, and the selection ring tops everything. Kept
-   separate from theme.css, whose :root block is parsed as color tokens by
-   src/game/testing/themeTokens.ts and docs generation. */
+   structure lines, and clue overlays (cages, kropki dots, inequality
+   triangles) sit above the digits.
+   --layer-selection is negative on purpose, not just "a small number": a
+   selected cell's ::after ring used to sit at a positive layer and, despite
+   being numerically below --layer-clue-overlays, still painted over a clue
+   marker sitting on the cell's own top/left edge — but not its bottom/right
+   edge (reproduced with Playwright pixel sampling; root cause suspected to
+   be a .row { display: contents } stacking quirk, but simply renumbering
+   two positive layers against each other did not fix it, only going
+   negative did). Negative z-index descendants are their own painting step,
+   earlier than every non-negative one regardless of magnitude, so this
+   reliably keeps the ring below cell content and clue overlays on all four
+   sides — markers stay visible, like given digits already do when selected.
+   Kept separate from theme.css, whose :root block is parsed as color tokens
+   by src/game/testing/themeTokens.ts and docs generation. */
 :root {
+  --layer-selection: -1;
   --layer-chain: 0;
   --layer-grid-lines: 1;
   --layer-box-lines: 2;
   --layer-cell-content: 3;
   --layer-clue-overlays: 4;
-  --layer-selection: 10;
 
   /* App chrome above the board: the header's settings dropdown, toasts
      above the page but below confirm dialogs and their backdrops, and the
