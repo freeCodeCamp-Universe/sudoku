@@ -202,4 +202,49 @@ describe('NumberPad', () => {
     const button = screen.getByRole('button', { name: 'Orange, more placed than needed' });
     expect(button).toHaveAttribute('data-overused', 'true');
   });
+
+  it('should flag a fully-placed symbol in the button label', () => {
+    render(
+      <NumberPad
+        symbols={[5, 6]}
+        overusedSymbols={new Set()}
+        usedSymbols={new Set([6])}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: '5' })).toBeTruthy();
+    const button = screen.getByRole('button', { name: '6, all placed' });
+    expect(button).toHaveAttribute('data-used', 'true');
+  });
+
+  it('should prefer the overused marker when a symbol is somehow in both sets', () => {
+    render(
+      <NumberPad
+        symbols={[6]}
+        overusedSymbols={new Set([6])}
+        usedSymbols={new Set([6])}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    const button = screen.getByRole('button', { name: '6, more placed than needed' });
+    expect(button).toHaveAttribute('data-overused', 'true');
+    expect(button).not.toHaveAttribute('data-used');
+  });
+
+  it('should not mark any button as used when usedSymbols is omitted', () => {
+    render(
+      <NumberPad
+        symbols={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        overusedSymbols={new Set()}
+        onEnter={() => {}}
+        candidateMode={false}
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: /all placed/ })).toBeNull();
+  });
 });

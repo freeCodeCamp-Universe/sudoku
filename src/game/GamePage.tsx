@@ -32,6 +32,7 @@ import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
 import { findOverusedSymbols } from './overusedSymbols';
+import { findUsedSymbols } from './usedSymbols';
 import { overlapCounts } from './overlapCounts';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
@@ -434,6 +435,10 @@ function GameInner({
     () => findOverusedSymbols(state.values, solution, model.symbols),
     [model.symbols, solution, state.values]
   );
+  const usedSymbols = useMemo(
+    () => findUsedSymbols(state.values, solution, model.symbols),
+    [model.symbols, solution, state.values]
+  );
 
   // The hint fires each time a symbol crosses into the overused state, however
   // the entry was made (numpad tap or keyboard on the board), so it watches the
@@ -580,6 +585,7 @@ function GameInner({
     <NumberPad
       symbols={displaySymbols}
       overusedSymbols={overusedSymbols}
+      usedSymbols={usedSymbols}
       columns={
         model.symbols.length === 16
           ? 4

@@ -772,7 +772,9 @@ describe('GamePage - check prompt', () => {
 
     // Refilling it brings back the completion prompt instead of auto-checking,
     // because global checking is still off and verify mode did not persist.
-    await user.click(screen.getByRole('button', { name: '5' }));
+    // Prefix match: the board is otherwise fully solved, so 5 may already be
+    // fully placed elsewhere and its label reads "5, all placed".
+    await user.click(screen.getByRole('button', { name: /^5(,|$)/ }));
 
     expect(screen.getByText(/looks like you're done/i)).toBeInTheDocument();
   });

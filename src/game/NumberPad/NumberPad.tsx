@@ -14,6 +14,11 @@ const GRID_LABELS = {
 interface NumberPadProps {
   symbols: SymbolValue[];
   overusedSymbols: Set<SymbolValue>;
+  // Symbols placed exactly as many times as the puzzle needs — a persistent
+  // gray marker, distinct from the red overused marker (which only appears
+  // once a symbol is placed past that point). Optional/defaulted so existing
+  // callers that don't track this yet keep working unchanged.
+  usedSymbols?: Set<SymbolValue>;
   onEnter: (value: SymbolValue | 0) => void;
   candidateMode: boolean;
   columns?: number;
@@ -25,6 +30,7 @@ interface NumberPadProps {
 export function NumberPad({
   symbols,
   overusedSymbols,
+  usedSymbols = new Set(),
   onEnter,
   candidateMode,
   columns,
@@ -125,15 +131,19 @@ export function NumberPad({
             }
             const symbol = item.value;
             const overused = overusedSymbols.has(symbol);
+            const used = !overused && usedSymbols.has(symbol);
             const label = overused
               ? `${describeSymbol(symbol)}, more placed than needed`
-              : describeSymbol(symbol);
+              : used
+                ? `${describeSymbol(symbol)}, all placed`
+                : describeSymbol(symbol);
             return (
               <div key={symbol} role="gridcell" className={styles.numCell}>
                 <button
                   {...sharedProps}
                   className={styles.numBtn}
                   data-overused={overused || undefined}
+                  data-used={used || undefined}
                   aria-label={label}
                   onClick={() => onEnter(symbol)}
                 >

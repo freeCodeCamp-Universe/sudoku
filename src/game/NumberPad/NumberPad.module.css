@@ -73,6 +73,16 @@
   outline-offset: 2px;
 }
 
+.numBtn[data-used] {
+  border-block-end-color: var(--text-muted);
+}
+
+.numBtn:has(.colorChip)[data-used] {
+  border-block-end-color: var(--text-muted);
+}
+
+/* Declared after [data-used] so overused (a symbol placed past what the
+   puzzle needs) always wins if a future change ever made the two overlap. */
 .numBtn[data-overused] {
   border-block-end-color: var(--accent-red);
 }
