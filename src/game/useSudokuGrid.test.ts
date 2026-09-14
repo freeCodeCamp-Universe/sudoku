@@ -8,6 +8,7 @@ import type { CellAnnotator } from '@/game/gameTypes';
 import { buildModel } from '@/engine/buildModel';
 import { Board } from '@/game/Board/Board';
 import { gridLayout } from '@/game/layouts/grid';
+import { samurai } from '@/variants/samurai';
 import { sujiken } from '@/variants/sujiken';
 import { useSudokuGrid } from './useSudokuGrid';
 
@@ -908,6 +909,59 @@ describe('useSudokuGrid moveSelection', () => {
     });
 
     expect(result.current.cellState('r0c0').selected).toBe(true);
+  });
+
+  it('should cross inactive gaps between multigrid sections', () => {
+    const samuraiModel = buildModel(samurai);
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells: samuraiModel.cells,
+        model: samuraiModel,
+        values: emptyValues,
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+      })
+    );
+
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+    act(() => {
+      result.current.moveSelection('right');
+    });
+
+    expect(result.current.cellState('r0c12').selected).toBe(true);
+
+    act(() => {
+      result.current.moveSelection('left');
+    });
+
+    expect(result.current.cellState('r0c8').selected).toBe(true);
   });
 });
 
