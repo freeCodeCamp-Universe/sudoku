@@ -48,4 +48,43 @@ describe('usePersistence', () => {
     expect(result.current.settings.checkEnabled).toBe(false);
     expect(result.current.settings.timerEnabled).toBe(false);
   });
+
+  it('should default navOnLeft to false', () => {
+    const { result } = renderHook(() => usePersistence('classic'));
+
+    expect(result.current.settings.navOnLeft).toBe(false);
+  });
+
+  it('should persist navOnLeft toggle to localStorage', () => {
+    const { result } = renderHook(() => usePersistence('classic'));
+
+    act(() => {
+      result.current.toggleNavOnLeft();
+    });
+
+    expect(localStorage.getItem('sudoku-nav-on-left')).toBe('true');
+    expect(result.current.settings.navOnLeft).toBe(true);
+  });
+
+  it('should read a previously stored navOnLeft value on mount', () => {
+    localStorage.setItem('sudoku-nav-on-left', 'true');
+
+    const { result } = renderHook(() => usePersistence('classic'));
+
+    expect(result.current.settings.navOnLeft).toBe(true);
+  });
+
+  it('should toggle navOnLeft back to false on a second call', () => {
+    const { result } = renderHook(() => usePersistence('classic'));
+
+    act(() => {
+      result.current.toggleNavOnLeft();
+    });
+    act(() => {
+      result.current.toggleNavOnLeft();
+    });
+
+    expect(localStorage.getItem('sudoku-nav-on-left')).toBe('false');
+    expect(result.current.settings.navOnLeft).toBe(false);
+  });
 });

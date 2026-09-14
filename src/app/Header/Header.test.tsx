@@ -148,6 +148,89 @@ describe('Header', () => {
       document.documentElement.classList.remove('high-contrast');
     });
 
+    it('should render the Navigation on left toggle when onToggleNavOnLeft is provided', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <ThemeProvider>
+            <Header
+              title="Classic Sudoku"
+              backHref="/"
+              navOnLeftEnabled={false}
+              onToggleNavOnLeft={vi.fn()}
+            />
+          </ThemeProvider>
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      const navOnLeftSwitch = screen.getByRole('switch', { name: /navigation on left/i });
+      expect(navOnLeftSwitch).toBeInTheDocument();
+      expect(navOnLeftSwitch).not.toBeChecked();
+    });
+
+    it('should not render the Navigation on left toggle when onToggleNavOnLeft is not provided', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <ThemeProvider>
+            <Header title="Classic Sudoku" backHref="/" onToggleCheck={vi.fn()} />
+          </ThemeProvider>
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      expect(screen.queryByRole('switch', { name: /navigation on left/i })).not.toBeInTheDocument();
+    });
+
+    it('should call onToggleNavOnLeft when the Navigation on left switch is clicked', async () => {
+      const user = userEvent.setup();
+      const onToggleNavOnLeft = vi.fn();
+
+      render(
+        <MemoryRouter>
+          <ThemeProvider>
+            <Header
+              title="Classic Sudoku"
+              backHref="/"
+              navOnLeftEnabled={false}
+              onToggleNavOnLeft={onToggleNavOnLeft}
+            />
+          </ThemeProvider>
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+      await user.click(screen.getByRole('switch', { name: /navigation on left/i }));
+
+      expect(onToggleNavOnLeft).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reflect navOnLeftEnabled=true on the Navigation on left switch', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <ThemeProvider>
+            <Header
+              title="Classic Sudoku"
+              backHref="/"
+              navOnLeftEnabled={true}
+              onToggleNavOnLeft={vi.fn()}
+            />
+          </ThemeProvider>
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      expect(screen.getByRole('switch', { name: /navigation on left/i })).toBeChecked();
+    });
+
     it('should implement ARIA Disclosure pattern and handle Escape key', async () => {
       const user = userEvent.setup();
       render(<SettingsHarness />);
