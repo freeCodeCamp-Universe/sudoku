@@ -1,0 +1,29 @@
+{
+  "lesson": {
+    "id": "64a2f3b1c7d8e9f0a1b2c3d5",
+    "module": 1,
+    "lesson": 2,
+    "type": "learn",
+    "title": "Your First Interactive Lesson",
+    "files": { "starter.txt": "Replace this file content with your lesson's seed state.\n" },
+    "config": {
+      "checklist": [
+        {
+          "label": "See the placeholder panel",
+          "hint": "You can find the interactive panel on the right side of the screen.",
+          "test": { "placeholder": true }
+        },
+        {
+          "label": "Read about replacing the panel",
+          "hint": "You can see architecture.md for instructions on building your own interactive panel.",
+          "test": { "placeholder": true }
+        }
+      ]
+    },
+    "layoutType": "interactive"
+  },
+  "nextLessonId": "64a2f3b1c7d8e9f0a1b2c3d6",
+  "isLastLesson": false,
+  "instructionsHtml": "<p>This is an <strong>interactive lesson</strong>. The right panel contains your interactive content area.</p>\n<p>Right now it shows a placeholder. Replace <code>PlaceholderPanel</code> with your own component to\nbuild real exercises. See <code>architecture.md</code> for step-by-step instructions.</p>\n<h2 id=\"completing-this-lesson\">Completing this lesson</h2>\n<p>The checklist below tracks your progress. The placeholder panel auto-completes all items\nso you can see how the flow works before wiring up a real engine.</p>\n",
+  "headings": []
+}

@@ -1,0 +1,28 @@
+{
+  "modules": [
+    {
+      "number": 1,
+      "slug": "getting-started",
+      "title": "Getting Started",
+      "lessons": [
+        {
+          "id": "64a2f3b1c7d8e9f0a1b2c3d4",
+          "title": "Welcome to {{PROJECT_NAME}}"
+        },
+        {
+          "id": "64a2f3b1c7d8e9f0a1b2c3d5",
+          "title": "Your First Interactive Lesson"
+        },
+        {
+          "id": "64a2f3b1c7d8e9f0a1b2c3d6",
+          "title": "Getting Started Review"
+        }
+      ]
+    }
+  ],
+  "orderedLessonIds": [
+    "64a2f3b1c7d8e9f0a1b2c3d4",
+    "64a2f3b1c7d8e9f0a1b2c3d5",
+    "64a2f3b1c7d8e9f0a1b2c3d6"
+  ]
+}
