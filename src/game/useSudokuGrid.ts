@@ -4,17 +4,30 @@ import { validate } from '@/engine/validate';
 import type { Cell, CellId, SymbolValue, Values, VariantModel } from '@/engine/types';
 import type { CellAnnotator, CellState, Direction, GridInteraction } from './gameTypes';
 
-function stepCellId(cell: { row: number; col: number }, direction: Direction): CellId {
-  switch (direction) {
-    case 'up':
-      return `r${cell.row - 1}c${cell.col}`;
-    case 'down':
-      return `r${cell.row + 1}c${cell.col}`;
-    case 'left':
-      return `r${cell.row}c${cell.col - 1}`;
-    case 'right':
-      return `r${cell.row}c${cell.col + 1}`;
-  }
+function findNextCell(cells: Cell[], cell: Cell, direction: Direction): CellId | null {
+  const candidates = cells.filter((candidate) => {
+    if (direction === 'up' || direction === 'down') {
+      return (
+        candidate.col === cell.col &&
+        (direction === 'up' ? candidate.row < cell.row : candidate.row > cell.row)
+      );
+    }
+
+    return (
+      candidate.row === cell.row &&
+      (direction === 'left' ? candidate.col < cell.col : candidate.col > cell.col)
+    );
+  });
+
+  candidates.sort((a, b) => {
+    if (direction === 'up' || direction === 'left') {
+      return direction === 'up' ? b.row - a.row : b.col - a.col;
+    }
+
+    return direction === 'down' ? a.row - b.row : a.col - b.col;
+  });
+
+  return candidates[0]?.id ?? null;
 }
 
 interface UseSudokuGridOptions {
@@ -361,16 +374,16 @@ export function useSudokuGrid({
 
       switch (key) {
         case 'ArrowUp':
-          nextId = stepCellId(cell, 'up');
+          nextId = findNextCell(cells, cell, 'up');
           break;
         case 'ArrowDown':
-          nextId = stepCellId(cell, 'down');
+          nextId = findNextCell(cells, cell, 'down');
           break;
         case 'ArrowLeft':
-          nextId = stepCellId(cell, 'left');
+          nextId = findNextCell(cells, cell, 'left');
           break;
         case 'ArrowRight':
-          nextId = stepCellId(cell, 'right');
+          nextId = findNextCell(cells, cell, 'right');
           break;
         case 'Home':
           nextId = `r${cell.row}c${Math.min(...rowCols)}`;
@@ -517,8 +530,8 @@ export function useSudokuGrid({
       if (!cell) {
         return;
       }
-      const nextId = stepCellId(cell, direction);
-      if (!cellsById.has(nextId)) {
+      const nextId = findNextCell(cells, cell, direction);
+      if (!nextId) {
         return;
       }
       selectCell(nextId);
@@ -527,7 +540,7 @@ export function useSudokuGrid({
         ?.focus({ preventScroll: true });
       onCellNavigate?.(nextId);
     },
-    [selectedId, firstCellId, cellsById, selectCell, onCellNavigate]
+    [selectedId, firstCellId, cells, cellsById, selectCell, onCellNavigate]
   );
 
   const cellProps = useCallback(
