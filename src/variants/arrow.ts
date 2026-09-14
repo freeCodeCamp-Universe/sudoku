@@ -97,7 +97,7 @@ export const arrow: Variant = {
           text: "The symbol in the bulb must equal the sum of all symbols along the arrow's line.",
         },
         {
-          term: 'Bulbs can repeat shafts',
+          term: 'Bulb exclusion',
           text: 'The bulb symbol is not part of the sum. Only the cells along the shaft count.',
         },
       ],
