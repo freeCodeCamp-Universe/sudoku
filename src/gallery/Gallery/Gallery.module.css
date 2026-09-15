@@ -43,6 +43,10 @@
   font-size: 1rem;
 }
 
+.randomPuzzleButton {
+  margin-block-start: 12px;
+}
+
 .headerTopBar {
   width: 100%;
   display: flex;

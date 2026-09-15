@@ -11,7 +11,7 @@ import {
   gutterOrigin,
   isOversized,
 } from '@/game/boardViewport';
-import { Button } from '@/game/Button';
+import { Button } from '@/app/Button';
 import { Dialog } from '@/game/Dialog';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
@@ -679,7 +679,7 @@ function GameInner({
   const controlsPanel = (
     <div className={styles.actionColumn}>
       <Toolbar vertical onClearAll={handleClearAll} onReveal={handleReveal} />
-      <Button variant="primary" onClick={handleNewGame}>
+      <Button variant="cta" onClick={handleNewGame}>
         New Game
       </Button>
     </div>
@@ -807,7 +807,7 @@ function GameInner({
                 style={{ width: framedSize.w, height: framedSize.h }}
               >
                 <span className={styles.pauseTitle}>Paused</span>
-                <Button variant="primary" onClick={togglePause}>
+                <Button variant="cta" onClick={togglePause}>
                   Resume
                 </Button>
               </div>
@@ -870,7 +870,7 @@ function GameInner({
         </div>
       </div>
       {isDesktop ? (
-        <Button variant="primary" className={styles.desktopNewGame} onClick={handleNewGame}>
+        <Button variant="cta" className={styles.desktopNewGame} onClick={handleNewGame}>
           New Game
         </Button>
       ) : null}
