@@ -66,12 +66,14 @@ function createReducer(initialGivens: Values, solution: Values) {
         const nextCandidates = cloneCandidates(state.candidates);
 
         if (action.value === 0) {
-          nextValues.delete(action.cellId);
+          if (state.values.has(action.cellId)) {
+            nextValues.delete(action.cellId);
+          } else {
+            nextCandidates.delete(action.cellId);
+          }
         } else {
           nextValues.set(action.cellId, action.value);
         }
-
-        nextCandidates.delete(action.cellId);
 
         return {
           ...state,
@@ -122,8 +124,12 @@ function createReducer(initialGivens: Values, solution: Values) {
 
         const nextValues = new Map(state.values);
         const nextCandidates = cloneCandidates(state.candidates);
-        nextValues.delete(action.cellId);
-        nextCandidates.delete(action.cellId);
+
+        if (state.values.has(action.cellId)) {
+          nextValues.delete(action.cellId);
+        } else {
+          nextCandidates.delete(action.cellId);
+        }
 
         return {
           ...state,

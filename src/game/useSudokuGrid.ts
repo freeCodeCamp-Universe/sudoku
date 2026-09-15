@@ -241,7 +241,7 @@ export function useSudokuGrid({
   // runs, so callers pass the projected `nextValues` and this helper computes the
   // correct/conflict flags consistently for both keyboard and numpad paths.
   const announceCellState = useCallback(
-    (id: CellId, nextValues: Values) => {
+    (id: CellId, nextValues: Values, nextCandidates = candidates) => {
       const cell = cellsById.get(id);
 
       if (!cell) {
@@ -251,7 +251,7 @@ export function useSudokuGrid({
       const value = nextValues.get(id);
       const sortedCandidates =
         value === undefined
-          ? model.symbols.filter((s) => (candidates.get(id) ?? []).includes(s))
+          ? model.symbols.filter((s) => (nextCandidates.get(id) ?? []).includes(s))
           : [];
       const projectedConflictSet = new Set(
         validate(nextValues, model).flatMap((conflict) => conflict.cells)
@@ -262,7 +262,7 @@ export function useSudokuGrid({
 
         return {
           value: nextValues.get(cellId),
-          candidates: candidates.get(cellId) ?? [],
+          candidates: nextCandidates.get(cellId) ?? [],
           given: isGiven,
           revealed: revealed.has(cellId),
           selected: selectedId === cellId,
@@ -290,19 +290,18 @@ export function useSudokuGrid({
       const inConflict =
         value !== undefined && correct !== true && checkEnabled && projectedConflictSet.has(id);
 
-      announce(
-        getCellLabel(
-          cell,
-          boxNumberByCell.get(id),
-          value,
-          sortedCandidates,
-          extras,
-          correct,
-          inConflict,
-          givens.has(id) || revealed.has(id),
-          describeSymbol
-        )
+      const cellLabel = getCellLabel(
+        cell,
+        boxNumberByCell.get(id),
+        value,
+        sortedCandidates,
+        extras,
+        correct,
+        inConflict,
+        givens.has(id) || revealed.has(id),
+        describeSymbol
       );
+      announce(cellLabel);
     },
     [
       announce,
@@ -319,6 +318,46 @@ export function useSudokuGrid({
       selectedId,
       solution,
     ]
+  );
+
+  const announceErase = useCallback(
+    (id: CellId, nextCandidates: Map<CellId, SymbolValue[]>) => {
+      const cell = cellsById.get(id);
+
+      if (!cell) {
+        return;
+      }
+
+      const value = values.get(id);
+      const erasedCandidates = model.symbols.filter((symbol) =>
+        (candidates.get(id) ?? []).includes(symbol)
+      );
+      const erased =
+        value !== undefined
+          ? `Erased value ${describeSymbol(value)}`
+          : erasedCandidates.length > 0
+            ? `Erased candidate${erasedCandidates.length === 1 ? '' : 's'} ${erasedCandidates
+                .map(describeSymbol)
+                .join(', ')}`
+            : 'Erased content';
+
+      const remainingCandidates = model.symbols.filter((symbol) =>
+        (nextCandidates.get(id) ?? []).includes(symbol)
+      );
+      const available =
+        remainingCandidates.length > 0
+          ? `${remainingCandidates.length === 1 ? 'candidate' : 'candidates'} ${remainingCandidates
+              .map(describeSymbol)
+              .join(', ')} ${remainingCandidates.length === 1 ? 'remains' : 'remain'}.`
+          : 'Empty.';
+
+      announce(
+        `${formatLocation(cell, boxNumberByCell.get(id))}. ${erased}${
+          remainingCandidates.length > 0 && value !== undefined ? ', ' : '. '
+        }${available}`
+      );
+    },
+    [announce, boxNumberByCell, candidates, cellsById, describeSymbol, model, values]
   );
 
   // Shared by the keyboard path and the numpad so both speak the same
@@ -427,7 +466,11 @@ export function useSudokuGrid({
 
           const nextValues = new Map(values);
           nextValues.delete(currentId);
-          announceCellState(currentId, nextValues);
+          const nextCandidates = new Map(candidates);
+          if (!values.has(currentId)) {
+            nextCandidates.delete(currentId);
+          }
+          announceErase(currentId, nextCandidates);
         }
         return;
       }
@@ -479,6 +522,7 @@ export function useSudokuGrid({
       announce,
       announceCandidateToggle,
       announceCellState,
+      announceErase,
       candidateMode,
       candidates,
       cells,
@@ -564,6 +608,7 @@ export function useSudokuGrid({
     announcerRef,
     announce,
     announceCellState,
+    announceErase,
     announceCandidateToggle,
     moveSelection,
   };

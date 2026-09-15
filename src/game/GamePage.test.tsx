@@ -1,5 +1,5 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
@@ -394,8 +394,32 @@ describe('GamePage - Classic integration', () => {
     const gridAnnouncer = screen
       .getAllByRole('status')
       .find((el) => el.getAttribute('id') === 'grid-announcer')!;
-    expect(gridAnnouncer.textContent).toContain('empty');
+    expect(gridAnnouncer.textContent).toContain('Empty');
     vi.useRealTimers();
+  });
+
+  it('should announce the remaining candidates after clearing a normal value', async () => {
+    const user = userEvent.setup();
+    window.localStorage.setItem('sudoku-check-answers', 'false');
+    renderGamePage();
+
+    await user.click(screen.getByRole('tab', { name: 'Candidate' }));
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    await user.click(screen.getByRole('tab', { name: 'Normal' }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+
+    const gridAnnouncer = screen
+      .getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    await waitFor(() => expect(gridAnnouncer.textContent).toMatch(/candidate 5/));
+
+    await user.click(screen.getByRole('button', { name: 'Erase' }));
+
+    await waitFor(() => expect(gridAnnouncer.textContent).toContain('Empty'));
   });
 
   it('should announce the color name when a color numpad button is clicked', () => {

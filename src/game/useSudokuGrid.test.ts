@@ -544,7 +544,9 @@ describe('useSudokuGrid', () => {
     });
 
     expect(onEnterValue).toHaveBeenCalledWith('r0c0', 0);
-    expect(getAnnouncer()?.textContent).toBe('Row 1, column 1, box 1, candidates 2, 5, 7');
+    expect(getAnnouncer()?.textContent).toBe(
+      'Row 1, column 1, box 1. Erased value 5, candidates 2, 5, 7 remain.'
+    );
     vi.useRealTimers();
   });
 
