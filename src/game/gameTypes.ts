@@ -64,7 +64,12 @@ export interface GridInteraction {
   describeCell(id: CellId): string;
   announcerRef: React.RefObject<HTMLDivElement | null>;
   announce: (message: string) => void;
-  announceCellState: (id: CellId, nextValues: Values) => void;
+  announceCellState: (
+    id: CellId,
+    nextValues: Values,
+    nextCandidates?: Map<CellId, SymbolValue[]>
+  ) => void;
+  announceErase: (id: CellId, nextCandidates: Map<CellId, SymbolValue[]>) => void;
   announceCandidateToggle: (id: CellId, value: SymbolValue, adding: boolean) => void;
   moveSelection(direction: Direction): void;
 }

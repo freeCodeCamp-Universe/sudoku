@@ -41,12 +41,21 @@ function StateDisplay() {
   return (
     <div>
       <span data-testid="value-r0c0">{context.state.values.get('r0c0') ?? 'empty'}</span>
+      <span data-testid="candidates-r0c0">
+        {context.state.candidates.get('r0c0')?.join(',') ?? 'empty'}
+      </span>
       <span data-testid="history-len">{context.state.history.length}</span>
       <button
         type="button"
         onClick={() => context.dispatch({ type: 'enterValue', cellId: 'r0c0', value: 5 })}
       >
         enter 5
+      </button>
+      <button
+        type="button"
+        onClick={() => context.dispatch({ type: 'toggleCandidate', cellId: 'r0c0', value: 1 })}
+      >
+        toggle candidate 1
       </button>
       <button type="button" onClick={() => context.dispatch({ type: 'undo' })}>
         undo
@@ -109,5 +118,20 @@ describe('GameProvider', () => {
     await user.click(screen.getByRole('button', { name: 'erase' }));
 
     expect(screen.getByTestId('value-r0c0')).toHaveTextContent('empty');
+  });
+
+  it('should erase a cell value before erasing its candidates', async () => {
+    const user = userEvent.setup();
+
+    render(makeProvider());
+    await user.click(screen.getByRole('button', { name: 'toggle candidate 1' }));
+    await user.click(screen.getByRole('button', { name: 'enter 5' }));
+
+    await user.click(screen.getByRole('button', { name: 'erase' }));
+    expect(screen.getByTestId('value-r0c0')).toHaveTextContent('empty');
+    expect(screen.getByTestId('candidates-r0c0')).toHaveTextContent('1');
+
+    await user.click(screen.getByRole('button', { name: 'erase' }));
+    expect(screen.getByTestId('candidates-r0c0')).toHaveTextContent('empty');
   });
 });

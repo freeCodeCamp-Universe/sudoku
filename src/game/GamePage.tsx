@@ -571,7 +571,11 @@ function GameInner({
       dispatch({ type: 'erase', cellId: selectedCellId });
       const nextValues = new Map(state.values);
       nextValues.delete(selectedCellId);
-      grid.announceCellState(selectedCellId, nextValues);
+      const nextCandidates = new Map(state.candidates);
+      if (!state.values.has(selectedCellId)) {
+        nextCandidates.delete(selectedCellId);
+      }
+      grid.announceErase(selectedCellId, nextCandidates);
       return;
     }
 

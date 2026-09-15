@@ -62,6 +62,7 @@ export function renderVariantBoard(
         announcerRef: { current: null },
         announce: () => {},
         announceCellState: (_id: CellId, _nextValues: Values) => {},
+        announceErase: () => {},
         announceCandidateToggle: () => {},
         moveSelection: () => {},
       }}

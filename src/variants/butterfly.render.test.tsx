@@ -46,6 +46,7 @@ describe('Butterfly Board renders correct cell count', () => {
           announcerRef: { current: null },
           announce: () => {},
           announceCellState: () => {},
+          announceErase: () => {},
           announceCandidateToggle: () => {},
           moveSelection: () => {},
         }}
@@ -79,6 +80,7 @@ describe('Butterfly Board renders correct cell count', () => {
           announcerRef: { current: null },
           announce: () => {},
           announceCellState: () => {},
+          announceErase: () => {},
           announceCandidateToggle: () => {},
           moveSelection: () => {},
         }}
