@@ -38,6 +38,10 @@ function renderGallery() {
   );
 }
 
+function getVariantLinks() {
+  return screen.getAllByRole('link', { name: /\((beginner|intermediate|advanced)\)$/i });
+}
+
 afterEach(() => {
   window.localStorage.clear();
 });
@@ -46,7 +50,7 @@ describe('Gallery', () => {
   it('should render a card for every variant in the registry', () => {
     renderGallery();
 
-    expect(screen.getAllByRole('link')).toHaveLength(Object.keys(variantRegistry).length);
+    expect(getVariantLinks()).toHaveLength(Object.keys(variantRegistry).length);
   });
 
   it('should filter cards when a search term matches a variant name', async () => {
@@ -76,7 +80,7 @@ describe('Gallery', () => {
 
     await user.type(screen.getByRole('searchbox', { name: /search puzzles/i }), 'beginner');
 
-    expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
+    expect(getVariantLinks().length).toBeGreaterThan(0);
     expect(screen.queryByText(/Arrow Sudoku/i)).toBeNull();
   });
 
@@ -95,11 +99,11 @@ describe('Gallery', () => {
 
     renderGallery();
 
-    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/Classic Sudoku/i);
+    expect(getVariantLinks()[0]).toHaveTextContent(/Classic Sudoku/i);
 
     await user.selectOptions(screen.getByRole('combobox', { name: /sort puzzles by/i }), 'alpha');
 
-    expect(screen.getAllByRole('link')[0]).toHaveTextContent(/4×4 Sudoku/i);
+    expect(getVariantLinks()[0]).toHaveTextContent(/4×4 Sudoku/i);
   });
 
   it('should show a no-results message when nothing matches', async () => {
@@ -116,6 +120,17 @@ describe('Gallery', () => {
     renderGallery();
 
     expect(screen.getByRole('button', { name: /switch to light theme/i })).toBeTruthy();
+  });
+
+  it('should offer a link for playing a random puzzle', () => {
+    renderGallery();
+
+    const randomPuzzleLink = screen.getByRole('link', { name: /play a random puzzle/i });
+
+    expect(randomPuzzleLink).toHaveAttribute(
+      'href',
+      expect.stringMatching(new RegExp(`^/(${Object.keys(variantRegistry).join('|')})$`))
+    );
   });
 
   it('should update the theme button label and announce the new theme after toggling', async () => {
@@ -136,7 +151,7 @@ describe('Gallery', () => {
 
     await user.type(screen.getByRole('searchbox', { name: /search puzzles/i }), 'classic');
 
-    const count = screen.getAllByRole('link').length;
+    const count = getVariantLinks().length;
     expect(screen.getByText(new RegExp(`${count} puzzles? found\\.`))).toBeTruthy();
   });
 
@@ -168,7 +183,7 @@ describe('Gallery', () => {
     await user.click(screen.getByRole('button', { name: 'Favorite classic' }));
     await user.click(screen.getByRole('button', { name: 'Favorites only' }));
 
-    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(getVariantLinks()).toHaveLength(1);
     expect(screen.getByText(/Classic Sudoku/i)).toBeTruthy();
   });
 
@@ -181,7 +196,7 @@ describe('Gallery', () => {
     await user.click(screen.getByRole('button', { name: 'Favorites only' }));
     await user.click(screen.getByRole('button', { name: 'Favorites only' }));
 
-    expect(screen.getAllByRole('link')).toHaveLength(Object.keys(variantRegistry).length);
+    expect(getVariantLinks()).toHaveLength(Object.keys(variantRegistry).length);
   });
 
   it('should show the empty-favorites message when filtering with no favorites', async () => {
@@ -221,7 +236,7 @@ describe('Gallery', () => {
       'aria-pressed',
       'true'
     );
-    expect(screen.getAllByRole('link')).toHaveLength(1);
+    expect(getVariantLinks()).toHaveLength(1);
     expect(screen.getByText(/Classic Sudoku/i)).toBeTruthy();
   });
 });

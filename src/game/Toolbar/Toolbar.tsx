@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@/game/Button';
+import { Button } from '@/app/Button';
 import { Dialog } from '@/game/Dialog';
 import styles from './Toolbar.module.css';
 
@@ -16,14 +16,14 @@ export function Toolbar({ onClearAll, onReveal, vertical = false }: ToolbarProps
     <>
       <div className={`${styles.buttonRow}${vertical ? ` ${styles.buttonRowVertical}` : ''}`}>
         <Button
-          accent="yellow"
+          hoverColor="yellow"
           className={vertical ? styles.fullWidth : undefined}
           onClick={onReveal}
         >
           Reveal Cell
         </Button>
         <Button
-          accent="red"
+          hoverColor="red"
           className={vertical ? styles.fullWidth : undefined}
           onClick={() => setClearConfirmOpen(true)}
           aria-label="Clear All"

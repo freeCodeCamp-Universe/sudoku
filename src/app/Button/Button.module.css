@@ -15,39 +15,43 @@
     opacity 0.15s;
 }
 
-.outline {
+.default {
   border: 1px solid var(--border);
   background: var(--bg-secondary);
   color: var(--text-muted);
 }
 
-.outline:hover {
+.hoverBlue:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
 }
 
-.accentYellow:hover {
+.hoverYellow:hover {
   border-color: var(--accent-yellow);
   color: var(--accent-yellow);
 }
 
-.accentRed:hover {
+.hoverRed:hover {
   border-color: var(--accent-red);
   color: var(--accent-red);
 }
 
-.primary {
+.cta {
   border: none;
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   font-weight: 700;
 }
 
-.primary:hover {
+.cta:hover {
   opacity: 0.88;
 }
 
 .btn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+.link {
+  text-decoration: none;
 }
