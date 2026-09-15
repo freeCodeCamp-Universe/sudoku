@@ -28,6 +28,10 @@ export function OnboardingDialog({ open, onClose }: OnboardingDialogProps) {
           <dt>Highlight peers</dt>
           <dd>Dims the cells in the same row, column, and box as the selected cell.</dd>
         </div>
+        <div className={styles.settingRow}>
+          <dt>Navigation on left</dt>
+          <dd>Moves the arrow pad and minimap to the left side of the controls.</dd>
+        </div>
       </dl>
       <button type="button" className={styles.closeBtn} onClick={onClose}>
         Got it

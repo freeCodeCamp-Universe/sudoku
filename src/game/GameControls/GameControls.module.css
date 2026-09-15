@@ -116,6 +116,11 @@
   }
 }
 
+/* Swaps the map/nav column to the inline-start side. */
+.controlsRowNavOnLeft {
+  flex-direction: row-reverse;
+}
+
 /*
  * Landscape-mobile modifier (set by PortraitControls' landscape prop). The
  * >= 600px block above keys off viewport width, so it matches every landscape

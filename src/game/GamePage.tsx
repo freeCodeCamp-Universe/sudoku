@@ -77,6 +77,7 @@ interface GameInnerProps {
     timerEnabled: boolean;
     highlightPeers: boolean;
     showColorLabels: boolean;
+    navOnLeft: boolean;
   };
   onNewGame?: () => void;
   onFirstWin?: () => void;
@@ -862,6 +863,7 @@ function GameInner({
               minimap={minimap}
               zoomControls={zoomControls}
               landscape={isLandscapeMobile}
+              navOnLeft={settings.navOnLeft}
             />
           )}
           {isLandscapeMobile ? variantLegend : null}
@@ -996,6 +998,7 @@ export function GamePage() {
     toggleTimer,
     toggleHighlightPeers,
     toggleColorLabels,
+    toggleNavOnLeft,
     onboardingShown,
     acknowledgeOnboarding,
   } = usePersistence(variantId);
@@ -1028,9 +1031,11 @@ export function GamePage() {
         checkEnabled={settings.checkEnabled}
         timerEnabled={settings.timerEnabled}
         highlightPeersEnabled={settings.highlightPeers}
+        navOnLeftEnabled={settings.navOnLeft}
         onToggleCheck={toggleCheck}
         onToggleTimer={toggleTimer}
         onToggleHighlightPeers={toggleHighlightPeers}
+        onToggleNavOnLeft={toggleNavOnLeft}
       />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider

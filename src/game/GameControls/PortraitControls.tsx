@@ -25,6 +25,8 @@ interface PortraitControlsProps {
    * phone. This flag re-scopes those wide-viewport rules to the column.
    */
   landscape?: boolean;
+  /** Moves the navigation column (D-pad / minimap) to the inline-start side. */
+  navOnLeft?: boolean;
 }
 
 export function PortraitControls({
@@ -43,13 +45,18 @@ export function PortraitControls({
   minimap,
   zoomControls,
   landscape = false,
+  navOnLeft = false,
 }: PortraitControlsProps) {
+  const classNames = [
+    styles.controlsRow,
+    landscape && styles.controlsRowLandscape,
+    navOnLeft && styles.controlsRowNavOnLeft,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div
-      className={
-        landscape ? `${styles.controlsRow} ${styles.controlsRowLandscape}` : styles.controlsRow
-      }
-    >
+    <div className={classNames}>
       <div className={styles.controlsMain}>
         <Tabs
           tabs={controlTabs}

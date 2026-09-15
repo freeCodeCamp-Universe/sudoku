@@ -5,6 +5,7 @@ interface Settings {
   timerEnabled: boolean;
   highlightPeers: boolean;
   showColorLabels: boolean;
+  navOnLeft: boolean;
 }
 
 interface PersistenceResult {
@@ -13,6 +14,7 @@ interface PersistenceResult {
   toggleTimer: () => void;
   toggleHighlightPeers: () => void;
   toggleColorLabels: () => void;
+  toggleNavOnLeft: () => void;
   onboardingShown: boolean;
   acknowledgeOnboarding: () => void;
 }
@@ -21,6 +23,7 @@ const CHECK_STORAGE_KEY = 'sudoku-check-answers';
 const TIMER_STORAGE_KEY = 'sudoku-timer';
 const HIGHLIGHT_PEERS_STORAGE_KEY = 'sudoku-highlight-peers';
 const COLOR_LABELS_STORAGE_KEY = 'sudoku-color-number-labels';
+const NAV_ON_LEFT_STORAGE_KEY = 'sudoku-nav-on-left';
 const ONBOARDING_STORAGE_KEY = 'sudoku-onboarding-shown';
 
 export function usePersistence(_variantId: string): PersistenceResult {
@@ -29,6 +32,7 @@ export function usePersistence(_variantId: string): PersistenceResult {
     timerEnabled: localStorage.getItem(TIMER_STORAGE_KEY) !== 'false',
     highlightPeers: localStorage.getItem(HIGHLIGHT_PEERS_STORAGE_KEY) !== 'false',
     showColorLabels: localStorage.getItem(COLOR_LABELS_STORAGE_KEY) === 'true',
+    navOnLeft: localStorage.getItem(NAV_ON_LEFT_STORAGE_KEY) === 'true',
   }));
 
   const [onboardingShown, setOnboardingShown] = useState(
@@ -73,12 +77,21 @@ export function usePersistence(_variantId: string): PersistenceResult {
     });
   }, []);
 
+  const toggleNavOnLeft = useCallback(() => {
+    setSettings((currentSettings) => {
+      const next = !currentSettings.navOnLeft;
+      localStorage.setItem(NAV_ON_LEFT_STORAGE_KEY, String(next));
+      return { ...currentSettings, navOnLeft: next };
+    });
+  }, []);
+
   return {
     settings,
     toggleCheck,
     toggleTimer,
     toggleHighlightPeers,
     toggleColorLabels,
+    toggleNavOnLeft,
     onboardingShown,
     acknowledgeOnboarding,
   };

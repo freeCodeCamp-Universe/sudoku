@@ -18,9 +18,11 @@ interface HeaderProps {
   checkEnabled?: boolean;
   timerEnabled?: boolean;
   highlightPeersEnabled?: boolean;
+  navOnLeftEnabled?: boolean;
   onToggleCheck?: () => void;
   onToggleTimer?: () => void;
   onToggleHighlightPeers?: () => void;
+  onToggleNavOnLeft?: () => void;
 }
 
 export function Header({
@@ -33,9 +35,11 @@ export function Header({
   checkEnabled,
   timerEnabled,
   highlightPeersEnabled,
+  navOnLeftEnabled,
   onToggleCheck,
   onToggleTimer,
   onToggleHighlightPeers,
+  onToggleNavOnLeft,
 }: HeaderProps) {
   const { highContrast, toggleHighContrast } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -62,7 +66,8 @@ export function Header({
   const hasSettings =
     onToggleCheck !== undefined ||
     onToggleTimer !== undefined ||
-    onToggleHighlightPeers !== undefined;
+    onToggleHighlightPeers !== undefined ||
+    onToggleNavOnLeft !== undefined;
 
   return (
     <header className={compact ? `${styles.topBar} ${styles.topBarCompact}` : styles.topBar}>
@@ -151,6 +156,16 @@ export function Header({
                     checked={Boolean(highlightPeersEnabled)}
                     onChange={onToggleHighlightPeers}
                   />
+                ) : null}
+                {onToggleNavOnLeft !== undefined ? (
+                  <div className={styles.mobileOnly}>
+                    <Toggle
+                      id="settings-nav-on-left-label"
+                      label="Navigation on left"
+                      checked={Boolean(navOnLeftEnabled)}
+                      onChange={onToggleNavOnLeft}
+                    />
+                  </div>
                 ) : null}
                 <Toggle
                   id="settings-high-contrast-label"
