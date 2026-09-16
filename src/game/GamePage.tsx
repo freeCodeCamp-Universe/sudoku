@@ -64,6 +64,10 @@ const MODE_OPTIONS: SegmentedControlOption<Mode>[] = [
   { value: 'expert', label: 'Expert' },
 ];
 
+const MODE_LABELS: Record<Mode, string> = Object.fromEntries(
+  MODE_OPTIONS.map((option) => [option.value, option.label])
+) as Record<Mode, string>;
+
 // Letter variants can't show symbols in value order — for wordoku, values
 // 1-9 spell the hidden word, so value order on the pad would give it away.
 // A seeded shuffle keeps the order stable for the lifetime of the puzzle
@@ -1014,6 +1018,15 @@ function GameInner({
               className={`${styles.modalBtn} ${styles.secondary}`}
               onClick={() => {
                 setNewGameConfirmOpen(false);
+                // pendingMode is only set when this confirm was opened by a
+                // Mode change (not a plain New Game click). Declining here
+                // keeps the current puzzle, so the Mode preference reverts
+                // to match it too -- the control shows what's actually being
+                // played, not a choice that never took effect.
+                if (pendingMode !== undefined) {
+                  onModeChange?.(activeMode);
+                  grid.announce(`${MODE_LABELS[activeMode]} kept for this puzzle.`);
+                }
                 setPendingMode(undefined);
               }}
             >

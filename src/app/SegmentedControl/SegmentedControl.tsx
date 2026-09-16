@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import styles from './SegmentedControl.module.css';
 
 export interface SegmentedControlOption<T extends string> {
@@ -17,8 +17,14 @@ interface SegmentedControlProps<T extends string> {
 /**
  * A single-choice control for a handful of mutually exclusive options with no
  * associated content panel (unlike Tabs, which owns a tabpanel per tab) --
- * exposed as a WAI-ARIA radiogroup. Arrow/Home/End keys move focus and select
- * in the same step (roving tabindex), matching a native radio group.
+ * exposed as a WAI-ARIA radiogroup using the "selection does not follow
+ * focus" variant: Arrow/Home/End keys move a roving tabindex without
+ * selecting, and Space/Enter (native button activation) or a click commits.
+ * Selecting immediately on every arrow press (the other APG variant, and
+ * native `<input type="radio">` behavior) would trigger this control's
+ * side effect -- starting a new puzzle -- before the user has settled on an
+ * option, which is a real problem for keyboard users only (a click is
+ * already a deliberate commit).
  */
 export function SegmentedControl<T extends string>({
   options,
@@ -28,18 +34,20 @@ export function SegmentedControl<T extends string>({
   className,
 }: SegmentedControlProps<T>) {
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  // Falls back to the first option when value matches nothing, so the group
+  // is never entirely unreachable by Tab.
+  const [focusedIndex, setFocusedIndex] = useState(Math.max(selectedIndex, 0));
 
-  // Re-selecting the already-active option is a no-op, matching a native
-  // radio group (clicking an already-checked radio does not re-fire change).
-  function selectOption(newValue: T) {
-    if (newValue !== value) {
-      onChange(newValue);
-    }
-  }
+  // Keeps the roving tabindex on the current selection when value changes
+  // from outside this component (e.g. a resumed puzzle's saved mode).
+  useEffect(() => {
+    if (selectedIndex >= 0) setFocusedIndex(selectedIndex);
+  }, [selectedIndex]);
 
-  function focusOption(index: number) {
+  function moveFocus(index: number) {
     const wrapped = (index + options.length) % options.length;
-    selectOption(options[wrapped].value);
+    setFocusedIndex(wrapped);
     btnRefs.current[wrapped]?.focus();
   }
 
@@ -48,20 +56,20 @@ export function SegmentedControl<T extends string>({
       case 'ArrowRight':
       case 'ArrowDown':
         e.preventDefault();
-        focusOption(index + 1);
+        moveFocus(index + 1);
         break;
       case 'ArrowLeft':
       case 'ArrowUp':
         e.preventDefault();
-        focusOption(index - 1);
+        moveFocus(index - 1);
         break;
       case 'Home':
         e.preventDefault();
-        focusOption(0);
+        moveFocus(0);
         break;
       case 'End':
         e.preventDefault();
-        focusOption(options.length - 1);
+        moveFocus(options.length - 1);
         break;
     }
   }
@@ -83,10 +91,13 @@ export function SegmentedControl<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
-            tabIndex={selected ? 0 : -1}
+            tabIndex={index === focusedIndex ? 0 : -1}
             className={styles.option}
             onKeyDown={(e) => onKeyDown(e, index)}
-            onClick={() => selectOption(option.value)}
+            onClick={() => {
+              setFocusedIndex(index);
+              if (option.value !== value) onChange(option.value);
+            }}
           >
             {option.label}
           </button>

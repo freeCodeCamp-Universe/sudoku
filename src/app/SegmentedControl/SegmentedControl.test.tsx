@@ -53,7 +53,7 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radio', { name: 'Expert' })).toHaveAttribute('tabindex', '-1');
   });
 
-  it('should move selection with the arrow keys, wrapping at the ends', async () => {
+  it('should move focus with the arrow keys without selecting, wrapping at the ends', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -63,10 +63,11 @@ describe('SegmentedControl', () => {
     screen.getByRole('radio', { name: 'Expert' }).focus();
     await user.keyboard('{ArrowRight}');
 
-    expect(onChange).toHaveBeenCalledWith('easy');
+    expect(screen.getByRole('radio', { name: 'Easy' })).toHaveFocus();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('should jump to the first and last option with Home and End', async () => {
+  it('should jump focus to the first and last option with Home and End, without selecting', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -75,10 +76,40 @@ describe('SegmentedControl', () => {
 
     screen.getByRole('radio', { name: 'Medium' }).focus();
     await user.keyboard('{End}');
-    expect(onChange).toHaveBeenLastCalledWith('expert');
+    expect(screen.getByRole('radio', { name: 'Expert' })).toHaveFocus();
 
     await user.keyboard('{Home}');
-    expect(onChange).toHaveBeenLastCalledWith('easy');
+    expect(screen.getByRole('radio', { name: 'Easy' })).toHaveFocus();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should commit the focused option with Space or Enter, but not before', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <SegmentedControl ariaLabel="Mode" options={OPTIONS} value="medium" onChange={onChange} />
+    );
+
+    screen.getByRole('radio', { name: 'Medium' }).focus();
+    await user.keyboard('{ArrowRight}');
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.keyboard(' ');
+    expect(onChange).toHaveBeenCalledWith('expert');
+  });
+
+  it('should move the roving tabindex to the focused option, not just the checked one', async () => {
+    const user = userEvent.setup();
+    render(
+      <SegmentedControl ariaLabel="Mode" options={OPTIONS} value="medium" onChange={() => {}} />
+    );
+
+    screen.getByRole('radio', { name: 'Medium' }).focus();
+    await user.keyboard('{ArrowRight}');
+
+    expect(screen.getByRole('radio', { name: 'Easy' })).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('radio', { name: 'Medium' })).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('radio', { name: 'Expert' })).toHaveAttribute('tabindex', '0');
   });
 
   it('should not call onChange when clicking the already-selected option', async () => {

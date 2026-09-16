@@ -1264,14 +1264,63 @@ describe('GamePage - mode selector', () => {
 
     await user.click(screen.getByRole('radio', { name: 'Expert' }));
 
-    // The preference is saved right away regardless of what happens next...
+    // The preference applies right away while the confirm dialog is open...
     expect(localStorage.getItem('sudoku-mode')).toBe('expert');
     const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
     await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
 
-    // ...but the board itself is untouched until the user actually confirms.
+    // ...but the board itself is untouched, since the user didn't confirm.
     expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
     expect(screen.getAllByRole('gridcell', { name: /, 5(,|$)/ }).length).toBeGreaterThan(0);
+  });
+
+  it('should revert the Mode selection (not the puzzle) when Keep Playing is chosen', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
+
+    // The control shows what's actually being played (Medium, the default),
+    // not the Expert choice that was backed out of, and the stored
+    // preference reverts to match -- so a later plain New Game doesn't
+    // surprise the player with the mode they explicitly declined.
+    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(localStorage.getItem('sudoku-mode')).toBe('medium');
+
+    await waitFor(() => {
+      const gridAnnouncer = screen
+        .getAllByRole('status')
+        .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+      expect(gridAnnouncer.textContent).toMatch(/medium.*kept/i);
+    });
+  });
+
+  it('should not announce anything mode-related when declining a plain New Game (not triggered by a Mode change)', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    const gridAnnouncer = screen
+      .getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    const textBeforeNewGame = gridAnnouncer.textContent;
+
+    await user.click(screen.getByRole('button', { name: 'New Game' }));
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
+
+    // No new mode-preference announcement fired: the announcer is exactly
+    // whatever the earlier cell entry left it at.
+    expect(gridAnnouncer.textContent).toBe(textBeforeNewGame);
   });
 
   it('should regenerate the board once Start New Game is confirmed after a Mode change', async () => {
