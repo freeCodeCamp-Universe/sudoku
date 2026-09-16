@@ -101,7 +101,7 @@ export const skyscraper: Variant = {
         },
         {
           term: 'Reading clues',
-          text: 'A clue of 1 means only one building is visible from that direction. A clue of 3 means three buildings are visible, and each visible building is taller than all buildings before it. The remaining buildings are hidden from view.',
+          text: 'A clue of 1 means only one building is visible from that direction. A clue of 3 means three buildings are visible, and each visible building is taller than all buildings before it, not just its neighbor. The remaining buildings are hidden from view.',
         },
       ],
     },
