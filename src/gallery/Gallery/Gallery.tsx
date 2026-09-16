@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Button } from '@/app/Button';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import type { Variant } from '@/engine/types';
 import { StarIcon } from '@/gallery/StarIcon';
@@ -79,6 +80,9 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
 
 export function Gallery() {
   const [query, setQuery] = useState('');
+  const [randomVariantId] = useState(
+    () => ALL_VARIANTS[Math.floor(Math.random() * ALL_VARIANTS.length)].id
+  );
   const [sortMode, setSortMode] = useState<SortMode>(
     () => (localStorage.getItem('sudoku-sort') as SortMode | null) ?? 'popularity'
   );
@@ -111,6 +115,9 @@ export function Gallery() {
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
         <p className={styles.subheading}>32 sudoku variants for every skill level</p>
+        <Button href={`/${randomVariantId}`} variant="cta" className={styles.randomPuzzleButton}>
+          Play a random puzzle
+        </Button>
       </header>
 
       <div className={styles.controls}>
