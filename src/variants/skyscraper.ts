@@ -89,19 +89,19 @@ export const skyscraper: Variant = {
       rules: [
         {
           term: 'Building heights',
-          text: 'Think of each symbol as a building, where 1 is the shortest and 9 is the tallest.',
+          text: 'Each cell represents a building, with its symbol indicating a height from 1 (shortest) to 9 (tallest).',
         },
         {
           term: 'Clues',
-          text: 'Clues around the edge tell you how many buildings are visible looking into that row or column. A taller building hides all shorter ones behind it.',
-        },
-        {
-          term: 'Reading clues',
-          text: 'A clue of 1 means only the tallest building is visible. A clue of 9 means all nine buildings stand in perfect ascending order from that side.',
+          text: 'The numbers outside the edge tell you how many buildings are visible when looking into the row or column from that position.',
         },
         {
           term: 'Line of sight',
-          text: "Visibility is strictly from the clue's edge inward. Buildings behind a taller one are completely hidden.",
+          text: "The first building is always visible. Moving inward, a building is visible only if it's taller than every building before it. Shorter buildings are hidden behind taller ones.",
+        },
+        {
+          term: 'Reading clues',
+          text: 'A clue of 1 means only one building is visible from that direction. A clue of 3 means three buildings are visible, and each visible building is taller than all buildings before it, not just its neighbor. The remaining buildings are hidden from view.',
         },
       ],
     },
