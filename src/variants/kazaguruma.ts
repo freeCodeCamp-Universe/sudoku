@@ -99,6 +99,10 @@ export const kazaguruma: Variant = {
   popularity: 15,
   difficulty: 'advanced',
   difficultyRank: 11,
+  // Below ~90 clues, Expert-mode generation (see Mode multiplier in
+  // generate()) develops a heavy tail of multi-second uniqueness searches;
+  // measured via a timing spike across many seeds before adding this floor.
+  minimumClues: 90,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

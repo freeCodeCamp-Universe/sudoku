@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import type { Mode } from '@/engine/types';
 
 interface Settings {
   checkEnabled: boolean;
@@ -6,6 +7,7 @@ interface Settings {
   highlightPeers: boolean;
   showColorLabels: boolean;
   navOnLeft: boolean;
+  mode: Mode;
 }
 
 interface PersistenceResult {
@@ -15,6 +17,7 @@ interface PersistenceResult {
   toggleHighlightPeers: () => void;
   toggleColorLabels: () => void;
   toggleNavOnLeft: () => void;
+  setMode: (mode: Mode) => void;
   onboardingShown: boolean;
   acknowledgeOnboarding: () => void;
 }
@@ -24,16 +27,26 @@ const TIMER_STORAGE_KEY = 'sudoku-timer';
 const HIGHLIGHT_PEERS_STORAGE_KEY = 'sudoku-highlight-peers';
 const COLOR_LABELS_STORAGE_KEY = 'sudoku-color-number-labels';
 const NAV_ON_LEFT_STORAGE_KEY = 'sudoku-nav-on-left';
+const MODE_STORAGE_KEY = 'sudoku-mode';
 const ONBOARDING_STORAGE_KEY = 'sudoku-onboarding-shown';
 
+function isMode(value: string | null): value is Mode {
+  return value === 'easy' || value === 'medium' || value === 'expert';
+}
+
 export function usePersistence(_variantId: string): PersistenceResult {
-  const [settings, setSettings] = useState<Settings>(() => ({
-    checkEnabled: localStorage.getItem(CHECK_STORAGE_KEY) !== 'false',
-    timerEnabled: localStorage.getItem(TIMER_STORAGE_KEY) !== 'false',
-    highlightPeers: localStorage.getItem(HIGHLIGHT_PEERS_STORAGE_KEY) !== 'false',
-    showColorLabels: localStorage.getItem(COLOR_LABELS_STORAGE_KEY) === 'true',
-    navOnLeft: localStorage.getItem(NAV_ON_LEFT_STORAGE_KEY) === 'true',
-  }));
+  const [settings, setSettings] = useState<Settings>(() => {
+    const storedMode = localStorage.getItem(MODE_STORAGE_KEY);
+
+    return {
+      checkEnabled: localStorage.getItem(CHECK_STORAGE_KEY) !== 'false',
+      timerEnabled: localStorage.getItem(TIMER_STORAGE_KEY) !== 'false',
+      highlightPeers: localStorage.getItem(HIGHLIGHT_PEERS_STORAGE_KEY) !== 'false',
+      showColorLabels: localStorage.getItem(COLOR_LABELS_STORAGE_KEY) === 'true',
+      navOnLeft: localStorage.getItem(NAV_ON_LEFT_STORAGE_KEY) === 'true',
+      mode: isMode(storedMode) ? storedMode : 'medium',
+    };
+  });
 
   const [onboardingShown, setOnboardingShown] = useState(
     () => localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true'
@@ -85,6 +98,11 @@ export function usePersistence(_variantId: string): PersistenceResult {
     });
   }, []);
 
+  const setMode = useCallback((mode: Mode) => {
+    localStorage.setItem(MODE_STORAGE_KEY, mode);
+    setSettings((currentSettings) => ({ ...currentSettings, mode }));
+  }, []);
+
   return {
     settings,
     toggleCheck,
@@ -92,6 +110,7 @@ export function usePersistence(_variantId: string): PersistenceResult {
     toggleHighlightPeers,
     toggleColorLabels,
     toggleNavOnLeft,
+    setMode,
     onboardingShown,
     acknowledgeOnboarding,
   };

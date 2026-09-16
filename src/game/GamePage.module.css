@@ -269,6 +269,25 @@
   align-self: center;
 }
 
+.modeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-end: 10px;
+  inline-size: 100%;
+}
+
+.modeLabel {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.modeSegmented {
+  flex: 1;
+  min-inline-size: 0;
+}
+
 .legendSwatch {
   display: inline-block;
   width: 18px;

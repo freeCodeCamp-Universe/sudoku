@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
-import { generate } from '@/engine/generate';
+import { generate, multiplierForMode } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import { validate } from '@/engine/validate';
 import { super16 } from './super16';
@@ -50,4 +50,38 @@ describe('super16 variant', () => {
 
     expect(solve(model, givens, { max: 2 })).toHaveLength(1);
   }, 60_000);
+
+  // A single greedy removal pass on this 256-cell grid plateaus around
+  // 85-98 clues regardless of the requested target, which used to make every
+  // Mode collapse to the same count (the generic ratio-derived target and the
+  // old flat minimumClues floor both landed below that natural floor). Basing
+  // the multiplier on this variant's own ~96 default instead gives Easy an
+  // always-reachable increase and Expert a real, usually-reachable decrease.
+  it('should leave more clues for easy than medium, and no more for expert than medium', () => {
+    const model = buildModel(super16);
+    const { givens: easy } = generate(
+      model,
+      super16.difficulty,
+      seeded(22),
+      multiplierForMode('easy')
+    );
+    const { givens: medium } = generate(
+      model,
+      super16.difficulty,
+      seeded(22),
+      multiplierForMode('medium')
+    );
+    const { givens: expert } = generate(
+      model,
+      super16.difficulty,
+      seeded(22),
+      multiplierForMode('expert')
+    );
+
+    expect(easy.size).toBeGreaterThan(medium.size);
+    // Expert's lower target is not always reachable (removal only happens
+    // once uniqueness is proven), so it is only guaranteed to be no denser
+    // than medium, not strictly sparser on every seed.
+    expect(expert.size).toBeLessThanOrEqual(medium.size);
+  }, 30_000);
 });

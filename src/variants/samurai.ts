@@ -99,6 +99,10 @@ export const samurai: Variant = {
   popularity: 3,
   difficulty: 'advanced',
   difficultyRank: 1,
+  // Below ~105 clues, Expert-mode generation (see Mode multiplier in
+  // generate()) develops a heavy tail of multi-second uniqueness searches;
+  // measured via a timing spike across many seeds before adding this floor.
+  minimumClues: 105,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

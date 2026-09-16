@@ -1,5 +1,6 @@
 import { cellId } from '@/engine/grid';
 import type { Solution, SymbolValue, Variant, VariantModel } from '@/engine/types';
+import { makeGenerateGivens } from './generateGivens9x9';
 
 const SUPER_LABELS: Record<number, string> = {
   1: '1',
@@ -94,7 +95,15 @@ export const super16: Variant = {
   constraintIds: ['uniqueness'],
   overlayIds: [],
   annotatorIds: [],
-  minimumClues: 96,
+  // The generic 9x9-derived clue ratio (~77 for a 256-cell board) is nowhere
+  // near what a single greedy removal pass can actually prove unique on a
+  // 16x16 grid -- empirically that pass plateaus around 85-98 clues
+  // regardless of the requested target, which made every Mode collapse to
+  // the same count. Basing the multiplier on 96 (matching this variant's
+  // long-standing default density) instead gives Easy a real, always-
+  // reachable increase (~115) and Expert a real, usually-reachable decrease
+  // (~85-95) even though its literal target (~77) itself stays unreachable.
+  generateGivens: makeGenerateGivens(96),
   generateSolution: generateSuper16Solution,
   renderSymbol(value: SymbolValue): string {
     return SUPER_LABELS[value] ?? String(value);

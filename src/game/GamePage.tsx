@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
-import type { CellId, SymbolValue } from '@/engine/types';
+import type { CellId, Mode, SymbolValue } from '@/engine/types';
 import {
   boardFrameEdge,
   framedBoardSize,
@@ -31,6 +31,7 @@ import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/app/Toggle';
+import { SegmentedControl, type SegmentedControlOption } from '@/app/SegmentedControl';
 import { findOverusedSymbols } from './overusedSymbols';
 import { findUsedSymbols } from './usedSymbols';
 import { overlapCounts } from './overlapCounts';
@@ -57,6 +58,12 @@ type VariantWithColorNames = {
   colorNames?: string[];
 };
 
+const MODE_OPTIONS: SegmentedControlOption<Mode>[] = [
+  { value: 'easy', label: 'Easy' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'expert', label: 'Expert' },
+];
+
 // Letter variants can't show symbols in value order — for wordoku, values
 // 1-9 spell the hidden word, so value order on the pad would give it away.
 // A seeded shuffle keeps the order stable for the lifetime of the puzzle
@@ -78,23 +85,28 @@ interface GameInnerProps {
     highlightPeers: boolean;
     showColorLabels: boolean;
     navOnLeft: boolean;
+    mode: Mode;
   };
-  onNewGame?: () => void;
+  onNewGame?: (mode?: Mode) => void;
+  onModeChange?: (mode: Mode) => void;
   onFirstWin?: () => void;
   onToggleColorLabels?: () => void;
   seedBase: number;
   jigsawLayoutStart: number;
   genKey: number;
+  activeMode: Mode;
 }
 
 function GameInner({
   settings,
   onNewGame,
+  onModeChange,
   onFirstWin,
   onToggleColorLabels,
   seedBase,
   jigsawLayoutStart,
   genKey,
+  activeMode,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const [candidateMode, setCandidateMode] = useState(false);
@@ -104,6 +116,9 @@ function GameInner({
   const [controlsOpen, setControlsOpen] = useState(false);
   const [navTab, setNavTab] = useState<'move' | 'map'>('move');
   const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(false);
+  // The mode requested by the pending New Game, held between opening the
+  // confirm dialog and the user's later "Start New Game" click.
+  const [pendingMode, setPendingMode] = useState<Mode | undefined>(undefined);
   const [winOpen, setWinOpen] = useState(false);
   const winTitleId = useId();
   const [verifyMode, setVerifyMode] = useState(false);
@@ -428,15 +443,24 @@ function GameInner({
     setCompleted(false);
   }
 
-  function handleNewGame() {
+  function handleNewGame(requestedMode?: Mode) {
     setWinOpen(false);
     if (hasProgress && !state.solved) {
+      setPendingMode(requestedMode);
       setNewGameConfirmOpen(true);
       return;
     }
     clearProgress(variant.id);
-    onNewGame?.();
+    onNewGame?.(requestedMode);
     dispatch({ type: 'newGame' });
+  }
+
+  // Selecting a Mode always saves the preference immediately, then requests a
+  // new game the same way the New Game button does — same progress-loss
+  // confirmation if there's something to lose, immediate otherwise.
+  function handleModeSelect(mode: Mode) {
+    onModeChange?.(mode);
+    handleNewGame(mode);
   }
 
   const overusedSymbols = useMemo(
@@ -514,8 +538,9 @@ function GameInner({
       candidates: [...state.candidates],
       revealed: [...state.revealed],
       elapsedSeconds: state.elapsedSeconds,
+      mode: activeMode,
     });
-  }, [state, hasProgress, variant.id, seedBase, jigsawLayoutStart, genKey]);
+  }, [state, hasProgress, variant.id, seedBase, jigsawLayoutStart, genKey, activeMode]);
 
   function formatElapsedSpaced(totalSeconds: number): string {
     const minutes = Math.floor(totalSeconds / 60);
@@ -680,10 +705,25 @@ function GameInner({
       </>
     ) : null;
 
+  const modeControl =
+    variant.supportsMode === false ? null : (
+      <div className={styles.modeRow}>
+        <span className={styles.modeLabel}>Mode</span>
+        <SegmentedControl
+          ariaLabel="Mode"
+          value={settings.mode}
+          onChange={handleModeSelect}
+          options={MODE_OPTIONS}
+          className={styles.modeSegmented}
+        />
+      </div>
+    );
+
   const controlsPanel = (
     <div className={styles.actionColumn}>
       <Toolbar vertical onClearAll={handleClearAll} onReveal={handleReveal} />
-      <Button variant="cta" onClick={handleNewGame}>
+      {modeControl}
+      <Button variant="cta" onClick={() => handleNewGame()}>
         New Game
       </Button>
     </div>
@@ -849,6 +889,7 @@ function GameInner({
               onClearAll={handleClearAll}
               onReveal={handleReveal}
               settingToggles={settingToggles}
+              modeControl={modeControl}
             />
           ) : (
             <PortraitControls
@@ -874,7 +915,7 @@ function GameInner({
         </div>
       </div>
       {isDesktop ? (
-        <Button variant="cta" className={styles.desktopNewGame} onClick={handleNewGame}>
+        <Button variant="cta" className={styles.desktopNewGame} onClick={() => handleNewGame()}>
           New Game
         </Button>
       ) : null}
@@ -961,7 +1002,8 @@ function GameInner({
               onClick={() => {
                 clearProgress(variant.id);
                 setNewGameConfirmOpen(false);
-                onNewGame?.();
+                onNewGame?.(pendingMode);
+                setPendingMode(undefined);
                 dispatch({ type: 'newGame' });
               }}
             >
@@ -970,7 +1012,10 @@ function GameInner({
             <button
               type="button"
               className={`${styles.modalBtn} ${styles.secondary}`}
-              onClick={() => setNewGameConfirmOpen(false)}
+              onClick={() => {
+                setNewGameConfirmOpen(false);
+                setPendingMode(undefined);
+              }}
             >
               Keep Playing
             </button>
@@ -1003,6 +1048,7 @@ export function GamePage() {
     toggleHighlightPeers,
     toggleColorLabels,
     toggleNavOnLeft,
+    setMode,
     onboardingShown,
     acknowledgeOnboarding,
   } = usePersistence(variantId);
@@ -1018,10 +1064,15 @@ export function GamePage() {
     () => savedProgress?.seedBase ?? Math.floor(Math.random() * 0x7fffffff)
   );
   const [genKey, setGenKey] = useState(() => savedProgress?.genKey ?? 0);
+  // The mode a resumed puzzle was actually generated under, kept separate
+  // from the stored preference (settings.mode) so switching the preference
+  // never silently regenerates the board already on screen. It only ever
+  // updates alongside genKey, at the moment a new puzzle is requested.
+  const [activeMode, setActiveMode] = useState<Mode>(() => savedProgress?.mode ?? settings.mode);
 
   const { model, gameVariant, givens, solution } = useMemo(
-    () => buildPuzzle(variant, jigsawLayoutStart, genKey, seedBase),
-    [variant, jigsawLayoutStart, genKey, seedBase]
+    () => buildPuzzle(variant, jigsawLayoutStart, genKey, seedBase, activeMode),
+    [variant, jigsawLayoutStart, genKey, seedBase, activeMode]
   );
 
   return (
@@ -1051,12 +1102,17 @@ export function GamePage() {
         >
           <GameInner
             settings={settings}
-            onNewGame={() => setGenKey((k) => k + 1)}
+            onNewGame={(explicitMode) => {
+              setActiveMode(explicitMode ?? settings.mode);
+              setGenKey((k) => k + 1);
+            }}
+            onModeChange={setMode}
             onFirstWin={onboardingShown ? undefined : () => setOnboardingOpen(true)}
             onToggleColorLabels={toggleColorLabels}
             seedBase={seedBase}
             jigsawLayoutStart={jigsawLayoutStart}
             genKey={genKey}
+            activeMode={activeMode}
           />
         </GameProvider>
       </main>

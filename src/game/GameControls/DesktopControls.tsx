@@ -12,6 +12,7 @@ interface DesktopControlsProps {
   onClearAll: () => void;
   onReveal: () => void;
   settingToggles: ReactNode;
+  modeControl?: ReactNode;
 }
 
 export function DesktopControls({
@@ -23,9 +24,11 @@ export function DesktopControls({
   onClearAll,
   onReveal,
   settingToggles,
+  modeControl,
 }: DesktopControlsProps) {
   return (
     <>
+      {modeControl}
       <Tabs
         tabs={controlTabs}
         activeId={activeControlTab}

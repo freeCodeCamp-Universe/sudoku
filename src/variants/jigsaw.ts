@@ -139,6 +139,10 @@ export function makeJigsawVariant(regions: number[][]): Variant {
     popularity: 5,
     difficulty: 'intermediate',
     difficultyRank: 10,
+    // The jigsaw generator never proves uniqueness (see generateJigsawGivens
+    // below), so a Mode-driven clue reduction risks shipping an ambiguous
+    // puzzle rather than just running slower.
+    supportsMode: false,
     layout: { kind: 'grid', size: JIGSAW_SIZE, box: { rows: 3, cols: 3 } },
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     constraintIds: ['uniqueness'],
