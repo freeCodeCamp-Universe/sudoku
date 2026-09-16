@@ -103,7 +103,14 @@ export const super16: Variant = {
   // long-standing default density) instead gives Easy a real, always-
   // reachable increase (~115) and Expert a real, usually-reachable decrease
   // (~85-95) even though its literal target (~77) itself stays unreachable.
-  generateGivens: makeGenerateGivens(96),
+  //
+  // The 2,000-node uniqueness budget (vs. the shared 50,000 default) is a
+  // measured tradeoff: sweeping budgets from 200 to 50,000 across 20+ seeds
+  // showed achieved density barely changes (well within a few clues) below
+  // ~5,000, while worst-case generation time drops from ~22s to ~1.4s. A much
+  // larger board like this one just doesn't need as many propagation nodes
+  // per check to reach the same conclusion.
+  generateGivens: makeGenerateGivens(96, 2_000),
   generateSolution: generateSuper16Solution,
   renderSymbol(value: SymbolValue): string {
     return SUPER_LABELS[value] ?? String(value);

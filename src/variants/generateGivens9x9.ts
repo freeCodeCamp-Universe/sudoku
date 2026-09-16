@@ -2,7 +2,7 @@ import { shuffle } from '@/engine/grid';
 import { hasUniqueSolution, solve } from '@/engine/solve';
 import type { Difficulty, Solution, Values, VariantModel } from '@/engine/types';
 
-export function makeGenerateGivens(baseTarget: number) {
+export function makeGenerateGivens(baseTarget: number, nodeBudget = 50_000) {
   return function generateGivens(
     solution: Solution,
     model: VariantModel,
@@ -30,7 +30,7 @@ export function makeGenerateGivens(baseTarget: number) {
       if (saved === undefined) continue;
       givens.delete(id);
       const provenUnique = uniquenessOnly
-        ? hasUniqueSolution(model, givens, { nodeBudget: 50_000 })
+        ? hasUniqueSolution(model, givens, { nodeBudget })
         : solve(model, givens, { max: 2 }).length === 1;
       if (!provenUnique) givens.set(id, saved);
     }

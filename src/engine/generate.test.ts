@@ -180,17 +180,17 @@ describe('generate perf guard', () => {
     }, 180_000);
   });
 
-  // Super16 (256 cells, uniqueness-only) already has a heavy-tailed generation
-  // time at today's shipped default density (~96 clues) -- measured up to
-  // several seconds on an unlucky seed even before Mode existed. Its custom
-  // generateGivens (base 96, see super16.ts) makes Expert usually land
-  // sparser than Medium without requiring a lower bound to be reachable, so
-  // this guard uses a looser bound than the other variants above: it exists
-  // to catch a genuine regression (e.g. an order-of-magnitude slowdown), not
-  // to assert the pre-existing tail has been eliminated.
-  it('should keep super16 expert-mode generation within a generous bound and still unique', () => {
+  // Super16 (256 cells, uniqueness-only) used to have a heavy-tailed
+  // generation time (up to ~22s on an unlucky seed) at the shared 50,000-node
+  // uniqueness budget. Sweeping budgets from 200 to 50,000 across 20+ seeds
+  // showed achieved density barely changes below ~5,000 nodes, so super16.ts
+  // now uses a tuned 2,000-node budget -- worst case measured at ~1.4s across
+  // 30 seeds per mode. This guard keeps a bound well above that measurement,
+  // not a hair-trigger one, so it catches a genuine regression without being
+  // flaky on ordinary seed-to-seed variance.
+  it('should keep super16 expert-mode generation bounded and still unique', () => {
     const model = buildModel(getVariant('super'));
-    const maxGenerationMs = 15_000;
+    const maxGenerationMs = 3_000;
     const runs = 5;
 
     for (let run = 0; run < runs; run += 1) {
