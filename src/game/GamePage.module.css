@@ -440,7 +440,6 @@
      window scrolls instead of squeezing the board. */
   .mainContent,
   .gamePage,
-  .gameLayout,
   .gameLeft,
   .boardFrame {
     min-block-size: auto;

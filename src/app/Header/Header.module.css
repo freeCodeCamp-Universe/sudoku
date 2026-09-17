@@ -285,6 +285,11 @@
 }
 
 @media (min-width: 1024px) {
+  .utilityRow {
+    padding-inline: 0;
+    margin-block-end: 20px;
+  }
+
   .mobileOnly {
     display: none;
   }

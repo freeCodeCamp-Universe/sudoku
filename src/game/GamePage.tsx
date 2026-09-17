@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Header } from '@/app/Header';
+import { Header, HeaderUtilityRow } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, Mode, SymbolValue } from '@/engine/types';
@@ -874,9 +874,11 @@ function GameInner({
         onToggleTimer={onToggleTimer}
         onToggleHighlightPeers={onToggleHighlightPeers}
         onToggleNavOnLeft={onToggleNavOnLeft}
+        renderUtilityRow={false}
       />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
+          <HeaderUtilityRow timer={timer} onHelpOpen={onHelpOpen} />
           <div
             ref={viewportRef}
             className={
