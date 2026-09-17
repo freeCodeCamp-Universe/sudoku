@@ -129,6 +129,25 @@ describe('Header', () => {
       expect(timerSwitch).toBeChecked();
     });
 
+    it('should expose the dark theme switch first in the settings list', async () => {
+      const user = userEvent.setup();
+      localStorage.clear();
+      document.documentElement.classList.remove('light');
+
+      render(<SettingsHarness />);
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      const switches = screen.getAllByRole('switch');
+      expect(switches[0]).toHaveAccessibleName('Dark theme');
+      expect(switches[0]).toBeChecked();
+
+      await user.click(switches[0]);
+
+      expect(switches[0]).not.toBeChecked();
+      expect(document.documentElement).toHaveClass('light');
+    });
+
     it('should toggle the global high-contrast palette from the settings dropdown', async () => {
       const user = userEvent.setup();
       localStorage.clear();

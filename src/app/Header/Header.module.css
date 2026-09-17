@@ -54,6 +54,20 @@
   margin-inline-start: auto;
 }
 
+.themeToggle {
+  display: contents;
+}
+
+.mobileVariantThemeToggle {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .mobileVariantThemeToggle {
+    display: contents;
+  }
+}
+
 @media (min-width: 600px) {
   .topBarRight {
     margin-inline-start: 0;

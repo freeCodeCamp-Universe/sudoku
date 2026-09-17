@@ -41,7 +41,7 @@ export function Header({
   onToggleHighlightPeers,
   onToggleNavOnLeft,
 }: HeaderProps) {
-  const { highContrast, toggleHighContrast } = useTheme();
+  const { theme, toggleTheme, highContrast, toggleHighContrast } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const settingsBtnRef = useRef<HTMLButtonElement>(null);
@@ -133,6 +133,12 @@ export function Header({
                 role="group"
                 aria-label="Settings"
               >
+                <Toggle
+                  id="settings-dark-theme-label"
+                  label="Dark theme"
+                  checked={theme === 'dark'}
+                  onChange={toggleTheme}
+                />
                 {onToggleCheck !== undefined ? (
                   <Toggle
                     id="settings-check-label"
@@ -216,7 +222,9 @@ export function Header({
             </svg>
           </button>
         ) : null}
-        <ThemeToggleButton />
+        <div className={onHelpOpen ? styles.mobileVariantThemeToggle : styles.themeToggle}>
+          <ThemeToggleButton />
+        </div>
       </div>
     </header>
   );
