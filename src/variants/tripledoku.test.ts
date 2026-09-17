@@ -3,7 +3,7 @@ import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import { getVariant } from './registry';
-import { gattai3 } from './gattai3';
+import { tripledoku } from './tripledoku';
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -14,11 +14,11 @@ function seeded(seed: number): () => number {
   };
 }
 
-describe('gattai-3 variant - model structure', () => {
-  const model = buildModel(gattai3);
+describe('tripledoku variant - model structure', () => {
+  const model = buildModel(tripledoku);
 
-  it('should have 180 cells', () => {
-    expect(model.cells).toHaveLength(180);
+  it('should have 171 cells', () => {
+    expect(model.cells).toHaveLength(171);
   });
 
   it('should have 81 houses', () => {
@@ -40,9 +40,9 @@ describe('gattai-3 variant - model structure', () => {
   });
 });
 
-describe('gattai-3 variant - generate + solve', () => {
+describe('tripledoku variant - generate + solve', () => {
   it('should generate a uniquely solvable puzzle from the registry', () => {
-    const model = buildModel(getVariant('gattai-3'));
+    const model = buildModel(getVariant('tripledoku'));
     const { givens } = generate(model, 'intermediate', seeded(42));
 
     expect(solve(model, givens, { max: 2 })).toHaveLength(1);
