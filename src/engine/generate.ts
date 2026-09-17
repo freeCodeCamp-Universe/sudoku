@@ -1,7 +1,7 @@
 import { shuffle } from './grid';
 import { assignValue, createSearchState, pickNextCell, unassignValue } from './searchState';
 import { findSolution, hasUniqueSolution, solve } from './solve';
-import type { Difficulty, Solution, Values, VariantModel } from './types';
+import type { Difficulty, Mode, Solution, Values, VariantModel } from './types';
 
 export function cluesFor(difficulty: Difficulty, totalCells: number): number {
   const ratio: Record<Difficulty, number> = {
@@ -11,6 +11,18 @@ export function cluesFor(difficulty: Difficulty, totalCells: number): number {
   };
 
   return Math.round(totalCells * ratio[difficulty]);
+}
+
+// Relative to each variant's own existing default clue count (Medium = ×1),
+// not a fresh absolute ratio table — see Mode design notes in generate().
+const MODE_MULTIPLIERS: Record<Mode, number> = {
+  easy: 1.2,
+  medium: 1,
+  expert: 0.8,
+};
+
+export function multiplierForMode(mode: Mode): number {
+  return MODE_MULTIPLIERS[mode];
 }
 
 const UNIQUENESS_NODE_BUDGET = 50_000;
@@ -81,18 +93,22 @@ export function generateSolution(model: VariantModel, rng: () => number = Math.r
 export function generate(
   model: VariantModel,
   difficulty: Difficulty,
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  modeMultiplier = 1
 ): { solution: Solution; givens: Values } {
   const solution = generateSolution(model, rng);
   if (model.generateGivens) {
     return {
       solution,
-      givens: model.generateGivens(solution, model, difficulty, rng),
+      givens: model.generateGivens(solution, model, difficulty, rng, modeMultiplier),
     };
   }
 
   const givens: Values = new Map(solution);
-  const target = Math.max(cluesFor(difficulty, model.cells.length), model.minimumClues ?? 0);
+  const target = Math.max(
+    Math.round(cluesFor(difficulty, model.cells.length) * modeMultiplier),
+    model.minimumClues ?? 0
+  );
   const uniquenessOnly = model.constraints.every((constraint) => constraint.id === 'uniqueness');
 
   for (const id of shuffle([...givens.keys()], rng)) {

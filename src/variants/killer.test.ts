@@ -30,6 +30,13 @@ describe('killer variant', () => {
     expect(killer.constraintIds).toContain('cageSum');
   });
 
+  // The cage-carving generator can't reliably prove uniqueness below its
+  // natural given-count floor, so every Mode target sits above what's
+  // actually achievable -- the Mode selector would have zero visible effect.
+  it('should not support the player-facing Mode selector', () => {
+    expect(killer.supportsMode).toBe(false);
+  });
+
   it('should include cage overlay id', () => {
     expect(killer.overlayIds).toContain('cage');
   });

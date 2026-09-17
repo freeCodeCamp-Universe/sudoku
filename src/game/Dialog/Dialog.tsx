@@ -1,5 +1,14 @@
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type KeyboardEvent, type ReactNode } from 'react';
 import styles from './Dialog.module.css';
+
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ');
 
 interface DialogBaseProps {
   open: boolean;
@@ -56,12 +65,46 @@ export function Dialog(props: DialogProps) {
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  // Native `showModal()` focus trapping is not reliable enough to lean on:
+  // Chromium cycles past the last/first focusable descendant via `<body>`
+  // for one keypress before wrapping (reads as a dead keystroke), and WebKit
+  // is worse -- Tab from the close button never reaches the interior buttons
+  // at all, oscillating between `<body>` and the `<dialog>` element itself
+  // (confirmed directly; "Start New Game"/"Keep Playing" were unreachable by
+  // keyboard). So every Tab press inside an open dialog is handled entirely
+  // by hand: find the focused element's position in our own focusable list
+  // (falling back to "nothing found" when the browser's own focus landed
+  // somewhere odd) and move to the next/previous one, wrapping at the ends.
+  function handleKeyDown(event: KeyboardEvent<HTMLDialogElement>) {
+    if (event.key !== 'Tab') return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+    if (focusable.length === 0) return;
+
+    event.preventDefault();
+
+    const currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
+    const lastIndex = focusable.length - 1;
+    const nextIndex = event.shiftKey
+      ? currentIndex <= 0
+        ? lastIndex
+        : currentIndex - 1
+      : currentIndex === -1 || currentIndex === lastIndex
+        ? 0
+        : currentIndex + 1;
+
+    focusable[nextIndex].focus();
+  }
+
   return (
     <dialog
       ref={dialogRef}
       className={className ? `${styles.dialog} ${className}` : styles.dialog}
       aria-labelledby={labelledBy}
       onClose={onClose}
+      onKeyDown={handleKeyDown}
       onClick={
         closeOnBackdrop
           ? (event) => {

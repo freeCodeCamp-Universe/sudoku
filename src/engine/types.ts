@@ -43,7 +43,8 @@ export interface VariantModel {
     solution: Solution,
     model: VariantModel,
     difficulty: Difficulty,
-    rng?: () => number
+    rng?: () => number,
+    modeMultiplier?: number
   ) => Values;
   minimumClues?: number;
 }
@@ -56,6 +57,13 @@ export interface Constraint {
 
 export type Solution = Values;
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+
+// Player-facing clue-density control, independent of the variant's fixed
+// Difficulty label — see Mode multiplier usage in generate() and
+// makeGenerateGivens(). Named distinctly from Difficulty so the two concepts
+// (fixed per-variant label vs. player-selectable clue density) never get
+// conflated in code.
+export type Mode = 'easy' | 'medium' | 'expert';
 
 export interface GridLayout {
   kind: 'grid';
@@ -88,6 +96,11 @@ export interface Variant {
   popularity: number;
   difficulty: Difficulty;
   difficultyRank?: number;
+  // Whether the player-facing Mode (Easy/Medium/Expert) selector applies to
+  // this variant. Defaults to true; jigsaw opts out because its generator
+  // never proves uniqueness, so asking for fewer clues risks an ambiguous
+  // puzzle rather than just a slower one.
+  supportsMode?: boolean;
   tags?: string[];
   layout: BoardLayout;
   symbols: SymbolValue[];
@@ -106,7 +119,8 @@ export interface Variant {
     solution: Solution,
     model: VariantModel,
     difficulty: Difficulty,
-    rng?: () => number
+    rng?: () => number,
+    modeMultiplier?: number
   ) => Values;
   minimumClues?: number;
   solve?: (model: VariantModel, given: Values, opts?: { max?: number }) => Solution[];

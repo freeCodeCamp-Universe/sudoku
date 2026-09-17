@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
-import { generate } from '@/engine/generate';
+import { generate, multiplierForMode } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import { validate } from '@/engine/validate';
 import { mini } from './mini';
@@ -42,5 +42,21 @@ describe('mini variant', () => {
     const { solution } = generate(model, 'intermediate', seeded(11));
 
     expect(validate(solution, model)).toEqual([]);
+  });
+
+  // Base 6 gives each Mode a target (7/6/5) that this grid's uniqueness
+  // search can actually reach, unlike the old base of 4 (Expert's ×0.8 → 3
+  // was unreachable and collapsed into Medium every time).
+  it('should reach the exact target clue count for every Mode', () => {
+    const model = buildModel(mini);
+
+    for (const [mode, expected] of [
+      ['easy', 7],
+      ['medium', 6],
+      ['expert', 5],
+    ] as const) {
+      const { givens } = generate(model, 'intermediate', seeded(12), multiplierForMode(mode));
+      expect(givens.size).toBe(expected);
+    }
   });
 });

@@ -55,6 +55,7 @@ vi.mock('@/engine/generate', () => {
       solution,
       givens: new Map([...solution.entries()].slice(0, 25)),
     }),
+    multiplierForMode: () => 1,
   };
 });
 
@@ -1183,5 +1184,218 @@ describe('GamePage - landscape mobile controls', () => {
     );
 
     expect(screen.getByRole('tab', { name: 'Move' })).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+describe('GamePage - mode selector', () => {
+  it('should render a Mode segmented control in the controls area, visible without opening Settings', () => {
+    renderGamePage();
+
+    // Found directly, with no "open Settings" step -- it lives in the
+    // controls area (next to New Game), not behind the Settings dropdown.
+    expect(screen.getByRole('radiogroup', { name: 'Mode' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+  });
+
+  it('should not render a Mode segmented control for jigsaw', () => {
+    renderGamePage('jigsaw');
+
+    expect(screen.queryByRole('radiogroup', { name: 'Mode' })).toBeNull();
+  });
+
+  it('should not render a Mode segmented control for killer (its target is never actually reachable)', () => {
+    renderGamePage('killer');
+
+    expect(screen.queryByRole('radiogroup', { name: 'Mode' })).toBeNull();
+  });
+
+  it('should sit inside the Controls tab below Clear All (and above New Game) below tablet width', async () => {
+    const user = userEvent.setup();
+    window.innerWidth = 500;
+    renderGamePage();
+
+    await user.click(screen.getByRole('tab', { name: 'Controls' }));
+
+    const controlsTabpanel = screen.getByRole('tabpanel', { name: 'Controls' });
+    const clearAll = within(controlsTabpanel).getByRole('button', { name: 'Clear All' });
+    const mode = within(controlsTabpanel).getByRole('radiogroup', { name: 'Mode' });
+    const newGame = within(controlsTabpanel).getByRole('button', { name: 'New Game' });
+
+    const isBefore = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    expect(isBefore(clearAll, mode)).toBe(true);
+    expect(isBefore(mode, newGame)).toBe(true);
+  });
+
+  it('should immediately start a new game (no confirmation) when Mode changes and there is no progress to lose', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+
+    expect(localStorage.getItem('sudoku-mode')).toBe('expert');
+    expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
+  });
+
+  it('should do nothing when clicking the already-selected Mode option', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    const enteredCell = screen.getAllByRole('gridcell', { name: /, 5(,|$)/ })[0];
+
+    await user.click(screen.getByRole('radio', { name: 'Medium' }));
+
+    // No confirm dialog, no regeneration -- the board (and its progress) is untouched.
+    expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
+    expect(enteredCell).toBeInTheDocument();
+  });
+
+  it('should ask for confirmation before changing Mode when there is unsaved progress, and Keep Playing preserves the board', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+
+    // The preference applies right away while the confirm dialog is open...
+    expect(localStorage.getItem('sudoku-mode')).toBe('expert');
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
+
+    // ...but the board itself is untouched, since the user didn't confirm.
+    expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
+    expect(screen.getAllByRole('gridcell', { name: /, 5(,|$)/ }).length).toBeGreaterThan(0);
+  });
+
+  it('should revert the Mode selection (not the puzzle) when Keep Playing is chosen', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
+
+    // The control shows what's actually being played (Medium, the default),
+    // not the Expert choice that was backed out of, and the stored
+    // preference reverts to match -- so a later plain New Game doesn't
+    // surprise the player with the mode they explicitly declined.
+    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(localStorage.getItem('sudoku-mode')).toBe('medium');
+
+    await waitFor(() => {
+      const gridAnnouncer = screen
+        .getAllByRole('status')
+        .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+      expect(gridAnnouncer.textContent).toMatch(/medium.*kept/i);
+    });
+  });
+
+  it('should not announce anything mode-related when declining a plain New Game (not triggered by a Mode change)', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    const gridAnnouncer = screen
+      .getAllByRole('status')
+      .find((el) => el.getAttribute('id') === 'grid-announcer')!;
+    const textBeforeNewGame = gridAnnouncer.textContent;
+
+    await user.click(screen.getByRole('button', { name: 'New Game' }));
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
+
+    // No new mode-preference announcement fired: the announcer is exactly
+    // whatever the earlier cell entry left it at.
+    expect(gridAnnouncer.textContent).toBe(textBeforeNewGame);
+  });
+
+  it('should regenerate the board once Start New Game is confirmed after a Mode change', async () => {
+    const user = userEvent.setup();
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+
+    const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Start New Game' }));
+
+    expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
+    expect(localStorage.getItem('sudoku-progress-classic')).toBeNull();
+  });
+
+  it("should keep a resumed puzzle's own mode in saved progress even after the mode preference has since changed", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem('sudoku-mode', 'expert');
+    localStorage.setItem(
+      'sudoku-progress-classic',
+      JSON.stringify({
+        seedBase: 1,
+        jigsawLayoutStart: 0,
+        genKey: 0,
+        values: [...makeSolution()].slice(0, 30),
+        candidates: [],
+        revealed: [],
+        elapsedSeconds: 0,
+        mode: 'easy',
+      })
+    );
+    renderGamePage();
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    const saved = JSON.parse(localStorage.getItem('sudoku-progress-classic')!);
+    expect(saved.mode).toBe('easy');
+  });
+
+  it("should apply the current mode preference (not the old puzzle's mode) once a New Game is confirmed", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem('sudoku-mode', 'expert');
+    localStorage.setItem(
+      'sudoku-progress-classic',
+      JSON.stringify({
+        seedBase: 1,
+        jigsawLayoutStart: 0,
+        genKey: 0,
+        values: [...makeSolution()].slice(0, 30),
+        candidates: [],
+        revealed: [],
+        elapsedSeconds: 0,
+        mode: 'easy',
+      })
+    );
+    renderGamePage();
+
+    await user.click(screen.getByRole('button', { name: 'New Game' }));
+    await user.click(
+      within(screen.getByRole('dialog', { name: /start a new game/i })).getByRole('button', {
+        name: 'Start New Game',
+      })
+    );
+
+    const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
+    await user.click(emptyCell);
+    await user.click(screen.getByRole('button', { name: '5' }));
+
+    const saved = JSON.parse(localStorage.getItem('sudoku-progress-classic')!);
+    expect(saved.mode).toBe('expert');
   });
 });

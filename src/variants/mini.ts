@@ -24,7 +24,11 @@ export const mini: Variant = {
     },
   ],
   popularity: 12,
-  generateGivens: makeGenerateGivens(4),
+  // Base 6 (not 4) so Mode has real headroom in both directions: at 4, Expert
+  // (×0.8 → 3) fell below what this 16-cell grid's search can reliably prove
+  // unique and collapsed into Medium. At 6, Easy/Medium/Expert (7/6/5) each
+  // land on their exact target on every seed tested.
+  generateGivens: makeGenerateGivens(6),
   difficulty: 'beginner',
   difficultyRank: 1,
   layout: { kind: 'grid', size: 4, box: { rows: 2, cols: 2 } },

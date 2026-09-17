@@ -98,6 +98,10 @@ export const sohei: Variant = {
   popularity: 10,
   difficulty: 'advanced',
   difficultyRank: 6,
+  // Below ~80 clues, Expert-mode generation (see Mode multiplier in
+  // generate()) develops a heavy tail of multi-second uniqueness searches;
+  // measured via a timing spike across many seeds before adding this floor.
+  minimumClues: 80,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

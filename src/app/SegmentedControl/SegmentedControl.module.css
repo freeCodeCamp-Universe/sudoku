@@ -1,0 +1,45 @@
+.group {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.option {
+  flex: 1;
+  /* A floor, not a fixed size: labels like "Medium"/"Expert" need this much
+     room even at 0.78rem, so a parent that would otherwise shrink-wrap
+     narrower (e.g. a numpad column sized for a 4-column grid) is forced to
+     make room instead of letting the text crowd the button edges. */
+  min-inline-size: 68px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding-block: 6px;
+  padding-inline: 10px;
+  border: none;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.option + .option {
+  border-inline-start: 1px solid var(--border);
+}
+
+.option[aria-checked='true'] {
+  background: var(--bg-surface);
+  color: var(--text-bright);
+}
+
+.option:hover:not([aria-checked='true']) {
+  color: var(--text-primary);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}

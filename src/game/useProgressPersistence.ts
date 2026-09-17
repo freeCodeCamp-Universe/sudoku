@@ -1,4 +1,4 @@
-import type { CellId, SymbolValue } from '@/engine/types';
+import type { CellId, Mode, SymbolValue } from '@/engine/types';
 
 // Bumped when the mapping from the saved seeds to a generated board changes
 // (schema 2: jigsaw regions generated from the seed instead of preset
@@ -15,6 +15,7 @@ export interface SavedProgress {
   revealed: CellId[];
   elapsedSeconds: number;
   layoutSchema?: number;
+  mode?: Mode;
 }
 
 function storageKey(variantId: string): string {
