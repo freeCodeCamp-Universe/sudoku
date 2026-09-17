@@ -54,6 +54,19 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: /back/i })).toHaveAttribute('href', '/');
   });
 
+  it('should render the Donate link with the configured campaign URL', () => {
+    renderHeader();
+
+    const donateLink = screen.getByRole('link', { name: 'Donate' });
+
+    expect(donateLink).toHaveAttribute(
+      'href',
+      'https://donate.freecodecamp.org?source=48283329-5235-43d6-83ba-ef82c42123e1&campaign=test-2026&medium=web'
+    );
+    expect(donateLink).toHaveAttribute('target', '_blank');
+    expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('should navigate with the router when the back link is clicked', async () => {
     const user = userEvent.setup();
     renderHeader();

@@ -136,6 +136,19 @@ describe('Gallery', () => {
     expect(screen.getByRole('button', { name: /switch to light theme/i })).toBeTruthy();
   });
 
+  it('should render the Donate link in the home page header', () => {
+    renderGallery();
+
+    const donateLink = screen.getByRole('link', { name: 'Donate' });
+
+    expect(donateLink).toHaveAttribute(
+      'href',
+      'https://donate.freecodecamp.org?source=48283329-5235-43d6-83ba-ef82c42123e1&campaign=test-2026&medium=web'
+    );
+    expect(donateLink).toHaveAttribute('target', '_blank');
+    expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('should offer a link for playing a random puzzle', () => {
     renderGallery();
 

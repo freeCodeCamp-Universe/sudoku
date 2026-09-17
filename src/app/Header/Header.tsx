@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '@/app/ThemeProvider';
+import { DonateButton } from '@/app/DonateButton';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { useTheme } from '@/app/ThemeProvider';
 import { Toggle } from '@/app/Toggle';
 import { StarIcon } from '@/gallery/StarIcon';
 import styles from './Header.module.css';
@@ -264,6 +265,7 @@ export function Header({
           <div className={onHelpOpen ? styles.mobileVariantThemeToggle : styles.themeToggle}>
             <ThemeToggleButton />
           </div>
+          <DonateButton />
         </div>
       </header>
       {renderUtilityRow && (timer || onHelpOpen) ? (
