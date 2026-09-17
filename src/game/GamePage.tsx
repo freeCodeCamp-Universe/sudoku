@@ -84,6 +84,10 @@ function shuffledDisplayOrder(symbols: SymbolValue[], seed: number): SymbolValue
 }
 
 interface GameInnerProps {
+  title: string;
+  onBack: () => void;
+  onHelpOpen: () => void;
+  onKeyboardShortcutsOpen: () => void;
   settings: {
     checkEnabled: boolean;
     timerEnabled: boolean;
@@ -96,6 +100,10 @@ interface GameInnerProps {
   onModeChange?: (mode: Mode) => void;
   onFirstWin?: () => void;
   onToggleColorLabels?: () => void;
+  onToggleCheck: () => void;
+  onToggleTimer: () => void;
+  onToggleHighlightPeers: () => void;
+  onToggleNavOnLeft: () => void;
   seedBase: number;
   jigsawLayoutStart: number;
   genKey: number;
@@ -103,11 +111,19 @@ interface GameInnerProps {
 }
 
 function GameInner({
+  title,
+  onBack,
+  onHelpOpen,
+  onKeyboardShortcutsOpen,
   settings,
   onNewGame,
   onModeChange,
   onFirstWin,
   onToggleColorLabels,
+  onToggleCheck,
+  onToggleTimer,
+  onToggleHighlightPeers,
+  onToggleNavOnLeft,
   seedBase,
   jigsawLayoutStart,
   genKey,
@@ -839,7 +855,22 @@ function GameInner({
         .join(' ')}
     >
       {overusedEdgeHint}
-      {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
+      <Header
+        title={title}
+        compact={isLandscapeMobile}
+        onBack={onBack}
+        onHelpOpen={onHelpOpen}
+        onKeyboardShortcutsOpen={onKeyboardShortcutsOpen}
+        timer={timer}
+        checkEnabled={settings.checkEnabled}
+        timerEnabled={settings.timerEnabled}
+        highlightPeersEnabled={settings.highlightPeers}
+        navOnLeftEnabled={settings.navOnLeft}
+        onToggleCheck={onToggleCheck}
+        onToggleTimer={onToggleTimer}
+        onToggleHighlightPeers={onToggleHighlightPeers}
+        onToggleNavOnLeft={onToggleNavOnLeft}
+      />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
           <div
@@ -1045,9 +1076,6 @@ export function GamePage() {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const isLandscape = useMediaQuery('(orientation: landscape)');
-  const isLandscapeMobile = !isDesktop && isLandscape;
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -1095,21 +1123,6 @@ export function GamePage() {
 
   return (
     <>
-      <Header
-        title={variant.name}
-        compact={isLandscapeMobile}
-        onBack={() => navigate('/')}
-        onHelpOpen={() => setHelpOpen(true)}
-        onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
-        checkEnabled={settings.checkEnabled}
-        timerEnabled={settings.timerEnabled}
-        highlightPeersEnabled={settings.highlightPeers}
-        navOnLeftEnabled={settings.navOnLeft}
-        onToggleCheck={toggleCheck}
-        onToggleTimer={toggleTimer}
-        onToggleHighlightPeers={toggleHighlightPeers}
-        onToggleNavOnLeft={toggleNavOnLeft}
-      />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider
           variant={gameVariant}
@@ -1119,6 +1132,10 @@ export function GamePage() {
           initialProgress={savedProgress}
         >
           <GameInner
+            title={variant.name}
+            onBack={() => navigate('/')}
+            onHelpOpen={() => setHelpOpen(true)}
+            onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
             settings={settings}
             onNewGame={(explicitMode) => {
               setActiveMode(explicitMode ?? settings.mode);
@@ -1131,6 +1148,10 @@ export function GamePage() {
             jigsawLayoutStart={jigsawLayoutStart}
             genKey={genKey}
             activeMode={activeMode}
+            onToggleCheck={toggleCheck}
+            onToggleTimer={toggleTimer}
+            onToggleHighlightPeers={toggleHighlightPeers}
+            onToggleNavOnLeft={toggleNavOnLeft}
           />
         </GameProvider>
       </main>

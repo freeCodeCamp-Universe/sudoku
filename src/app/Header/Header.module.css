@@ -54,6 +54,30 @@
   margin-inline-start: auto;
 }
 
+.utilityRow {
+  width: min(1280px, 100%);
+  margin-block-end: 10px;
+  padding-inline: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timerSlot {
+  margin-inline-start: auto;
+}
+
+.timerSlot > :first-child {
+  margin-block-end: 0;
+}
+
+@media (min-width: 600px) {
+  .utilityRow {
+    padding-inline: 16px;
+  }
+}
+
 .themeToggle {
   display: contents;
 }
