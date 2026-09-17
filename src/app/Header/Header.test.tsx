@@ -26,6 +26,28 @@ describe('Header', () => {
     expect(screen.getByRole('heading', { name: 'Classic Sudoku' })).toBeTruthy();
   });
 
+  it('should toggle the favorite button for the variant', async () => {
+    const user = userEvent.setup();
+    const onToggleFavorite = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <Header title="Classic Sudoku" backHref="/" onToggleFavorite={onToggleFavorite} />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    const favoriteButton = screen.getByRole('button', {
+      name: 'Add Classic Sudoku to favorites',
+    });
+
+    expect(favoriteButton).toHaveAttribute('aria-pressed', 'false');
+    await user.click(favoriteButton);
+
+    expect(onToggleFavorite).toHaveBeenCalledTimes(1);
+  });
+
   it('should render a back link pointing to the provided href', () => {
     renderHeader();
 

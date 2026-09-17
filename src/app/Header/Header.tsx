@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '@/app/ThemeProvider';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import { Toggle } from '@/app/Toggle';
+import { StarIcon } from '@/gallery/StarIcon';
 import styles from './Header.module.css';
 
 interface HeaderProps {
   title: string;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
   /*
    * Used for landscape mode
    */
@@ -28,6 +31,8 @@ interface HeaderProps {
 
 export function Header({
   title,
+  isFavorite = false,
+  onToggleFavorite,
   compact = false,
   backHref,
   onBack,
@@ -106,6 +111,19 @@ export function Header({
         )}
         <h1 className={styles.title}>{title}</h1>
         <div className={styles.topBarRight}>
+          {onToggleFavorite ? (
+            <button
+              type="button"
+              className={styles.favoriteBtn}
+              aria-pressed={isFavorite}
+              aria-label={
+                isFavorite ? `Remove ${title} from favorites` : `Add ${title} to favorites`
+              }
+              onClick={onToggleFavorite}
+            >
+              <StarIcon className={styles.favoriteStar} filled={isFavorite} />
+            </button>
+          ) : null}
           {hasSettings ? (
             <div className={styles.settingsWrap} ref={settingsRef} onKeyDown={handleKeyDown}>
               <button

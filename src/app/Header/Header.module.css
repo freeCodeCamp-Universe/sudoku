@@ -41,9 +41,45 @@
     position: absolute;
     inset-inline-start: 50%;
     transform: translateX(-50%);
+    max-width: calc(100% - 220px);
     flex: none;
     font-size: 1.1rem;
   }
+}
+
+.favoriteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.favoriteBtn:hover,
+.favoriteBtn[aria-pressed='true'] {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+.favoriteBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.favoriteStar {
+  inline-size: 18px;
+  block-size: 18px;
+  fill: currentColor;
 }
 
 .topBarRight {

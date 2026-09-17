@@ -53,6 +53,7 @@ import { clearProgress, loadProgress, saveProgress } from './useProgressPersiste
 import { useSudokuGrid } from './useSudokuGrid';
 import { useSeoMeta } from '@/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
+import { useFavorites } from '@/gallery/useFavorites';
 import styles from './GamePage.module.css';
 
 type VariantWithColorNames = {
@@ -130,6 +131,7 @@ function GameInner({
   activeMode,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
+  const { favorites, toggleFavorite } = useFavorites();
   const [candidateMode, setCandidateMode] = useState(false);
   // Per-page "Highlight overlaps" state for multigrid variants: ON by default,
   // session-only (deliberately outside usePersistence, so a fresh mount is ON).
@@ -857,6 +859,8 @@ function GameInner({
       {overusedEdgeHint}
       <Header
         title={title}
+        isFavorite={favorites.has(variant.id)}
+        onToggleFavorite={() => toggleFavorite(variant.id)}
         compact={isLandscapeMobile}
         onBack={onBack}
         onHelpOpen={onHelpOpen}
