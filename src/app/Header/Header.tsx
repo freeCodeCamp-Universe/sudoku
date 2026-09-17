@@ -148,8 +148,8 @@ export function Header({
             <span className={styles.backBtnText}>Back</span>
           </Link>
         )}
-        <h1 className={styles.title}>{title}</h1>
-        <div className={styles.topBarRight}>
+        <div className={styles.titleGroup}>
+          <h1 className={styles.title}>{title}</h1>
           {onToggleFavorite ? (
             <button
               type="button"
@@ -163,6 +163,8 @@ export function Header({
               <StarIcon className={styles.favoriteStar} filled={isFavorite} />
             </button>
           ) : null}
+        </div>
+        <div className={styles.topBarRight}>
           {hasSettings ? (
             <div className={styles.settingsWrap} ref={settingsRef} onKeyDown={handleKeyDown}>
               <button

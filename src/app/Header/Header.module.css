@@ -25,8 +25,15 @@
   margin-block-end: 12px;
 }
 
-.title {
+.titleGroup {
   flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.title {
   min-width: 0;
   font-size: 0.95rem;
   font-weight: 700;
@@ -37,12 +44,15 @@
 }
 
 @media (min-width: 600px) {
-  .title {
+  .titleGroup {
     position: absolute;
     inset-inline-start: 50%;
     transform: translateX(-50%);
     max-width: calc(100% - 220px);
     flex: none;
+  }
+
+  .title {
     font-size: 1.1rem;
   }
 }
@@ -55,19 +65,16 @@
   inline-size: 32px;
   block-size: 32px;
   padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
+  border: 0;
+  border-radius: 0;
   background: none;
   color: var(--text-muted);
   cursor: pointer;
-  transition:
-    border-color 0.15s,
-    color 0.15s;
+  transition: color 0.15s;
 }
 
 .favoriteBtn:hover,
 .favoriteBtn[aria-pressed='true'] {
-  border-color: var(--accent-yellow);
   color: var(--accent-yellow);
 }
 
