@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { PauseIcon } from './PauseIcon';
 import { PlayIcon } from './PlayIcon';
 import styles from './Timer.module.css';
@@ -28,9 +29,11 @@ export function Timer({
   paused = false,
   onTogglePause,
 }: TimerProps) {
+  const timerDescriptionId = useId();
   const minutes = Math.floor(elapsedSeconds / 60);
   const seconds = elapsedSeconds % 60;
   const display = `${minutes}:${String(seconds).padStart(2, '0')}`;
+  const pauseLabel = paused ? 'Resume game' : 'Pause game';
 
   return (
     <div
@@ -46,20 +49,28 @@ export function Timer({
       data-hidden={!visible || undefined}
       aria-hidden={!visible}
     >
-      {display}
       {onTogglePause ? (
         <button
           type="button"
-          className={styles.pauseBtn}
-          aria-label={paused ? 'Resume game' : 'Pause game'}
+          className={styles.timerButton}
+          aria-label={pauseLabel}
+          aria-describedby={timerDescriptionId}
           onClick={onTogglePause}
         >
+          <span aria-hidden="true">{display}</span>
           {paused ? (
-            <PlayIcon className={styles.pauseBtnIcon} />
+            <PlayIcon className={styles.timerButtonIcon} />
           ) : (
-            <PauseIcon className={styles.pauseBtnIcon} />
+            <PauseIcon className={styles.timerButtonIcon} />
           )}
         </button>
+      ) : (
+        display
+      )}
+      {onTogglePause ? (
+        <span id={timerDescriptionId} className={styles.srOnly} role="timer" aria-live="off">
+          Elapsed time {display}
+        </span>
       ) : null}
     </div>
   );

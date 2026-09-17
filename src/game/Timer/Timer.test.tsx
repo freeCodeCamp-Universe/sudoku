@@ -8,6 +8,7 @@ describe('Timer', () => {
     render(<Timer elapsedSeconds={0} running={false} visible />);
 
     expect(screen.getByText('0:00')).toBeTruthy();
+    expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('should format minutes and seconds correctly', () => {
@@ -31,13 +32,17 @@ describe('Timer', () => {
   it('should render a Pause game button while running', () => {
     render(<Timer elapsedSeconds={0} running visible onTogglePause={() => {}} />);
 
-    expect(screen.getByRole('button', { name: 'Pause game' })).toBeTruthy();
+    const button = screen.getByRole('button', { name: 'Pause game' });
+    expect(button).toHaveTextContent('0:00');
+    expect(button).toHaveAttribute('aria-describedby');
   });
 
   it('should render a Resume game button while paused', () => {
     render(<Timer elapsedSeconds={0} running={false} visible paused onTogglePause={() => {}} />);
 
-    expect(screen.getByRole('button', { name: 'Resume game' })).toBeTruthy();
+    const button = screen.getByRole('button', { name: 'Resume game' });
+    expect(button).toHaveTextContent('0:00');
+    expect(screen.getByRole('timer')).toHaveTextContent('Elapsed time 0:00');
   });
 
   it('should call onTogglePause when the button is clicked', async () => {
@@ -48,5 +53,18 @@ describe('Timer', () => {
     await user.click(screen.getByRole('button', { name: 'Pause game' }));
 
     expect(onTogglePause).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep the ticking time out of the button name', () => {
+    const { rerender } = render(
+      <Timer elapsedSeconds={0} running visible onTogglePause={() => {}} />
+    );
+
+    expect(screen.getByRole('button')).toHaveAccessibleName('Pause game');
+
+    rerender(<Timer elapsedSeconds={1} running visible onTogglePause={() => {}} />);
+
+    expect(screen.getByRole('button')).toHaveAccessibleName('Pause game');
+    expect(screen.getByRole('timer')).toHaveTextContent('Elapsed time 0:01');
   });
 });

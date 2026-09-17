@@ -3,8 +3,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-muted);
   letter-spacing: 2px;
   margin-block-end: 10px;
@@ -13,12 +12,13 @@
 /* 36px target (comfortably above the WCAG 2.5.8 24px minimum); the negative
    block margin keeps the timer row's height at the text's height so the
    bigger target doesn't push the board down. */
-.pauseBtn {
+.timerButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 36px;
-  block-size: 36px;
+  gap: 10px;
+  min-inline-size: 92px;
+  block-size: 32px;
   margin-block: -6px;
   background: none;
   border: 1px solid var(--border);
@@ -30,24 +30,37 @@
     color 0.15s;
 }
 
-.pauseBtn:hover {
+.timerButton:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
 }
 
-.pauseBtn:focus-visible {
+.timerButton:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
-.pauseBtnIcon {
-  inline-size: 11px;
-  block-size: 11px;
+.timerButtonIcon {
+  inline-size: 12px;
+  block-size: 12px;
   fill: currentColor;
+}
+
+.srOnly {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (min-width: 600px) {
   .timer {
+    font-size: 1.1rem;
     margin-block-end: 20px;
   }
 }
