@@ -278,6 +278,7 @@
 }
 
 .modeLabel {
+  display: none;
   font-size: 0.85rem;
   color: var(--text-primary);
   flex-shrink: 0;
@@ -286,6 +287,12 @@
 .modeSegmented {
   flex: 1;
   min-inline-size: 0;
+}
+
+@media (min-width: 600px) {
+  .modeLabel {
+    display: inline;
+  }
 }
 
 .legendSwatch {
