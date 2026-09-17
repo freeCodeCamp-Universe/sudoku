@@ -6,6 +6,8 @@ import { StarIcon } from '@/gallery/StarIcon';
 import { useFavorites } from '@/gallery/useFavorites';
 import { VariantCard } from '@/gallery/VariantCard';
 import { variantRegistry } from '@/variants/registry';
+import { useSeoMeta } from '@/hooks/useSeoMeta';
+import { seoConfig } from '@/utils/seo.config';
 import styles from './Gallery.module.css';
 
 type SortMode = 'popularity' | 'alpha' | 'difficulty';
@@ -79,6 +81,11 @@ function sortVariants(variants: Variant[], sortMode: SortMode): Variant[] {
 }
 
 export function Gallery() {
+  useSeoMeta({
+    title: seoConfig.siteTitle,
+    description: seoConfig.siteDescription,
+    path: '/',
+  });
   const [query, setQuery] = useState('');
   const [randomVariantId] = useState(
     () => ALL_VARIANTS[Math.floor(Math.random() * ALL_VARIANTS.length)].id

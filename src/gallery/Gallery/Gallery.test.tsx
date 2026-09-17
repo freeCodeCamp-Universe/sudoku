@@ -1,8 +1,10 @@
+/* eslint-disable testing-library/no-node-access */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/app/ThemeProvider';
+import { seoConfig } from '@/utils/seo.config';
 import { variantRegistry } from '@/variants/registry';
 import { Gallery } from './Gallery';
 
@@ -47,6 +49,18 @@ afterEach(() => {
 });
 
 describe('Gallery', () => {
+  it('should set the home page SEO metadata', () => {
+    renderGallery();
+
+    expect(document.title).toBe(seoConfig.siteTitle);
+    expect(document.head.querySelector<HTMLMetaElement>('meta[name="description"]')?.content).toBe(
+      seoConfig.siteDescription
+    );
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      `${seoConfig.siteUrl}/`
+    );
+  });
+
   it('should render a card for every variant in the registry', () => {
     renderGallery();
 

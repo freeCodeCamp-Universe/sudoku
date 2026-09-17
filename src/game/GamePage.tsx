@@ -51,7 +51,8 @@ import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
 import { useSudokuGrid } from './useSudokuGrid';
-import { useDocumentTitle } from './useDocumentTitle';
+import { useSeoMeta } from '@/hooks/useSeoMeta';
+import { seoConfig } from '@/utils/seo.config';
 import styles from './GamePage.module.css';
 
 type VariantWithColorNames = {
@@ -1053,7 +1054,11 @@ export function GamePage() {
   }
 
   const variant = useMemo(() => getVariant(variantId), [variantId]);
-  useDocumentTitle(variant.name);
+  useSeoMeta({
+    title: `${variant.name} | ${seoConfig.publisherName}`,
+    description: variant.description,
+    path: `/${variant.id}`,
+  });
   const {
     settings,
     toggleCheck,
