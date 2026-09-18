@@ -31,6 +31,9 @@ function useActiveHeading(headings: Heading[]): [string | null, (id: string) => 
     if (!headings.length) {
       return;
     }
+    if (typeof IntersectionObserver === 'undefined') {
+      return;
+    }
 
     const intersecting = new Map<Element, IntersectionObserverEntry>();
     const observer = new IntersectionObserver(

@@ -3,8 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { Router } from 'react-router-dom';
-import { memoryLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { progressStore } from '@/learn/stores/progressStore';
 import { NavDrawer } from '@/learn/features/NavDrawer/NavDrawer';
 
@@ -40,8 +39,7 @@ function setProgress(completed: string[]) {
 }
 
 function renderWithRouter(ui: ReactElement) {
-  const { hook } = memoryLocation({ path: '/', record: true });
-  return render(<Router hook={hook}>{ui}</Router>);
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
 /** Harness with a real trigger so focus move/restore is observable. */

@@ -23,7 +23,7 @@ import { PrimaryAction } from '@/learn/features/PrimaryAction/PrimaryAction';
 import { ResetButton } from '@/learn/features/ResetButton/ResetButton';
 import styles from '@/learn/views/LessonWorkspace/LessonWorkspace.module.css';
 
-export type TabId = 'instructions' | 'interactive';
+export type TabId = 'instructions' | 'terminal';
 
 export interface InteractivePanelProps {
   lesson: ClientInteractiveLessonDefinition;
@@ -101,20 +101,20 @@ export function LessonWorkspace({
       isFirstTabRender.current = false;
       return;
     }
-    setTabAnnouncement(tab === 'interactive' ? 'interactive panel' : 'instructions');
+    setTabAnnouncement(tab === 'terminal' ? 'terminal' : 'instructions');
   }, [tab]);
 
   const focusInteractive = useCallback(() => {
-    if (tab === 'interactive') {
+    if (tab === 'terminal') {
       interactiveRef.current?.focus();
       return;
     }
     pendingInteractiveFocus.current = true;
-    onSelectTab('interactive');
+    onSelectTab('terminal');
   }, [tab, onSelectTab]);
 
   useEffect(() => {
-    if (tab === 'interactive' && pendingInteractiveFocus.current) {
+    if (tab === 'terminal' && pendingInteractiveFocus.current) {
       pendingInteractiveFocus.current = false;
       interactiveRef.current?.focus();
     }
@@ -216,7 +216,6 @@ export function LessonWorkspace({
   return (
     <>
       <main id="main-content" tabIndex={-1} className={styles.page} data-tab={tab}>
-        {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable panel is an intentional tab stop */}
         <section
           ref={instructionsRef}
           tabIndex={0}
@@ -232,9 +231,13 @@ export function LessonWorkspace({
             {feedback}
           </div>
         </section>
-        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-
-        <div ref={interactiveRef} className={styles.terminal} tabIndex={-1}>
+        <div
+          ref={interactiveRef}
+          className={styles.terminal}
+          tabIndex={-1}
+          role="application"
+          aria-label="vim terminal"
+        >
           <InteractivePanel
             key={resetKey}
             lesson={interactiveLesson}

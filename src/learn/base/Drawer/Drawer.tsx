@@ -50,7 +50,6 @@ export interface DrawerProps {
 
 const TRANSITION_MS = 180;
 
-// eslint-disable-next-line react-refresh/only-export-components
 function DrawerRoot({
   open,
   onClose,
@@ -186,7 +185,6 @@ function DrawerRoot({
               onClick={onClose}
               aria-hidden="true"
             />
-            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog with onKeyDown for Escape is the standard WAI-ARIA pattern */}
             <div
               ref={panelRef}
               className={panelClassName}
@@ -216,7 +214,6 @@ interface DrawerHeaderProps {
   below?: ReactNode;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function DrawerHeader({ id, children, subtitle, below }: DrawerHeaderProps) {
   const { onClose, closeLabel } = useContext(DrawerContext);
   return (
@@ -237,7 +234,6 @@ function DrawerHeader({ id, children, subtitle, below }: DrawerHeaderProps) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function DrawerBody({ children, className }: { children: ReactNode; className?: string }) {
   const { slideFrom } = useContext(DrawerContext);
   const resolved = [
@@ -250,7 +246,6 @@ function DrawerBody({ children, className }: { children: ReactNode; className?: 
   return <div className={resolved}>{children}</div>;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function DrawerFooter({ children, className }: { children: ReactNode; className?: string }) {
   const resolved = className ? `${styles.footer} ${className}` : styles.footer;
   return <footer className={resolved}>{children}</footer>;

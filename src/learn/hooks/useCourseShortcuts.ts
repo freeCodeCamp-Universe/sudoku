@@ -16,7 +16,17 @@ export interface UseCourseShortcutsOptions {
   enabled?: boolean;
 }
 
-export function useCourseShortcuts({ currentLessonId, reachableLessonIds, onNavigate, onFocusInteractivePanel, onFocusInstructions, onOpenDrawer, onOpenShortcuts, announce, enabled = true }: UseCourseShortcutsOptions): void {
+export function useCourseShortcuts({
+  currentLessonId,
+  reachableLessonIds,
+  onNavigate,
+  onFocusInteractivePanel,
+  onFocusInstructions,
+  onOpenDrawer,
+  onOpenShortcuts,
+  announce,
+  enabled = true,
+}: UseCourseShortcutsOptions): void {
   useEffect(() => {
     if (!enabled) return;
 
@@ -31,6 +41,14 @@ export function useCourseShortcuts({ currentLessonId, reachableLessonIds, onNavi
     }
 
     function onKeyDown(event: KeyboardEvent) {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+      ) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
         if (event.code === 'KeyN') {
           event.preventDefault();
@@ -56,5 +74,15 @@ export function useCourseShortcuts({ currentLessonId, reachableLessonIds, onNavi
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, currentLessonId, reachableLessonIds, onNavigate, onFocusInteractivePanel, onFocusInstructions, onOpenDrawer, onOpenShortcuts, announce]);
+  }, [
+    enabled,
+    currentLessonId,
+    reachableLessonIds,
+    onNavigate,
+    onFocusInteractivePanel,
+    onFocusInstructions,
+    onOpenDrawer,
+    onOpenShortcuts,
+    announce,
+  ]);
 }

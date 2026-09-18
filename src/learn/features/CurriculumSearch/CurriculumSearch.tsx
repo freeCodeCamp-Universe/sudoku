@@ -35,9 +35,17 @@ export function CurriculumSearch({ query, onQueryChange }: Props) {
   return (
     <div className={styles.search}>
       <label className={styles.field}>
-        <input ref={inputRef} type="search" value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Search lessons by title or ID" aria-label="Search lessons by title or ID" aria-keyshortcuts={`${altKeyName}+K`} />
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+          placeholder="Search lessons by title or ID"
+          aria-label="Search lessons by title or ID"
+          aria-keyshortcuts={`${altKeyName}+K`}
+        />
         <span className={styles.hint} aria-hidden="true">
-          <KbdCombo keys={['Alt', 'K']} minimal className={styles['hint-combo']} />
+          <KbdCombo keys={['Alt', 'K']} separateAll className={styles['hint-combo']} />
         </span>
       </label>
     </div>

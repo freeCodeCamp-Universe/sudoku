@@ -2,8 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { Router } from 'react-router-dom';
-import { memoryLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { CurriculumNavigator } from '@/learn/features/CurriculumNavigator/CurriculumNavigator';
 import type { CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
 
@@ -26,8 +25,7 @@ const modules: CurriculumTreeModule[] = [
 ];
 
 function renderWithRouter(ui: ReactElement) {
-  const { hook } = memoryLocation({ path: '/', record: true });
-  return render(<Router hook={hook}>{ui}</Router>);
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
 describe('CurriculumNavigator', () => {

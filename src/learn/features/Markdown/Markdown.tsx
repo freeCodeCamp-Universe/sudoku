@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import styles from '@/learn/features/Markdown/Markdown.module.css';
 
 export interface MarkdownProps {
@@ -12,6 +13,33 @@ export interface MarkdownProps {
  * bundle.
  */
 export function Markdown({ html }: MarkdownProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const buttons: HTMLButtonElement[] = [];
+    for (const block of container.querySelectorAll<HTMLPreElement>('pre[data-copy]')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = 'Copy';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.addEventListener('click', async () => {
+        await navigator.clipboard?.writeText(block.textContent ?? '');
+        button.textContent = 'Copied';
+      });
+      block.append(button);
+      buttons.push(button);
+    }
+
+    return () => {
+      buttons.forEach((button) => button.remove());
+    };
+  }, [html]);
+
   // Lesson markdown is author-controlled curriculum content loaded from this repository.
-  return <div className={styles.prose} dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div ref={containerRef} className={styles.prose} dangerouslySetInnerHTML={{ __html: html }} />
+  );
 }

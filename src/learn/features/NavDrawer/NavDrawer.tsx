@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useProgress } from '@/learn/hooks/useProgress';
-import { type CurriculumTreeLessonState, type CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
+import {
+  type CurriculumTreeLessonState,
+  type CurriculumTreeModule,
+} from '@/learn/features/CurriculumTree/CurriculumTree';
 import { Progress } from '@/learn/features/Progress/Progress';
 import { CurriculumNavigator } from '@/learn/features/CurriculumNavigator/CurriculumNavigator';
 import { CurriculumSearch } from '@/learn/features/CurriculumSearch/CurriculumSearch';
@@ -19,7 +22,13 @@ export interface NavDrawerProps {
   triggerElement?: HTMLElement | null;
 }
 
-export function NavDrawer({ open, onClose, modules, currentLessonId, triggerElement }: NavDrawerProps) {
+export function NavDrawer({
+  open,
+  onClose,
+  modules,
+  currentLessonId,
+  triggerElement,
+}: NavDrawerProps) {
   const currentLessonRef = useRef<HTMLAnchorElement | null>(null);
   const [query, setQuery] = useState('');
   const { completed } = useProgress();
@@ -58,7 +67,16 @@ export function NavDrawer({ open, onClose, modules, currentLessonId, triggerElem
       initialFocus={currentLessonId ? currentLessonRef : undefined}
     >
       <Drawer.Body>
-        <CurriculumNavigator modules={modules} variant="drawer" query={query} onQueryChange={setQuery} showSearch={false} lessonState={lessonState} onLessonClick={onClose} currentLessonRef={currentLessonRef} />
+        <CurriculumNavigator
+          modules={modules}
+          variant="drawer"
+          query={query}
+          onQueryChange={setQuery}
+          showSearch={false}
+          lessonState={lessonState}
+          onLessonClick={onClose}
+          currentLessonRef={currentLessonRef}
+        />
       </Drawer.Body>
     </Drawer>
   );

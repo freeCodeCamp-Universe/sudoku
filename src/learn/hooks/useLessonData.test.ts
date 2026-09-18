@@ -9,7 +9,7 @@ import type { LessonData } from '@/learn/hooks/useLessonData';
 
 const mockUseCurriculumTree = vi.fn<() => CurriculumTree | null>();
 
-vi.mock('@/curriculum/useCurriculumTree', () => ({
+vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: (...args: unknown[]) => mockUseCurriculumTree(...(args as [])),
 }));
 
@@ -24,7 +24,13 @@ function makeLessonData(id: string): LessonData {
 
 function makeTree(lessons: { id: string; dataFile: string }[]): CurriculumTree {
   return {
-    modules: [{ slug: 'mod-1', title: 'Module 1', lessons: lessons.map((l) => ({ id: l.id, title: `Lesson ${l.id}`, dataFile: l.dataFile })) }],
+    modules: [
+      {
+        slug: 'mod-1',
+        title: 'Module 1',
+        lessons: lessons.map((l) => ({ id: l.id, title: `Lesson ${l.id}`, dataFile: l.dataFile })),
+      },
+    ],
     orderedLessonIds: lessons.map((l) => l.id),
   };
 }

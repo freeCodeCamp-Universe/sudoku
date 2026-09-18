@@ -57,15 +57,25 @@ describe('Checklist', () => {
   });
 
   it('should announce count changes without duplicating a status change', () => {
-    const before: ChecklistItem[] = [{ label: 'Trace the V (2 of 7)', showHint: false, status: 'not-done', count: 2 }];
+    const before: ChecklistItem[] = [
+      { label: 'Trace the V (2 of 7)', showHint: false, status: 'not-done', count: 2 },
+    ];
     const { rerender } = render(<Checklist items={before} />);
 
     rerender(<Checklist items={[{ ...before[0], label: 'Trace the V (3 of 7)', count: 3 }]} />);
     expect(screen.getByTestId('checklist-announcement')).toHaveTextContent('Trace the V (3 of 7)');
 
-    rerender(<Checklist items={[{ ...before[0], label: 'Trace the V (7 of 7)', status: 'completed', count: 7 }]} />);
-    expect(screen.getByTestId('checklist-announcement')).toHaveTextContent('Trace the V (7 of 7): done');
-    expect(screen.getByTestId('checklist-announcement')).not.toHaveTextContent('Trace the V (7 of 7): done. Trace the V (7 of 7)');
+    rerender(
+      <Checklist
+        items={[{ ...before[0], label: 'Trace the V (7 of 7)', status: 'completed', count: 7 }]}
+      />
+    );
+    expect(screen.getByTestId('checklist-announcement')).toHaveTextContent(
+      'Trace the V (7 of 7): done'
+    );
+    expect(screen.getByTestId('checklist-announcement')).not.toHaveTextContent(
+      'Trace the V (7 of 7): done. Trace the V (7 of 7)'
+    );
   });
 
   it('should suppress the announcement when muteAnnouncement is true', () => {
@@ -90,7 +100,9 @@ describe('Checklist', () => {
   });
 
   it('should announce a hint through the live region when it is revealed', () => {
-    const hidden: ChecklistItem[] = [{ label: 'step 1', hint: 'press i first', showHint: false, status: 'not-done' }];
+    const hidden: ChecklistItem[] = [
+      { label: 'step 1', hint: 'press i first', showHint: false, status: 'not-done' },
+    ];
     const { rerender } = render(<Checklist items={hidden} />);
 
     const region = screen.getByTestId('checklist-announcement');
@@ -123,7 +135,9 @@ describe('Checklist', () => {
   });
 
   it('should not re-announce a hint that is already showing', () => {
-    const shown: ChecklistItem[] = [{ label: 'step 1', hint: 'press i first', showHint: true, status: 'not-done' }];
+    const shown: ChecklistItem[] = [
+      { label: 'step 1', hint: 'press i first', showHint: true, status: 'not-done' },
+    ];
     const { rerender } = render(<Checklist items={shown} />);
 
     rerender(<Checklist items={[...shown]} />);
@@ -132,7 +146,9 @@ describe('Checklist', () => {
   });
 
   it('should show an item hint only once it has been revealed', () => {
-    const hidden: ChecklistItem[] = [{ label: 'step 1', hint: 'press i first', showHint: false, status: 'not-done' }];
+    const hidden: ChecklistItem[] = [
+      { label: 'step 1', hint: 'press i first', showHint: false, status: 'not-done' },
+    ];
     const { rerender } = render(<Checklist items={hidden} />);
 
     expect(screen.queryByText(/press i first/i)).not.toBeInTheDocument();

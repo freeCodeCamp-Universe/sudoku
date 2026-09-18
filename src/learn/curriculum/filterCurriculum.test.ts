@@ -31,8 +31,12 @@ const modules: CurriculumTreeModule[] = [
 
 describe('filterCurriculum', () => {
   it('should match lesson titles and IDs case-insensitively', () => {
-    expect(filterCurriculum(modules, 'INSERT')).toEqual([{ ...modules[0], lessons: [modules[0].lessons[0]] }]);
-    expect(filterCurriculum(modules, 'word-motions')).toEqual([{ ...modules[1], lessons: [modules[1].lessons[0]] }]);
+    expect(filterCurriculum(modules, 'INSERT')).toEqual([
+      { ...modules[0], lessons: [modules[0].lessons[0]] },
+    ]);
+    expect(filterCurriculum(modules, 'word-motions')).toEqual([
+      { ...modules[1], lessons: [modules[1].lessons[0]] },
+    ]);
   });
 
   it('should keep all modules and lessons for an empty query', () => {
@@ -45,13 +49,21 @@ describe('filterCurriculum', () => {
 
   describe('position shorthand (e.g. "#101", "#611")', () => {
     it('should match a specific lesson by module and 1-based position', () => {
-      expect(filterCurriculum(modules, '#101')).toEqual([{ ...modules[0], lessons: [modules[0].lessons[0]] }]);
-      expect(filterCurriculum(modules, '#102')).toEqual([{ ...modules[0], lessons: [modules[0].lessons[1]] }]);
+      expect(filterCurriculum(modules, '#101')).toEqual([
+        { ...modules[0], lessons: [modules[0].lessons[0]] },
+      ]);
+      expect(filterCurriculum(modules, '#102')).toEqual([
+        { ...modules[0], lessons: [modules[0].lessons[1]] },
+      ]);
     });
 
     it('should handle lesson numbers >= 10 (last two digits)', () => {
-      expect(filterCurriculum(modules, '#611')).toEqual([{ ...modules[2], lessons: [modules[2].lessons[10]] }]);
-      expect(filterCurriculum(modules, '#612')).toEqual([{ ...modules[2], lessons: [modules[2].lessons[11]] }]);
+      expect(filterCurriculum(modules, '#611')).toEqual([
+        { ...modules[2], lessons: [modules[2].lessons[10]] },
+      ]);
+      expect(filterCurriculum(modules, '#612')).toEqual([
+        { ...modules[2], lessons: [modules[2].lessons[11]] },
+      ]);
     });
 
     it('should return empty when the lesson index is out of bounds', () => {
@@ -78,7 +90,9 @@ describe('filterCurriculum', () => {
 
     it('should use module.number when present, not array index', () => {
       // modules[2] has number:6, so "#601" should find its first lesson
-      expect(filterCurriculum(modules, '#601')).toEqual([{ ...modules[2], lessons: [modules[2].lessons[0]] }]);
+      expect(filterCurriculum(modules, '#601')).toEqual([
+        { ...modules[2], lessons: [modules[2].lessons[0]] },
+      ]);
     });
 
     it('should fall back to index+1 when module.number is absent', () => {
@@ -90,7 +104,9 @@ describe('filterCurriculum', () => {
         },
       ];
       // Without number, module is treated as #1 (index 0 + 1)
-      expect(filterCurriculum(noNumberModules, '#101')).toEqual([{ ...noNumberModules[0], lessons: [noNumberModules[0].lessons[0]] }]);
+      expect(filterCurriculum(noNumberModules, '#101')).toEqual([
+        { ...noNumberModules[0], lessons: [noNumberModules[0].lessons[0]] },
+      ]);
     });
   });
 });

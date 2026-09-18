@@ -16,7 +16,25 @@ describe('parseInstructionSegments', () => {
   });
 
   it('should parse a single tab group with two tabs', () => {
-    const source = ['Intro paragraph.', '', ':::tabs', '## config.json', '', '```json', '{ "key": "value" }', '```', '', '## styles.css', '', '```css', 'body { color: red; }', '```', ':::', '', 'Closing paragraph.'].join('\n');
+    const source = [
+      'Intro paragraph.',
+      '',
+      ':::tabs',
+      '## config.json',
+      '',
+      '```json',
+      '{ "key": "value" }',
+      '```',
+      '',
+      '## styles.css',
+      '',
+      '```css',
+      'body { color: red; }',
+      '```',
+      ':::',
+      '',
+      'Closing paragraph.',
+    ].join('\n');
 
     const result = parseInstructionSegments(source, PATH);
 
@@ -33,7 +51,9 @@ describe('parseInstructionSegments', () => {
   });
 
   it('should accept any heading level inside tabs', () => {
-    const source = [':::tabs', '#### deep-heading.txt', '', '```', 'content', '```', ':::'].join('\n');
+    const source = [':::tabs', '#### deep-heading.txt', '', '```', 'content', '```', ':::'].join(
+      '\n'
+    );
 
     const result = parseInstructionSegments(source, PATH);
 
@@ -58,7 +78,27 @@ describe('parseInstructionSegments', () => {
   });
 
   it('should parse multiple tab groups in one instructions block', () => {
-    const source = ['## Section 1', '', ':::tabs', '### a.txt', '', '```', 'alpha', '```', ':::', '', '## Section 2', '', ':::tabs', '### b.txt', '', '```', 'bravo', '```', ':::'].join('\n');
+    const source = [
+      '## Section 1',
+      '',
+      ':::tabs',
+      '### a.txt',
+      '',
+      '```',
+      'alpha',
+      '```',
+      ':::',
+      '',
+      '## Section 2',
+      '',
+      ':::tabs',
+      '### b.txt',
+      '',
+      '```',
+      'bravo',
+      '```',
+      ':::',
+    ].join('\n');
 
     const result = parseInstructionSegments(source, PATH);
 
@@ -70,7 +110,17 @@ describe('parseInstructionSegments', () => {
   });
 
   it('should handle multi-line content in fenced blocks', () => {
-    const source = [':::tabs', '## script.js', '', '```js', 'function greet() {', '  console.log("hello");', '}', '```', ':::'].join('\n');
+    const source = [
+      ':::tabs',
+      '## script.js',
+      '',
+      '```js',
+      'function greet() {',
+      '  console.log("hello");',
+      '}',
+      '```',
+      ':::',
+    ].join('\n');
 
     const result = parseInstructionSegments(source, PATH);
 
@@ -95,17 +145,31 @@ describe('parseInstructionSegments', () => {
   it('should throw when a tab entry has no fenced block', () => {
     const source = [':::tabs', '## a.txt', '', 'just text, no fence', ':::'].join('\n');
 
-    expect(() => parseInstructionSegments(source, PATH)).toThrow(/Expected a fenced code block after "a.txt"/);
+    expect(() => parseInstructionSegments(source, PATH)).toThrow(
+      /Expected a fenced code block after "a.txt"/
+    );
   });
 
   it('should throw on unterminated fenced block inside tabs', () => {
     const source = [':::tabs', '## a.txt', '', '```', 'no closing fence', ':::'].join('\n');
 
-    expect(() => parseInstructionSegments(source, PATH)).toThrow(/Unterminated fenced block for "a.txt"/);
+    expect(() => parseInstructionSegments(source, PATH)).toThrow(
+      /Unterminated fenced block for "a.txt"/
+    );
   });
 
   it('should handle tab group at the start with no preceding markdown', () => {
-    const source = [':::tabs', '## first.txt', '', '```', 'content', '```', ':::', '', 'After the tabs.'].join('\n');
+    const source = [
+      ':::tabs',
+      '## first.txt',
+      '',
+      '```',
+      'content',
+      '```',
+      ':::',
+      '',
+      'After the tabs.',
+    ].join('\n');
 
     const result = parseInstructionSegments(source, PATH);
 
@@ -115,7 +179,17 @@ describe('parseInstructionSegments', () => {
   });
 
   it('should handle tab group at the end with no trailing markdown', () => {
-    const source = ['Before the tabs.', '', ':::tabs', '## last.txt', '', '```', 'content', '```', ':::'].join('\n');
+    const source = [
+      'Before the tabs.',
+      '',
+      ':::tabs',
+      '## last.txt',
+      '',
+      '```',
+      'content',
+      '```',
+      ':::',
+    ].join('\n');
 
     const result = parseInstructionSegments(source, PATH);
 

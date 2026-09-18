@@ -32,7 +32,10 @@ describe('PlaceholderPanel', () => {
     expect(onUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         complete: true,
-        checklist: expect.arrayContaining([expect.objectContaining({ label: 'Item one', status: 'completed' }), expect.objectContaining({ label: 'Item two', status: 'completed' })]),
+        checklist: expect.arrayContaining([
+          expect.objectContaining({ label: 'Item one', status: 'completed' }),
+          expect.objectContaining({ label: 'Item two', status: 'completed' }),
+        ]),
       })
     );
   });

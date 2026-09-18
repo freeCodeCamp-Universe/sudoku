@@ -5,7 +5,9 @@ import type { CurriculumTreeModule } from '@/learn/features/CurriculumTree/Curri
  * Format: # + module number + 2-digit 1-indexed lesson number (e.g. #101 = module 1, lesson 1).
  * The "#" prefix distinguishes this from a normal text search.
  */
-function parsePositionShorthand(query: string): { moduleNumber: number; lessonNumber: number } | null {
+function parsePositionShorthand(
+  query: string
+): { moduleNumber: number; lessonNumber: number } | null {
   if (!/^#\d{3,}$/.test(query)) {
     return null;
   }
@@ -18,7 +20,10 @@ function parsePositionShorthand(query: string): { moduleNumber: number; lessonNu
   return { moduleNumber, lessonNumber };
 }
 
-export function filterCurriculum(modules: CurriculumTreeModule[], query: string): CurriculumTreeModule[] {
+export function filterCurriculum(
+  modules: CurriculumTreeModule[],
+  query: string
+): CurriculumTreeModule[] {
   const normalizedQuery = query.trim().toLowerCase();
 
   if (!normalizedQuery) {
@@ -42,7 +47,11 @@ export function filterCurriculum(modules: CurriculumTreeModule[], query: string)
   return modules
     .map((module) => ({
       ...module,
-      lessons: module.lessons.filter((lesson) => lesson.id.toLowerCase().includes(normalizedQuery) || lesson.title.toLowerCase().includes(normalizedQuery)),
+      lessons: module.lessons.filter(
+        (lesson) =>
+          lesson.id.toLowerCase().includes(normalizedQuery) ||
+          lesson.title.toLowerCase().includes(normalizedQuery)
+      ),
     }))
     .filter((module) => module.lessons.length > 0);
 }

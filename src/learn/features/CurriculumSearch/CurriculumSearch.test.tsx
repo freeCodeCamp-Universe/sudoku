@@ -11,7 +11,9 @@ describe('CurriculumSearch', () => {
   it('should render a search input with an accessible label', () => {
     renderSearch();
 
-    expect(screen.getByRole('searchbox', { name: 'Search lessons by title or ID' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('searchbox', { name: 'Search lessons by title or ID' })
+    ).toBeInTheDocument();
   });
 
   it('should call onQueryChange when the user types', () => {

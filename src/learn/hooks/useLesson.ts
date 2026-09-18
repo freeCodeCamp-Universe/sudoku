@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react';
-import { isProseLesson, type ClientLessonDefinition, type ClientInteractiveLessonDefinition } from '@/learn/curriculum/types';
+import {
+  isProseLesson,
+  type ClientLessonDefinition,
+  type ClientInteractiveLessonDefinition,
+} from '@/learn/curriculum/types';
 import { initChecklist, type ChecklistItem } from '@/learn/curriculum/lessonProgress';
 
 export interface LessonSnapshot {
@@ -48,7 +52,11 @@ export function useLesson(lesson: ClientLessonDefinition): UseLessonResult {
     setFeedback('Complete all checklist items before continuing.');
     setSnapshot((prev) => ({
       ...prev,
-      checklist: prev.checklist.map((item) => (item.status === 'completed' ? item : { ...item, status: 'error' as const, showHint: item.hint !== undefined })),
+      checklist: prev.checklist.map((item) =>
+        item.status === 'completed'
+          ? item
+          : { ...item, status: 'error' as const, showHint: item.hint !== undefined }
+      ),
     }));
   }, []);
 

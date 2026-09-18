@@ -17,7 +17,11 @@ export interface UseProgressResult {
  * renders on first paint with no loading state.
  */
 export function useProgress(): UseProgressResult {
-  const entries = useSyncExternalStore(progressStore.subscribe, progressStore.getEntries, progressStore.getEntries);
+  const entries = useSyncExternalStore(
+    progressStore.subscribe,
+    progressStore.getEntries,
+    progressStore.getEntries
+  );
 
   const completed = useMemo(() => entries.map((e) => e.id), [entries]);
 

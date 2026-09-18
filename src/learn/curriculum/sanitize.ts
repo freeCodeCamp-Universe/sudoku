@@ -33,13 +33,27 @@ export function assertSanitizedHtml(content: string, path: string): void {
     allowedTags: false,
     allowedAttributes: false,
     allowVulnerableTags: true,
-    allowedSchemes: ['http', 'https', 'ftp', 'mailto', 'tel', 'javascript', 'data', 'vbscript', 'blob', 'file'],
+    allowedSchemes: [
+      'http',
+      'https',
+      'ftp',
+      'mailto',
+      'tel',
+      'javascript',
+      'data',
+      'vbscript',
+      'blob',
+      'file',
+    ],
     allowedSchemesByTag: {},
   });
 
   const sanitized = sanitizeHtml(prose);
 
   if (sanitized !== permissive) {
-    throw new Error(`${path} contains HTML that is not permitted in lesson content. ` + `Only tags and attributes in the sanitize-html default allowlist are accepted.`);
+    throw new Error(
+      `${path} contains HTML that is not permitted in lesson content. ` +
+        `Only tags and attributes in the sanitize-html default allowlist are accepted.`
+    );
   }
 }

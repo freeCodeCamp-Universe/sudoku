@@ -32,6 +32,7 @@ export interface ChecklistRequirement {
 
 export interface LessonConfig {
   checklist: ChecklistRequirement[];
+  [key: string]: unknown;
 }
 
 export interface ProseLessonDefinition extends LessonIdentity {
@@ -48,6 +49,9 @@ export interface InteractiveLessonDefinition extends LessonIdentity {
 }
 
 export type LessonDefinition = InteractiveLessonDefinition | ProseLessonDefinition;
+
+/** Backwards-compatible name used by the lesson UI for interactive lessons. */
+export type AuthoredLessonDefinition = InteractiveLessonDefinition;
 
 export function isProseLesson(
   lesson: LessonDefinition | ClientLessonDefinition

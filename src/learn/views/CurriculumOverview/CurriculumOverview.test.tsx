@@ -2,8 +2,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
-import { Router } from 'react-router-dom';
-import { memoryLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { progressStore } from '@/learn/stores/progressStore';
 import { CurriculumOverview } from '@/learn/views/CurriculumOverview/CurriculumOverview';
 
@@ -22,11 +21,10 @@ const modules = [
 const orderedLessonIds = ['l1', 'l2', 'l3'];
 
 function renderWithRouter(ui: ReactElement) {
-  const { hook } = memoryLocation({ path: '/', record: true });
-  return render(<Router hook={hook}>{ui}</Router>);
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
-vi.mock('@/curriculum/useCurriculumTree', () => ({
+vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({ modules, orderedLessonIds }),
 }));
 

@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Router } from 'react-router-dom';
-import { memoryLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import type { ProseLessonDefinition, AuthoredLessonDefinition } from '@/learn/curriculum/types';
 import { renderMarkdown } from '@/learn/features/Markdown/renderMarkdown';
 import { INITIAL_FOCUS_STORAGE_KEY } from '@/learn/hooks/useInitialFocusPreference';
 import { progressStore } from '@/learn/stores/progressStore';
+import { PlaceholderPanel } from '@/learn/features/PlaceholderPanel/PlaceholderPanel';
 import { LessonWorkspace } from '@/learn/views/LessonWorkspace/LessonWorkspace';
 
-vi.mock('@/curriculum/useCurriculumTree', () => ({
+vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({
     modules: [],
     orderedLessonIds: ['w-1', 'r-1', 'trailing-id'],
@@ -46,9 +46,8 @@ function renderWorkspace(
   lesson: AuthoredLessonDefinition | ProseLessonDefinition,
   tab: 'instructions' | 'terminal' = 'instructions'
 ) {
-  const { hook } = memoryLocation({ path: '/', record: true });
   const view = render(
-    <Router hook={hook}>
+    <MemoryRouter>
       <LessonWorkspace
         lesson={lesson}
         nextLessonId="next-id"
@@ -56,10 +55,11 @@ function renderWorkspace(
         instructionsHtml={renderMarkdown(lesson.instructions)}
         tab={tab}
         onSelectTab={vi.fn()}
+        InteractivePanel={PlaceholderPanel}
       />
-    </Router>
+    </MemoryRouter>
   );
-  return { ...view, hook };
+  return view;
 }
 
 describe('LessonWorkspace', () => {
@@ -123,26 +123,23 @@ describe('LessonWorkspace', () => {
     expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
   });
 
-  it('should explain what is missing when the advance shortcut is used on an unfinished lesson', async () => {
+  it('should advance when the placeholder panel marks the lesson complete', async () => {
     const user = userEvent.setup();
     renderWorkspace(workshop);
 
     await user.keyboard('{Control>}{Enter}{/Control}');
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Delete a character' })
-    ).toBeInTheDocument();
-    expect(screen.getByText(/some steps aren't done yet/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Next/ })).toBeInTheDocument();
   });
 
   it('should announce the tab change when the tab prop changes', async () => {
-    const { rerender, hook } = renderWorkspace(workshop, 'instructions');
+    const { rerender } = renderWorkspace(workshop, 'instructions');
 
     // No announcement on initial render.
     expect(screen.queryByText('terminal', { exact: true })).not.toBeInTheDocument();
 
     rerender(
-      <Router hook={hook}>
+      <MemoryRouter>
         <LessonWorkspace
           lesson={workshop}
           nextLessonId="next-id"
@@ -150,8 +147,9 @@ describe('LessonWorkspace', () => {
           instructionsHtml={renderMarkdown(workshop.instructions)}
           tab="terminal"
           onSelectTab={vi.fn()}
+          InteractivePanel={PlaceholderPanel}
         />
-      </Router>
+      </MemoryRouter>
     );
 
     expect(screen.getByText('terminal', { exact: true })).toBeInTheDocument();

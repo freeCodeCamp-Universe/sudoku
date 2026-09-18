@@ -1,6 +1,10 @@
 import { useMemo, useState } from 'react';
 import { filterCurriculum } from '@/learn/curriculum/filterCurriculum';
-import { CurriculumTree, type CurriculumTreeLessonState, type CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
+import {
+  CurriculumTree,
+  type CurriculumTreeLessonState,
+  type CurriculumTreeModule,
+} from '@/learn/features/CurriculumTree/CurriculumTree';
 import { CurriculumSearch } from '@/learn/features/CurriculumSearch/CurriculumSearch';
 import styles from '@/learn/features/CurriculumNavigator/CurriculumNavigator.module.css';
 
@@ -16,14 +20,27 @@ interface Props {
   currentLessonRef?: React.RefObject<HTMLAnchorElement | null>;
 }
 
-export function CurriculumNavigator({ modules, variant, query: controlledQuery, onQueryChange, showSearch = true, lessonState, onLessonClick, currentLessonRef }: Props) {
+export function CurriculumNavigator({
+  modules,
+  variant,
+  query: controlledQuery,
+  onQueryChange,
+  showSearch = true,
+  lessonState,
+  onLessonClick,
+  currentLessonRef,
+}: Props) {
   const [localQuery, setLocalQuery] = useState('');
   const query = controlledQuery ?? localQuery;
   const handleQueryChange = onQueryChange ?? setLocalQuery;
   const filteredModules = useMemo(() => filterCurriculum(modules, query), [modules, query]);
   const resultCount = filteredModules.reduce((count, module) => count + module.lessons.length, 0);
   const normalizedQuery = query.trim();
-  const resultMessage = normalizedQuery ? (resultCount > 0 ? `Showing ${resultCount} matching ${resultCount === 1 ? 'lesson' : 'lessons'} for "${normalizedQuery}".` : `No lessons found for "${normalizedQuery}".`) : '';
+  const resultMessage = normalizedQuery
+    ? resultCount > 0
+      ? `Showing ${resultCount} matching ${resultCount === 1 ? 'lesson' : 'lessons'} for "${normalizedQuery}".`
+      : `No lessons found for "${normalizedQuery}".`
+    : '';
 
   return (
     <div className={`${styles.navigator} ${styles[variant]}`}>
@@ -33,11 +50,23 @@ export function CurriculumNavigator({ modules, variant, query: controlledQuery, 
             <CurriculumSearch query={query} onQueryChange={handleQueryChange} />
           </div>
         ) : null}
-        <p className={`${styles.status} ${normalizedQuery ? styles['status-filled'] : styles['status-empty']}`} role="status" aria-live="polite">
+        <p
+          className={`${styles.status} ${normalizedQuery ? styles['status-filled'] : styles['status-empty']}`}
+          role="status"
+          aria-live="polite"
+        >
           {resultMessage}
         </p>
       </div>
-      {filteredModules.length > 0 ? <CurriculumTree modules={filteredModules} variant={variant} lessonState={lessonState} onLessonClick={onLessonClick} currentLessonRef={currentLessonRef} /> : null}
+      {filteredModules.length > 0 ? (
+        <CurriculumTree
+          modules={filteredModules}
+          variant={variant}
+          lessonState={lessonState}
+          onLessonClick={onLessonClick}
+          currentLessonRef={currentLessonRef}
+        />
+      ) : null}
     </div>
   );
 }

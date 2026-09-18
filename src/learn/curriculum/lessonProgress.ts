@@ -5,6 +5,7 @@ export type ChecklistStatus = 'not-done' | 'completed' | 'error';
 export interface ChecklistItem {
   label: string;
   hint?: string;
+  count?: number;
   showHint: boolean;
   status: ChecklistStatus;
 }

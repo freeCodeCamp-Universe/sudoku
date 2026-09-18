@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { INITIAL_FOCUS_PREFERENCE_EVENT, INITIAL_FOCUS_STORAGE_KEY, useInitialFocusPreference } from '@/learn/hooks/useInitialFocusPreference';
+import {
+  INITIAL_FOCUS_PREFERENCE_EVENT,
+  INITIAL_FOCUS_STORAGE_KEY,
+  useInitialFocusPreference,
+} from '@/learn/hooks/useInitialFocusPreference';
 
 afterEach(() => {
   localStorage.clear();

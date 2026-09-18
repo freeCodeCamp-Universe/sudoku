@@ -31,7 +31,10 @@ const interactive: AuthoredLessonDefinition = {
   },
 };
 
-function renderToolbar(lesson: ProseLessonDefinition | AuthoredLessonDefinition, overrides: Partial<Parameters<typeof LessonToolbar>[0]> = {}) {
+function renderToolbar(
+  lesson: ProseLessonDefinition | AuthoredLessonDefinition,
+  overrides: Partial<Parameters<typeof LessonToolbar>[0]> = {}
+) {
   const ref = createRef<HTMLButtonElement | null>();
   const props = {
     lesson,
@@ -55,10 +58,16 @@ describe('LessonToolbar', () => {
 
   it('should set aria-expanded on the Outline button based on outlineOpen', () => {
     const { rerender, props } = renderToolbar(prose, { outlineOpen: false });
-    expect(screen.getByRole('button', { name: 'Outline' })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: 'Outline' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
 
     rerender(<LessonToolbar {...props} outlineOpen={true} />);
-    expect(screen.getByRole('button', { name: 'Outline' })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Outline' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    );
   });
 
   it('should call onOutlineToggle when the Outline button is clicked', async () => {
@@ -79,8 +88,14 @@ describe('LessonToolbar', () => {
 
   it('should mark the active tab with aria-pressed', () => {
     renderToolbar(interactive, { tab: 'instructions' });
-    expect(screen.getByRole('button', { name: 'Instructions' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'Terminal' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Instructions' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.getByRole('button', { name: 'Terminal' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
   });
 
   it('should call onSelectTab when a tab button is clicked', async () => {

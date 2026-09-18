@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
-import { useCourseShortcuts, type UseCourseShortcutsOptions } from '@/learn/hooks/useCourseShortcuts';
+import {
+  useCourseShortcuts,
+  type UseCourseShortcutsOptions,
+} from '@/learn/hooks/useCourseShortcuts';
 
 const reachable = ['a', 'b', 'c'];
 
@@ -25,9 +28,12 @@ function setup(overrides: Partial<UseCourseShortcutsOptions> = {}) {
     ...overrides,
   };
 
-  const { rerender, unmount } = renderHook((props: UseCourseShortcutsOptions) => useCourseShortcuts(props), {
-    initialProps: options,
-  });
+  const { rerender, unmount } = renderHook(
+    (props: UseCourseShortcutsOptions) => useCourseShortcuts(props),
+    {
+      initialProps: options,
+    }
+  );
 
   return {
     onNavigate,
@@ -152,7 +158,13 @@ describe('useCourseShortcuts', () => {
   });
 
   it('should ignore bare keys so typed Vim commands are untouched', () => {
-    const { onNavigate, onFocusInteractivePanel, onFocusInstructions, onOpenDrawer, onOpenShortcuts } = setup();
+    const {
+      onNavigate,
+      onFocusInteractivePanel,
+      onFocusInstructions,
+      onOpenDrawer,
+      onOpenShortcuts,
+    } = setup();
 
     press('KeyN');
     press('KeyP');

@@ -21,7 +21,9 @@ describe('curriculum integrity', () => {
 
   it('should reference only lessons that exist', () => {
     const lessonIds = new Set(lessons.map((l) => l.id));
-    const broken = modules.flatMap((m) => m.lessonIds.filter((id) => !lessonIds.has(id)).map((id) => `module ${m.module}: ${id}`));
+    const broken = modules.flatMap((m) =>
+      m.lessonIds.filter((id) => !lessonIds.has(id)).map((id) => `module ${m.module}: ${id}`)
+    );
     expect(broken).toEqual([]);
   });
 
@@ -30,7 +32,9 @@ describe('curriculum integrity', () => {
       if (!lesson.config) return [];
       return lesson.config.checklist.flatMap((req) => {
         const { hint } = req;
-        return hint && !/^You (?:can|should)\b/.test(hint) ? [`${lesson.id} item "${req.label}" has hint "${hint}"`] : [];
+        return hint && !/^You (?:can|should)\b/.test(hint)
+          ? [`${lesson.id} item "${req.label}" has hint "${hint}"`]
+          : [];
       });
     });
     expect(broken.join('\n')).toBe('');

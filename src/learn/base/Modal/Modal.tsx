@@ -57,7 +57,6 @@ interface ModalHeaderProps {
   className?: string;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function ModalHeader({
   id,
   children,
@@ -98,13 +97,11 @@ function ModalHeader({
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function ModalBody({ children, className }: { children: ReactNode; className?: string }) {
   const resolved = className ? `${styles.body} ${className}` : styles.body;
   return <div className={resolved}>{children}</div>;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function ModalRoot({
   open,
   onClose,
@@ -222,7 +219,6 @@ function ModalRoot({
           onClick={onClose}
           aria-hidden="true"
         />
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog with onKeyDown for Escape is the standard WAI-ARIA pattern */}
         <div
           ref={panelRef}
           className={panelClassName ? `${styles.panel} ${panelClassName}` : styles.panel}

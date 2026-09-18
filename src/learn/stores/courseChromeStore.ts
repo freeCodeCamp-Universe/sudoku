@@ -75,7 +75,11 @@ export interface CourseChrome extends ChromeState {
 
 /** Subscribe an island to the shared chrome state and its open/close actions. */
 export function useCourseChrome(): CourseChrome {
-  const snapshot = useSyncExternalStore(courseChrome.subscribe, courseChrome.getState, courseChrome.getState);
+  const snapshot = useSyncExternalStore(
+    courseChrome.subscribe,
+    courseChrome.getState,
+    courseChrome.getState
+  );
   return {
     drawerOpen: snapshot.drawerOpen,
     shortcutsOpen: snapshot.shortcutsOpen,
