@@ -4,8 +4,8 @@
   gap: var(--space-sm);
   padding-block: var(--space-sm);
   padding-inline: var(--space-md);
-  background-color: var(--blue05);
-  color: var(--blue80);
+  background-color: var(--bg-surface);
+  color: var(--accent-blue);
 }
 
 .content {
@@ -36,6 +36,6 @@
 }
 
 .dismiss:focus-visible {
-  outline: var(--focus-ring);
+  outline: 2px solid var(--focus-ring);
   outline-offset: var(--focus-ring-offset);
 }

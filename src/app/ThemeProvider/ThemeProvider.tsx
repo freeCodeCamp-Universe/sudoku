@@ -34,6 +34,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   useLayoutEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
+    document.documentElement.dataset.theme = theme;
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 

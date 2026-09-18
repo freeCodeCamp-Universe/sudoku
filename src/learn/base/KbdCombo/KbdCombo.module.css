@@ -15,7 +15,7 @@
   align-items: center;
   min-inline-size: 1.6rem;
   min-block-size: 1.6rem;
-  font-family: var(--font-mono);
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
 }
 
 .combo kbd.kbd-square {
@@ -23,10 +23,10 @@
 }
 
 .combo kbd.kbd-symbol {
-  font-family: -apple-system, system-ui, sans-serif;
+  font-family: inherit;
 }
 
 .plus {
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   padding-inline: var(--space-xxs);
 }

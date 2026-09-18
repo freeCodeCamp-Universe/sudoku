@@ -3,8 +3,8 @@
   --prose-lh-code: 1.7;
   --prose-lh-kbd: 2;
 
-  font-family: var(--font-sans);
-  color: var(--color-fg-primary);
+  font-family: inherit;
+  color: var(--text-primary);
 }
 
 .prose p {
@@ -22,7 +22,7 @@
 .prose h2,
 .prose h3,
 .prose h4 {
-  font-family: var(--font-sans);
+  font-family: inherit;
   line-height: var(--line-height-heading);
 }
 
@@ -65,14 +65,14 @@
 
 .prose th,
 .prose td {
-  border: 1px solid var(--color-border-secondary);
+  border: 1px solid var(--cell-border);
   padding-block: var(--space-sm);
   padding-inline: var(--space-sm);
   text-align: start;
 }
 
 .prose th {
-  background-color: var(--color-bg-secondary);
+  background-color: var(--bg-secondary);
   font-weight: 600;
   text-align: center;
 }
@@ -101,5 +101,5 @@
 }
 
 .prose tbody tr:nth-child(odd) {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--bg-surface);
 }

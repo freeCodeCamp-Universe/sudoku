@@ -11,7 +11,7 @@
   inline-size: var(--icon-button-size);
   block-size: var(--icon-button-size);
   padding: 0;
-  color: var(--color-fg-secondary);
+  color: var(--text-subtle);
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -19,8 +19,8 @@
 }
 
 .action:hover {
-  color: var(--color-fg-primary);
-  background-color: var(--color-bg-tertiary);
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
 }
 
 .action-keyboard-only {

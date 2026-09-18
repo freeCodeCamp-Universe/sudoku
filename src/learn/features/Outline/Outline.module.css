@@ -24,12 +24,12 @@
 
 .link {
   display: block;
-  font-family: var(--font-sans);
+  font-family: inherit;
   font-size: var(--text-md);
   line-height: var(--line-height-caption);
   padding-inline: var(--space-sm);
   padding-block: var(--space-xxs);
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   text-decoration: none;
   border-radius: var(--radius);
 
@@ -38,18 +38,18 @@
 }
 
 .link:hover {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--bg-surface);
 }
 
 /* Active heading — mirrors the CurriculumTree "current" indicator. */
 .link-active {
-  color: var(--color-fg-primary);
-  background-color: var(--color-bg-tertiary);
-  border-inline-start-color: var(--color-current-indicator);
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  border-inline-start-color: var(--accent-blue);
 }
 
 .link-active:hover {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--bg-surface);
 }
 
 .item-h3 .link {

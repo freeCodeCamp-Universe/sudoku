@@ -40,7 +40,7 @@
 .home-module-title {
   gap: var(--space-sm);
   font-size: var(--text-md);
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
 }
 
 .drawer-module-title {
@@ -76,7 +76,7 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   border-inline-start: 3px solid transparent;
   border-radius: var(--radius);
 }
@@ -95,16 +95,16 @@
 
 a.home-lesson-row:hover,
 a.drawer-lesson-row:hover {
-  background-color: var(--color-bg-tertiary);
+  background-color: var(--bg-surface);
 }
 
 .drawer-lesson[data-state='current'] .drawer-lesson-row,
 .drawer-lesson[data-state='completed-current'] .drawer-lesson-row,
 .home-lesson[data-state='current'] .home-lesson-row,
 .home-lesson[data-state='completed-current'] .home-lesson-row {
-  color: var(--color-fg-primary);
-  background-color: var(--color-bg-tertiary);
-  border-inline-start-color: var(--color-current-indicator);
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  border-inline-start-color: var(--accent-blue);
 }
 
 .home-lesson-title,
@@ -123,7 +123,7 @@ a.drawer-lesson-row:hover {
 
 .home-marker-completed,
 .drawer-marker-completed {
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
 }
 
 /* Both icons are always in the DOM; CSS toggles visibility based on data-state.

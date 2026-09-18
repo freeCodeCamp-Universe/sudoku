@@ -23,15 +23,15 @@
   display: flex;
   flex-direction: column;
   overflow: clip;
-  background-color: var(--color-bg-secondary);
-  border-inline-end: 1px solid var(--color-border-secondary);
+  background-color: var(--bg-secondary);
+  border-inline-end: 1px solid var(--cell-border);
   animation: slide-in var(--transition-base);
 }
 
 .panel-end {
   inset-inline: auto 0;
   border-inline-end: 0;
-  border-inline-start: 1px solid var(--color-border-secondary);
+  border-inline-start: 1px solid var(--cell-border);
   animation-name: slide-in-end;
 }
 
@@ -42,13 +42,13 @@
   inline-size: 100%;
   max-block-size: var(--drawer-max-block-size);
   border-inline-end: 0;
-  border-block-start: 1px solid var(--color-border-secondary);
+  border-block-start: 1px solid var(--cell-border);
   animation-name: slide-in-bottom;
 }
 
 .header {
   flex-shrink: 0;
-  border-block-end: 1px solid var(--color-border-secondary);
+  border-block-end: 1px solid var(--cell-border);
   padding-block: var(--drawer-padding-block);
   padding-inline: var(--drawer-padding-inline);
 }
@@ -70,7 +70,7 @@
 }
 
 .title {
-  font-family: var(--font-sans);
+  font-family: inherit;
   font-size: var(--text-lg);
   margin-block: 0;
 }
@@ -81,7 +81,7 @@
   justify-content: center;
   inline-size: var(--icon-button-size);
   block-size: var(--icon-button-size);
-  color: var(--color-fg-secondary);
+  color: var(--text-subtle);
   background: none;
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -89,8 +89,8 @@
 }
 
 .close:hover {
-  color: var(--color-fg-primary);
-  background-color: var(--color-bg-tertiary);
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
 }
 
 .body {
@@ -115,7 +115,7 @@
 
 .footer {
   flex-shrink: 0;
-  border-block-start: 1px solid var(--color-border-secondary);
+  border-block-start: 1px solid var(--cell-border);
   padding-block: var(--drawer-padding-block);
   padding-inline: var(--drawer-padding-inline);
 }

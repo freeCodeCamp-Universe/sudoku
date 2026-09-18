@@ -6,7 +6,7 @@
   --hint-lh-code: 1.8;
   --hint-lh-kbd: 2.1;
 
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
 }
 
 .list {
@@ -22,7 +22,7 @@
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   gap: var(--space-xxs) var(--space-sm);
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
 }
 
 .icon {
@@ -31,7 +31,7 @@
   grid-column: 1;
   grid-row: 1;
   align-self: center;
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
 }
 
 .icon svg {
@@ -62,9 +62,9 @@
   grid-row: 2;
   margin: 0;
   padding-inline-start: var(--space-sm);
-  border-inline-start: 2px solid var(--color-border-secondary);
+  border-inline-start: 2px solid var(--cell-border);
   padding-block: var(--space-xxs);
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   font-size: var(--text-sm);
   line-height: var(--hint-lh);
 }

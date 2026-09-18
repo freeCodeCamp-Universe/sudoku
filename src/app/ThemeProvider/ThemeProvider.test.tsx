@@ -25,6 +25,7 @@ describe('ThemeProvider', () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.classList.remove('light', 'high-contrast');
+    delete document.documentElement.dataset.theme;
   });
 
   it('should default to dark theme', () => {
@@ -76,6 +77,22 @@ describe('ThemeProvider', () => {
     await user.click(screen.getByRole('button', { name: 'toggle' }));
 
     expect(document.documentElement.classList.contains('light')).toBe(true);
+  });
+
+  it('should set the data-theme attribute for learn styles', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>
+    );
+
+    expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+
+    await user.click(screen.getByRole('button', { name: 'toggle' }));
+
+    expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   });
 
   it('should not announce theme on initial render', () => {

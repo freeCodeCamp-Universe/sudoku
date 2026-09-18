@@ -1,6 +1,6 @@
 .hint {
   display: none;
-  font-family: -apple-system, system-ui, sans-serif;
+  font-family: inherit;
 }
 
 @media (width >= 768px) and (hover: hover) {

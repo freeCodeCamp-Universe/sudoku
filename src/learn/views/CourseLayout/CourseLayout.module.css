@@ -8,31 +8,21 @@
   gap: var(--space-md);
   padding-inline: var(--space-sm);
   padding-block: var(--space-xs);
-  background-color: var(--color-bg-primary);
+  background-color: var(--bg-primary);
 }
 
 .home-link {
   padding-inline: var(--space-sm);
   padding-block: var(--space-xxs);
   border-radius: var(--radius);
-  font-family: var(--font-sans);
+  font-family: inherit;
   font-weight: 700;
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .home-link:hover {
-  background-color: var(--color-bg-tertiary);
-}
-
-/* The header stays dark regardless of the active theme. These token overrides
- * cascade into the HeaderControls island's own module because the island is a
- * DOM descendant of .header. */
-:root[data-theme='light'] .header {
-  --color-bg-primary: var(--gray90);
-  --color-fg-primary: var(--gray05);
-  --color-fg-secondary: var(--gray15);
-  --color-bg-tertiary: var(--gray80);
+  background-color: var(--bg-surface);
 }
 
 @media (width >= 768px) {

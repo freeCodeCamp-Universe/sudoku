@@ -16,7 +16,7 @@
   padding: var(--space-xl);
   flex: 1;
   min-block-size: 0;
-  background: var(--color-bg-secondary);
+  background: var(--bg-secondary);
   animation: fade-in var(--transition-base) ease-out both;
   animation-delay: 150ms;
 }
@@ -28,12 +28,12 @@
 }
 
 .base-ring {
-  stroke: var(--color-border-secondary);
+  stroke: var(--cell-border);
   stroke-linecap: round;
 }
 
 .arc {
-  stroke: var(--color-fg-primary);
+  stroke: var(--text-primary);
   stroke-linecap: round;
   transform-box: view-box;
   transform-origin: center;

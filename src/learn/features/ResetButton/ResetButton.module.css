@@ -1,27 +1,27 @@
 button.reset {
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   background-color: transparent;
   border-color: transparent;
 }
 
 button.reset:hover,
 button.reset:active {
-  color: var(--color-danger);
-  background-color: var(--gray80);
-  border-color: var(--color-danger);
+  color: var(--accent-red);
+  background-color: var(--bg-surface);
+  border-color: var(--accent-red);
 }
 
 :root[data-theme='light'] button.reset {
-  color: var(--color-fg-primary);
+  color: var(--text-primary);
   background-color: transparent;
   border-color: transparent;
 }
 
 :root[data-theme='light'] button.reset:hover,
 :root[data-theme='light'] button.reset:active {
-  color: var(--color-danger);
-  background-color: var(--gray10);
-  border-color: var(--color-danger);
+  color: var(--accent-red);
+  background-color: var(--bg-surface);
+  border-color: var(--accent-red);
 }
 
 .confirm {
@@ -31,15 +31,15 @@ button.reset:active {
 }
 
 .prompt {
-  font-family: var(--font-sans);
+  font-family: inherit;
   font-size: var(--text-sm);
-  color: var(--color-fg-secondary);
+  color: var(--text-subtle);
 }
 
 .drawer-prompt {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  color: var(--color-fg-secondary);
+  font-family: inherit;
+  font-size: var(--text-md);
+  color: var(--text-subtle);
 }
 
 .drawer-actions {
