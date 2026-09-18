@@ -192,6 +192,40 @@
   inline-size: 100%;
 }
 
+.utilityMode {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.utilityMode select {
+  box-sizing: border-box;
+  min-inline-size: 64px;
+  block-size: 32px;
+  padding-block: 0;
+  padding-inline: 6px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  color: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.utilityMode select:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.utilityMode select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 @media (min-width: 600px) {
   .actionColumn {
     max-inline-size: 320px;

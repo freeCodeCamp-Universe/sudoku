@@ -34,10 +34,11 @@ interface HeaderProps {
 interface HeaderUtilityRowProps {
   timer?: ReactNode;
   onHelpOpen?: () => void;
+  modeControl?: ReactNode;
 }
 
-export function HeaderUtilityRow({ timer, onHelpOpen }: HeaderUtilityRowProps) {
-  if (!timer && !onHelpOpen) {
+export function HeaderUtilityRow({ timer, onHelpOpen, modeControl }: HeaderUtilityRowProps) {
+  if (!timer && !onHelpOpen && !modeControl) {
     return null;
   }
 
@@ -62,6 +63,7 @@ export function HeaderUtilityRow({ timer, onHelpOpen }: HeaderUtilityRowProps) {
           </svg>
         </button>
       ) : null}
+      {modeControl}
       {timer ? <div className={styles.timerSlot}>{timer}</div> : null}
     </div>
   );

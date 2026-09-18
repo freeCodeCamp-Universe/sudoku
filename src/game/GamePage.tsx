@@ -482,6 +482,9 @@ function GameInner({
   // new game the same way the New Game button does — same progress-loss
   // confirmation if there's something to lose, immediate otherwise.
   function handleModeSelect(mode: Mode) {
+    if (mode === settings.mode) {
+      return;
+    }
     onModeChange?.(mode);
     handleNewGame(mode);
   }
@@ -741,11 +744,27 @@ function GameInner({
         />
       </div>
     );
+  const mobileModeControl =
+    !isDesktop && variant.supportsMode !== false ? (
+      <label className={styles.utilityMode}>
+        <span className={styles.srOnly}>Mode</span>
+        <select
+          aria-label="Mode"
+          value={settings.mode}
+          onChange={(event) => handleModeSelect(event.target.value as Mode)}
+        >
+          {MODE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    ) : null;
 
   const controlsPanel = (
     <div className={styles.actionColumn}>
       <Toolbar vertical onClearAll={handleClearAll} onReveal={handleReveal} />
-      {modeControl}
       <Button variant="cta" onClick={() => handleNewGame()}>
         New Game
       </Button>
@@ -878,7 +897,7 @@ function GameInner({
       />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
-          <HeaderUtilityRow timer={timer} onHelpOpen={onHelpOpen} />
+          <HeaderUtilityRow timer={timer} onHelpOpen={onHelpOpen} modeControl={mobileModeControl} />
           <div
             ref={viewportRef}
             className={
