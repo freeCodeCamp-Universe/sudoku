@@ -4,7 +4,7 @@ The app is a React SPA with a Sudoku puzzle engine. Three layers depend on each 
 
 ```
 ┌──────────────────────────────────────────────┐
-│  App / Gallery / Game  (React UI)            │  routing, pages, board rendering
+│  App / Gallery / Game / Learn (React UI)     │  routing, pages, board, course UI
 ├──────────────────────────────────────────────┤
 │  Variants               (declarative specs)  │  one data object per puzzle type
 ├──────────────────────────────────────────────┤
@@ -14,16 +14,17 @@ The app is a React SPA with a Sudoku puzzle engine. Three layers depend on each 
 
 ## Key directories
 
-| Path                            | What lives there                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------- |
-| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.           |
-| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.        |
-| `src/game/`                     | Playable board UI, game state, layout strategies, overlays, annotators.         |
-| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                           |
-| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                          |
-| `src/app/`                      | Shell components: page layout, header, theme provider.                          |
-| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`. |
-| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                 |
+| Path                            | What lives there                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------ |
+| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.                |
+| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.             |
+| `src/game/`                     | Playable board UI, game state, layout strategies, overlays, annotators.              |
+| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                                |
+| `src/learn/`                    | Feature-flagged Sudoku course: curriculum, lesson views, course shell, and progress. |
+| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                               |
+| `src/app/`                      | Shell components: page layout, header, theme provider.                               |
+| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`.      |
+| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                      |
 
 ---
 
@@ -185,6 +186,31 @@ Two separate stores in `localStorage`:
 
 ---
 
+## Learn layer
+
+The learn experience is a separate React feature under `src/learn/`. It is enabled only when `SHOW_LEARN=true` in non-production mode; production builds always omit the learn routes and curriculum data. This keeps the in-progress course out of the production application while allowing it to be developed and tested locally.
+
+### Routing and course shell
+
+`src/routes.tsx` defines two feature-flagged routes:
+
+- `/learn` renders `LearnPage` inside `CourseLayout`, showing the curriculum overview.
+- `/learn/:lessonId` renders `LessonRoute` inside `CourseLayout`, loading and displaying an individual lesson.
+
+`CourseLayout` provides the course header, navigation controls, skip link, touch-device banner, and course overlays. `LearnPage` and `LessonPage` provide the overview and lesson workspaces respectively. Lesson content is rendered from generated JSON rather than imported directly into React components.
+
+### Curriculum data and lesson loading
+
+`src/learn/curriculum/ordering.ts` is the source of truth for module order and lesson file order. During development, the Vite `curriculum-data` plugin runs `scripts/build-lesson-data.ts` and generates the curriculum tree and lesson JSON under `public/data/`. Changes to curriculum Markdown or the Markdown renderer trigger regeneration and a full reload.
+
+`useCurriculumTree` fetches and caches `/data/curriculum-tree.json`. `useLessonData` resolves a lesson from that tree, fetches `/data/lessons/<dataFile>`, caches it, and prefetches the next lesson. Lesson Markdown is sanitized and transformed by the learn Markdown pipeline before it is serialized for the client.
+
+### Learn progress
+
+Course completion is stored separately from puzzle progress in `localStorage`. `progressStore` provides the shared external store, while `useProgress` exposes completed lesson IDs and completion actions to the overview, navigation, and lesson views. The store re-reads storage before writes so completions from another tab are preserved.
+
+---
+
 ## App and gallery layers
 
 `src/App.tsx` wires `BrowserRouter`, `ThemeProvider`, and `Layout` around `AppRoutes`.
@@ -192,6 +218,7 @@ Two separate stores in `localStorage`:
 Routes (`src/routes.tsx`):
 
 - `/` renders `Gallery`
+- `/learn` and `/learn/:lessonId` render the feature-flagged learn experience described above
 - `/:variantId` renders `GamePage`
 
 `Gallery` (`src/gallery/Gallery/`) reads `variantRegistry`, sorts and filters by popularity/alpha/difficulty, and renders `VariantCard` components. Each card links to `/:variantId` and shows a canvas preview.
@@ -209,6 +236,8 @@ tsc --noEmit && vite build && tsx scripts/generate-spa-routes.ts
 1. **Type-check**: `tsc --noEmit` covers all files in `src/`, including test files.
 2. **Bundle**: Vite outputs `dist/index.html` and hashed assets to `dist/assets/`.
 3. **Per-route HTML**: `scripts/generate-spa-routes.ts` imports `variantRegistry`, iterates its keys, and copies `dist/index.html` into `dist/<variantId>/index.html` for each of the 32 variants. This lets any static host serve deep links like `/classic` or `/killer` as a real file. React Router resolves the route client-side.
+
+When the learn feature is enabled, the same script also creates `dist/learn/index.html` and one `dist/learn/<lessonId>/index.html` per lesson, with route-specific SEO metadata. The learn route files are omitted from production builds because `SHOW_LEARN` is disabled there.
 
 ---
 
