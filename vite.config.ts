@@ -1,19 +1,27 @@
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { curriculumDataPlugin } from './scripts/curriculumDataPlugin';
 
-export default defineConfig({
-  base: '/',
-  plugins: [curriculumDataPlugin(), react()],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, __dirname, ['SHOW_']);
+  const showLearn = mode !== 'production' && env.SHOW_LEARN === 'true';
+
+  return {
+    base: '/',
+    plugins: [showLearn && curriculumDataPlugin(), react()].filter(Boolean),
+    define: {
+      'import.meta.env.SHOW_LEARN': JSON.stringify(showLearn ? 'true' : 'false'),
     },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-  },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.ts',
+    },
+  };
 });

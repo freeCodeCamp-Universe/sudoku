@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node --import tsx/esm --import ./scripts/prebuild-register.ts scripts/build-lesson-data.ts",
-    "build": "tsc --noEmit && vite build && tsx scripts/generate-spa-routes.ts",
+    "prebuild": "NODE_ENV=production node --import tsx/esm --import ./scripts/prebuild-register.ts scripts/build-lesson-data.ts",
+    "build": "tsc --noEmit && vite build && NODE_ENV=production tsx scripts/generate-spa-routes.ts",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

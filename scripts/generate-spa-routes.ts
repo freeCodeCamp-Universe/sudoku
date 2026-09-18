@@ -9,12 +9,15 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { curriculum } from '../src/learn/curriculum/ordering';
 import { variantRegistry } from '../src/variants/registry';
 import { seoConfig } from '../src/utils/seo.config';
+import { loadEnv } from 'vite';
 
 const dist = resolve(process.cwd(), 'dist');
 const template = readFileSync(resolve(dist, 'index.html'), 'utf8');
+const isProductionBuild = process.env.NODE_ENV === 'production';
+const env = loadEnv(isProductionBuild ? 'production' : 'development', process.cwd(), ['SHOW_']);
+const showLearn = !isProductionBuild && env.SHOW_LEARN === 'true';
 let count = 0;
 
 function buildJsonLd(
@@ -120,7 +123,8 @@ interface LessonMetadata {
   title: string;
 }
 
-function loadLessonMetadata(): LessonMetadata[] {
+async function loadLessonMetadata(): Promise<LessonMetadata[]> {
+  const { curriculum } = await import('../src/learn/curriculum/ordering');
   const lessonsDir = resolve(process.cwd(), 'src/learn/curriculum/lessons');
   const lessons: LessonMetadata[] = [];
 
@@ -147,12 +151,14 @@ writeFileSync(
   render(template, seoConfig.siteTitle, seoConfig.siteDescription, '/', 'WebSite')
 );
 
-mkdirSync(resolve(dist, 'learn'), { recursive: true });
-writeFileSync(
-  resolve(dist, 'learn', 'index.html'),
-  render(template, seoConfig.siteTitle, seoConfig.siteDescription, '/learn', 'WebPage')
-);
-count++;
+if (showLearn) {
+  mkdirSync(resolve(dist, 'learn'), { recursive: true });
+  writeFileSync(
+    resolve(dist, 'learn', 'index.html'),
+    render(template, seoConfig.siteTitle, seoConfig.siteDescription, '/learn', 'WebPage')
+  );
+  count++;
+}
 
 for (const variant of Object.values(variantRegistry)) {
   const title = `${variant.name} | ${seoConfig.siteTitle}`;
@@ -166,15 +172,17 @@ for (const variant of Object.values(variantRegistry)) {
   count++;
 }
 
-for (const lesson of loadLessonMetadata()) {
-  const title = `${lesson.title} | ${seoConfig.siteTitle}`;
-  const dir = resolve(dist, 'learn', lesson.id);
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(
-    resolve(dir, 'index.html'),
-    render(template, title, seoConfig.siteDescription, `/learn/${lesson.id}`, 'WebPage')
-  );
-  count++;
+if (showLearn) {
+  for (const lesson of await loadLessonMetadata()) {
+    const title = `${lesson.title} | ${seoConfig.siteTitle}`;
+    const dir = resolve(dist, 'learn', lesson.id);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      resolve(dir, 'index.html'),
+      render(template, title, seoConfig.siteDescription, `/learn/${lesson.id}`, 'WebPage')
+    );
+    count++;
+  }
 }
 
 console.log(`Generated ${count} per-route index.html files in dist/`);
