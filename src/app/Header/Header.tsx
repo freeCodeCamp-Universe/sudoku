@@ -197,12 +197,14 @@ export function Header({
                   role="group"
                   aria-label="Settings"
                 >
-                  <Toggle
-                    id="settings-dark-theme-label"
-                    label="Dark theme"
-                    checked={theme === 'dark'}
-                    onChange={toggleTheme}
-                  />
+                  {compact ? (
+                    <Toggle
+                      id="settings-dark-theme-label"
+                      label="Dark theme"
+                      checked={theme === 'dark'}
+                      onChange={toggleTheme}
+                    />
+                  ) : null}
                   {onToggleCheck !== undefined ? (
                     <Toggle
                       id="settings-check-label"
@@ -266,9 +268,11 @@ export function Header({
               </svg>
             </button>
           ) : null}
-          <div className={onHelpOpen ? styles.mobileVariantThemeToggle : styles.themeToggle}>
-            <ThemeToggleButton />
-          </div>
+          {!compact && (
+            <div className={styles.themeToggle}>
+              <ThemeToggleButton />
+            </div>
+          )}
           <DonateButton />
         </div>
       </header>

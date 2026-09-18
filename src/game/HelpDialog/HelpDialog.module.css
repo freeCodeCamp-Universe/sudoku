@@ -68,6 +68,14 @@
   border-color: #1d4f85;
 }
 
+.tabs button {
+  background: transparent;
+}
+
+.tabs button[aria-selected='true'] {
+  background: var(--bg-secondary);
+}
+
 .rules {
   display: flex;
   flex-direction: column;

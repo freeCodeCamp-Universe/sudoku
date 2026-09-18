@@ -123,7 +123,7 @@ describe('Header', () => {
   });
 
   describe('settings', () => {
-    function SettingsHarness() {
+    function SettingsHarness({ compact = false }: { compact?: boolean }) {
       const [checkEnabled, setCheckEnabled] = useState(false);
       const [timerEnabled, setTimerEnabled] = useState(false);
 
@@ -133,6 +133,7 @@ describe('Header', () => {
             <Header
               title="Classic Sudoku"
               backHref="/"
+              compact={compact}
               checkEnabled={checkEnabled}
               timerEnabled={timerEnabled}
               onToggleCheck={() => setCheckEnabled((v) => !v)}
@@ -164,12 +165,12 @@ describe('Header', () => {
       expect(timerSwitch).toBeChecked();
     });
 
-    it('should expose the dark theme switch first in the settings list', async () => {
+    it('should expose the dark theme switch first in the settings list when compact', async () => {
       const user = userEvent.setup();
       localStorage.clear();
       document.documentElement.classList.remove('light');
 
-      render(<SettingsHarness />);
+      render(<SettingsHarness compact />);
 
       await user.click(screen.getByRole('button', { name: /settings/i }));
 
@@ -181,6 +182,28 @@ describe('Header', () => {
 
       expect(switches[0]).not.toBeChecked();
       expect(document.documentElement).toHaveClass('light');
+    });
+
+    it('should show the dark theme switch in settings and hide the header theme button when compact', async () => {
+      const user = userEvent.setup();
+      render(<SettingsHarness compact />);
+
+      expect(screen.queryByRole('button', { name: /switch to/i })).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      expect(screen.getByRole('switch', { name: /dark theme/i })).toBeInTheDocument();
+    });
+
+    it('should show the header theme button and hide the dark theme switch in settings when not compact', async () => {
+      const user = userEvent.setup();
+      render(<SettingsHarness />);
+
+      expect(screen.getByRole('button', { name: /switch to/i })).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      expect(screen.queryByRole('switch', { name: /dark theme/i })).not.toBeInTheDocument();
     });
 
     it('should toggle the global high-contrast palette from the settings dropdown', async () => {
