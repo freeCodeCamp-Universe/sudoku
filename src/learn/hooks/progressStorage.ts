@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'vim-course:progress';
+export const PROGRESS_STORAGE_KEY = 'sudoku:learn:progress';
 
 export interface CompletedEntry {
   id: string;
@@ -12,7 +12,7 @@ interface StoredProgress {
 
 export function readProgress(): CompletedEntry[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
     if (raw === null) {
       return [];
     }
@@ -28,7 +28,13 @@ export function readProgress(): CompletedEntry[] {
       return [];
     }
 
-    return (stored.completed as unknown[]).filter((entry): entry is CompletedEntry => typeof entry === 'object' && entry !== null && typeof (entry as CompletedEntry).id === 'string' && typeof (entry as CompletedEntry).completedAt === 'number');
+    return (stored.completed as unknown[]).filter(
+      (entry): entry is CompletedEntry =>
+        typeof entry === 'object' &&
+        entry !== null &&
+        typeof (entry as CompletedEntry).id === 'string' &&
+        typeof (entry as CompletedEntry).completedAt === 'number'
+    );
   } catch {
     return [];
   }
@@ -37,7 +43,7 @@ export function readProgress(): CompletedEntry[] {
 export function writeProgress(completed: CompletedEntry[]): void {
   try {
     const payload: StoredProgress = { completed };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(payload));
   } catch {
     // Persistence is best-effort: a full or unavailable store must not break the app.
   }

@@ -3,8 +3,9 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { courseChrome } from '@/learn/stores/courseChromeStore';
 import { CourseOverlays } from '@/learn/features/CourseOverlays/CourseOverlays';
+import { ThemeProvider } from '@/app/ThemeProvider';
 
-vi.mock('@/curriculum/useCurriculumTree', () => ({
+vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({ modules: [], orderedLessonIds: [] }),
 }));
 
@@ -14,8 +15,16 @@ afterEach(() => {
 });
 
 describe('CourseOverlays', () => {
+  function renderOverlays() {
+    return render(
+      <ThemeProvider>
+        <CourseOverlays />
+      </ThemeProvider>
+    );
+  }
+
   it('should render neither overlay while the store is closed', () => {
-    render(<CourseOverlays />);
+    renderOverlays();
 
     expect(screen.queryByRole('dialog', { name: 'Lessons' })).toBeNull();
     expect(screen.queryByRole('dialog', { name: 'Keyboard shortcuts' })).toBeNull();
@@ -23,7 +32,7 @@ describe('CourseOverlays', () => {
   });
 
   it('should open the drawer when the store opens it (as the header button does)', () => {
-    render(<CourseOverlays />);
+    renderOverlays();
 
     act(() => {
       courseChrome.openDrawer();
@@ -33,7 +42,7 @@ describe('CourseOverlays', () => {
   });
 
   it('should open the shortcuts modal when the store opens it', () => {
-    render(<CourseOverlays />);
+    renderOverlays();
 
     act(() => {
       courseChrome.openShortcuts();
@@ -49,7 +58,7 @@ describe('CourseOverlays', () => {
     trigger.focus();
 
     const user = userEvent.setup();
-    render(<CourseOverlays />);
+    renderOverlays();
 
     act(() => {
       courseChrome.openDrawer();
@@ -70,7 +79,7 @@ describe('CourseOverlays', () => {
     trigger.focus();
 
     const user = userEvent.setup();
-    render(<CourseOverlays />);
+    renderOverlays();
 
     act(() => {
       courseChrome.openShortcuts();
@@ -85,7 +94,7 @@ describe('CourseOverlays', () => {
   });
 
   it('should open the settings modal when the store opens it', () => {
-    render(<CourseOverlays />);
+    renderOverlays();
 
     act(() => {
       courseChrome.openSettings();
@@ -95,6 +104,8 @@ describe('CourseOverlays', () => {
     expect(screen.getByRole('switch', { name: 'Enable dark theme' })).toBeInTheDocument();
     expect(screen.getByText('When on, keyboard shortcuts are active.')).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Enable animations' })).toBeInTheDocument();
-    expect(screen.getByText('When on, animations and transitions are applied.')).toBeInTheDocument();
+    expect(
+      screen.getByText('When on, animations and transitions are applied.')
+    ).toBeInTheDocument();
   });
 });

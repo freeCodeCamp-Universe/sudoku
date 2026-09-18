@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const ANIMATIONS_STORAGE_KEY = '{{PROJECT_NAME}}:animationsEnabled';
-export const ANIMATIONS_PREFERENCE_EVENT = '{{PROJECT_NAME}}:animations-preference-change';
+export const ANIMATIONS_STORAGE_KEY = 'sudoku:learn:animationsEnabled';
+export const ANIMATIONS_PREFERENCE_EVENT = 'sudoku:learn:animations-preference-change';
 export const REDUCED_MOTION_ATTRIBUTE = 'data-reduced-motion';
 
 function readAnimationsPreference(): boolean {

@@ -20,12 +20,30 @@ interface CourseOverlaysProps {
  */
 export function CourseOverlays({ currentLessonId }: CourseOverlaysProps) {
   const tree = useCurriculumTree();
-  const { drawerOpen, shortcutsOpen, settingsOpen, closeDrawer, closeShortcuts, closeSettings, triggerElement } = useCourseChrome();
+  const {
+    drawerOpen,
+    shortcutsOpen,
+    settingsOpen,
+    closeDrawer,
+    closeShortcuts,
+    closeSettings,
+    triggerElement,
+  } = useCourseChrome();
 
   return (
     <>
-      <NavDrawer open={drawerOpen} onClose={closeDrawer} modules={tree?.modules ?? []} currentLessonId={currentLessonId} triggerElement={triggerElement} />
-      <ShortcutsModal open={shortcutsOpen} onClose={closeShortcuts} triggerElement={triggerElement} />
+      <NavDrawer
+        open={drawerOpen}
+        onClose={closeDrawer}
+        modules={tree?.modules ?? []}
+        currentLessonId={currentLessonId}
+        triggerElement={triggerElement}
+      />
+      <ShortcutsModal
+        open={shortcutsOpen}
+        onClose={closeShortcuts}
+        triggerElement={triggerElement}
+      />
       <SettingsModal open={settingsOpen} onClose={closeSettings} triggerElement={triggerElement} />
     </>
   );

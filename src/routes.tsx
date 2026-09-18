@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { Gallery } from '@/gallery/Gallery';
 import { GamePage } from '@/game/GamePage';
+import { CourseLayout } from '@/learn/views/CourseLayout/CourseLayout';
 import { LearnPage } from '@/learn/views/LearnPage/LearnPage';
 import { LessonRoute } from '@/learn/views/LessonRoute/LessonRoute';
 
@@ -12,8 +13,22 @@ export function AppRoutes() {
       <Route path="/" element={<Gallery />} />
       {showLearn && (
         <>
-          <Route path="/learn" element={<LearnPage />} />
-          <Route path="/learn/:lessonId" element={<LessonRoute />} />
+          <Route
+            path="/learn"
+            element={
+              <CourseLayout>
+                <LearnPage />
+              </CourseLayout>
+            }
+          />
+          <Route
+            path="/learn/:lessonId"
+            element={
+              <CourseLayout>
+                <LessonRoute />
+              </CourseLayout>
+            }
+          />
         </>
       )}
       <Route path="/:variantId" element={<GamePage />} />

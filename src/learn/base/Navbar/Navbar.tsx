@@ -12,7 +12,7 @@ export function Navbar({ onOpenShortcuts, onOpenSettings }: NavbarProps) {
   return (
     <header className={styles.navbar}>
       <a href="/" className={styles.home}>
-        {'{{PROJECT_NAME}}'}
+        Sudoku
       </a>
       <div className={styles.actions}>
         <button
@@ -33,7 +33,7 @@ export function Navbar({ onOpenShortcuts, onOpenSettings }: NavbarProps) {
         </button>
         <Button
           variant="cta"
-          href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign={{PROJECT_NAME}}&medium=web`}
+          href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign=Sudoku&medium=web`}
           target_blank
           rel="noopener noreferrer"
         >

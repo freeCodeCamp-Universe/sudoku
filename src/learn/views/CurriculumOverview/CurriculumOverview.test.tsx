@@ -38,7 +38,7 @@ afterEach(() => {
 describe('CurriculumOverview', () => {
   it('should render completion state from the shared progress storage', () => {
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({ completed: [{ id: 'l1', completedAt: 1000 }] })
     );
     progressStore.reset();
@@ -62,7 +62,7 @@ describe('CurriculumOverview', () => {
 
   it('should show "Continue" linking to the lesson after the most recently completed one', () => {
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({ completed: [{ id: 'l1', completedAt: 1000 }] })
     );
     progressStore.reset();
@@ -76,7 +76,7 @@ describe('CurriculumOverview', () => {
   it('should link "Continue" based on highest timestamp, not array position', () => {
     // l3 completed first (ts=1000), l1 completed last (ts=2000) → lastCompleted=l1 → link to l2
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({
         completed: [
           { id: 'l3', completedAt: 1000 },
@@ -96,7 +96,7 @@ describe('CurriculumOverview', () => {
     // User completed l1 (ts=1000) and l3 (ts=2000, the final lesson) but skipped l2.
     // lastCompletedId=l3 → orderedLessonIds[3] is undefined → frontier=l2.
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({
         completed: [
           { id: 'l1', completedAt: 1000 },
@@ -114,7 +114,7 @@ describe('CurriculumOverview', () => {
 
   it('should hide the CTA button when all lessons are completed', () => {
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({
         completed: [
           { id: 'l1', completedAt: 1000 },
@@ -134,7 +134,7 @@ describe('CurriculumOverview', () => {
   it('should fall back to the frontier when the last completed lesson is no longer in the curriculum', () => {
     // 'l-unknown' is not in orderedLessonIds; frontier is the first uncompleted (l1)
     localStorage.setItem(
-      'vim-course:progress',
+      'sudoku:learn:progress',
       JSON.stringify({
         completed: [{ id: 'l-unknown', completedAt: 1000 }],
       })

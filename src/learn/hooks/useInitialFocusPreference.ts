@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const INITIAL_FOCUS_STORAGE_KEY = 'vim-course:focusInstructionsOnLoad';
-export const INITIAL_FOCUS_PREFERENCE_EVENT = 'vim-course:initial-focus-preference-change';
+export const INITIAL_FOCUS_STORAGE_KEY = 'sudoku:learn:focusInstructionsOnLoad';
+export const INITIAL_FOCUS_PREFERENCE_EVENT = 'sudoku:learn:initial-focus-preference-change';
 
 function readInitialFocusPreference(): boolean {
   if (typeof window === 'undefined') {
@@ -21,7 +21,9 @@ export interface UseInitialFocusPreferenceResult {
 }
 
 export function useInitialFocusPreference(): UseInitialFocusPreferenceResult {
-  const [focusInstructionsOnLoad, setFocusInstructionsOnLoad] = useState(readInitialFocusPreference);
+  const [focusInstructionsOnLoad, setFocusInstructionsOnLoad] = useState(
+    readInitialFocusPreference
+  );
 
   useEffect(() => {
     const updatePreference = () => {

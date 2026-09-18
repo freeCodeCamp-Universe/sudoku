@@ -27,7 +27,7 @@ const modules = [
   },
 ];
 
-const STORAGE_KEY = 'vim-course:progress';
+const STORAGE_KEY = 'sudoku:learn:progress';
 
 function setProgress(completed: string[]) {
   localStorage.setItem(
@@ -45,7 +45,10 @@ function renderWithRouter(ui: ReactElement) {
 }
 
 /** Harness with a real trigger so focus move/restore is observable. */
-function Harness({ onClose, currentLessonId }: { onClose?: () => void; currentLessonId?: string } = {}) {
+function Harness({
+  onClose,
+  currentLessonId,
+}: { onClose?: () => void; currentLessonId?: string } = {}) {
   const [open, setOpen] = useState(false);
   const close = () => {
     onClose?.();
@@ -82,7 +85,9 @@ describe('NavDrawer', () => {
 
     expect(screen.getByText('1/4 lessons completed')).toHaveAttribute('aria-hidden', 'true');
     expect(screen.getByText('1 out of 4 lessons completed')).toHaveClass('sr-only');
-    expect(within(screen.getByRole('dialog')).getByText('1/4 lessons completed')).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('dialog')).getByText('1/4 lessons completed')
+    ).toBeInTheDocument();
 
     const completed = screen.getByRole('link', { name: /Enter insert mode/ });
     expect(completed).toHaveAttribute('href', '/learn/l1');
@@ -94,7 +99,10 @@ describe('NavDrawer', () => {
     expect(within(current).queryByText('current')).toBeNull();
 
     // Later lessons are navigable, not locked.
-    expect(screen.getByRole('link', { name: /Save and quit/ })).toHaveAttribute('href', '/learn/l2');
+    expect(screen.getByRole('link', { name: /Save and quit/ })).toHaveAttribute(
+      'href',
+      '/learn/l2'
+    );
     expect(screen.queryByText('locked')).toBeNull();
   });
 

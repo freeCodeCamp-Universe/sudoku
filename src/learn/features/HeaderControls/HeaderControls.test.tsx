@@ -25,7 +25,7 @@ describe('HeaderControls', () => {
 
     expect(screen.getByRole('button', { name: /open lessons/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /keyboard shortcuts/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'settings' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
   });
 
   it('should hide the drawer control when requested', () => {
@@ -48,7 +48,7 @@ describe('HeaderControls', () => {
     await user.click(screen.getByRole('button', { name: /keyboard shortcuts/i }));
     expect(courseChrome.getState().shortcutsOpen).toBe(true);
 
-    await user.click(screen.getByRole('button', { name: 'settings' }));
+    await user.click(screen.getByRole('button', { name: 'Settings' }));
     expect(courseChrome.getState().settingsOpen).toBe(true);
   });
 });

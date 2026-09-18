@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Banner } from '@/learn/base/Banner/Banner';
 import { HeaderControls } from '@/learn/features/HeaderControls/HeaderControls';
 import { CourseOverlays } from '@/learn/features/CourseOverlays/CourseOverlays';
@@ -11,10 +11,7 @@ interface Props {
 }
 
 export function CourseLayout({ children }: Props) {
-  const lessonMatch = useMatch('/learn/:lessonId');
-  const isLesson = Boolean(lessonMatch);
-  const params = lessonMatch?.params;
-  const currentLessonId = isLesson ? params.lessonId : undefined;
+  const { lessonId: currentLessonId } = useParams<{ lessonId?: string }>();
   const isTouch = useMediaQuery('(hover: none)');
 
   return (
@@ -24,7 +21,7 @@ export function CourseLayout({ children }: Props) {
       </a>
       <header className={styles.header}>
         <Link to="/" className={styles['home-link']}>
-          {{ PROJECT_NAME }}
+          Sudoku
         </Link>
         <HeaderControls
           showDrawer={Boolean(currentLessonId)}
@@ -32,7 +29,7 @@ export function CourseLayout({ children }: Props) {
         />
       </header>
       {isTouch && !currentLessonId && (
-        <Banner dismissible={false}>{{ MOBILE_BANNER_MESSAGE }}</Banner>
+        <Banner dismissible={false}>This course is best experienced on a larger screen.</Banner>
       )}
       {children}
       <CourseOverlays currentLessonId={currentLessonId} />

@@ -21,7 +21,7 @@ vi.mock('@/learn/hooks/useSeoMeta', () => ({
 
 vi.mock('@/utils/seo.config', () => ({
   seoConfig: {
-    siteTitle: '{{PROJECT_NAME}} | freeCodeCamp.org',
+    siteTitle: 'Sudoku | freeCodeCamp.org',
     siteDescription: undefined,
   },
 }));
@@ -39,6 +39,6 @@ describe('LessonPage', () => {
   it('should set the document title from the lesson title', () => {
     render(<LessonPage lesson={lesson} isLastLesson={false} instructionsHtml="" headings={[]} />);
 
-    expect(document.title).toBe('Getting started with Vim | {{PROJECT_NAME}} | freeCodeCamp.org');
+    expect(document.title).toBe('Getting started with Vim | Sudoku | freeCodeCamp.org');
   });
 });

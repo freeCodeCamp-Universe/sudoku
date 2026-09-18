@@ -4,7 +4,7 @@ import { orderedLessonIds } from '@/learn/curriculum/lessonOrder';
 import { progressStore } from '@/learn/stores/progressStore';
 import { useProgress } from '@/learn/hooks/useProgress';
 
-const STORAGE_KEY = 'vim-course:progress';
+const STORAGE_KEY = 'sudoku:learn:progress';
 
 afterEach(() => {
   act(() => {

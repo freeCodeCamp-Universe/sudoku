@@ -13,7 +13,7 @@ vi.mock('@/learn/hooks/useSeoMeta', () => ({
 
 vi.mock('@/utils/seo.config', () => ({
   seoConfig: {
-    siteTitle: '{{PROJECT_NAME}} | freeCodeCamp.org',
+    siteTitle: 'Sudoku | freeCodeCamp.org',
     siteDescription: undefined,
   },
 }));
@@ -28,7 +28,7 @@ describe('LearnPage', () => {
 
     render(<LearnPage />);
 
-    expect(document.title).toBe('{{PROJECT_NAME}} | freeCodeCamp.org');
+    expect(document.title).toBe('Sudoku | freeCodeCamp.org');
     expect(screen.getByRole('status', { name: 'Loading course' })).toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: 'Learn Vim for Terminal Text Editing' })

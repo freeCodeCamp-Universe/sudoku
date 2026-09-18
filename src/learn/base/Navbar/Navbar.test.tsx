@@ -15,7 +15,7 @@ describe('Navbar', () => {
   it('should render a home link', () => {
     render(<Navbar onOpenShortcuts={vi.fn()} onOpenSettings={vi.fn()} />);
 
-    const link = screen.getByRole('link', { name: '{{PROJECT_NAME}}' });
+    const link = screen.getByRole('link', { name: 'Sudoku' });
     expect(link).toHaveAttribute('href', '/');
   });
 

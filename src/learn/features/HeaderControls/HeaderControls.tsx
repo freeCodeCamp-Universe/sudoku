@@ -19,7 +19,7 @@ export function HeaderControls({ showDrawer = true, showShortcuts = true }: Head
           type="button"
           className={styles.action}
           onClick={openDrawer}
-          aria-label="open lessons"
+          aria-label="Open lessons"
         >
           <ListIcon />
         </button>
@@ -29,17 +29,17 @@ export function HeaderControls({ showDrawer = true, showShortcuts = true }: Head
           type="button"
           className={`${styles.action} ${styles['action-keyboard-only']}`}
           onClick={openShortcuts}
-          aria-label="keyboard shortcuts"
+          aria-label="Keyboard shortcuts"
         >
           <KeyboardIcon />
         </button>
       )}
-      <button type="button" className={styles.action} onClick={openSettings} aria-label="settings">
+      <button type="button" className={styles.action} onClick={openSettings} aria-label="Settings">
         <GearIcon />
       </button>
       <Button
         variant="cta"
-        href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign={{PROJECT_NAME}}&medium=web`}
+        href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign=Sudoku&medium=web`}
         target_blank
       >
         Donate

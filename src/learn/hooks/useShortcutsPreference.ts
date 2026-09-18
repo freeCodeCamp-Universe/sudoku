@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const SHORTCUTS_STORAGE_KEY = '{{PROJECT_NAME}}:shortcutsEnabled';
-export const SHORTCUTS_PREFERENCE_EVENT = '{{PROJECT_NAME}}:shortcuts-preference-change';
+export const SHORTCUTS_STORAGE_KEY = 'sudoku:learn:shortcutsEnabled';
+export const SHORTCUTS_PREFERENCE_EVENT = 'sudoku:learn:shortcuts-preference-change';
 
 function readShortcutsPreference(): boolean {
   if (typeof window === 'undefined') {

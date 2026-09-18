@@ -42,11 +42,21 @@ const prose: ProseLessonDefinition = {
   instructions: '## Modes\n\nVim has modes.',
 };
 
-function renderWorkspace(lesson: AuthoredLessonDefinition | ProseLessonDefinition, tab: 'instructions' | 'terminal' = 'instructions') {
+function renderWorkspace(
+  lesson: AuthoredLessonDefinition | ProseLessonDefinition,
+  tab: 'instructions' | 'terminal' = 'instructions'
+) {
   const { hook } = memoryLocation({ path: '/', record: true });
   const view = render(
     <Router hook={hook}>
-      <LessonWorkspace lesson={lesson} nextLessonId="next-id" isLastLesson={false} instructionsHtml={renderMarkdown(lesson.instructions)} tab={tab} onSelectTab={vi.fn()} />
+      <LessonWorkspace
+        lesson={lesson}
+        nextLessonId="next-id"
+        isLastLesson={false}
+        instructionsHtml={renderMarkdown(lesson.instructions)}
+        tab={tab}
+        onSelectTab={vi.fn()}
+      />
     </Router>
   );
   return { ...view, hook };
@@ -91,7 +101,10 @@ describe('LessonWorkspace', () => {
   });
 
   it('should show a completed icon and status before a completed lesson title', () => {
-    localStorage.setItem('vim-course:progress', JSON.stringify({ completed: [{ id: 'w-1', completedAt: 1000 }] }));
+    localStorage.setItem(
+      'sudoku:learn:progress',
+      JSON.stringify({ completed: [{ id: 'w-1', completedAt: 1000 }] })
+    );
     progressStore.reset();
     renderWorkspace(workshop);
 
@@ -116,7 +129,9 @@ describe('LessonWorkspace', () => {
 
     await user.keyboard('{Control>}{Enter}{/Control}');
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Delete a character' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Delete a character' })
+    ).toBeInTheDocument();
     expect(screen.getByText(/some steps aren't done yet/i)).toBeInTheDocument();
   });
 
@@ -128,7 +143,14 @@ describe('LessonWorkspace', () => {
 
     rerender(
       <Router hook={hook}>
-        <LessonWorkspace lesson={workshop} nextLessonId="next-id" isLastLesson={false} instructionsHtml={renderMarkdown(workshop.instructions)} tab="terminal" onSelectTab={vi.fn()} />
+        <LessonWorkspace
+          lesson={workshop}
+          nextLessonId="next-id"
+          isLastLesson={false}
+          instructionsHtml={renderMarkdown(workshop.instructions)}
+          tab="terminal"
+          onSelectTab={vi.fn()}
+        />
       </Router>
     );
 
