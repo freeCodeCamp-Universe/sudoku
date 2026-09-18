@@ -880,7 +880,7 @@ function GameInner({
         title={title}
         isFavorite={favorites.has(variant.id)}
         onToggleFavorite={() => toggleFavorite(variant.id)}
-        compact={isLandscapeMobile}
+        compact={!isDesktop}
         onBack={onBack}
         onHelpOpen={onHelpOpen}
         onKeyboardShortcutsOpen={onKeyboardShortcutsOpen}
