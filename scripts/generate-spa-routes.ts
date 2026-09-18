@@ -9,6 +9,7 @@
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { curriculum } from '../src/learn/curriculum/ordering';
 import { variantRegistry } from '../src/variants/registry';
 import { seoConfig } from '../src/utils/seo.config';
 
@@ -114,10 +115,44 @@ function render(
   );
 }
 
+interface LessonMetadata {
+  id: string;
+  title: string;
+}
+
+function loadLessonMetadata(): LessonMetadata[] {
+  const lessonsDir = resolve(process.cwd(), 'src/learn/curriculum/lessons');
+  const lessons: LessonMetadata[] = [];
+
+  for (const module of curriculum) {
+    for (const entry of module.lessons) {
+      const filename = typeof entry === 'string' ? entry : entry.file;
+      const source = readFileSync(resolve(lessonsDir, filename), 'utf8');
+      const id = /^id:\s*(.+)$/m.exec(source)?.[1]?.trim();
+      const title = /^title:\s*(.+)$/m.exec(source)?.[1]?.trim();
+
+      if (!id || !title) {
+        throw new Error(`Lesson frontmatter must include id and title: ${filename}`);
+      }
+
+      lessons.push({ id, title });
+    }
+  }
+
+  return lessons;
+}
+
 writeFileSync(
   resolve(dist, 'index.html'),
   render(template, seoConfig.siteTitle, seoConfig.siteDescription, '/', 'WebSite')
 );
+
+mkdirSync(resolve(dist, 'learn'), { recursive: true });
+writeFileSync(
+  resolve(dist, 'learn', 'index.html'),
+  render(template, seoConfig.siteTitle, seoConfig.siteDescription, '/learn', 'WebPage')
+);
+count++;
 
 for (const variant of Object.values(variantRegistry)) {
   const title = `${variant.name} | ${seoConfig.siteTitle}`;
@@ -127,6 +162,17 @@ for (const variant of Object.values(variantRegistry)) {
   writeFileSync(
     resolve(dir, 'index.html'),
     render(template, title, description, `/${variant.id}`, 'WebPage')
+  );
+  count++;
+}
+
+for (const lesson of loadLessonMetadata()) {
+  const title = `${lesson.title} | ${seoConfig.siteTitle}`;
+  const dir = resolve(dist, 'learn', lesson.id);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(
+    resolve(dir, 'index.html'),
+    render(template, title, seoConfig.siteDescription, `/learn/${lesson.id}`, 'WebPage')
   );
   count++;
 }
