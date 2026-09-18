@@ -1,0 +1,55 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  block-size: var(--navbar-height, 3.5rem);
+  padding-inline: var(--space-md);
+  background-color: var(--color-bg-primary);
+  border-block-end: 1px solid var(--color-border-secondary);
+}
+
+.home {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-fg-primary);
+  text-decoration: none;
+}
+
+.home:hover {
+  color: var(--color-accent);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--icon-button-size);
+  block-size: var(--icon-button-size);
+  padding: 0;
+  color: var(--color-fg-secondary);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.action:hover {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.action-keyboard-only {
+  display: none;
+}
+
+@media (hover: hover) {
+  .action-keyboard-only {
+    display: inline-flex;
+  }
+}

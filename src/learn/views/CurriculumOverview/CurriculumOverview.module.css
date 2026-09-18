@@ -1,0 +1,14 @@
+.loading {
+  flex: 1;
+  min-block-size: 0;
+}
+
+.cta-row {
+  display: flex;
+  justify-content: center;
+  margin-block: var(--space-2xl);
+}
+
+.cta-button {
+  width: 50%;
+}

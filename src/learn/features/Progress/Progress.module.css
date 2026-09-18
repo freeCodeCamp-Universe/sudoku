@@ -1,0 +1,5 @@
+.progress {
+  margin: 0;
+  color: var(--color-fg-tertiary);
+  font-size: var(--text-xs);
+}

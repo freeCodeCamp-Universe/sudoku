@@ -1,0 +1,149 @@
+.home-modules,
+.drawer-modules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-modules {
+  margin-block: 0;
+  gap: var(--space-xl);
+}
+
+.drawer-modules {
+  gap: var(--space-lg);
+}
+
+.home-module,
+.drawer-module {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-module {
+  gap: var(--space-sm);
+}
+
+.drawer-module {
+  gap: var(--space-xxs);
+}
+
+.home-module-title,
+.drawer-module-title {
+  display: flex;
+  align-items: baseline;
+  margin-block: 0;
+}
+
+.home-module-title {
+  gap: var(--space-sm);
+  font-size: var(--text-md);
+  color: var(--color-fg-primary);
+}
+
+.drawer-module-title {
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+}
+
+.home-lessons,
+.drawer-lessons {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-lessons {
+  padding-inline-start: var(--space-md);
+  gap: var(--space-xxs);
+}
+
+.drawer-lessons {
+  padding-inline-start: var(--space-sm);
+  gap: var(--space-xxs);
+}
+
+.home-lesson,
+.drawer-lesson {
+  margin: 0;
+}
+
+.home-lesson-row,
+.drawer-lesson-row {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-fg-primary);
+  border-inline-start: 3px solid transparent;
+  border-radius: var(--radius);
+}
+
+.home-lesson-row {
+  gap: var(--space-sm);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xxs);
+}
+
+.drawer-lesson-row {
+  gap: var(--space-sm);
+  padding: var(--space-xs);
+  font-size: var(--text-xs);
+}
+
+a.home-lesson-row:hover,
+a.drawer-lesson-row:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.drawer-lesson[data-state='current'] .drawer-lesson-row,
+.drawer-lesson[data-state='completed-current'] .drawer-lesson-row,
+.home-lesson[data-state='current'] .home-lesson-row,
+.home-lesson[data-state='completed-current'] .home-lesson-row {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+  border-inline-start-color: var(--color-current-indicator);
+}
+
+.home-lesson-title,
+.drawer-lesson-title {
+  flex: 1;
+}
+
+.home-marker-completed,
+.home-marker-available,
+.drawer-marker-completed,
+.drawer-marker-available {
+  flex-shrink: 0;
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+
+.home-marker-completed,
+.drawer-marker-completed {
+  color: var(--color-fg-primary);
+}
+
+/* Both icons are always in the DOM; CSS toggles visibility based on data-state.
+   Default (available/current): show circle, hide checkmark. */
+.home-lesson .home-marker-completed,
+.drawer-lesson .drawer-marker-completed {
+  display: none;
+}
+
+/* Completed states: show checkmark, hide circle. */
+.home-lesson[data-state='completed'] .home-marker-completed,
+.home-lesson[data-state='completed-current'] .home-marker-completed,
+.drawer-lesson[data-state='completed'] .drawer-marker-completed,
+.drawer-lesson[data-state='completed-current'] .drawer-marker-completed {
+  display: initial;
+}
+
+.home-lesson[data-state='completed'] .home-marker-available,
+.home-lesson[data-state='completed-current'] .home-marker-available,
+.drawer-lesson[data-state='completed'] .drawer-marker-available,
+.drawer-lesson[data-state='completed-current'] .drawer-marker-available {
+  display: none;
+}

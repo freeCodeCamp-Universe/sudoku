@@ -1,0 +1,30 @@
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  padding-block: var(--space-8);
+  padding-inline: var(--space-6);
+  gap: var(--space-3);
+  text-align: center;
+  color: var(--text-secondary);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.label {
+  font-size: var(--text-base);
+  font-weight: 500;
+  margin: 0;
+}
+
+.hint {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.hint code {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}

@@ -1,0 +1,34 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--icon-button-size);
+  block-size: var(--icon-button-size);
+  padding: 0;
+  color: var(--color-fg-secondary);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.action:hover {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.action-keyboard-only {
+  display: none;
+}
+
+@media (width >= 768px) and (hover: hover) {
+  .action-keyboard-only {
+    display: inline-flex;
+  }
+}

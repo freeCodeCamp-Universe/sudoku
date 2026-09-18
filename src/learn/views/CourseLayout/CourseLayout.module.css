@@ -1,0 +1,42 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xs);
+  background-color: var(--color-bg-primary);
+}
+
+.home-link {
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xxs);
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--color-fg-primary);
+  text-decoration: none;
+}
+
+.home-link:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* The header stays dark regardless of the active theme. These token overrides
+ * cascade into the HeaderControls island's own module because the island is a
+ * DOM descendant of .header. */
+:root[data-theme='light'] .header {
+  --color-bg-primary: var(--gray90);
+  --color-fg-primary: var(--gray05);
+  --color-fg-secondary: var(--gray15);
+  --color-bg-tertiary: var(--gray80);
+}
+
+@media (width >= 768px) {
+  .header {
+    padding-inline: var(--space-md);
+  }
+}

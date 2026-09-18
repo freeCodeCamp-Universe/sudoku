@@ -1,0 +1,78 @@
+.checklist {
+  --label-lh: var(--line-height-caption);
+  --label-lh-code: 1.7;
+  --label-lh-kbd: 2;
+  --hint-lh: 1.6;
+  --hint-lh-code: 1.8;
+  --hint-lh-kbd: 2.1;
+
+  color: var(--color-fg-primary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-xxs) var(--space-sm);
+  color: var(--color-fg-primary);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  color: var(--color-fg-primary);
+}
+
+.icon svg {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.body {
+  display: contents;
+}
+
+.label {
+  grid-column: 2;
+  grid-row: 1;
+  line-height: var(--label-lh);
+}
+
+.label:has(kbd) {
+  line-height: var(--label-lh-kbd);
+}
+
+.label:has(code):not(:has(kbd)) {
+  line-height: var(--label-lh-code);
+}
+
+.hint {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  padding-inline-start: var(--space-sm);
+  border-inline-start: 2px solid var(--color-border-secondary);
+  padding-block: var(--space-xxs);
+  color: var(--color-fg-primary);
+  font-size: var(--text-sm);
+  line-height: var(--hint-lh);
+}
+
+.hint:has(kbd) {
+  line-height: var(--hint-lh-kbd);
+}
+
+.hint:has(code):not(:has(kbd)) {
+  line-height: var(--hint-lh-code);
+}

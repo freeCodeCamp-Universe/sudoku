@@ -1,0 +1,74 @@
+/* ── Toolbar shell ────────────────────────────────────────────────────────── */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-md);
+  padding-block: var(--space-sm);
+  background-color: var(--color-bg-secondary);
+  border-block-end: 1px solid var(--color-border-secondary);
+  flex: 0 0 auto;
+}
+
+/*
+ * Interactive lessons: the only toolbar content (Instructions/Terminal tabs)
+ * is redundant on desktop where both panels are visible side by side.
+ * Hide the entire toolbar row on desktop for these lessons.
+ */
+@media (width >= 768px) {
+  .toolbar-interactive {
+    display: none;
+  }
+}
+
+/* ── Outline button (prose lessons) ──────────────────────────────────────── */
+
+.outline-button {
+  font-size: var(--text-sm);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xs);
+}
+
+/* ── Instructions / Terminal segmented control (interactive lessons) ──────── */
+
+.tabgroup {
+  display: flex;
+  margin-inline: auto;
+}
+
+.tab {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  padding-inline: var(--space-md);
+  padding-block: var(--space-xs);
+  color: var(--color-fg-primary);
+  background-color: transparent;
+  border: 1px solid var(--color-border-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab:first-child {
+  border-start-start-radius: var(--radius);
+  border-end-start-radius: var(--radius);
+}
+
+.tab:last-child {
+  border-start-end-radius: var(--radius);
+  border-end-end-radius: var(--radius);
+  border-inline-start: none;
+}
+
+.tab:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.tab-active {
+  background-color: var(--color-fg-primary);
+  color: var(--color-bg-tertiary);
+  border-color: var(--color-fg-primary);
+}
+
+.tab-active:hover {
+  background-color: var(--color-fg-primary);
+}

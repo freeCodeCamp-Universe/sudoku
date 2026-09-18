@@ -1,0 +1,49 @@
+button.reset {
+  color: var(--color-fg-primary);
+  background-color: transparent;
+  border-color: transparent;
+}
+
+button.reset:hover,
+button.reset:active {
+  color: var(--color-danger);
+  background-color: var(--gray80);
+  border-color: var(--color-danger);
+}
+
+:root[data-theme='light'] button.reset {
+  color: var(--color-fg-primary);
+  background-color: transparent;
+  border-color: transparent;
+}
+
+:root[data-theme='light'] button.reset:hover,
+:root[data-theme='light'] button.reset:active {
+  color: var(--color-danger);
+  background-color: var(--gray10);
+  border-color: var(--color-danger);
+}
+
+.confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.prompt {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-fg-secondary);
+}
+
+.drawer-prompt {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-fg-secondary);
+}
+
+.drawer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}

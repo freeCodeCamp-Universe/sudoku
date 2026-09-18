@@ -1,0 +1,32 @@
+.combo {
+  display: none;
+  align-items: center;
+}
+
+@media (width >= 768px) and (hover: hover) {
+  .combo {
+    display: inline-flex;
+  }
+}
+
+.combo kbd {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-inline-size: 1.6rem;
+  min-block-size: 1.6rem;
+  font-family: var(--font-mono);
+}
+
+.combo kbd.kbd-square {
+  inline-size: 1.6rem;
+}
+
+.combo kbd.kbd-symbol {
+  font-family: -apple-system, system-ui, sans-serif;
+}
+
+.plus {
+  color: var(--color-fg-primary);
+  padding-inline: var(--space-xxs);
+}

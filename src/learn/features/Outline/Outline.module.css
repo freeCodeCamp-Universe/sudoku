@@ -1,0 +1,57 @@
+/* ── List ─────────────────────────────────────────────────────────────────── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-inline: var(--space-md);
+  padding-block: var(--space-sm);
+}
+
+.item-h2,
+.item-h3 {
+  margin: 0;
+}
+
+.item-h3 {
+  padding-inline-start: var(--space-md);
+}
+
+/* ── Links ────────────────────────────────────────────────────────────────── */
+
+.link {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--line-height-caption);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xxs);
+  color: var(--color-fg-primary);
+  text-decoration: none;
+  border-radius: var(--radius);
+
+  /* Reserve space for the active border so the layout doesn't shift. */
+  border-inline-start: 3px solid transparent;
+}
+
+.link:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Active heading — mirrors the CurriculumTree "current" indicator. */
+.link-active {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+  border-inline-start-color: var(--color-current-indicator);
+}
+
+.link-active:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.item-h3 .link {
+  font-size: var(--text-xs);
+}

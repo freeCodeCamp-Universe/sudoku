@@ -1,0 +1,231 @@
+/* ── Page shell ──────────────────────────────────────────────────────────────
+ * The page fills the viewport below the header. A flex column at mobile shows
+ * one tabbed panel at a time; at 768px+ it flips to a flex row so both panels
+ * sit side by side at full height.
+ */
+.page {
+  position: relative;
+  padding: 0;
+  flex: 1;
+  min-block-size: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/*
+ * The default outline expands outside the border box, adding visible width and
+ * triggering a scrollbar. A negative outline-offset would be clipped by child
+ * panels that use overflow: hidden. Instead, an absolutely-placed pseudo-element
+ * draws an inset box-shadow ring above all children without affecting layout or
+ * blocking pointer events.
+ */
+.page:focus-visible {
+  outline: none;
+}
+
+.page:focus-visible::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 1px;
+  box-shadow: inset 0 0 0 2px var(--color-focus);
+  pointer-events: none;
+}
+
+/* ── Prose page (no terminal) ────────────────────────────────────────────── */
+
+.prose-page {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 46rem;
+  margin-inline: auto;
+  padding-inline: var(--space-md);
+  padding-block: var(--space-lg);
+}
+
+/* Anchor-jump offset: keep heading text clear of the toolbar row. */
+.prose-page :global(h2),
+.prose-page :global(h3) {
+  scroll-margin-block-start: var(--space-lg);
+}
+
+.review-page {
+  max-inline-size: none;
+}
+
+.review-content {
+  inline-size: 100%;
+  max-inline-size: 44rem;
+  margin-inline: auto;
+}
+
+.review-content h2 {
+  margin-block: var(--space-2xl) var(--space-lg);
+}
+
+.review-content h3 {
+  margin-block: var(--space-xl) var(--space-md);
+}
+
+/* ── Heading ─────────────────────────────────────────────────────────────── */
+
+.heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  margin-block: 0 var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.heading code {
+  font-size: var(--text-md);
+}
+
+.heading-status {
+  flex: 0 0 auto;
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+  color: var(--color-fg-primary);
+}
+
+.heading:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.review-page .heading {
+  margin-block-end: var(--space-xl);
+  justify-content: center;
+  text-align: center;
+}
+
+/* ── Panels ──────────────────────────────────────────────────────────────── */
+
+/* ── Instructions panel ──────────────────────────────────────────────────── */
+
+/* Both hidden at mobile by default; the tab selector reveals the active one. */
+.instructions,
+.terminal {
+  display: none;
+}
+
+.instructions {
+  flex: 1;
+  min-block-size: 0;
+  gap: var(--space-md);
+  padding-inline: var(--space-md);
+  padding-block: var(--space-md);
+  overflow: hidden auto;
+}
+
+.instructions:focus-visible {
+  outline: var(--focus-ring);
+
+  /* Inset so the ring is not clipped by .page's overflow: hidden. */
+  outline-offset: -2px;
+}
+
+/* ── Terminal panel ──────────────────────────────────────────────────────── */
+
+.terminal {
+  flex: 1;
+  min-block-size: 0;
+  background-color: var(--color-bg-secondary);
+}
+
+.page[data-tab='instructions'] .instructions,
+.page[data-tab='terminal'] .terminal {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Instructions panel content ─────────────────────────────────────────── */
+
+.instruction-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Controls ────────────────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-block-start: auto;
+  padding-block-start: var(--space-md);
+}
+
+.review-page .controls {
+  inline-size: 100%;
+  box-sizing: border-box;
+  justify-content: flex-end;
+  padding-block-start: var(--space-xl);
+}
+
+.review-page .controls > :last-child {
+  margin-inline-start: auto;
+}
+
+.terminal > :first-child {
+  flex: 1;
+  min-block-size: 0;
+}
+
+.terminal > .controls {
+  flex: 0 0 auto;
+  justify-content: space-between;
+  margin-block-start: 0;
+  padding-inline: var(--space-md);
+  padding-block: calc(var(--space-md) - var(--space-xxs));
+  background-color: var(--color-bg-secondary);
+  border-block-start: 1px solid var(--color-border-secondary);
+}
+
+/* ── Desktop: side-by-side ───────────────────────────────────────────────── */
+
+@media (width >= 768px) {
+  .page {
+    flex-direction: row;
+  }
+
+  .prose-page {
+    padding-block: var(--space-xl);
+  }
+
+  .instructions {
+    flex: 0 0 clamp(18rem, 30vw, 24rem);
+    padding-inline: var(--space-md);
+    padding-block: var(--space-md);
+  }
+
+  .terminal {
+    flex: 1;
+    min-inline-size: 0;
+    border-inline-start: 1px solid var(--color-border-secondary);
+  }
+
+  /*
+   * Both panels visible side by side. The compound selector ties specificity
+   * with the tab selectors (0,3,0) so source order wins at this breakpoint.
+   */
+  .page[data-tab] .instructions,
+  .page[data-tab] .terminal {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (width >= 1024px) {
+  .instructions {
+    flex-basis: clamp(20rem, 35vw, 28rem);
+  }
+}

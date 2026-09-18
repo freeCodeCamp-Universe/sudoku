@@ -1,0 +1,51 @@
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.container {
+  display: grid;
+  place-items: center;
+  padding: var(--space-xl);
+  flex: 1;
+  min-block-size: 0;
+  background: var(--color-bg-secondary);
+  animation: fade-in var(--transition-base) ease-out both;
+  animation-delay: 150ms;
+}
+
+.spinner {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  display: block;
+}
+
+.base-ring {
+  stroke: var(--color-border-secondary);
+  stroke-linecap: round;
+}
+
+.arc {
+  stroke: var(--color-fg-primary);
+  stroke-linecap: round;
+  transform-box: view-box;
+  transform-origin: center;
+  animation: spin 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arc {
+    animation: none;
+  }
+
+  .container {
+    animation: none;
+  }
+}

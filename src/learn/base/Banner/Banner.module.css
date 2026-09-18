@@ -1,0 +1,41 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-md);
+  background-color: var(--blue05);
+  color: var(--blue80);
+}
+
+.content {
+  flex: 1;
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--line-height-caption);
+}
+
+.dismiss {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--icon-button-size);
+  inline-size: var(--icon-button-size);
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  border-radius: var(--radius);
+  transition: background-color var(--transition-fast);
+}
+
+.dismiss:hover {
+  background-color: color-mix(in srgb, currentcolor 15%, transparent);
+}
+
+.dismiss:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}

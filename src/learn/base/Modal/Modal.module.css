@@ -1,0 +1,114 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: var(--overlay-background-color);
+  animation: fade-in var(--transition-base);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-md);
+  padding-inline: var(--space-lg);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-row + * {
+  margin-block-start: var(--space-md);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  margin-block: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  flex: 1;
+  overflow-y: auto;
+  padding-block: var(--space-md);
+  padding-inline: var(--space-lg);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--icon-button-size);
+  block-size: var(--icon-button-size);
+  color: var(--color-fg-secondary);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.panel {
+  position: relative;
+  inline-size: min(28rem, 100%);
+  max-block-size: min(85vh, 48rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius);
+  animation: panel-enter var(--transition-base);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .panel {
+    animation: none;
+  }
+}

@@ -1,0 +1,9 @@
+.setting-keyboard-only {
+  display: none;
+}
+
+@media (width >= 768px) and (hover: hover) {
+  .setting-keyboard-only {
+    display: flex;
+  }
+}

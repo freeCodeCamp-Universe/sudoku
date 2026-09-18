@@ -1,0 +1,226 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: var(--overlay-background-color);
+  animation: fade-in var(--transition-base);
+}
+
+.panel {
+  --drawer-padding-inline: var(--space-md);
+  --drawer-padding-block: var(--space-md);
+  --drawer-bottom-body-min: 8rem;
+
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: min(26rem, 90vw);
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  background-color: var(--color-bg-secondary);
+  border-inline-end: 1px solid var(--color-border-secondary);
+  animation: slide-in var(--transition-base);
+}
+
+.panel-end {
+  inset-inline: auto 0;
+  border-inline-end: 0;
+  border-inline-start: 1px solid var(--color-border-secondary);
+  animation-name: slide-in-end;
+}
+
+.panel-bottom {
+  --drawer-max-block-size: 85vh;
+
+  inset-block-start: auto;
+  inline-size: 100%;
+  max-block-size: var(--drawer-max-block-size);
+  border-inline-end: 0;
+  border-block-start: 1px solid var(--color-border-secondary);
+  animation-name: slide-in-bottom;
+}
+
+.header {
+  flex-shrink: 0;
+  border-block-end: 1px solid var(--color-border-secondary);
+  padding-block: var(--drawer-padding-block);
+  padding-inline: var(--drawer-padding-inline);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-row + * {
+  margin-block-start: var(--space-md);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+.title {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  margin-block: 0;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--icon-button-size);
+  block-size: var(--icon-button-size);
+  color: var(--color-fg-secondary);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--color-fg-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  padding-block: var(--drawer-padding-block);
+  padding-inline: var(--drawer-padding-inline);
+}
+
+/* Negate the global offset so the outline renders inside the element.
+   The panel's overflow: clip would otherwise clip the outside ring. */
+.body:focus-visible {
+  outline-offset: calc(var(--focus-ring-offset) * -1);
+}
+
+.body-bottom {
+  min-block-size: var(--drawer-bottom-body-min);
+}
+
+.footer {
+  flex-shrink: 0;
+  border-block-start: 1px solid var(--color-border-secondary);
+  padding-block: var(--drawer-padding-block);
+  padding-inline: var(--drawer-padding-inline);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-end {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.closing {
+  animation: slide-out var(--transition-base) forwards;
+}
+
+.panel-end.closing {
+  animation-name: slide-out-end;
+}
+
+.panel-bottom.closing {
+  animation-name: slide-out-bottom;
+}
+
+@keyframes slide-out-end {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-out-bottom {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop {
+    animation: none;
+  }
+
+  .panel {
+    animation: none;
+  }
+
+  .closing {
+    animation: none;
+    transform: translateX(-100%);
+  }
+
+  .panel-end.closing {
+    transform: translateX(100%);
+  }
+
+  .panel-bottom.closing {
+    transform: translateY(100%);
+  }
+}
