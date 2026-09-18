@@ -149,6 +149,16 @@ describe('Gallery', () => {
     expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  it('should link to the learn page when learn is enabled', () => {
+    vi.stubEnv('SHOW_LEARN', 'true');
+
+    renderGallery();
+
+    expect(screen.getByRole('link', { name: 'Learn' })).toHaveAttribute('href', '/learn');
+
+    vi.unstubAllEnvs();
+  });
+
   it('should offer a link for playing a random puzzle', () => {
     renderGallery();
 

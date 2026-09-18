@@ -54,6 +54,10 @@
   gap: 10px;
 }
 
+.learnButton {
+  margin-inline-end: auto;
+}
+
 .controls {
   display: grid;
   gap: 16px;

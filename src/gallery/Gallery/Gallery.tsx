@@ -119,6 +119,11 @@ export function Gallery() {
     <main id="main-content" tabIndex={-1} className={styles.main}>
       <header className={styles.header}>
         <div className={styles.headerTopBar}>
+          {import.meta.env.SHOW_LEARN === 'true' && (
+            <Button href="/learn" className={styles.learnButton}>
+              Learn
+            </Button>
+          )}
           <ThemeToggleButton />
           <DonateButton />
         </div>
