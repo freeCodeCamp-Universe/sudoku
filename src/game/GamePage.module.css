@@ -76,6 +76,9 @@
    24px in Board.module.css, so surrounding controls keep their exact
    positions even where the frame is content-sized (desktop). */
 .pauseCover {
+  /* align-self: stretch fills the 56vh boardFrame on mobile so the centered
+     content is visible; on desktop the explicit inline height takes over. */
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: center;

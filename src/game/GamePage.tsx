@@ -909,7 +909,7 @@ function GameInner({
             {isPaused ? (
               <div
                 className={styles.pauseCover}
-                style={{ width: framedSize.w, height: framedSize.h }}
+                style={{ width: framedSize.w, height: isDesktop ? framedSize.h : undefined }}
               >
                 <span className={styles.pauseTitle}>Paused</span>
                 <Button variant="cta" onClick={togglePause}>
