@@ -1,0 +1,9 @@
+.donateButton {
+  padding-inline: 8px;
+}
+
+@media (min-width: 600px) {
+  .donateButton {
+    padding-inline: 20px;
+  }
+}
