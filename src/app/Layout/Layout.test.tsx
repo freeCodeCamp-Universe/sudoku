@@ -10,9 +10,13 @@ function renderLayout() {
     <MemoryRouter initialEntries={['/']}>
       <Layout>
         <Link to="/classic">Open game</Link>
+        <Link to="/learn">Open learn</Link>
+        <Link to="/learn/101">Open lesson</Link>
         <Routes>
           <Route path="/" element={<p>home</p>} />
           <Route path="/classic" element={<p>game</p>} />
+          <Route path="/learn" element={<p>learn</p>} />
+          <Route path="/learn/:lessonId" element={<p>lesson</p>} />
         </Routes>
       </Layout>
     </MemoryRouter>
@@ -61,5 +65,23 @@ describe('Layout', () => {
     await user.click(screen.getByRole('link', { name: 'Open game' }));
 
     expect(screen.getByRole('status')).toHaveTextContent(variantRegistry.classic.name);
+  });
+
+  it('should announce Learn for the curriculum route', async () => {
+    const user = userEvent.setup();
+    renderLayout();
+
+    await user.click(screen.getByRole('link', { name: 'Open learn' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Learn');
+  });
+
+  it('should announce Lesson for a lesson route', async () => {
+    const user = userEvent.setup();
+    renderLayout();
+
+    await user.click(screen.getByRole('link', { name: 'Open lesson' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('Lesson');
   });
 });

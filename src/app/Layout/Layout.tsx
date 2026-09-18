@@ -13,6 +13,14 @@ function pageNameFor(pathname: string): string {
     return 'Puzzle gallery';
   }
 
+  if (pathname === '/learn') {
+    return 'Learn';
+  }
+
+  if (/^\/learn\/[^/]+\/?$/.test(pathname)) {
+    return 'Lesson';
+  }
+
   const variantId = pathname.replace(/^\//, '');
 
   return variantRegistry[variantId]?.name ?? 'Puzzle';

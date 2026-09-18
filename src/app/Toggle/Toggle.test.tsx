@@ -16,6 +16,22 @@ describe('Toggle', () => {
     expect(screen.getByRole('switch', { name: 'Show numbers' })).toBeChecked();
   });
 
+  it('should describe the switch when a description is provided', () => {
+    render(
+      <Toggle
+        label="Show numbers"
+        description="Display candidate numbers in each cell."
+        checked={false}
+        onChange={() => {}}
+      />
+    );
+
+    const toggle = screen.getByRole('switch', { name: 'Show numbers' });
+    const description = screen.getByText('Display candidate numbers in each cell.');
+
+    expect(toggle).toHaveAttribute('aria-describedby', description.id);
+  });
+
   it('should call onChange when clicked', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
