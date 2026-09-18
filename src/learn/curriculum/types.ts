@@ -49,11 +49,15 @@ export interface InteractiveLessonDefinition extends LessonIdentity {
 
 export type LessonDefinition = InteractiveLessonDefinition | ProseLessonDefinition;
 
-export function isProseLesson(lesson: LessonDefinition | ClientLessonDefinition): lesson is ProseLessonDefinition | ClientProseLessonDefinition {
+export function isProseLesson(
+  lesson: LessonDefinition | ClientLessonDefinition
+): lesson is ProseLessonDefinition | ClientProseLessonDefinition {
   return lesson.config === undefined;
 }
 
-export function isInteractiveLesson(lesson: LessonDefinition | ClientLessonDefinition): lesson is InteractiveLessonDefinition | ClientInteractiveLessonDefinition {
+export function isInteractiveLesson(
+  lesson: LessonDefinition | ClientLessonDefinition
+): lesson is InteractiveLessonDefinition | ClientInteractiveLessonDefinition {
   return lesson.config !== undefined;
 }
 
@@ -74,15 +78,21 @@ export interface ClientInteractiveLessonDefinition extends LessonIdentity {
   config: LessonConfig;
 }
 
-export type ClientLessonDefinition = ClientInteractiveLessonDefinition | ClientProseLessonDefinition;
+export type ClientLessonDefinition =
+  | ClientInteractiveLessonDefinition
+  | ClientProseLessonDefinition;
 
 export function toClientLesson(lesson: LessonDefinition): ClientLessonDefinition {
   if (isProseLesson(lesson)) {
     const { instructions, instructionSegments, ...rest } = lesson;
-    const clientSegments = instructionSegments?.map((seg): ClientInstructionSegment => (seg.kind === 'markdown' ? { kind: 'markdown' } : seg));
+    void instructions;
+    const clientSegments = instructionSegments?.map(
+      (seg): ClientInstructionSegment => (seg.kind === 'markdown' ? { kind: 'markdown' } : seg)
+    );
     return { ...rest, instructionSegments: clientSegments };
   }
   const { instructions, ...rest } = lesson;
+  void instructions;
   return rest;
 }
 

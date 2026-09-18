@@ -78,6 +78,6 @@ export function renderMarkdown(source: string): string {
       gfm: true,
     }) as string
   )
-    .replaceAll('<table>', '<div data-table-wrapper><table>')
-    .replaceAll('</table>', '</table></div>');
+    .replace(/<table>/g, '<div data-table-wrapper><table>')
+    .replace(/<\/table>/g, '</table></div>');
 }

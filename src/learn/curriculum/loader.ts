@@ -4,8 +4,16 @@ const SHOW_UPCOMING_LESSONS = import.meta.env.SHOW_UPCOMING_LESSONS === 'true';
 
 import { assertSanitizedHtml } from '@/learn/curriculum/sanitize';
 import { hasTabBlocks, parseInstructionSegments } from '@/learn/curriculum/tabBlocks';
-import type { InteractiveLessonDefinition, ChecklistRequirement, LessonConfig, LessonDefinition, LessonType, ModuleDefinition, ProseLessonDefinition } from '@/learn/curriculum/types';
-import type { LessonEntry, OrderingModule } from '@/learn/curriculum/orderingTypes';
+import type {
+  InteractiveLessonDefinition,
+  ChecklistRequirement,
+  LessonConfig,
+  LessonDefinition,
+  LessonType,
+  ModuleDefinition,
+  ProseLessonDefinition,
+} from '@/learn/curriculum/types';
+import type { OrderingModule } from '@/learn/curriculum/orderingTypes';
 
 export type { LessonEntry, OrderingModule } from '@/learn/curriculum/orderingTypes';
 
@@ -20,19 +28,30 @@ const KNOWN_SECTIONS = new Set(['instructions', 'files', 'config', 'author-notes
 
 type RawMarkdownModule = string | { default: string };
 
-const markdownModules = normalizeMarkdownModules(import.meta.glob('./lessons/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, RawMarkdownModule>);
+const markdownModules = normalizeMarkdownModules(
+  import.meta.glob('./lessons/*.md', { query: '?raw', import: 'default', eager: true }) as Record<
+    string,
+    RawMarkdownModule
+  >
+);
 
 let lessonsByIdCache: Map<string, LessonDefinition> | undefined;
 
 export function loadCurriculum(): CurriculumContent {
-  return filterVisibleCurriculum(loadFullCurriculum(), import.meta.env.DEV && SHOW_UPCOMING_LESSONS);
+  return filterVisibleCurriculum(
+    loadFullCurriculum(),
+    import.meta.env.DEV && SHOW_UPCOMING_LESSONS
+  );
 }
 
 export function loadFullCurriculum(): CurriculumContent {
   return buildCurriculum(defaultOrdering, markdownModules);
 }
 
-export function filterVisibleCurriculum(content: CurriculumContent, showUpcoming: boolean): CurriculumContent {
+export function filterVisibleCurriculum(
+  content: CurriculumContent,
+  showUpcoming: boolean
+): CurriculumContent {
   if (showUpcoming) return content;
   const modules = content.modules.filter((m) => !m.wip);
   const visibleIds = new Set(modules.flatMap((m) => m.lessonIds));
@@ -47,7 +66,10 @@ export function getLessonById(id: string): LessonDefinition | undefined {
   return lessonsByIdCache.get(id);
 }
 
-export function buildCurriculum(ordering: readonly OrderingModule[], markdownByPath: MarkdownModuleMap): CurriculumContent {
+export function buildCurriculum(
+  ordering: readonly OrderingModule[],
+  markdownByPath: MarkdownModuleMap
+): CurriculumContent {
   const lessonIndexByFile = new Map<string, number>();
   let globalIndex = 1;
 
@@ -93,7 +115,12 @@ export function buildCurriculum(ordering: readonly OrderingModule[], markdownByP
 // ---------------------------------------------------------------------------
 
 function normalizeMarkdownModules(raw: Record<string, RawMarkdownModule>): MarkdownModuleMap {
-  return Object.fromEntries(Object.entries(raw).map(([key, value]) => [key, typeof value === 'string' ? value : value.default]));
+  return Object.fromEntries(
+    Object.entries(raw).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? value : value.default,
+    ])
+  );
 }
 
 function parseFrontmatter(source: string): { body: string; meta: Record<string, string> } {
@@ -183,7 +210,12 @@ function parseConfig(configSection: string): LessonConfig {
   return { checklist };
 }
 
-function parseLesson(source: string, module: number, lesson: number, wip: boolean): LessonDefinition {
+function parseLesson(
+  source: string,
+  module: number,
+  lesson: number,
+  wip: boolean
+): LessonDefinition {
   const { body, meta } = parseFrontmatter(source);
 
   const id = meta.id;
@@ -220,7 +252,10 @@ function parseLesson(source: string, module: number, lesson: number, wip: boolea
     };
 
     if (hasTabBlocks(instructions)) {
-      (def as unknown as Record<string, unknown>).instructionSegments = parseInstructionSegments(instructions);
+      (def as unknown as Record<string, unknown>).instructionSegments = parseInstructionSegments(
+        instructions,
+        id
+      );
     }
 
     return def;
@@ -238,7 +273,7 @@ function parseLesson(source: string, module: number, lesson: number, wip: boolea
   };
 
   if (hasTabBlocks(instructions)) {
-    def.instructionSegments = parseInstructionSegments(instructions);
+    def.instructionSegments = parseInstructionSegments(instructions, id);
   }
 
   return def;

@@ -8,6 +8,7 @@ node_modules/
 dist/
 build/
 .vite/
+public/data/
 
 # TypeScript
 *.tsbuildinfo
