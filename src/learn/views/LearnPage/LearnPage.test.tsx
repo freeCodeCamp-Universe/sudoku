@@ -30,9 +30,7 @@ describe('LearnPage', () => {
 
     expect(document.title).toBe('Sudoku | freeCodeCamp.org');
     expect(screen.getByRole('status', { name: 'Loading course' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: 'Learn Vim for Terminal Text Editing' })
-    ).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Learn Sudoku' })).toBeNull();
     expect(screen.queryByRole('contentinfo')).toBeNull();
   });
 });

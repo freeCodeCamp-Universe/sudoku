@@ -236,7 +236,7 @@ export function LessonWorkspace({
           className={styles.terminal}
           tabIndex={-1}
           role="application"
-          aria-label="vim terminal"
+          aria-label="interactive lesson workspace"
         >
           <InteractivePanel
             key={resetKey}

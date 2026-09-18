@@ -27,7 +27,7 @@ export function LearnPage() {
   return (
     <>
       <main id="main-content" className={styles.page} tabIndex={-1}>
-        <h1 className={styles.title}>Learn Vim for Terminal Text Editing</h1>
+        <h1 className={styles.title}>Learn Sudoku</h1>
         <CurriculumOverview />
       </main>
       <footer className={styles.footer}>

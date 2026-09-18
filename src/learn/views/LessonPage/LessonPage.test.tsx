@@ -31,7 +31,7 @@ const lesson: ProseLessonDefinition = {
   id: 'intro',
   module: 1,
   lesson: 1,
-  title: 'Getting started with Vim',
+  title: 'Getting started with Sudoku',
   type: 'learn',
   instructions: 'Learn the basics.',
 };
@@ -44,6 +44,6 @@ describe('LessonPage', () => {
       </MemoryRouter>
     );
 
-    expect(document.title).toBe('Getting started with Vim | Sudoku | freeCodeCamp.org');
+    expect(document.title).toBe('Getting started with Sudoku | Sudoku | freeCodeCamp.org');
   });
 });

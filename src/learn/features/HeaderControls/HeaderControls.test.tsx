@@ -14,7 +14,7 @@ afterEach(() => {
 describe('HeaderControls', () => {
   it('should have a configured donation ID', () => {
     // TODO: Replace this guard with an href assertion once the donation ID
-    // is set. See the vim-course HeaderControls.test.tsx for an example
+    // is set. See the course HeaderControls.test.tsx for an example
     // that asserts the full donate URL, target="_blank", and
     // rel="noopener noreferrer".
     expect(cfg.donationId).not.toBe('TODO');

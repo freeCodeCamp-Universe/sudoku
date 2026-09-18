@@ -39,7 +39,7 @@ const prose: ProseLessonDefinition = {
   lesson: 1,
   title: 'About modes',
   type: 'review',
-  instructions: '## Modes\n\nVim has modes.',
+  instructions: '## Modes\n\nEditors can have modes.',
 };
 
 function renderWorkspace(
@@ -90,7 +90,9 @@ describe('LessonWorkspace', () => {
       // React hydrated pre-existing server-rendered elements).
       vi.runAllTimers();
 
-      expect(screen.getByRole('application', { name: 'vim terminal' })).toHaveFocus();
+      expect(
+        screen.getByRole('application', { name: 'interactive lesson workspace' })
+      ).toHaveFocus();
       expect(screen.queryByText('completed')).not.toBeInTheDocument();
     } finally {
       if (original) {
@@ -117,7 +119,9 @@ describe('LessonWorkspace', () => {
   it('should render the terminal, checklist, and controls for a workshop', () => {
     renderWorkspace(workshop);
 
-    expect(screen.getByRole('application', { name: 'vim terminal' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('application', { name: 'interactive lesson workspace' })
+    ).toBeInTheDocument();
     expect(screen.getByText('Delete a character with x')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Next (Ctrl + Enter)' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();

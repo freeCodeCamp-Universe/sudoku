@@ -157,7 +157,7 @@ describe('useCourseShortcuts', () => {
     expect(onNavigate).not.toHaveBeenCalled();
   });
 
-  it('should ignore bare keys so typed Vim commands are untouched', () => {
+  it('should ignore bare keys so typed commands are untouched', () => {
     const {
       onNavigate,
       onFocusInteractivePanel,

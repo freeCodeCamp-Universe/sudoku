@@ -11,7 +11,7 @@ const prose: ProseLessonDefinition = {
   lesson: 1,
   title: 'About modes',
   type: 'review',
-  instructions: '## Modes\n\nVim has modes.',
+  instructions: '## Modes\n\nEditors can have modes.',
 };
 
 const interactive: AuthoredLessonDefinition = {

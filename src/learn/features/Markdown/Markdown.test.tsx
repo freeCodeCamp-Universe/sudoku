@@ -63,19 +63,23 @@ describe('Markdown', () => {
   });
 
   it('should render links with target blank and nofollow attributes', () => {
-    render(<Markdown html={renderMarkdown('[Vim docs](https://vimhelp.org)')} />);
+    render(<Markdown html={renderMarkdown('[Course docs](https://example.com/docs)')} />);
 
-    const link = screen.getByRole('link', { name: 'Vim docs' });
-    expect(link).toHaveAttribute('href', 'https://vimhelp.org');
+    const link = screen.getByRole('link', { name: 'Course docs' });
+    expect(link).toHaveAttribute('href', 'https://example.com/docs');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'nofollow noopener noreferrer');
   });
 
   it('should render links with a title attribute when one is provided', () => {
-    render(<Markdown html={renderMarkdown('[Vim docs](https://vimhelp.org "Vim reference")')} />);
+    render(
+      <Markdown
+        html={renderMarkdown('[Course docs](https://example.com/docs "Course reference")')}
+      />
+    );
 
-    const link = screen.getByRole('link', { name: 'Vim docs' });
-    expect(link).toHaveAttribute('title', 'Vim reference');
+    const link = screen.getByRole('link', { name: 'Course docs' });
+    expect(link).toHaveAttribute('title', 'Course reference');
   });
 
   it('should render table headers and cells', () => {

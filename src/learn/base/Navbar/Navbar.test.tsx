@@ -1,17 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import cfg from '@/../donation-config.json';
 import { Navbar } from '@/learn/base/Navbar/Navbar';
 
 describe('Navbar', () => {
-  it('should have a configured donation ID', () => {
-    // TODO: Replace this guard with an href assertion once the donation ID is
-    // set. See the vim-course HeaderControls.test.tsx for an example that
-    // asserts the full donate URL, target="_blank", and rel="noopener noreferrer".
-    expect(cfg.donationId).not.toBe('TODO');
-  });
-
   it('should render a home link', () => {
     render(<Navbar onOpenShortcuts={vi.fn()} onOpenSettings={vi.fn()} />);
 
@@ -42,6 +34,12 @@ describe('Navbar', () => {
   it('should render a donate link', () => {
     render(<Navbar onOpenShortcuts={vi.fn()} onOpenSettings={vi.fn()} />);
 
-    expect(screen.getByRole('link', { name: 'Donate' })).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: 'Donate' });
+    expect(link).toHaveAttribute(
+      'href',
+      'https://donate.freecodecamp.org?source=48283329-5235-43d6-83ba-ef82c42123e1&campaign=Sudoku&medium=web'
+    );
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 });
