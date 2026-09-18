@@ -29,6 +29,9 @@ export function VariantCard({ variant, isFavorite, onToggleFavorite }: VariantCa
             {variant.name}
           </Link>
         </h3>
+        <span className={`${styles.badge} ${styles[`badge${capitalize(variant.difficulty)}`]}`}>
+          {DIFFICULTY_LABEL[variant.difficulty]}
+        </span>
         <button
           type="button"
           className={styles.favoriteButton}
@@ -42,9 +45,6 @@ export function VariantCard({ variant, isFavorite, onToggleFavorite }: VariantCa
         >
           <StarIcon className={styles.star} filled={isFavorite} />
         </button>
-        <span className={`${styles.badge} ${styles[`badge${capitalize(variant.difficulty)}`]}`}>
-          {DIFFICULTY_LABEL[variant.difficulty]}
-        </span>
       </div>
       <div className={styles.preview}>
         <Preview variantId={variant.id} />

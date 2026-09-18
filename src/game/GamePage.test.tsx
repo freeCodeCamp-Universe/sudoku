@@ -1188,28 +1188,28 @@ describe('GamePage - landscape mobile controls', () => {
 });
 
 describe('GamePage - mode selector', () => {
-  it('should render a Mode segmented control in the controls area, visible without opening Settings', () => {
+  it('should render a Mode select in the utility row, visible without opening Settings', () => {
+    window.innerWidth = 500;
     renderGamePage();
 
-    // Found directly, with no "open Settings" step -- it lives in the
-    // controls area (next to New Game), not behind the Settings dropdown.
-    expect(screen.getByRole('radiogroup', { name: 'Mode' })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
   });
 
-  it('should not render a Mode segmented control for jigsaw', () => {
+  it('should not render a Mode select for jigsaw', () => {
+    window.innerWidth = 500;
     renderGamePage('jigsaw');
 
-    expect(screen.queryByRole('radiogroup', { name: 'Mode' })).toBeNull();
+    expect(screen.queryByRole('combobox', { name: 'Mode' })).toBeNull();
   });
 
-  it('should not render a Mode segmented control for killer (its target is never actually reachable)', () => {
+  it('should not render a Mode select for killer (its target is never actually reachable)', () => {
+    window.innerWidth = 500;
     renderGamePage('killer');
 
-    expect(screen.queryByRole('radiogroup', { name: 'Mode' })).toBeNull();
+    expect(screen.queryByRole('combobox', { name: 'Mode' })).toBeNull();
   });
 
-  it('should sit inside the Controls tab below Clear All (and above New Game) below tablet width', async () => {
+  it('should not render the Mode select inside the Controls tab', async () => {
     const user = userEvent.setup();
     window.innerWidth = 500;
     renderGamePage();
@@ -1217,22 +1217,15 @@ describe('GamePage - mode selector', () => {
     await user.click(screen.getByRole('tab', { name: 'Controls' }));
 
     const controlsTabpanel = screen.getByRole('tabpanel', { name: 'Controls' });
-    const clearAll = within(controlsTabpanel).getByRole('button', { name: 'Clear All' });
-    const mode = within(controlsTabpanel).getByRole('radiogroup', { name: 'Mode' });
-    const newGame = within(controlsTabpanel).getByRole('button', { name: 'New Game' });
-
-    const isBefore = (a: Element, b: Element) =>
-      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-
-    expect(isBefore(clearAll, mode)).toBe(true);
-    expect(isBefore(mode, newGame)).toBe(true);
+    expect(within(controlsTabpanel).queryByRole('combobox', { name: 'Mode' })).toBeNull();
   });
 
   it('should immediately start a new game (no confirmation) when Mode changes and there is no progress to lose', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
-    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Mode' }), 'expert');
 
     expect(localStorage.getItem('sudoku-mode')).toBe('expert');
     expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
@@ -1240,6 +1233,7 @@ describe('GamePage - mode selector', () => {
 
   it('should do nothing when clicking the already-selected Mode option', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
@@ -1247,7 +1241,7 @@ describe('GamePage - mode selector', () => {
     await user.click(screen.getByRole('button', { name: '5' }));
     const enteredCell = screen.getAllByRole('gridcell', { name: /, 5(,|$)/ })[0];
 
-    await user.click(screen.getByRole('radio', { name: 'Medium' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Mode' }), 'medium');
 
     // No confirm dialog, no regeneration -- the board (and its progress) is untouched.
     expect(screen.queryByRole('dialog', { name: /start a new game/i })).toBeNull();
@@ -1256,13 +1250,14 @@ describe('GamePage - mode selector', () => {
 
   it('should ask for confirmation before changing Mode when there is unsaved progress, and Keep Playing preserves the board', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
 
-    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Mode' }), 'expert');
 
     // The preference applies right away while the confirm dialog is open...
     expect(localStorage.getItem('sudoku-mode')).toBe('expert');
@@ -1276,12 +1271,13 @@ describe('GamePage - mode selector', () => {
 
   it('should revert the Mode selection (not the puzzle) when Keep Playing is chosen', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
-    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Mode' }), 'expert');
 
     const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
     await user.click(within(confirmDialog).getByRole('button', { name: 'Keep Playing' }));
@@ -1290,7 +1286,7 @@ describe('GamePage - mode selector', () => {
     // not the Expert choice that was backed out of, and the stored
     // preference reverts to match -- so a later plain New Game doesn't
     // surprise the player with the mode they explicitly declined.
-    expect(screen.getByRole('radio', { name: 'Medium' })).toBeChecked();
+    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
     expect(localStorage.getItem('sudoku-mode')).toBe('medium');
 
     await waitFor(() => {
@@ -1303,6 +1299,7 @@ describe('GamePage - mode selector', () => {
 
   it('should not announce anything mode-related when declining a plain New Game (not triggered by a Mode change)', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
@@ -1325,13 +1322,14 @@ describe('GamePage - mode selector', () => {
 
   it('should regenerate the board once Start New Game is confirmed after a Mode change', async () => {
     const user = userEvent.setup();
+    window.innerWidth = 500;
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
 
-    await user.click(screen.getByRole('radio', { name: 'Expert' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Mode' }), 'expert');
 
     const confirmDialog = screen.getByRole('dialog', { name: /start a new game/i });
     await user.click(within(confirmDialog).getByRole('button', { name: 'Start New Game' }));

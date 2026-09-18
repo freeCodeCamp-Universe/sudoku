@@ -26,10 +26,45 @@ describe('Header', () => {
     expect(screen.getByRole('heading', { name: 'Classic Sudoku' })).toBeTruthy();
   });
 
+  it('should toggle the favorite button for the variant', async () => {
+    const user = userEvent.setup();
+    const onToggleFavorite = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <Header title="Classic Sudoku" backHref="/" onToggleFavorite={onToggleFavorite} />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    const favoriteButton = screen.getByRole('button', {
+      name: 'Add Classic Sudoku to favorites',
+    });
+
+    expect(favoriteButton).toHaveAttribute('aria-pressed', 'false');
+    await user.click(favoriteButton);
+
+    expect(onToggleFavorite).toHaveBeenCalledTimes(1);
+  });
+
   it('should render a back link pointing to the provided href', () => {
     renderHeader();
 
     expect(screen.getByRole('link', { name: /back/i })).toHaveAttribute('href', '/');
+  });
+
+  it('should render the Donate link with the configured campaign URL', () => {
+    renderHeader();
+
+    const donateLink = screen.getByRole('link', { name: 'Donate' });
+
+    expect(donateLink).toHaveAttribute(
+      'href',
+      'https://donate.freecodecamp.org?source=48283329-5235-43d6-83ba-ef82c42123e1&campaign=test-2026&medium=web'
+    );
+    expect(donateLink).toHaveAttribute('target', '_blank');
+    expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('should navigate with the router when the back link is clicked', async () => {
@@ -127,6 +162,25 @@ describe('Header', () => {
 
       await user.click(timerSwitch);
       expect(timerSwitch).toBeChecked();
+    });
+
+    it('should expose the dark theme switch first in the settings list', async () => {
+      const user = userEvent.setup();
+      localStorage.clear();
+      document.documentElement.classList.remove('light');
+
+      render(<SettingsHarness />);
+
+      await user.click(screen.getByRole('button', { name: /settings/i }));
+
+      const switches = screen.getAllByRole('switch');
+      expect(switches[0]).toHaveAccessibleName('Dark theme');
+      expect(switches[0]).toBeChecked();
+
+      await user.click(switches[0]);
+
+      expect(switches[0]).not.toBeChecked();
+      expect(document.documentElement).toHaveClass('light');
     });
 
     it('should toggle the global high-contrast palette from the settings dropdown', async () => {

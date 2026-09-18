@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Header } from '@/app/Header';
+import { Header, HeaderUtilityRow } from '@/app/Header';
 import { useTheme } from '@/app/ThemeProvider';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, Mode, SymbolValue } from '@/engine/types';
@@ -53,6 +53,7 @@ import { clearProgress, loadProgress, saveProgress } from './useProgressPersiste
 import { useSudokuGrid } from './useSudokuGrid';
 import { useSeoMeta } from '@/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
+import { useFavorites } from '@/gallery/useFavorites';
 import styles from './GamePage.module.css';
 
 type VariantWithColorNames = {
@@ -84,6 +85,10 @@ function shuffledDisplayOrder(symbols: SymbolValue[], seed: number): SymbolValue
 }
 
 interface GameInnerProps {
+  title: string;
+  onBack: () => void;
+  onHelpOpen: () => void;
+  onKeyboardShortcutsOpen: () => void;
   settings: {
     checkEnabled: boolean;
     timerEnabled: boolean;
@@ -96,6 +101,10 @@ interface GameInnerProps {
   onModeChange?: (mode: Mode) => void;
   onFirstWin?: () => void;
   onToggleColorLabels?: () => void;
+  onToggleCheck: () => void;
+  onToggleTimer: () => void;
+  onToggleHighlightPeers: () => void;
+  onToggleNavOnLeft: () => void;
   seedBase: number;
   jigsawLayoutStart: number;
   genKey: number;
@@ -103,17 +112,26 @@ interface GameInnerProps {
 }
 
 function GameInner({
+  title,
+  onBack,
+  onHelpOpen,
+  onKeyboardShortcutsOpen,
   settings,
   onNewGame,
   onModeChange,
   onFirstWin,
   onToggleColorLabels,
+  onToggleCheck,
+  onToggleTimer,
+  onToggleHighlightPeers,
+  onToggleNavOnLeft,
   seedBase,
   jigsawLayoutStart,
   genKey,
   activeMode,
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
+  const { favorites, toggleFavorite } = useFavorites();
   const [candidateMode, setCandidateMode] = useState(false);
   // Per-page "Highlight overlaps" state for multigrid variants: ON by default,
   // session-only (deliberately outside usePersistence, so a fresh mount is ON).
@@ -464,6 +482,9 @@ function GameInner({
   // new game the same way the New Game button does — same progress-loss
   // confirmation if there's something to lose, immediate otherwise.
   function handleModeSelect(mode: Mode) {
+    if (mode === settings.mode) {
+      return;
+    }
     onModeChange?.(mode);
     handleNewGame(mode);
   }
@@ -723,11 +744,27 @@ function GameInner({
         />
       </div>
     );
+  const mobileModeControl =
+    !isDesktop && variant.supportsMode !== false ? (
+      <label className={styles.utilityMode}>
+        <span className={styles.srOnly}>Mode</span>
+        <select
+          aria-label="Mode"
+          value={settings.mode}
+          onChange={(event) => handleModeSelect(event.target.value as Mode)}
+        >
+          {MODE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    ) : null;
 
   const controlsPanel = (
     <div className={styles.actionColumn}>
       <Toolbar vertical onClearAll={handleClearAll} onReveal={handleReveal} />
-      {modeControl}
       <Button variant="cta" onClick={() => handleNewGame()}>
         New Game
       </Button>
@@ -839,9 +876,28 @@ function GameInner({
         .join(' ')}
     >
       {overusedEdgeHint}
-      {isLandscapeMobile ? <div className={styles.landscapeTimerRow}>{timer}</div> : timer}
+      <Header
+        title={title}
+        isFavorite={favorites.has(variant.id)}
+        onToggleFavorite={() => toggleFavorite(variant.id)}
+        compact={isLandscapeMobile}
+        onBack={onBack}
+        onHelpOpen={onHelpOpen}
+        onKeyboardShortcutsOpen={onKeyboardShortcutsOpen}
+        timer={timer}
+        checkEnabled={settings.checkEnabled}
+        timerEnabled={settings.timerEnabled}
+        highlightPeersEnabled={settings.highlightPeers}
+        navOnLeftEnabled={settings.navOnLeft}
+        onToggleCheck={onToggleCheck}
+        onToggleTimer={onToggleTimer}
+        onToggleHighlightPeers={onToggleHighlightPeers}
+        onToggleNavOnLeft={onToggleNavOnLeft}
+        renderUtilityRow={false}
+      />
       <div className={styles.gameLayout}>
         <div className={styles.gameLeft}>
+          <HeaderUtilityRow timer={timer} onHelpOpen={onHelpOpen} modeControl={mobileModeControl} />
           <div
             ref={viewportRef}
             className={
@@ -1045,9 +1101,6 @@ export function GamePage() {
   const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const isLandscape = useMediaQuery('(orientation: landscape)');
-  const isLandscapeMobile = !isDesktop && isLandscape;
 
   if (!variantId) {
     throw new Error('Missing variant id');
@@ -1095,21 +1148,6 @@ export function GamePage() {
 
   return (
     <>
-      <Header
-        title={variant.name}
-        compact={isLandscapeMobile}
-        onBack={() => navigate('/')}
-        onHelpOpen={() => setHelpOpen(true)}
-        onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
-        checkEnabled={settings.checkEnabled}
-        timerEnabled={settings.timerEnabled}
-        highlightPeersEnabled={settings.highlightPeers}
-        navOnLeftEnabled={settings.navOnLeft}
-        onToggleCheck={toggleCheck}
-        onToggleTimer={toggleTimer}
-        onToggleHighlightPeers={toggleHighlightPeers}
-        onToggleNavOnLeft={toggleNavOnLeft}
-      />
       <main id="main-content" tabIndex={-1} className={styles.mainContent}>
         <GameProvider
           variant={gameVariant}
@@ -1119,6 +1157,10 @@ export function GamePage() {
           initialProgress={savedProgress}
         >
           <GameInner
+            title={variant.name}
+            onBack={() => navigate('/')}
+            onHelpOpen={() => setHelpOpen(true)}
+            onKeyboardShortcutsOpen={() => setShortcutsOpen(true)}
             settings={settings}
             onNewGame={(explicitMode) => {
               setActiveMode(explicitMode ?? settings.mode);
@@ -1131,6 +1173,10 @@ export function GamePage() {
             jigsawLayoutStart={jigsawLayoutStart}
             genKey={genKey}
             activeMode={activeMode}
+            onToggleCheck={toggleCheck}
+            onToggleTimer={toggleTimer}
+            onToggleHighlightPeers={toggleHighlightPeers}
+            onToggleNavOnLeft={toggleNavOnLeft}
           />
         </GameProvider>
       </main>

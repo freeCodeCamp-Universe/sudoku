@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/app/Button';
+import { DonateButton } from '@/app/DonateButton';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import type { Variant } from '@/engine/types';
 import { StarIcon } from '@/gallery/StarIcon';
@@ -119,6 +120,7 @@ export function Gallery() {
       <header className={styles.header}>
         <div className={styles.headerTopBar}>
           <ThemeToggleButton />
+          <DonateButton />
         </div>
         <h1 className={styles.heading}>SUDOKU</h1>
         <p className={styles.subheading}>32 sudoku variants for every skill level</p>
