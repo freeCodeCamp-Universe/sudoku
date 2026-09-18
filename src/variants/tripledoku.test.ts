@@ -1,0 +1,50 @@
+import { describe, expect, it } from 'vitest';
+import { buildModel } from '@/engine/buildModel';
+import { generate } from '@/engine/generate';
+import { solve } from '@/engine/solve';
+import { getVariant } from './registry';
+import { tripledoku } from './tripledoku';
+
+function seeded(seed: number): () => number {
+  let state = seed;
+
+  return () => {
+    state = (state * 1103515245 + 12345) & 0x7fffffff;
+    return state / 0x7fffffff;
+  };
+}
+
+describe('tripledoku variant - model structure', () => {
+  const model = buildModel(tripledoku);
+
+  it('should have 171 cells', () => {
+    expect(model.cells).toHaveLength(171);
+  });
+
+  it('should have 81 houses', () => {
+    expect(model.houses).toHaveLength(81);
+  });
+
+  it('should have no duplicate house ids', () => {
+    const ids = model.houses.map((house) => house.id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('should have 9 symbols', () => {
+    expect(model.symbols).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  });
+
+  it('should include the shared central box in all three grids', () => {
+    expect(model.houses.filter((house) => house.cells.includes('r6c6'))).toHaveLength(9);
+  });
+});
+
+describe('tripledoku variant - generate + solve', () => {
+  it('should generate a uniquely solvable puzzle from the registry', () => {
+    const model = buildModel(getVariant('tripledoku'));
+    const { givens } = generate(model, 'intermediate', seeded(42));
+
+    expect(solve(model, givens, { max: 2 })).toHaveLength(1);
+  });
+});
