@@ -30,6 +30,10 @@ function parseDeclarations(css: string, selector: string): Record<string, string
   return result;
 }
 
+function isColorValue(value: string): boolean {
+  return /^(?:#(?:[\da-f]{3,8})|rgba?\(|hsla?\(|color\()/i.test(value);
+}
+
 export function readThemeTokens(): Record<string, TokenValue> {
   const css = readFileSync(THEME_CSS_PATH, 'utf8');
   const root = parseDeclarations(css, ':root');
@@ -50,6 +54,10 @@ export function readThemeTokens(): Record<string, TokenValue> {
   }
 
   for (const [name, dark] of Object.entries(root)) {
+    if (!isColorValue(dark)) {
+      continue;
+    }
+
     // Fallback chains mirror the CSS cascade for an element carrying both
     // classes: `.high-contrast` is declared after `.light`, so it wins ties,
     // and `.light.high-contrast` (higher specificity) wins over both.

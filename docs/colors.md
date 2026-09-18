@@ -89,6 +89,7 @@ _Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `p
 | `--minimap-cell` | #3b3b4f | #c8c8d8 | #2a2a40 | #c8c8d8 |
 | `--minimap-filled` | #858591 | #626262 | #78788c | #0a0a23 |
 | `--minimap-view` | #99c9ff | #1565c0 | #d8ecff | #1565c0 |
+| `--overlay-background-color` | rgb(0 0 0 / 60%) | rgb(0 0 0 / 60%) | rgb(0 0 0 / 60%) | rgb(0 0 0 / 60%) |
 
 ## Per-variant color markers
 

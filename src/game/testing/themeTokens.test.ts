@@ -17,4 +17,9 @@ describe('readThemeTokens', () => {
   it('should read a light override for --accent-blue', () => {
     expect(readThemeTokens()['--accent-blue'].light).toBe('#1565c0');
   });
+
+  it('should exclude non-color theme tokens', () => {
+    expect(readThemeTokens()['--text-2xs']).toBeUndefined();
+    expect(readThemeTokens()['--focus-ring-offset']).toBeUndefined();
+  });
 });

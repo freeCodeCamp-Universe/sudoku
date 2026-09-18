@@ -4,15 +4,15 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ProseLessonDefinition } from '@/learn/curriculum/types';
 import { LessonPage } from '@/learn/views/LessonPage/LessonPage';
 
-vi.mock('@/components/features/lesson-toolbar', () => ({
+vi.mock('@/learn/features/LessonToolbar/LessonToolbar', () => ({
   LessonToolbar: () => null,
 }));
 
-vi.mock('@/components/features/outline/outline', () => ({
+vi.mock('@/learn/features/Outline/Outline', () => ({
   Outline: () => null,
 }));
 
-vi.mock('./lesson-workspace', () => ({
+vi.mock('@/learn/views/LessonWorkspace/LessonWorkspace', () => ({
   LessonWorkspace: () => null,
 }));
 
