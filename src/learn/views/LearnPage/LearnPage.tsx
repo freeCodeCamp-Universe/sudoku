@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
 import { LoadingState } from '@/learn/base/LoadingState/LoadingState';
-import { FccLogoIcon } from '@/components/base/Icon';
-import { Link } from '@/components/base/link/link';
+import { FccLogoIcon } from '@/learn/icons';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
 import { CurriculumOverview } from '@/learn/views/CurriculumOverview/CurriculumOverview';
@@ -36,9 +35,9 @@ export function LearnPage() {
           <FccLogoIcon className={styles['footer-logo']} />
           <span>
             Developed by the{' '}
-            <Link to="https://www.freecodecamp.org" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.freecodecamp.org" target="_blank" rel="noopener noreferrer">
               freeCodeCamp
-            </Link>{' '}
+            </a>{' '}
             team
           </span>
         </p>

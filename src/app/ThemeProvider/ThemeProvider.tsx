@@ -8,7 +8,7 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
-const THEME_STORAGE_KEY = 'sudoku-theme';
+export const THEME_STORAGE_KEY = 'sudoku-theme';
 const HIGH_CONTRAST_STORAGE_KEY = 'sudoku-high-contrast';
 // The retired per-variant colorblind toggle folded into the global
 // high-contrast setting; carry an enabled value over once.

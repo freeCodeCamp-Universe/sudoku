@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CheckCircleIcon, CircleIcon } from '@/components/base/Icon';
+import { CheckCircleIcon, CircleIcon } from '@/learn/icons';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import styles from '@/learn/features/CurriculumTree/CurriculumTree.module.css';
 
@@ -28,7 +28,13 @@ interface Props {
   currentLessonRef?: React.RefObject<HTMLAnchorElement | null>;
 }
 
-export function CurriculumTree({ modules, variant, lessonState, onLessonClick, currentLessonRef }: Props) {
+export function CurriculumTree({
+  modules,
+  variant,
+  lessonState,
+  onLessonClick,
+  currentLessonRef,
+}: Props) {
   const stateFor = lessonState ?? (() => 'available' as const);
   const ModuleHeading = variant === 'home' ? 'h2' : 'h3';
   const variantClass = (suffix: string) => styles[`${variant}-${suffix}`];
@@ -44,7 +50,12 @@ export function CurriculumTree({ modules, variant, lessonState, onLessonClick, c
             {module.lessons.map((lesson) => {
               const state = stateFor(lesson.id);
               return (
-                <li key={lesson.id} className={`${variantClass('lesson')} ${variant}-lesson`} data-lesson-id={lesson.id} data-state={state}>
+                <li
+                  key={lesson.id}
+                  className={`${variantClass('lesson')} ${variant}-lesson`}
+                  data-lesson-id={lesson.id}
+                  data-state={state}
+                >
                   <Link
                     to={`/learn/${lesson.id}`}
                     className={`${variantClass('lesson-row')} ${variant}-lesson-row`}
@@ -52,9 +63,19 @@ export function CurriculumTree({ modules, variant, lessonState, onLessonClick, c
                     ref={isCurrentState(state) ? currentLessonRef : undefined}
                     onClick={onLessonClick}
                   >
-                    <CheckCircleIcon className={`${variantClass('marker-completed')} ${variant}-marker ${variant}-marker-completed`} />
-                    <CircleIcon className={`${variantClass('marker-available')} ${variant}-marker ${variant}-marker-available`} /> <span className={`sr-only ${variant}-status-completed`}>Completed</span>
-                    <span className={`sr-only ${variant}-status-available`}>Not completed</span> <span className={variantClass('lesson-title')}>{renderInline(lesson.title)}</span>
+                    <CheckCircleIcon
+                      className={`${variantClass('marker-completed')} ${variant}-marker ${variant}-marker-completed`}
+                    />
+                    <CircleIcon
+                      className={`${variantClass('marker-available')} ${variant}-marker ${variant}-marker-available`}
+                    />{' '}
+                    <span className={`sr-only ${variant}-status-completed`}>Completed</span>
+                    <span className={`sr-only ${variant}-status-available`}>
+                      Not completed
+                    </span>{' '}
+                    <span className={variantClass('lesson-title')}>
+                      {renderInline(lesson.title)}
+                    </span>
                   </Link>
                 </li>
               );

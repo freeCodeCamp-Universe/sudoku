@@ -1,6 +1,6 @@
 import cfg from '@/../donation-config.json';
-import { GearIcon, KeyboardIcon } from '@/components/base/Icon';
-import { Button } from '@/learn/base/Button/Button';
+import { GearIcon, KeyboardIcon } from '@/learn/icons';
+import { Button } from '@/app/Button/Button';
 import styles from '@/learn/base/Navbar/Navbar.module.css';
 
 export interface NavbarProps {
@@ -34,7 +34,7 @@ export function Navbar({ onOpenShortcuts, onOpenSettings }: NavbarProps) {
         <Button
           variant="cta"
           href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign={{PROJECT_NAME}}&medium=web`}
-          target="_blank"
+          target_blank
           rel="noopener noreferrer"
         >
           Donate

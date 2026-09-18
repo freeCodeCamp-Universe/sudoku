@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { usePlatformModifier } from '@/learn/hooks/usePlatformModifier';
-import { Button } from '@/learn/base/Button/Button';
+import { Button } from '@/app/Button/Button';
 import styles from '@/learn/features/PrimaryAction/PrimaryAction.module.css';
 
 export interface PrimaryActionProps {
@@ -21,7 +21,12 @@ export interface PrimaryActionProps {
  * but its shortcut still reports the blocked attempt so the workspace can explain
  * what is still missing.
  */
-export function PrimaryAction({ complete, isCapstone = false, onAdvance, onBlocked }: PrimaryActionProps) {
+export function PrimaryAction({
+  complete,
+  isCapstone = false,
+  onAdvance,
+  onBlocked,
+}: PrimaryActionProps) {
   const { shortcutsEnabled } = useShortcutsPreference();
   const modifier = usePlatformModifier();
   const label = isCapstone ? 'Finish' : 'Next';
@@ -52,7 +57,12 @@ export function PrimaryAction({ complete, isCapstone = false, onAdvance, onBlock
   }
 
   return (
-    <Button type="button" variant="cta" onClick={onAdvance} aria-keyshortcuts="Meta+Enter Control+Enter">
+    <Button
+      type="button"
+      variant="cta"
+      onClick={onAdvance}
+      aria-keyshortcuts="Meta+Enter Control+Enter"
+    >
       {label}{' '}
       <span className={styles.hint} aria-hidden="true">
         ({modifier} + Enter)

@@ -1,21 +1,26 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ANIMATIONS_STORAGE_KEY } from '@/learn/hooks/useAnimationsPreference';
 import { SHORTCUTS_STORAGE_KEY } from '@/learn/hooks/useShortcutsPreference';
-import { THEME_STORAGE_KEY } from '@/hooks/use-theme';
+import { ThemeProvider, THEME_STORAGE_KEY } from '@/app/ThemeProvider/ThemeProvider';
 import { SettingsModal } from '@/learn/base/SettingsModal/SettingsModal';
 
 afterEach(() => {
   localStorage.clear();
-  document.documentElement.removeAttribute('data-theme');
+  document.documentElement.classList.remove('light');
   document.documentElement.removeAttribute('data-reduced-motion');
 });
 
 describe('SettingsModal', () => {
+  function renderSettings(ui: ReactNode) {
+    return render(<ThemeProvider>{ui}</ThemeProvider>);
+  }
+
   it('should move focus into the modal when it opens', async () => {
     const user = userEvent.setup();
-    const { rerender } = render(
+    const { rerender } = renderSettings(
       <>
         <button type="button">settings trigger</button>
         <SettingsModal open={false} onClose={() => {}} />
@@ -24,10 +29,10 @@ describe('SettingsModal', () => {
 
     await user.click(screen.getByRole('button', { name: 'settings trigger' }));
     rerender(
-      <>
+      <ThemeProvider>
         <button type="button">settings trigger</button>
         <SettingsModal open onClose={() => {}} />
-      </>
+      </ThemeProvider>
     );
 
     const close = screen.getByRole('button', { name: 'close settings' });
@@ -39,7 +44,7 @@ describe('SettingsModal', () => {
   });
 
   it('should render the settings descriptions when open', () => {
-    render(<SettingsModal open onClose={() => {}} />);
+    renderSettings(<SettingsModal open onClose={() => {}} />);
 
     expect(screen.getByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
     expect(screen.getByText('When on, the dark theme is used.')).toBeInTheDocument();
@@ -47,14 +52,14 @@ describe('SettingsModal', () => {
     expect(
       screen.getByText('When on, animations and transitions are applied.')
     ).toBeInTheDocument();
-    expect(
-      screen.getAllByRole('switch').map((toggle) => toggle.parentElement?.textContent)
-    ).toEqual(['Enable dark theme', 'Enable keyboard shortcuts', 'Enable animations']);
+    expect(screen.getByRole('switch', { name: 'Enable dark theme' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Enable keyboard shortcuts' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Enable animations' })).toBeInTheDocument();
   });
 
   it('should toggle and persist the dark theme preference', async () => {
     const user = userEvent.setup();
-    render(<SettingsModal open onClose={() => {}} />);
+    renderSettings(<SettingsModal open onClose={() => {}} />);
 
     const toggle = screen.getByRole('switch', { name: 'Enable dark theme' });
     expect(toggle).toBeChecked();
@@ -62,13 +67,13 @@ describe('SettingsModal', () => {
     await user.click(toggle);
 
     expect(toggle).not.toBeChecked();
-    expect(document.documentElement).toHaveAttribute('data-theme', 'light');
+    expect(document.documentElement).toHaveClass('light');
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
   });
 
   it('should toggle and persist the animations preference', async () => {
     const user = userEvent.setup();
-    render(<SettingsModal open onClose={() => {}} />);
+    renderSettings(<SettingsModal open onClose={() => {}} />);
 
     const toggle = screen.getByRole('switch', { name: 'Enable animations' });
     expect(toggle).toBeChecked();
@@ -82,7 +87,7 @@ describe('SettingsModal', () => {
 
   it('should toggle and persist the shortcuts preference', async () => {
     const user = userEvent.setup();
-    render(<SettingsModal open onClose={() => {}} />);
+    renderSettings(<SettingsModal open onClose={() => {}} />);
 
     const toggle = screen.getByRole('switch', { name: 'Enable keyboard shortcuts' });
     expect(toggle).toBeChecked();
@@ -96,7 +101,7 @@ describe('SettingsModal', () => {
   it('should close through the close button', async () => {
     const user = userEvent.setup();
     let open = true;
-    const { rerender } = render(
+    const { rerender } = renderSettings(
       <SettingsModal
         open={open}
         onClose={() => {
@@ -106,7 +111,11 @@ describe('SettingsModal', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'close settings' }));
-    rerender(<SettingsModal open={open} onClose={() => {}} />);
+    rerender(
+      <ThemeProvider>
+        <SettingsModal open={open} onClose={() => {}} />
+      </ThemeProvider>
+    );
 
     expect(screen.queryByRole('dialog', { name: 'Settings' })).toBeNull();
   });

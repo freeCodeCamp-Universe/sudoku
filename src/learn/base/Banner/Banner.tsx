@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { XIcon } from '@/components/base/Icon';
+import { XIcon } from '@/learn/icons';
 import styles from '@/learn/base/Banner/Banner.module.css';
 
 interface Props {

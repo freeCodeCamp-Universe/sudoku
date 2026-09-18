@@ -1,8 +1,8 @@
 import { Modal } from '@/learn/base/Modal/Modal';
-import { Switch } from '@/learn/base/Switch/Switch';
+import { Toggle } from '@/app/Toggle/Toggle';
 import { useAnimationsPreference } from '@/learn/hooks/useAnimationsPreference';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
-import { useTheme } from '@/hooks/use-theme';
+import { useTheme } from '@/app/ThemeProvider';
 import styles from '@/learn/base/SettingsModal/SettingsModal.module.css';
 
 export interface SettingsModalProps {
@@ -15,7 +15,7 @@ export interface SettingsModalProps {
 export function SettingsModal({ open, onClose, triggerElement }: SettingsModalProps) {
   const { animationsEnabled, setAnimationsEnabled } = useAnimationsPreference();
   const { shortcutsEnabled, setShortcutsEnabled } = useShortcutsPreference();
-  const { isDark, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Modal
@@ -28,25 +28,23 @@ export function SettingsModal({ open, onClose, triggerElement }: SettingsModalPr
     >
       <Modal.Header id="settings-modal-title">Settings</Modal.Header>
       <Modal.Body>
-        <Switch
-          checked={isDark}
+        <Toggle
+          checked={theme === 'dark'}
           onChange={() => toggleTheme()}
           label="Enable dark theme"
-          labelPosition="end"
           description="When on, the dark theme is used."
         />
         <div className={styles['setting-keyboard-only']}>
-          <Switch
+          <Toggle
             checked={shortcutsEnabled}
-            onChange={setShortcutsEnabled}
+            onChange={() => setShortcutsEnabled(!shortcutsEnabled)}
             label="Enable keyboard shortcuts"
-            labelPosition="end"
             description="When on, keyboard shortcuts are active."
           />
         </div>
-        <Switch
+        <Toggle
           checked={animationsEnabled}
-          onChange={setAnimationsEnabled}
+          onChange={() => setAnimationsEnabled(!animationsEnabled)}
           label="Enable animations"
           description="When on, animations and transitions are applied."
         />

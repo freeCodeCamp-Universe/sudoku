@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/learn/base/Button/Button';
+import { Button } from '@/app/Button/Button';
 import { Drawer } from '@/learn/base/Drawer/Drawer';
 import { useMediaQuery } from '@/learn/hooks/useMediaQuery';
 import styles from '@/learn/features/ResetButton/ResetButton.module.css';
@@ -50,7 +50,6 @@ export function ResetButton({ onReset }: ResetButtonProps) {
         <span className={styles.prompt}>Reset this lesson?</span>
         <Button
           type="button"
-          variant="primary"
           ref={cancelRef}
           onClick={() => {
             restoreFocus.current = true;
@@ -61,7 +60,7 @@ export function ResetButton({ onReset }: ResetButtonProps) {
         </Button>
         <Button
           type="button"
-          variant="danger"
+          hoverColor="red"
           onClick={() => {
             setConfirming(false);
             onReset();
@@ -75,23 +74,36 @@ export function ResetButton({ onReset }: ResetButtonProps) {
 
   return (
     <>
-      <Button ref={resetRef} type="button" variant="danger" borderless className={styles.reset} onClick={() => (isMobile ? setDrawerOpen(true) : setConfirming(true))}>
+      <Button
+        ref={resetRef}
+        type="button"
+        hoverColor="red"
+        className={styles.reset}
+        onClick={() => (isMobile ? setDrawerOpen(true) : setConfirming(true))}
+      >
         Reset
       </Button>
 
       {isMobile && (
-        <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} slideFrom="bottom" title="Confirm reset" triggerElement={resetRef.current} initialFocus={cancelRef}>
+        <Drawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          slideFrom="bottom"
+          title="Confirm reset"
+          triggerElement={resetRef.current}
+          initialFocus={cancelRef}
+        >
           <Drawer.Body>
             <p className={styles['drawer-prompt']}>Reset your edits and progress in this lesson?</p>
           </Drawer.Body>
           <Drawer.Footer>
             <div className={styles['drawer-actions']}>
-              <Button type="button" variant="primary" ref={cancelRef} onClick={() => setDrawerOpen(false)}>
+              <Button type="button" ref={cancelRef} onClick={() => setDrawerOpen(false)}>
                 Cancel
               </Button>
               <Button
                 type="button"
-                variant="danger"
+                hoverColor="red"
                 onClick={() => {
                   setDrawerOpen(false);
                   onReset();

@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { XIcon } from '@/components/base/Icon';
+import { XIcon } from '@/learn/icons';
 import { useBodyScrollLock } from '@/learn/hooks/useBodyScrollLock';
 import { getFocusableElements } from '@/learn/utils/focusTrap';
 import styles from '@/learn/base/Modal/Modal.module.css';

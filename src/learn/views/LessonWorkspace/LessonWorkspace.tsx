@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isProseLesson, type ClientLessonDefinition, type ClientInteractiveLessonDefinition } from '@/learn/curriculum/types';
+import {
+  isProseLesson,
+  type ClientLessonDefinition,
+  type ClientInteractiveLessonDefinition,
+} from '@/learn/curriculum/types';
 import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
 import { useCourseShortcuts } from '@/learn/hooks/useCourseShortcuts';
 import { useLesson } from '@/learn/hooks/useLesson';
@@ -10,7 +14,7 @@ import { useInitialFocusPreference } from '@/learn/hooks/useInitialFocusPreferen
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useProgress } from '@/learn/hooks/useProgress';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
-import { CheckCircleIcon } from '@/components/base/Icon';
+import { CheckCircleIcon } from '@/learn/icons';
 import { Markdown } from '@/learn/features/Markdown/Markdown';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import { TabGroup } from '@/learn/features/TabGroup/TabGroup';
@@ -38,7 +42,16 @@ export interface LessonWorkspaceProps {
   InteractivePanel: ComponentType<InteractivePanelProps>;
 }
 
-export function LessonWorkspace({ lesson, nextLessonId, isLastLesson, instructionsHtml, segmentHtmls, tab, onSelectTab, InteractivePanel }: LessonWorkspaceProps) {
+export function LessonWorkspace({
+  lesson,
+  nextLessonId,
+  isLastLesson,
+  instructionsHtml,
+  segmentHtmls,
+  tab,
+  onSelectTab,
+  InteractivePanel,
+}: LessonWorkspaceProps) {
   const navigate = useNavigate();
   const chrome = useCourseChrome();
   const tree = useCurriculumTree();
@@ -138,7 +151,8 @@ export function LessonWorkspace({ lesson, nextLessonId, isLastLesson, instructio
     onOpenDrawer: chrome.openDrawer,
     onOpenShortcuts: chrome.openShortcuts,
     announce: announceShortcut,
-    enabled: shortcutsEnabled && !chrome.drawerOpen && !chrome.shortcutsOpen && !chrome.settingsOpen,
+    enabled:
+      shortcutsEnabled && !chrome.drawerOpen && !chrome.shortcutsOpen && !chrome.settingsOpen,
   });
 
   const handleReset = useCallback(() => {
@@ -168,10 +182,25 @@ export function LessonWorkspace({ lesson, nextLessonId, isLastLesson, instructio
     const segments = lesson.instructionSegments;
     return (
       <>
-        <main id="main-content" tabIndex={-1} className={`${styles['prose-page']} ${lesson.type === 'review' ? styles['review-page'] : ''}`} aria-labelledby="lesson-heading">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className={`${styles['prose-page']} ${lesson.type === 'review' ? styles['review-page'] : ''}`}
+          aria-labelledby="lesson-heading"
+        >
           <div className={lesson.type === 'review' ? styles['review-content'] : ''}>
             {heading}
-            {segments && segmentHtmls ? segments.map((segment, index) => (segment.kind === 'markdown' ? <Markdown key={index} html={segmentHtmls[index]} /> : <TabGroup key={index} tabs={segment.tabs} />)) : <Markdown html={instructionsHtml} />}
+            {segments && segmentHtmls ? (
+              segments.map((segment, index) =>
+                segment.kind === 'markdown' ? (
+                  <Markdown key={index} html={segmentHtmls[index]} />
+                ) : (
+                  <TabGroup key={index} tabs={segment.tabs} />
+                )
+              )
+            ) : (
+              <Markdown html={instructionsHtml} />
+            )}
             <div className={styles.controls}>
               <PrimaryAction complete={complete} isCapstone={isLastLesson} onAdvance={advance} />
             </div>
@@ -188,7 +217,12 @@ export function LessonWorkspace({ lesson, nextLessonId, isLastLesson, instructio
     <>
       <main id="main-content" tabIndex={-1} className={styles.page} data-tab={tab}>
         {/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- scrollable panel is an intentional tab stop */}
-        <section ref={instructionsRef} tabIndex={0} className={styles.instructions} aria-labelledby="lesson-heading">
+        <section
+          ref={instructionsRef}
+          tabIndex={0}
+          className={styles.instructions}
+          aria-labelledby="lesson-heading"
+        >
           {heading}
           <div className={styles['instruction-body']}>
             <Markdown html={instructionsHtml} />
@@ -201,10 +235,20 @@ export function LessonWorkspace({ lesson, nextLessonId, isLastLesson, instructio
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
 
         <div ref={interactiveRef} className={styles.terminal} tabIndex={-1}>
-          <InteractivePanel key={resetKey} lesson={interactiveLesson} onUpdate={onUpdate} onReset={handleReset} />
+          <InteractivePanel
+            key={resetKey}
+            lesson={interactiveLesson}
+            onUpdate={onUpdate}
+            onReset={handleReset}
+          />
           <div className={styles.controls}>
             <ResetButton onReset={handleReset} />
-            <PrimaryAction complete={complete} isCapstone={isLastLesson} onAdvance={advance} onBlocked={reportIncomplete} />
+            <PrimaryAction
+              complete={complete}
+              isCapstone={isLastLesson}
+              onAdvance={advance}
+              onBlocked={reportIncomplete}
+            />
           </div>
         </div>
 

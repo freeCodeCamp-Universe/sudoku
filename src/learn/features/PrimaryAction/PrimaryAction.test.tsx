@@ -1,9 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import styles from '@/components/base/button/button.module.css';
+import styles from '@/app/Button/Button.module.css';
 import { SHORTCUTS_STORAGE_KEY } from '@/learn/hooks/useShortcutsPreference';
-import { PrimaryAction, type PrimaryActionProps } from '@/learn/features/PrimaryAction/PrimaryAction';
+import {
+  PrimaryAction,
+  type PrimaryActionProps,
+} from '@/learn/features/PrimaryAction/PrimaryAction';
 
 afterEach(() => {
   localStorage.clear();

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
-import { Button } from '@/learn/base/Button/Button';
+import { Button } from '@/app/Button/Button';
 import { LoadingState } from '@/learn/base/LoadingState/LoadingState';
 import { CurriculumNavigator } from '@/learn/features/CurriculumNavigator/CurriculumNavigator';
 import { Progress } from '@/learn/features/Progress/Progress';

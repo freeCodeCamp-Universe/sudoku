@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChecklistItem, ChecklistStatus } from '@/learn/curriculum/lessonProgress';
-import { CheckCircleIcon, CircleIcon, XCircleIcon } from '@/components/base/Icon';
+import { CheckCircleIcon, CircleIcon, XCircleIcon } from '@/learn/icons';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import styles from '@/learn/features/Checklist/Checklist.module.css';
 
@@ -59,7 +59,12 @@ function announceChanges(prev: ItemSnapshot[], next: readonly ChecklistItem[]): 
       messages.push(`${item.label}: ${STATUS_TEXT[item.status]}`);
     }
 
-    if (item.count !== undefined && before?.count !== undefined && item.count !== before.count && before.status === item.status) {
+    if (
+      item.count !== undefined &&
+      before?.count !== undefined &&
+      item.count !== before.count &&
+      before.status === item.status
+    ) {
       messages.push(`${item.label}`);
     }
 
@@ -80,7 +85,11 @@ function announceChanges(prev: ItemSnapshot[], next: readonly ChecklistItem[]): 
  * each state change and each revealed hint once; the checkmark transition is
  * instant under `prefers-reduced-motion`.
  */
-export function Checklist({ items, label = 'task checklist', muteAnnouncement = false }: ChecklistProps) {
+export function Checklist({
+  items,
+  label = 'task checklist',
+  muteAnnouncement = false,
+}: ChecklistProps) {
   const prevItems = useRef<ItemSnapshot[]>(snapshot(items));
   const [announcement, setAnnouncement] = useState('');
 
@@ -105,13 +114,22 @@ export function Checklist({ items, label = 'task checklist', muteAnnouncement = 
               <StatusIcon status={item.status} />
             </span>
             <div className={styles.body}>
-              <span className="sr-only">{`(${STATUS_TEXT[item.status]})`}</span> <span className={styles.label}>{renderInline(item.label)}</span>
-              {item.showHint && item.hint ? <p className={styles.hint}>{renderInline(item.hint)}</p> : null}
+              <span className="sr-only">{`(${STATUS_TEXT[item.status]})`}</span>{' '}
+              <span className={styles.label}>{renderInline(item.label)}</span>
+              {item.showHint && item.hint ? (
+                <p className={styles.hint}>{renderInline(item.hint)}</p>
+              ) : null}
             </div>
           </li>
         ))}
       </ul>
-      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true" data-testid="checklist-announcement">
+      <div
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="checklist-announcement"
+      >
         {announcement}
       </div>
     </section>
