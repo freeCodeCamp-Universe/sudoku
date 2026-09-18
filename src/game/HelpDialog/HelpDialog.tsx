@@ -63,6 +63,7 @@ export function HelpDialog({ open, onClose, basicRules, help }: HelpDialogProps)
         activeId={activeTab}
         onSelect={setActiveTab}
         ariaLabel="Help sections"
+        className={styles.tabs}
       />
 
       <div
