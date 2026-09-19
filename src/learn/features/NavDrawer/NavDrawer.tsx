@@ -18,7 +18,7 @@ export interface NavDrawerProps {
   modules: CurriculumTreeModule[];
   /** Lesson currently open, used for the drawer's current indicator. */
   currentLessonId?: string;
-  /** Element to restore focus to on close. Forwarded to Drawer/Modal. */
+  /** Element to restore focus to on close. Forwarded to Drawer. */
   triggerElement?: HTMLElement | null;
 }
 

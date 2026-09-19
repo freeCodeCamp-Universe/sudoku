@@ -4,10 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { Dialog } from './Dialog';
 
-// The single-close contract only holds when a real parent owns `open`: a
-// dismissal flips `open` to false, and the effect-driven `close()` must not
-// re-run side effects. This harness models that parent so the tests exercise
-// the real path rather than a static `open` prop.
 function Harness({
   onClose,
   title = 'Test dialog',
@@ -94,6 +90,16 @@ describe('Dialog', () => {
     expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
   });
 
+  it('should use a custom close label', () => {
+    render(
+      <Dialog open onClose={vi.fn()} title="Custom label" closeLabel="close custom dialog">
+        <p>Body</p>
+      </Dialog>
+    );
+
+    expect(screen.getByRole('button', { name: 'close custom dialog' })).toBeInTheDocument();
+  });
+
   it('should not close on backdrop click when closeOnBackdrop is false', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
@@ -127,8 +133,6 @@ describe('Dialog', () => {
       </Dialog>
     );
 
-    // The jsdom `showModal()` polyfill does not auto-focus on open (real
-    // browsers do), so seed the starting point explicitly.
     screen.getByRole('button', { name: 'Close' }).focus();
     await user.tab();
     expect(screen.getByRole('button', { name: 'First action' })).toHaveFocus();
@@ -136,26 +140,25 @@ describe('Dialog', () => {
     expect(screen.getByRole('button', { name: 'Last action' })).toHaveFocus();
   });
 
-  it('should recover to the first focusable element if Tab is pressed while focus is somewhere the dialog does not track (e.g. a browser focus quirk)', () => {
+  it('should recover to the first focusable element if Tab is pressed while focus is outside the list', () => {
     render(
       <Dialog open onClose={vi.fn()} title="Multi-button dialog">
         <button type="button">First action</button>
         <button type="button">Last action</button>
+        <button type="button" aria-disabled="true">
+          Browser focus quirk
+        </button>
       </Dialog>
     );
 
-    // Simulates the real WebKit bug this guards against: native Tab handling
-    // there lands focus on the <dialog> element itself rather than any of
-    // its buttons, so our own handler can't assume the browser's Tab
-    // landed on a tracked element -- it must still recover sensibly.
     const dialog = screen.getByRole('dialog', { name: 'Multi-button dialog' });
-    dialog.focus();
+    screen.getByRole('button', { name: 'Browser focus quirk' }).focus();
     fireEvent.keyDown(dialog, { key: 'Tab' });
 
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
   });
 
-  it('should wrap Tab from the last focusable element back to the first, without landing on body', async () => {
+  it('should wrap Tab from the last focusable element back to the first', async () => {
     const user = userEvent.setup();
     render(
       <Dialog open onClose={vi.fn()} title="Multi-button dialog">
@@ -164,14 +167,13 @@ describe('Dialog', () => {
       </Dialog>
     );
 
-    // Focus order: close (x) -> First action -> Last action -> wraps to close (x).
     screen.getByRole('button', { name: 'Last action' }).focus();
     await user.tab();
 
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
   });
 
-  it('should wrap Shift+Tab from the first focusable element back to the last, without landing on body', async () => {
+  it('should wrap Shift+Tab from the first focusable element back to the last', async () => {
     const user = userEvent.setup();
     render(
       <Dialog open onClose={vi.fn()} title="Multi-button dialog">
@@ -186,7 +188,7 @@ describe('Dialog', () => {
     expect(screen.getByRole('button', { name: 'Last action' })).toHaveFocus();
   });
 
-  it('should expose an accessible name via the labelledBy prop with caller-owned markup', () => {
+  it('should expose an accessible name via the labelledBy prop', () => {
     render(
       <Dialog open onClose={vi.fn()} labelledBy="custom-title">
         <h2 id="custom-title">Named by children</h2>

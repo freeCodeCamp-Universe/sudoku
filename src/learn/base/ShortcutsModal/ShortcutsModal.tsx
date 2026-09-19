@@ -1,6 +1,6 @@
-import { KbdCombo } from '@/learn/base/KbdCombo/KbdCombo';
-import { Modal } from '@/learn/base/Modal/Modal';
+import { useAltLabel } from '@/learn/hooks/usePlatformModifier';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
+import { Dialog } from '@/app/Dialog';
 import styles from '@/learn/base/ShortcutsModal/ShortcutsModal.module.css';
 
 export interface ShortcutsModalProps {
@@ -18,34 +18,41 @@ const SHORTCUTS: Shortcut[] = [{ keys: ['Alt', '/'], action: 'show keyboard shor
 
 export function ShortcutsModal({ open, onClose, triggerElement }: ShortcutsModalProps) {
   const { shortcutsEnabled } = useShortcutsPreference();
+  const altLabel = useAltLabel();
 
   return (
-    <Modal
+    <Dialog
       open={open}
       onClose={onClose}
+      title="Keyboard Shortcuts"
       closeLabel="close shortcuts"
-      ariaLabelledBy="shortcuts-modal-title"
-      panelClassName={styles.panel}
       triggerElement={triggerElement}
     >
-      <Modal.Header id="shortcuts-modal-title">Keyboard shortcuts</Modal.Header>
-      <Modal.Body>
-        <p className={styles.notice}>
-          {shortcutsEnabled
-            ? 'The following keyboard shortcuts are enabled.'
-            : 'These shortcuts are currently off. You can enable them in the settings dialog.'}
-        </p>
-        <dl className={styles.list}>
+      <p className={styles.notice}>
+        {shortcutsEnabled
+          ? 'The following keyboard shortcuts are enabled.'
+          : 'These shortcuts are currently off. You can enable them in the settings dialog.'}
+      </p>
+      <table className={styles.table}>
+        <tbody>
           {SHORTCUTS.map((shortcut) => (
-            <div key={shortcut.action} className={styles.row}>
-              <dt className={styles.keys}>
-                <KbdCombo keys={shortcut.keys} separateAll />
-              </dt>
-              <dd className={styles.action}>{shortcut.action}</dd>
-            </div>
+            <tr key={shortcut.action}>
+              <td className={styles.keys}>
+                {shortcut.keys.map((key, index) => (
+                  <span key={`${key}-${index}`}>
+                    {index > 0 && <span className={styles.sep}>+</span>}
+                    <kbd className={styles.kbd}>{key === 'Alt' ? altLabel : key}</kbd>
+                  </span>
+                ))}
+              </td>
+              <td className={styles.desc}>{shortcut.action}</td>
+            </tr>
           ))}
-        </dl>
-      </Modal.Body>
-    </Modal>
+        </tbody>
+      </table>
+      <button type="button" className={styles.closeBtn} onClick={onClose}>
+        Got it
+      </button>
+    </Dialog>
   );
 }

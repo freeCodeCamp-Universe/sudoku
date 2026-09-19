@@ -1,4 +1,4 @@
-import { Dialog } from '@/game/Dialog';
+import { Dialog } from '@/app/Dialog';
 import styles from './KeyboardShortcutsDialog.module.css';
 
 export interface ShortcutEntry {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { act, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import {
   SHORTCUTS_PREFERENCE_EVENT,
@@ -36,12 +36,22 @@ describe('ShortcutsModal', () => {
 
     await user.click(screen.getByRole('button', { name: 'keyboard shortcuts' }));
 
-    const dialog = screen.getByRole('dialog', { name: 'Keyboard shortcuts' });
-    expect(within(dialog).getAllByRole('term')[0]).toHaveTextContent('Alt+/');
+    const dialog = screen.getByRole('dialog', { name: 'Keyboard Shortcuts' });
+    expect(within(dialog).getByRole('cell', { name: 'Alt + /' })).toBeInTheDocument();
     expect(within(dialog).getByText('show keyboard shortcuts dialog')).toBeInTheDocument();
     expect(
       within(dialog).getByText('The following keyboard shortcuts are enabled.')
     ).toBeInTheDocument();
+  });
+
+  it('should close when Got it is clicked', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+
+    render(<ShortcutsModal open onClose={onClose} />);
+    await user.click(screen.getByRole('button', { name: 'Got it' }));
+
+    expect(onClose).toHaveBeenCalledOnce();
   });
 
   it('should explain when shortcuts are disabled', () => {

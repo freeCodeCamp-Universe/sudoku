@@ -3,78 +3,106 @@ import styles from './Dialog.module.css';
 
 const FOCUSABLE_SELECTOR = [
   'a[href]',
-  'button:not([disabled])',
+  'button:not([disabled]):not([aria-disabled="true"])',
   'input:not([disabled])',
   'select:not([disabled])',
   'textarea:not([disabled])',
   '[tabindex]:not([tabindex="-1"])',
 ].join(', ');
 
+let lockCount = 0;
+let previousOverflow = '';
+
 interface DialogBaseProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
-  /** Show the top-corner `×` button. Defaults to `true`. */
+  /** Show the top-corner close button. Defaults to `true`. */
   showCloseX?: boolean;
+  /** Accessible label for the top-corner close button. */
+  closeLabel?: string;
   /** Dismiss when the backdrop (the dialog's own padding area) is clicked. Defaults to `true`. */
   closeOnBackdrop?: boolean;
-  /** Per-dialog width / content overrides, merged onto the shared `.dialog` class. */
+  /** Per-dialog width and content overrides, merged onto the shared dialog class. */
   className?: string;
+  /** Element to restore focus to after the dialog closes. */
+  triggerElement?: HTMLElement | null;
 }
 
 interface DialogWithTitle extends DialogBaseProps {
-  /** Plain-string title; `Dialog` renders the `<h2>` and wires `aria-labelledby`. */
+  /** Plain-string title; `Dialog` renders the heading and wires `aria-labelledby`. */
   title: string;
   labelledBy?: never;
 }
 
 interface DialogWithLabelledBy extends DialogBaseProps {
-  /** Id of caller-owned title markup in `children` (for titles that can't be a plain string). */
+  /** Id of caller-owned title markup in `children`. */
   labelledBy: string;
   title?: never;
 }
 
-// `title` and `labelledBy` are mutually exclusive and exactly one is required.
 type DialogProps = DialogWithTitle | DialogWithLabelledBy;
 
-/**
- * Shared modal dialog built on the native `<dialog>` element.
- *
- * Modal behavior (top layer, backdrop, focus trap, Escape-to-close) is only
- * reachable through the imperative `showModal()` method, so the sync effect
- * owns the one unavoidable piece of glue. The single close contract: **only the
- * native `close` event calls `props.onClose`.** The affordances this component
- * owns (`×`, backdrop) call `dialog.close()` directly, never `onClose`; footer
- * buttons in `children` close by flipping the parent's `open` state, which
- * routes through the effect → `close()` → native `close` event → `onClose`.
- */
+function useBodyScrollLock(locked: boolean): void {
+  useEffect(() => {
+    if (!locked) return;
+
+    if (lockCount === 0) {
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+    lockCount += 1;
+
+    return () => {
+      lockCount -= 1;
+      if (lockCount === 0) {
+        document.body.style.overflow = previousOverflow;
+        previousOverflow = '';
+      }
+    };
+  }, [locked]);
+}
+
 export function Dialog(props: DialogProps) {
-  const { open, onClose, children, showCloseX = true, closeOnBackdrop = true, className } = props;
+  const {
+    open,
+    onClose,
+    children,
+    showCloseX = true,
+    closeLabel = 'Close',
+    closeOnBackdrop = true,
+    className,
+    triggerElement,
+  } = props;
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const hasTitle = props.title !== undefined;
   const labelledBy = hasTitle ? titleId : props.labelledBy;
 
+  if (triggerElement) {
+    triggerRef.current = triggerElement;
+  }
+
+  useBodyScrollLock(open);
+
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog || typeof dialog.showModal !== 'function') return;
-    // Handles both directions, including `open` starting true on mount. The
-    // `close()` call fires the native `close` event — the single place
-    // `onClose` runs. No cleanup: unmounting while open must not fire `onClose`.
-    if (open && !dialog.open) dialog.showModal();
+
+    if (open && !dialog.open) {
+      dialog.showModal();
+      dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
-  // Native `showModal()` focus trapping is not reliable enough to lean on:
-  // Chromium cycles past the last/first focusable descendant via `<body>`
-  // for one keypress before wrapping (reads as a dead keystroke), and WebKit
-  // is worse -- Tab from the close button never reaches the interior buttons
-  // at all, oscillating between `<body>` and the `<dialog>` element itself
-  // (confirmed directly; "Start New Game"/"Keep Playing" were unreachable by
-  // keyboard). So every Tab press inside an open dialog is handled entirely
-  // by hand: find the focused element's position in our own focusable list
-  // (falling back to "nothing found" when the browser's own focus landed
-  // somewhere odd) and move to the next/previous one, wrapping at the ends.
+  useEffect(() => {
+    if (open || !triggerRef.current) return;
+    triggerRef.current.focus();
+    triggerRef.current = null;
+  }, [open]);
+
   function handleKeyDown(event: KeyboardEvent<HTMLDialogElement>) {
     if (event.key !== 'Tab') return;
     const dialog = dialogRef.current;
@@ -117,7 +145,7 @@ export function Dialog(props: DialogProps) {
         <button
           type="button"
           className={styles.closeX}
-          aria-label="Close"
+          aria-label={closeLabel}
           onClick={() => dialogRef.current?.close()}
         >
           ×

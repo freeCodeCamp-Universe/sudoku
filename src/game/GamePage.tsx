@@ -12,7 +12,7 @@ import {
   isOversized,
 } from '@/game/boardViewport';
 import { Button } from '@/app/Button';
-import { Dialog } from '@/game/Dialog';
+import { Dialog } from '@/app/Dialog';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';

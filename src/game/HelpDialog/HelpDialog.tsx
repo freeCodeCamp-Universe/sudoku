@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { withUnbreakableTokens } from '@/app/withUnbreakableTokens';
 import type { HelpRule, HelpSection } from '@/engine/types';
-import { Dialog } from '@/game/Dialog';
+import { Dialog } from '@/app/Dialog';
 import { Tabs } from '@/game/Tabs';
 import type { Tab } from '@/game/Tabs';
 import styles from './HelpDialog.module.css';

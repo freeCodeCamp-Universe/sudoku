@@ -1,3 +1,9 @@
+.panel {
+  max-inline-size: 28rem;
+  padding-block: 24px;
+  padding-inline: 28px;
+}
+
 .setting-keyboard-only {
   display: none;
 }

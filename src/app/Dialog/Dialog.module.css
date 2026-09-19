@@ -1,6 +1,5 @@
 .dialog {
   position: relative;
-  color: var(--text-muted);
   inline-size: 90%;
   max-inline-size: 420px;
   margin: auto;
@@ -9,24 +8,25 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg-surface);
+  color: var(--text-muted);
 }
 
 .closeX {
   position: absolute;
   inset-block-start: 12px;
   inset-inline-end: 14px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .closeX:hover {
@@ -51,8 +51,8 @@
 
 .title {
   align-self: center;
+  margin: 0;
   color: var(--text-bright);
   font-size: 1.15rem;
   font-weight: 700;
-  margin: 0;
 }

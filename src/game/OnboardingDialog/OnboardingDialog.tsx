@@ -1,4 +1,4 @@
-import { Dialog } from '@/game/Dialog';
+import { Dialog } from '@/app/Dialog';
 import styles from './OnboardingDialog.module.css';
 
 interface OnboardingDialogProps {
