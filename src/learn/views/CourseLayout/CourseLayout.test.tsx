@@ -25,10 +25,6 @@ vi.mock('@/learn/features/CourseOverlays/CourseOverlays', () => ({
   ),
 }));
 
-vi.mock('@/learn/hooks/useMediaQuery', () => ({
-  useMediaQuery: () => false,
-}));
-
 describe('CourseLayout', () => {
   it('should provide the learn shell without lesson-only controls on the overview', () => {
     render(

@@ -4,17 +4,16 @@
  * Two problems prevent importing src/learn/curriculum/loader.ts in a plain tsx/Node
  * context:
  *
- * 1. `const SHOW_UPCOMING_LESSONS = import.meta.env.SHOW_UPCOMING_LESSONS === 'true'` —
- *    Vite-specific API. `import.meta.env` is undefined in Node, so this throws at
- *    module load time.
+ * 1. The module reads `import.meta.env` at load time. This is a Vite-specific API;
+ *    `import.meta.env` is undefined in Node, so the module throws during loading.
  *
  * 2. `const markdownModules = normalizeMarkdownModules(import.meta.glob(...))` —
  *    Vite-specific API called at module scope. Node.js has `import.meta` but not
  *    `import.meta.glob`, so calling it throws at load time.
  *
  * This file registers a load hook that patches both after tsx compiles loader.ts:
- *   - Replaces `import.meta.env` with `process.env` so env var reads fall through
- *     to the Node.js process environment (SHOW_UPCOMING_LESSONS, DEV, etc.).
+ *   - Replaces `import.meta.env` with `process.env` so Vite environment reads fall
+ *     through to the Node.js process environment.
  *   - Replaces the `import.meta.glob(...)` call with `{}` so the module initialises
  *     without error. buildCurriculum() receives its markdownByPath map as an argument
  *     and never reads the module-level `markdownModules`, so the empty replacement is safe.
