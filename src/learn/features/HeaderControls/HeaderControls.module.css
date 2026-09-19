@@ -27,6 +27,16 @@
   display: none;
 }
 
+.open {
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 @media (width >= 768px) and (hover: hover) {
   .action-keyboard-only {
     display: inline-flex;

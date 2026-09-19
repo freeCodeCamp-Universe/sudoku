@@ -1,6 +1,11 @@
 import cfg from '@/../donation-config.json';
+import { SettingsMenu } from '@/app/SettingsMenu';
+import { Toggle } from '@/app/Toggle';
+import { useTheme } from '@/app/ThemeProvider';
 import { GearIcon, KeyboardIcon, ListIcon } from '@/learn/icons';
 import { Button } from '@/app/Button/Button';
+import { useAnimationsPreference } from '@/learn/hooks/useAnimationsPreference';
+import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
 import styles from '@/learn/features/HeaderControls/HeaderControls.module.css';
 
@@ -10,7 +15,11 @@ interface HeaderControlsProps {
 }
 
 export function HeaderControls({ showDrawer = true, showShortcuts = true }: HeaderControlsProps) {
-  const { openDrawer, openShortcuts, openSettings } = useCourseChrome();
+  const { openDrawer, openShortcuts, openSettings, closeSettings, settingsOpen } =
+    useCourseChrome();
+  const { animationsEnabled, setAnimationsEnabled } = useAnimationsPreference();
+  const { shortcutsEnabled, setShortcutsEnabled } = useShortcutsPreference();
+  const { theme, toggleTheme, highContrast, toggleHighContrast } = useTheme();
 
   return (
     <div className={styles.actions}>
@@ -34,9 +43,40 @@ export function HeaderControls({ showDrawer = true, showShortcuts = true }: Head
           <KeyboardIcon />
         </button>
       )}
-      <button type="button" className={styles.action} onClick={openSettings} aria-label="Settings">
-        <GearIcon />
-      </button>
+      <SettingsMenu
+        open={settingsOpen}
+        onToggle={() => (settingsOpen ? closeSettings() : openSettings())}
+        onClose={closeSettings}
+        panelId="learn-settings-panel"
+        buttonClassName={styles.action}
+        openButtonClassName={styles.open}
+        trigger={<GearIcon />}
+      >
+        <Toggle
+          id="learn-settings-dark-theme"
+          label="Dark theme"
+          checked={theme === 'dark'}
+          onChange={toggleTheme}
+        />
+        <Toggle
+          id="learn-settings-shortcuts"
+          label="Keyboard shortcuts"
+          checked={shortcutsEnabled}
+          onChange={() => setShortcutsEnabled(!shortcutsEnabled)}
+        />
+        <Toggle
+          id="learn-settings-animations"
+          label="Animations"
+          checked={animationsEnabled}
+          onChange={() => setAnimationsEnabled(!animationsEnabled)}
+        />
+        <Toggle
+          id="learn-settings-high-contrast"
+          label="High contrast"
+          checked={highContrast}
+          onChange={toggleHighContrast}
+        />
+      </SettingsMenu>
       <Button
         variant="cta"
         href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign=Sudoku&medium=web`}

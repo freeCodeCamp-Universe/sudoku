@@ -1,0 +1,20 @@
+.wrapper {
+  position: relative;
+}
+
+.panel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: calc(100% + 8px);
+  z-index: var(--layer-dropdown);
+  display: flex;
+  min-inline-size: 220px;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--bg-surface);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
+}

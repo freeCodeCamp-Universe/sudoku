@@ -48,7 +48,7 @@ describe('CourseOverlays', () => {
       courseChrome.openShortcuts();
     });
 
-    expect(screen.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Keyboard Shortcuts' })).toBeInTheDocument();
   });
 
   it('should restore focus to the element that was focused when the drawer opened', async () => {
@@ -85,7 +85,7 @@ describe('CourseOverlays', () => {
       courseChrome.openShortcuts();
     });
 
-    expect(screen.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Keyboard Shortcuts' })).toBeInTheDocument();
 
     await user.keyboard('{Escape}');
 
@@ -93,19 +93,13 @@ describe('CourseOverlays', () => {
     trigger.remove();
   });
 
-  it('should open the settings modal when the store opens it', () => {
+  it('should not render settings as a course overlay', () => {
     renderOverlays();
 
     act(() => {
       courseChrome.openSettings();
     });
 
-    expect(screen.getByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: 'Enable dark theme' })).toBeInTheDocument();
-    expect(screen.getByText('When on, keyboard shortcuts are active.')).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: 'Enable animations' })).toBeInTheDocument();
-    expect(
-      screen.getByText('When on, animations and transitions are applied.')
-    ).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Settings' })).not.toBeInTheDocument();
   });
 });

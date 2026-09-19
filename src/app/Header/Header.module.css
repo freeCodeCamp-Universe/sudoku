@@ -218,10 +218,6 @@
   color: var(--accent-blue);
 }
 
-.settingsWrap {
-  position: relative;
-}
-
 .settingsBtn {
   width: 32px;
   height: 32px;
@@ -249,22 +245,6 @@
 .settingsBtn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-}
-
-.dropdown {
-  position: absolute;
-  inset-inline-end: 0;
-  inset-block-start: calc(100% + 8px);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 180px;
-  z-index: var(--layer-dropdown);
-  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
 }
 
 .helpBtn:focus-visible {
