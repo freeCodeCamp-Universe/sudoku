@@ -3,6 +3,7 @@ import { validate } from '@/engine/validate';
 import { solve } from '@/engine/solve';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
+import { assemblePuzzle } from '@/game/assemblePuzzle';
 import { allVariants } from './allVariants';
 import { makeFixture, seeded } from './makeFixture';
 
@@ -28,9 +29,10 @@ describe('generation soundness', () => {
   it.each(allVariants())(
     'should produce a uniquely solvable puzzle for $id',
     (variant) => {
-      const model = buildModel(variant);
+      const baseModel = buildModel(variant);
       const uniqueOnAllSeeds = SEEDS.every((s) => {
-        const { givens } = generate(model, 'intermediate', seeded(s));
+        const { givens, solution } = generate(baseModel, 'intermediate', seeded(s));
+        const { model } = assemblePuzzle(variant, baseModel, solution);
         return solve(model, givens, { max: 2 }).length === 1;
       });
       expect(uniqueOnAllSeeds).toBe(true);

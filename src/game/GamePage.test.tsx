@@ -1202,11 +1202,11 @@ describe('GamePage - mode selector', () => {
     expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
   });
 
-  it('should not render a Mode select for killer (its target is never actually reachable)', () => {
+  it('should render a Mode select for killer', () => {
     window.innerWidth = 500;
     renderGamePage('killer');
 
-    expect(screen.queryByRole('combobox', { name: 'Mode' })).toBeNull();
+    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
   });
 
   it('should not render the Mode select inside the Controls tab', async () => {

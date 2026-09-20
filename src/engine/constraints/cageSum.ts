@@ -5,6 +5,31 @@ function getCages(model: VariantModel): Cage[] {
   return (model.structure as { cages?: Cage[] } | undefined)?.cages ?? [];
 }
 
+function isSumFeasible(cellCount: number, targetSum: number, usedDigits: Set<number>): boolean {
+  const available: number[] = [];
+  for (let d = 1; d <= 9; d += 1) {
+    if (!usedDigits.has(d)) {
+      available.push(d);
+    }
+  }
+
+  if (available.length < cellCount) {
+    return false;
+  }
+
+  let minSum = 0;
+  for (let i = 0; i < cellCount; i += 1) {
+    minSum += available[i];
+  }
+
+  let maxSum = 0;
+  for (let i = available.length - 1; i >= available.length - cellCount; i -= 1) {
+    maxSum += available[i];
+  }
+
+  return targetSum >= minSum && targetSum <= maxSum;
+}
+
 export const cageSum: Constraint = {
   id: 'cageSum',
 
@@ -52,8 +77,37 @@ export const cageSum: Constraint = {
         continue;
       }
 
+      let partialSum = 0;
+      let emptyCount = 0;
+      const usedDigits = new Set<number>();
+
       for (const id of cage.cells) {
-        if (id !== cellId && values.get(id) === value) {
+        if (id === cellId) {
+          continue;
+        }
+
+        const existing = values.get(id);
+        if (existing !== undefined) {
+          if (existing === value) {
+            return false;
+          }
+          partialSum += existing;
+          usedDigits.add(existing);
+        } else {
+          emptyCount += 1;
+        }
+      }
+
+      const sumAfterPlacement = partialSum + value;
+      usedDigits.add(value);
+
+      if (emptyCount === 0) {
+        if (sumAfterPlacement !== cage.sum) {
+          return false;
+        }
+      } else {
+        const remaining = cage.sum - sumAfterPlacement;
+        if (!isSumFeasible(emptyCount, remaining, usedDigits)) {
           return false;
         }
       }
