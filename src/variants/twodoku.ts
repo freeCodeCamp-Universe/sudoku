@@ -95,7 +95,7 @@ export const twodoku: Variant = {
   ],
   popularity: 22,
   difficulty: 'intermediate',
-  difficultyRank: 4,
+  difficultyRank: 6,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],

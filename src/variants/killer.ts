@@ -227,7 +227,7 @@ export const killer: Variant = {
   ],
   popularity: 2,
   difficulty: 'intermediate',
-  difficultyRank: 11,
+  difficultyRank: 13,
   // The cageSum constraint forces the slower generic solve() path (not the
   // fast uniqueness-propagation one), and empirically it cannot prove
   // uniqueness below ~23-27 givens for this cage layout -- below the target

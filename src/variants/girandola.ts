@@ -51,7 +51,7 @@ export const girandola: Variant = {
   popularity: 12,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
-  difficultyRank: 7,
+  difficultyRank: 9,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
