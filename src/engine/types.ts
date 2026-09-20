@@ -97,9 +97,7 @@ export interface Variant {
   difficulty: Difficulty;
   difficultyRank?: number;
   // Whether the player-facing Mode (Easy/Medium/Expert) selector applies to
-  // this variant. Defaults to true; jigsaw opts out because its generator
-  // never proves uniqueness, so asking for fewer clues risks an ambiguous
-  // puzzle rather than just a slower one.
+  // this variant. Defaults to true.
   supportsMode?: boolean;
   tags?: string[];
   layout: BoardLayout;

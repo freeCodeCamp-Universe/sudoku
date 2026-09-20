@@ -4,12 +4,6 @@ import type { CellId } from '@/engine/types';
 import { allVariants, houseCellIds } from './allVariants';
 import { renderPlay, type Fixture } from './renderPlay';
 
-// Every assertion below is relative to the stored reference solution
-// (isSolved and `correct` both compare against it) and none asserts that the
-// solution is unique, so jigsaw — the lone NON_UNIQUE_VARIANTS entry — is safe
-// to include. A skip would only be warranted by an assertion that depends on
-// uniqueness, which Pass 1 has none of.
-
 function openCells(fixture: Fixture): CellId[] {
   return fixture.model.cells.filter((cell) => !fixture.givens.has(cell.id)).map((cell) => cell.id);
 }

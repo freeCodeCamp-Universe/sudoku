@@ -1195,11 +1195,11 @@ describe('GamePage - mode selector', () => {
     expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
   });
 
-  it('should not render a Mode select for jigsaw', () => {
+  it('should render a Mode select for jigsaw', () => {
     window.innerWidth = 500;
     renderGamePage('jigsaw');
 
-    expect(screen.queryByRole('combobox', { name: 'Mode' })).toBeNull();
+    expect(screen.getByRole('combobox', { name: 'Mode' })).toHaveValue('medium');
   });
 
   it('should not render a Mode select for killer (its target is never actually reachable)', () => {
