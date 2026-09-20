@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { KbdCombo } from '@/app/KbdCombo/KbdCombo';
+import { KbdCombo } from '@/components/KbdCombo';
 
 describe('KbdCombo', () => {
   it('should render each key as a kbd chip', () => {

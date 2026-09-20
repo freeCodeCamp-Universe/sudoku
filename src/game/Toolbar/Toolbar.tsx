@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@/app/Button';
-import { Dialog } from '@/app/Dialog';
+import { Button } from '@/components/Button';
+import { Dialog } from '@/components/Dialog';
 import styles from './Toolbar.module.css';
 
 interface ToolbarProps {

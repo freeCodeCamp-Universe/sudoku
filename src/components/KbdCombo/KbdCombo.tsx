@@ -1,5 +1,5 @@
-import { useAltLabel, useCmdLabel } from '@/app/usePlatformModifier';
-import styles from '@/app/KbdCombo/KbdCombo.module.css';
+import { useAltLabel, useCmdLabel } from '@/hooks/usePlatformModifier';
+import styles from './KbdCombo.module.css';
 
 export interface KbdComboProps {
   /** Ordered key labels. 'Alt' resolves to the platform alt label; 'Cmd' to the platform modifier. */

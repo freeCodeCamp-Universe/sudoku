@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { SkipLink } from '@/app/SkipLink';
+import { SkipLink } from '@/components/SkipLink';
 import { variantRegistry } from '@/variants/registry';
 import styles from './Layout.module.css';
 

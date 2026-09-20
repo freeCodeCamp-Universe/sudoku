@@ -1,10 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DonateButton } from '@/app/DonateButton';
-import { SettingsMenu } from '@/app/SettingsMenu';
+import { SettingsMenu } from '@/components/SettingsMenu';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import { useTheme } from '@/app/ThemeProvider';
-import { Toggle } from '@/app/Toggle';
+import { Toggle } from '@/components/Toggle';
 import { StarIcon } from '@/gallery/StarIcon';
 import styles from './Header.module.css';
 

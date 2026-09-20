@@ -1,6 +1,6 @@
-import { useAltLabel } from '@/app/usePlatformModifier';
+import { useAltLabel } from '@/hooks/usePlatformModifier';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
-import { Dialog } from '@/app/Dialog';
+import { Dialog } from '@/components/Dialog';
 import styles from '@/learn/base/ShortcutsModal/ShortcutsModal.module.css';
 
 export interface ShortcutsModalProps {

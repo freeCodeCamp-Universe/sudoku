@@ -1,4 +1,4 @@
-import { Button } from '@/app/Button';
+import { Button } from '@/components/Button';
 import styles from './ZoomControls.module.css';
 
 interface ZoomControlsProps {

@@ -1,4 +1,4 @@
-import { withUnbreakableTokens } from '@/app/withUnbreakableTokens';
+import { withUnbreakableTokens } from '@/components/withUnbreakableTokens';
 import type { Variant } from '@/engine/types';
 import { Preview } from '@/gallery/previews';
 import { StarIcon } from '@/gallery/StarIcon';

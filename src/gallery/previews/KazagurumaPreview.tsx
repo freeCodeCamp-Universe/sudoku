@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTheme } from '@/app/ThemeProvider';
-import { readThemeColor } from '@/app/readThemeColor';
+import { readThemeColor } from '@/utils/readThemeColor';
 import styles from './Preview.module.css';
 import { PREVIEW_CANVAS_SIZE, usePreviewCanvas } from './usePreviewCanvas';
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/app/Button/Button';
+import { Button } from '@/components/Button';
 import { Drawer } from '@/learn/base/Drawer/Drawer';
 import { useMediaQuery } from '@/learn/hooks/useMediaQuery';
 import styles from '@/learn/features/ResetButton/ResetButton.module.css';

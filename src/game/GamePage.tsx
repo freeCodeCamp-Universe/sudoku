@@ -11,8 +11,8 @@ import {
   gutterOrigin,
   isOversized,
 } from '@/game/boardViewport';
-import { Button } from '@/app/Button';
-import { Dialog } from '@/app/Dialog';
+import { Button } from '@/components/Button';
+import { Dialog } from '@/components/Dialog';
 import type { BoardViewportState } from '@/game/gameTypes';
 import { Minimap } from '@/game/Minimap';
 import { buildMarkerGaps } from '@/game/markerGaps';
@@ -30,8 +30,8 @@ import { resolveAnnotators } from './annotators/registry';
 import { jigsawAnnotator } from './annotators/jigsaw';
 import { Board } from './Board';
 import type { Tab } from './Tabs';
-import { Toggle } from '@/app/Toggle';
-import { SegmentedControl, type SegmentedControlOption } from '@/app/SegmentedControl';
+import { Toggle } from '@/components/Toggle';
+import { SegmentedControl, type SegmentedControlOption } from '@/components/SegmentedControl';
 import { findOverusedSymbols } from './overusedSymbols';
 import { findUsedSymbols } from './usedSymbols';
 import { overlapCounts } from './overlapCounts';

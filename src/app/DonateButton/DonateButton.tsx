@@ -1,4 +1,4 @@
-import { Button } from '@/app/Button';
+import { Button } from '@/components/Button';
 import cfg from '../../../donation-config.json';
 import styles from './DonateButton.module.css';
 

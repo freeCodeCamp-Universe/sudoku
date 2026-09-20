@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import { isProseLesson, type ClientLessonDefinition } from '@/learn/curriculum/types';
 import type { TabId } from '@/learn/views/LessonWorkspace/LessonWorkspace';
-import { Button } from '@/app/Button/Button';
+import { Button } from '@/components/Button';
 import styles from '@/learn/features/LessonToolbar/LessonToolbar.module.css';
 
 export interface LessonToolbarProps {

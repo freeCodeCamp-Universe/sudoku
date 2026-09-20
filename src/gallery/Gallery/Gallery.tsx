@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button } from '@/app/Button';
+import { Button } from '@/components/Button';
 import { DonateButton } from '@/app/DonateButton';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
 import type { Variant } from '@/engine/types';

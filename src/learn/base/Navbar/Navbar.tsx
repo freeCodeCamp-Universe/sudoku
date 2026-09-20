@@ -1,6 +1,6 @@
 import cfg from '@/../donation-config.json';
 import { GearIcon, KeyboardIcon } from '@/learn/icons';
-import { Button } from '@/app/Button/Button';
+import { Button } from '@/components/Button';
 import styles from '@/learn/base/Navbar/Navbar.module.css';
 
 export interface NavbarProps {

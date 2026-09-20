@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { KbdCombo } from '@/app/KbdCombo/KbdCombo';
-import { useAltKeyName } from '@/app/usePlatformModifier';
+import { KbdCombo } from '@/components/KbdCombo';
+import { useAltKeyName } from '@/hooks/usePlatformModifier';
 import styles from '@/learn/features/CurriculumSearch/CurriculumSearch.module.css';
 
 interface Props {

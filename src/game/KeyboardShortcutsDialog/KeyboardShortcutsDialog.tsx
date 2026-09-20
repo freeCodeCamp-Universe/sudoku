@@ -1,5 +1,5 @@
-import { Dialog } from '@/app/Dialog';
-import { KbdCombo } from '@/app/KbdCombo/KbdCombo';
+import { Dialog } from '@/components/Dialog';
+import { KbdCombo } from '@/components/KbdCombo';
 import styles from './KeyboardShortcutsDialog.module.css';
 
 export interface ShortcutEntry {
