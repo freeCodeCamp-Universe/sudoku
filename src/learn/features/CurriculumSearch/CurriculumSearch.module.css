@@ -47,19 +47,6 @@
   flex-shrink: 0;
 }
 
-.hint .hint-combo {
-  display: inline-flex;
-  gap: var(--space-xxs);
-}
-
-.hint-combo kbd {
-  color: var(--text-muted);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--text-muted);
-  border-radius: var(--radius);
-  font-size: var(--text-2xs);
-}
-
 @media (width >= 768px) and (hover: hover) {
   .hint {
     display: flex;

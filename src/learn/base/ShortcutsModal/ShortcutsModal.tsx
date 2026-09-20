@@ -1,4 +1,4 @@
-import { useAltLabel } from '@/learn/hooks/usePlatformModifier';
+import { useAltLabel } from '@/app/usePlatformModifier';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { Dialog } from '@/app/Dialog';
 import styles from '@/learn/base/ShortcutsModal/ShortcutsModal.module.css';

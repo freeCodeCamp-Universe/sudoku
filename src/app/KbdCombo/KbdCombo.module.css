@@ -1,0 +1,29 @@
+.combo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.combo kbd {
+  display: inline-block;
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1;
+  padding-block: 3px;
+  padding-inline: 7px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-secondary);
+  color: var(--text-subtle);
+  margin-inline-end: 4px;
+}
+
+.combo kbd.kbd-symbol {
+  font-family: inherit;
+}
+
+.plus {
+  margin-inline-end: 4px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}

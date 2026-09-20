@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
-import { usePlatformModifier } from '@/learn/hooks/usePlatformModifier';
+import { usePlatformModifier } from '@/app/usePlatformModifier';
 import { Button } from '@/app/Button/Button';
 import styles from '@/learn/features/PrimaryAction/PrimaryAction.module.css';
 

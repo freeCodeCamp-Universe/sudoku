@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { KbdCombo } from '@/learn/base/KbdCombo/KbdCombo';
+import { KbdCombo } from '@/app/KbdCombo/KbdCombo';
 
 describe('KbdCombo', () => {
   it('should render each key as a kbd chip', () => {
@@ -60,5 +60,17 @@ describe('KbdCombo', () => {
     render(<KbdCombo keys={['⌥', 'K']} separateAll />);
 
     expect(screen.getByText('+')).toBeInTheDocument();
+  });
+
+  it('should render a custom separator', () => {
+    render(<KbdCombo keys={['Backspace', 'Delete']} separator="or" />);
+
+    expect(screen.getByText('or')).toBeInTheDocument();
+  });
+
+  it('should omit separators when requested', () => {
+    render(<KbdCombo keys={['↑', '↓']} showSeparators={false} />);
+
+    expect(screen.queryByText('+')).not.toBeInTheDocument();
   });
 });
