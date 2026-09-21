@@ -13,26 +13,6 @@
   vertical-align: middle;
 }
 
-.kbd {
-  display: inline-block;
-  padding-block: 3px;
-  padding-inline: 7px;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: var(--bg-secondary);
-  color: var(--text-subtle);
-  font-family: 'Fira Mono', Menlo, Consolas, monospace;
-  font-size: 0.72rem;
-  font-style: normal;
-  line-height: 1;
-}
-
-.sep {
-  margin-inline-end: 4px;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
 .notice {
   margin: 0;
   color: var(--text-subtle);
