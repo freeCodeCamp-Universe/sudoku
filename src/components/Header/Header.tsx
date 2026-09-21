@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { DonateButton } from '@/app/DonateButton';
+import { DonateButton } from '@/components/DonateButton';
 import { SettingsMenu } from '@/components/SettingsMenu';
-import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { useTheme } from '@/app/ThemeProvider';
 import { Toggle } from '@/components/Toggle';
 import { GearIcon, KeyboardIcon } from '@/components/icons';

@@ -2,7 +2,7 @@ import cfg from '@/../donation-config.json';
 import { SettingsMenu } from '@/components/SettingsMenu';
 import { Toggle } from '@/components/Toggle';
 import { useTheme } from '@/app/ThemeProvider';
-import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { GearIcon, KeyboardIcon, ListIcon } from '@/components/icons';
 import { Button } from '@/components/Button';
 import { useAnimationsPreference } from '@/learn/hooks/useAnimationsPreference';

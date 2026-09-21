@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/Button';
-import { DonateButton } from '@/app/DonateButton';
-import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { DonateButton } from '@/components/DonateButton';
+import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { Header } from '@/components/Header';
 import type { Variant } from '@/engine/types';
 import { StarIcon } from '@/gallery/StarIcon';
