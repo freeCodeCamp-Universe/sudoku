@@ -14,7 +14,7 @@ import { useInitialFocusPreference } from '@/learn/hooks/useInitialFocusPreferen
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useProgress } from '@/learn/hooks/useProgress';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
-import { CheckCircleIcon } from '@/learn/icons';
+import { CheckCircleIcon } from '@/components/icons';
 import { Markdown } from '@/learn/features/Markdown/Markdown';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import { TabGroup } from '@/learn/features/TabGroup/TabGroup';

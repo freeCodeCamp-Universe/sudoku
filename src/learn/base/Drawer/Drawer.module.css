@@ -88,6 +88,11 @@
   cursor: pointer;
 }
 
+.close > svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
 .close:hover {
   color: var(--text-primary);
   background-color: var(--bg-surface);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChecklistItem, ChecklistStatus } from '@/learn/curriculum/lessonProgress';
-import { CheckCircleIcon, CircleIcon, XCircleIcon } from '@/learn/icons';
+import { CheckCircleIcon, CircleIcon, XCircleIcon } from '@/components/icons';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import styles from '@/learn/features/Checklist/Checklist.module.css';
 

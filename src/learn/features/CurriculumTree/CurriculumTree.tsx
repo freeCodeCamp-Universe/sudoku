@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CheckCircleIcon, CircleIcon } from '@/learn/icons';
+import { CheckCircleIcon, CircleIcon } from '@/components/icons';
 import { renderInline } from '@/learn/features/Markdown/RenderInline';
 import styles from '@/learn/features/CurriculumTree/CurriculumTree.module.css';
 

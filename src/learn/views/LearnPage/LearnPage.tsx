@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
 import { LoadingState } from '@/learn/base/LoadingState/LoadingState';
-import { FccLogoIcon } from '@/learn/icons';
+import { FccLogoIcon } from '@/components/icons';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
 import { CurriculumOverview } from '@/learn/views/CurriculumOverview/CurriculumOverview';
