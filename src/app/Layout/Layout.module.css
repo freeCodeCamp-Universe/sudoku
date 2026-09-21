@@ -5,27 +5,12 @@
   align-items: stretch;
   width: 100%;
   max-width: 100%;
-  padding: 12px;
   /* Lets the game page's board frame absorb vertical squeeze from the
      viewport-height body; other pages' content keeps its natural
      min-content protection and simply scrolls. */
   min-block-size: 0;
 }
 
-.pageWrapper:has([data-lesson-page='interactive']) {
-  padding: 0;
-}
-
 .pageWrapper:focus {
   outline: none;
-}
-
-@media (min-width: 1024px) {
-  .pageWrapper {
-    padding: 32px 24px 60px;
-  }
-
-  .pageWrapper:has([data-lesson-page='interactive']) {
-    padding: 0;
-  }
 }

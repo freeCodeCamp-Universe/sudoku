@@ -35,21 +35,14 @@
   margin-block-start: 12px;
 }
 
-.headerTopBar {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.learnButton {
-  margin-inline-end: auto;
-}
-
 .controls {
   display: grid;
   gap: 16px;
   margin-bottom: 28px;
+}
+
+.learnButton {
+  margin-inline-end: var(--space-md);
 }
 
 .searchWrap,

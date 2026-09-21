@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/Button';
 import { DonateButton } from '@/app/DonateButton';
 import { ThemeToggleButton } from '@/app/ThemeToggleButton';
+import { Header } from '@/components/Header';
 import type { Variant } from '@/engine/types';
 import { StarIcon } from '@/gallery/StarIcon';
 import { useFavorites } from '@/gallery/useFavorites';
@@ -116,108 +117,110 @@ export function Gallery() {
   }, [query, sortMode, showFavoritesOnly, favorites]);
 
   return (
-    <main id="main-content" tabIndex={-1} className={styles.main}>
-      <header className={styles.header}>
-        <div className={styles.headerTopBar}>
-          {import.meta.env.SHOW_LEARN === 'true' && (
-            <Button href="/learn" className={styles.learnButton}>
-              Learn
-            </Button>
-          )}
-          <ThemeToggleButton />
-          <DonateButton />
-        </div>
-        <h1 className={styles.heading}>SUDOKU</h1>
-        <p className={styles.subheading}>32 sudoku variants for every skill level</p>
-        <Button href={`/${randomVariantId}`} variant="cta" className={styles.randomPuzzleButton}>
-          Play a random puzzle
-        </Button>
-      </header>
+    <>
+      <Header leading={null}>
+        {import.meta.env.SHOW_LEARN === 'true' && (
+          <Button href="/learn" className={styles.learnButton}>
+            Learn
+          </Button>
+        )}
+        <ThemeToggleButton />
+        <DonateButton />
+      </Header>
+      <main id="main-content" tabIndex={-1} className={styles.main}>
+        <header className={styles.header}>
+          <h1 className={styles.heading}>SUDOKU</h1>
+          <p className={styles.subheading}>32 sudoku variants for every skill level</p>
+          <Button href={`/${randomVariantId}`} variant="cta" className={styles.randomPuzzleButton}>
+            Play a random puzzle
+          </Button>
+        </header>
 
-      <div className={styles.controls}>
-        <div className={styles.searchWrap}>
-          <input
-            type="search"
-            className={styles.search}
-            placeholder="Search puzzles..."
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="Search puzzles"
-            value={query}
-            onChange={(event) => {
-              const nextQuery = event.target.value;
-              setQuery(nextQuery);
-              setAnnouncement(resultAnnouncement(matchCount(nextQuery, showFavoritesOnly)));
-            }}
-          />
-        </div>
-
-        <div className={styles.filterRow}>
-          <button
-            type="button"
-            className={styles.favoritesFilter}
-            aria-pressed={showFavoritesOnly}
-            onClick={() => {
-              const next = !showFavoritesOnly;
-              localStorage.setItem('sudoku-favorites-filter', String(next));
-              setShowFavoritesOnly(next);
-              setAnnouncement(
-                `${next ? 'Showing favorites only.' : 'Showing all puzzles.'} ${resultAnnouncement(
-                  matchCount(query, next)
-                )}`
-              );
-            }}
-          >
-            <StarIcon className={styles.favoritesFilterStar} filled={showFavoritesOnly} />
-            Favorites only
-          </button>
-
-          <div className={styles.sortWrap}>
-            <label className={styles.sortLabel} htmlFor="sort-select">
-              Sort by
-            </label>
-            <select
-              id="sort-select"
-              className={styles.sortSelect}
-              aria-label="Sort puzzles by"
-              value={sortMode}
+        <div className={styles.controls}>
+          <div className={styles.searchWrap}>
+            <input
+              type="search"
+              className={styles.search}
+              placeholder="Search puzzles..."
+              autoComplete="off"
+              spellCheck={false}
+              aria-label="Search puzzles"
+              value={query}
               onChange={(event) => {
-                const mode = event.target.value as SortMode;
-                localStorage.setItem('sudoku-sort', mode);
-                setSortMode(mode);
-                setAnnouncement(`Sorted by ${SORT_LABELS[mode]}.`);
+                const nextQuery = event.target.value;
+                setQuery(nextQuery);
+                setAnnouncement(resultAnnouncement(matchCount(nextQuery, showFavoritesOnly)));
+              }}
+            />
+          </div>
+
+          <div className={styles.filterRow}>
+            <button
+              type="button"
+              className={styles.favoritesFilter}
+              aria-pressed={showFavoritesOnly}
+              onClick={() => {
+                const next = !showFavoritesOnly;
+                localStorage.setItem('sudoku-favorites-filter', String(next));
+                setShowFavoritesOnly(next);
+                setAnnouncement(
+                  `${next ? 'Showing favorites only.' : 'Showing all puzzles.'} ${resultAnnouncement(
+                    matchCount(query, next)
+                  )}`
+                );
               }}
             >
-              <option value="popularity">Popularity</option>
-              <option value="alpha">A-Z</option>
-              <option value="difficulty">Difficulty</option>
-            </select>
+              <StarIcon className={styles.favoritesFilterStar} filled={showFavoritesOnly} />
+              Favorites only
+            </button>
+
+            <div className={styles.sortWrap}>
+              <label className={styles.sortLabel} htmlFor="sort-select">
+                Sort by
+              </label>
+              <select
+                id="sort-select"
+                className={styles.sortSelect}
+                aria-label="Sort puzzles by"
+                value={sortMode}
+                onChange={(event) => {
+                  const mode = event.target.value as SortMode;
+                  localStorage.setItem('sudoku-sort', mode);
+                  setSortMode(mode);
+                  setAnnouncement(`Sorted by ${SORT_LABELS[mode]}.`);
+                }}
+              >
+                <option value="popularity">Popularity</option>
+                <option value="alpha">A-Z</option>
+                <option value="difficulty">Difficulty</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      {visibleVariants.length === 0 ? (
-        <p className={styles.noResults}>
-          {showFavoritesOnly && favorites.size === 0
-            ? 'No favorite puzzles yet. Tap the star on a card to save it.'
-            : 'No puzzles match your search.'}
-        </p>
-      ) : (
-        <div className={styles.grid}>
-          {visibleVariants.map((variant) => (
-            <VariantCard
-              key={variant.id}
-              variant={variant}
-              isFavorite={favorites.has(variant.id)}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
+        {visibleVariants.length === 0 ? (
+          <p className={styles.noResults}>
+            {showFavoritesOnly && favorites.size === 0
+              ? 'No favorite puzzles yet. Tap the star on a card to save it.'
+              : 'No puzzles match your search.'}
+          </p>
+        ) : (
+          <div className={styles.grid}>
+            {visibleVariants.map((variant) => (
+              <VariantCard
+                key={variant.id}
+                variant={variant}
+                isFavorite={favorites.has(variant.id)}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
+          </div>
+        )}
+
+        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {announcement}
         </div>
-      )}
-
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {announcement}
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

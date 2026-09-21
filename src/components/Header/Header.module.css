@@ -1,3 +1,53 @@
+.header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  inline-size: 100%;
+  padding-block: var(--space-xs);
+  padding-inline: var(--space-sm);
+  background-color: var(--bg-primary);
+}
+
+.leading,
+.content {
+  display: flex;
+  align-items: center;
+}
+
+.leading {
+  min-inline-size: 0;
+}
+
+.content {
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  min-inline-size: 0;
+}
+
+.home-link {
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xxs);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.home-link:hover {
+  background-color: var(--bg-surface);
+}
+
+@media (width >= 768px) {
+  .header {
+    padding-inline: var(--space-md);
+  }
+}
+
 .topBar {
   width: min(1280px, 100%);
   margin-inline: auto;
@@ -8,6 +58,22 @@
   gap: 8px;
   margin-block-end: 10px;
   position: relative;
+}
+
+.gameHeader {
+  margin-block-end: 0;
+  gap: var(--space-md);
+}
+
+.gameHeaderContent {
+  flex: 1;
+  justify-content: space-between;
+}
+
+.gameHeader .titleGroup {
+  position: static;
+  transform: none;
+  max-inline-size: none;
 }
 
 @media (min-width: 600px) {
@@ -22,7 +88,7 @@
 /* Landscape-mobile modifier (set by the compact prop). Declared after the
    media block so equal specificity resolves by source order. */
 .topBarCompact {
-  margin-block-end: 12px;
+  margin-block-end: 0;
 }
 
 .titleGroup {
@@ -33,8 +99,15 @@
   gap: 4px;
 }
 
+.gameHeader .titleGroup {
+  position: static;
+  transform: none;
+  max-inline-size: none;
+}
+
 .title {
   min-width: 0;
+  margin: 0;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-bright);
@@ -100,7 +173,7 @@
 .utilityRow {
   width: min(1280px, 100%);
   margin-block-end: 10px;
-  padding-inline: 0;
+  padding-inline: var(--space-sm);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -118,7 +191,13 @@
 
 @media (min-width: 600px) {
   .utilityRow {
-    padding-inline: 16px;
+    padding-inline: var(--space-sm);
+  }
+}
+
+@media (width >= 768px) {
+  .utilityRow {
+    padding-inline: var(--space-md);
   }
 }
 
@@ -264,7 +343,7 @@
 
 @media (min-width: 1024px) {
   .utilityRow {
-    padding-inline: 0;
+    padding-inline: var(--space-md);
     margin-block-end: 20px;
   }
 

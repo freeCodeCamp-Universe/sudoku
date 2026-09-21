@@ -10,7 +10,11 @@ import { StarIcon } from '@/gallery/StarIcon';
 import styles from './Header.module.css';
 
 interface HeaderProps {
-  title: string;
+  title?: string;
+  leading?: ReactNode;
+  leadingClassName?: string;
+  children?: ReactNode;
+  contentClassName?: string;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   /*
@@ -37,6 +41,39 @@ interface HeaderUtilityRowProps {
   timer?: ReactNode;
   onHelpOpen?: () => void;
   modeControl?: ReactNode;
+}
+
+interface PuzzleHeaderProps extends HeaderProps {
+  title: string;
+}
+
+export function Header(props: HeaderProps) {
+  if (props.leading !== undefined || props.children !== undefined) {
+    return (
+      <header className={styles.header}>
+        <div
+          className={
+            props.leadingClassName ? `${styles.leading} ${props.leadingClassName}` : styles.leading
+          }
+        >
+          {props.leading}
+        </div>
+        <div
+          className={
+            props.contentClassName ? `${styles.content} ${props.contentClassName}` : styles.content
+          }
+        >
+          {props.children}
+        </div>
+      </header>
+    );
+  }
+
+  if (!props.title) {
+    throw new Error('Header title is required for puzzle headers');
+  }
+
+  return <PuzzleHeader {...props} title={props.title} />;
 }
 
 export function HeaderUtilityRow({ timer, onHelpOpen, modeControl }: HeaderUtilityRowProps) {
@@ -71,7 +108,7 @@ export function HeaderUtilityRow({ timer, onHelpOpen, modeControl }: HeaderUtili
   );
 }
 
-export function Header({
+function PuzzleHeader({
   title,
   isFavorite = false,
   onToggleFavorite,
@@ -90,7 +127,7 @@ export function Header({
   onToggleHighlightPeers,
   onToggleNavOnLeft,
   renderUtilityRow = true,
-}: HeaderProps) {
+}: PuzzleHeaderProps) {
   const { theme, toggleTheme, highContrast, toggleHighContrast } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -102,7 +139,13 @@ export function Header({
 
   return (
     <>
-      <header className={compact ? `${styles.topBar} ${styles.topBarCompact}` : styles.topBar}>
+      <header
+        className={
+          compact
+            ? `${styles.header} ${styles.gameHeader} ${styles.topBarCompact}`
+            : `${styles.header} ${styles.gameHeader}`
+        }
+      >
         {onBack ? (
           <button type="button" className={styles.backBtn} onClick={onBack}>
             <svg
