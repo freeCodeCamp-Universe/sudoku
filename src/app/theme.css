@@ -429,13 +429,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
-}
-
-@media (min-width: 1024px) {
-  body {
-    padding: 32px 24px 60px;
-  }
 }
 
 a,

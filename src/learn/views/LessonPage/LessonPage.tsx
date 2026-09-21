@@ -66,7 +66,7 @@ export function LessonPage({
   const interactivePanel = InteractivePanel ?? PlaceholderPanel;
 
   return (
-    <div className={styles.wrapper} data-lesson-page>
+    <div className={styles.wrapper} data-lesson-page={prose ? 'prose' : 'interactive'}>
       {showToolbar && (
         <LessonToolbar
           lesson={lesson}

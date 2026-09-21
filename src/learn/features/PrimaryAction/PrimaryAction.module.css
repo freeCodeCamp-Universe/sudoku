@@ -1,6 +1,7 @@
 .hint {
   display: none;
   font-family: inherit;
+  margin-inline-start: 0.25rem;
 }
 
 @media (width >= 768px) and (hover: hover) {
