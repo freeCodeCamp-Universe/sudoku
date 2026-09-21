@@ -18,7 +18,7 @@ export function CourseLayout({ children }: Props) {
       </a>
       <header className={styles.header}>
         <Link to="/" className={styles['home-link']}>
-          Sudoku
+          {currentLessonId ? 'Sudoku' : 'Home'}
         </Link>
         <HeaderControls
           showDrawer={Boolean(currentLessonId)}

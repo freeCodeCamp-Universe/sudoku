@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { KbdCombo } from '@/components/KbdCombo';
-import { useAltKeyName } from '@/hooks/usePlatformModifier';
 import styles from '@/learn/features/CurriculumSearch/CurriculumSearch.module.css';
 
 interface Props {
@@ -10,11 +9,10 @@ interface Props {
 
 export function CurriculumSearch({ query, onQueryChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const altKeyName = useAltKeyName();
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+      if ((!event.ctrlKey && !event.metaKey) || event.altKey || event.shiftKey) {
         return;
       }
       if (event.code !== 'KeyK') {
@@ -42,10 +40,10 @@ export function CurriculumSearch({ query, onQueryChange }: Props) {
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Search lessons by title or ID"
           aria-label="Search lessons by title or ID"
-          aria-keyshortcuts={`${altKeyName}+K`}
+          aria-keyshortcuts="Meta+K Control+K"
         />
         <span className={styles.hint} aria-hidden="true">
-          <KbdCombo keys={['Alt', 'K']} separateAll className={styles['hint-combo']} />
+          <KbdCombo keys={['Cmd', 'K']} showSeparators={false} className={styles['hint-combo']} />
         </span>
       </label>
     </div>

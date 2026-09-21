@@ -42,7 +42,7 @@ describe('CourseLayout', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('link', { name: 'Sudoku' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(screen.getByText('Overview')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'false');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'false');

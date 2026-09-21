@@ -2,6 +2,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  inline-size: 100%;
   max-inline-size: var(--measure-text);
   margin-inline: auto;
   padding-inline: var(--space-md);
