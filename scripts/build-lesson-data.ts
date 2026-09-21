@@ -73,6 +73,7 @@ if (isProductionBuild || env.SHOW_LEARN !== 'true') {
   }
 
   const orderedIds = content.modules.flatMap((m) => m.lessonIds);
+  const dataFileById = new Map<string, string>();
 
   for (const lesson of content.lessons) {
     const client = toClientLesson(lesson);
@@ -103,9 +104,10 @@ if (isProductionBuild || env.SHOW_LEARN !== 'true') {
     const hash = createHash('sha256').update(json).digest('hex').slice(0, 8);
     const dataFile = `${lesson.id}.${hash}.json`;
     writeFileSync(join(outputDir, dataFile), json);
+    dataFileById.set(lesson.id, dataFile);
   }
 
-  const treeModules = buildTreeModules(content.modules, content.lessons);
+  const treeModules = buildTreeModules(content.modules, content.lessons, dataFileById);
   const tree = { modules: treeModules, orderedLessonIds: orderedIds };
   writeFileSync(curriculumTreePath, JSON.stringify(tree, null, 2));
 

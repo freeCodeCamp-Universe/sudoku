@@ -455,3 +455,13 @@ select {
   flex-direction: column;
   min-block-size: 0;
 }
+
+/*
+ * Lesson pages own the viewport below the application shell. The page wrapper
+ * is an extra flex layer around the course header and lesson workspace.
+ */
+#root:has([data-lesson-page]),
+#root:has([data-tab]) {
+  block-size: 100dvh;
+  overflow: hidden;
+}

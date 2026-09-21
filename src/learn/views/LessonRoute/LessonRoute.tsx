@@ -8,11 +8,11 @@ export function LessonRoute() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { data, loading, error } = useLessonData(lessonId ?? '');
 
-  if (loading || !data) {
+  if (loading) {
     return <LoadingState label="Loading lesson" />;
   }
 
-  if (error) {
+  if (error || !data) {
     return (
       <main id="main-content" tabIndex={-1}>
         <p>Lesson not found.</p>
