@@ -28,7 +28,7 @@
 
 .action:hover {
   border-color: var(--accent-blue);
-  color: var(--text-primary);
+  color: var(--accent-blue);
 }
 
 .action-keyboard-only {
@@ -37,7 +37,7 @@
 
 .open {
   border-color: var(--accent-blue);
-  color: var(--text-primary);
+  color: var(--accent-blue);
 }
 
 .action:focus-visible {
