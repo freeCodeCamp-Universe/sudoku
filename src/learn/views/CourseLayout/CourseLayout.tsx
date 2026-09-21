@@ -18,8 +18,11 @@ export function CourseLayout({ children }: Props) {
         Skip to main content
       </a>
       <Header
-        leading={<Link to="/">{currentLessonId ? 'Sudoku' : 'Home'}</Link>}
-        leadingClassName={styles['home-link']}
+        leading={
+          <Link to="/" className={styles['home-link']}>
+            {currentLessonId ? 'Sudoku' : 'Home'}
+          </Link>
+        }
       >
         <HeaderControls
           showDrawer={Boolean(currentLessonId)}

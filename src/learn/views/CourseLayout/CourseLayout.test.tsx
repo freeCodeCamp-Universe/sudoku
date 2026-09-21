@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { CourseLayout } from '@/learn/views/CourseLayout/CourseLayout';
+import styles from '@/components/Header/Header.module.css';
 
 vi.mock('@/learn/features/HeaderControls/HeaderControls', () => ({
   HeaderControls: ({
@@ -49,6 +50,7 @@ describe('CourseLayout', () => {
     );
 
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveClass(styles['home-link']);
     expect(screen.getByText('Overview')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'false');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'false');
