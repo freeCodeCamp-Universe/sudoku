@@ -23,6 +23,8 @@ export function CourseLayout({ children }: Props) {
         <HeaderControls
           showDrawer={Boolean(currentLessonId)}
           showShortcuts={Boolean(currentLessonId)}
+          showSettings={Boolean(currentLessonId)}
+          showThemeToggle={!currentLessonId}
         />
       </header>
       {children}

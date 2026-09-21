@@ -7,14 +7,20 @@ vi.mock('@/learn/features/HeaderControls/HeaderControls', () => ({
   HeaderControls: ({
     showDrawer,
     showShortcuts,
+    showSettings,
+    showThemeToggle,
   }: {
     showDrawer?: boolean;
     showShortcuts?: boolean;
+    showSettings?: boolean;
+    showThemeToggle?: boolean;
   }) => (
     <div
       data-testid="header-controls"
       data-show-drawer={showDrawer}
       data-show-shortcuts={showShortcuts}
+      data-show-settings={showSettings}
+      data-show-theme-toggle={showThemeToggle}
     />
   ),
 }));
@@ -46,6 +52,8 @@ describe('CourseLayout', () => {
     expect(screen.getByText('Overview')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'false');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'false');
+    expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-settings', 'false');
+    expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-theme-toggle', 'true');
     expect(screen.getByTestId('course-overlays')).toHaveAttribute('data-current-lesson', '');
   });
 
@@ -68,6 +76,11 @@ describe('CourseLayout', () => {
     expect(screen.getByText('Lesson')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'true');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'true');
+    expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-settings', 'true');
+    expect(screen.getByTestId('header-controls')).toHaveAttribute(
+      'data-show-theme-toggle',
+      'false'
+    );
     expect(screen.getByTestId('course-overlays')).toHaveAttribute('data-current-lesson', '101');
   });
 });

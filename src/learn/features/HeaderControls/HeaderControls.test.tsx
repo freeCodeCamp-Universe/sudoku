@@ -34,6 +34,15 @@ describe('HeaderControls', () => {
     expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
   });
 
+  it('should render the theme toggle without settings when requested', () => {
+    renderControls(<HeaderControls showSettings={false} showThemeToggle />);
+
+    expect(screen.queryByRole('button', { name: 'Settings' })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /switch to (dark|light) theme/i })
+    ).toBeInTheDocument();
+  });
+
   it('should hide the drawer control when requested', () => {
     renderControls(<HeaderControls showDrawer={false} />);
     expect(screen.queryByRole('button', { name: /open lessons/i })).not.toBeInTheDocument();
