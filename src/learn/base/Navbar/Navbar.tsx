@@ -12,7 +12,7 @@ export function Navbar({ onOpenShortcuts, onOpenSettings }: NavbarProps) {
   return (
     <header className={styles.navbar}>
       <a href="/" className={styles.home}>
-        Sudoku
+        Home
       </a>
       <div className={styles.actions}>
         <button

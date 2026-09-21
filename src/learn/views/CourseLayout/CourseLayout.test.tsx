@@ -75,6 +75,7 @@ describe('CourseLayout', () => {
       </MemoryRouter>
     );
 
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(screen.getByText('Lesson')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'true');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'true');

@@ -20,7 +20,7 @@ export function CourseLayout({ children }: Props) {
       <Header
         leading={
           <Link to="/" className={styles['home-link']}>
-            {currentLessonId ? 'Sudoku' : 'Home'}
+            Home
           </Link>
         }
       >
