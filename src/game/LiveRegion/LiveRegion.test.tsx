@@ -16,7 +16,7 @@ describe('LiveRegion', () => {
     render(<LiveRegion ref={createRef()} />);
     const element = screen.getByRole('status');
 
-    expect(element.className).toContain('srOnly');
+    expect(element).toHaveClass('sr-only');
   });
 
   it('should forward the ref to the DOM element', () => {

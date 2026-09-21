@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
 import { LoadingState } from '@/learn/base/LoadingState/LoadingState';
-import { FccLogoIcon } from '@/components/icons';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
 import { CurriculumOverview } from '@/learn/views/CurriculumOverview/CurriculumOverview';
@@ -30,18 +29,6 @@ export function LearnPage() {
         <h1 className={styles.title}>Learn Sudoku</h1>
         <CurriculumOverview />
       </main>
-      <footer className={styles.footer}>
-        <p className={styles['footer-text']}>
-          <FccLogoIcon className={styles['footer-logo']} />
-          <span>
-            Developed by the{' '}
-            <a href="https://www.freecodecamp.org" target="_blank" rel="noopener noreferrer">
-              freeCodeCamp
-            </a>{' '}
-            team
-          </span>
-        </p>
-      </footer>
     </>
   );
 }

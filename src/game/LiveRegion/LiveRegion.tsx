@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import styles from './LiveRegion.module.css';
 
 export const LiveRegion = forwardRef<HTMLDivElement>(function LiveRegion(_props, ref) {
   return (
@@ -9,7 +8,7 @@ export const LiveRegion = forwardRef<HTMLDivElement>(function LiveRegion(_props,
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className={styles.srOnly}
+      className="sr-only"
     />
   );
 });

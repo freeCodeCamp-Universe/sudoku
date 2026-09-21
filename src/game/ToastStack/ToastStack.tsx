@@ -177,7 +177,7 @@ export function ToastStack({
 
   return createPortal(
     <>
-      <span role="status" className={styles.srOnly}>
+      <span role="status" className="sr-only">
         {announced}
       </span>
       {toasts.length > 0 ? (

@@ -68,7 +68,7 @@ export function Timer({
         display
       )}
       {onTogglePause ? (
-        <span id={timerDescriptionId} className={styles.srOnly} role="timer" aria-live="off">
+        <span id={timerDescriptionId} className="sr-only" role="timer" aria-live="off">
           Elapsed time {display}
         </span>
       ) : null}

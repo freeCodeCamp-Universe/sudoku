@@ -137,7 +137,7 @@ export function Cell({
       onClick={onClick}
       {...rest}
     >
-      <span className={styles.srOnly}>{description}</span>
+      <span className="sr-only">{description}</span>
       {value !== undefined ? (
         symbolKind === 'color' ? (
           <>

@@ -747,7 +747,7 @@ function GameInner({
   const mobileModeControl =
     !isDesktop && variant.supportsMode !== false ? (
       <label className={styles.utilityMode}>
-        <span className={styles.srOnly}>Mode</span>
+        <span className="sr-only">Mode</span>
         <select
           aria-label="Mode"
           value={settings.mode}
@@ -980,7 +980,7 @@ function GameInner({
           New Game
         </Button>
       ) : null}
-      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {pauseAnnouncement}
       </div>
       <div role="status" aria-live="polite">

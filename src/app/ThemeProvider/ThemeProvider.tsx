@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import '@/app/theme.css';
 import '@/app/layers.css';
 import { ThemeContext, type Theme, type ThemeContextValue } from './context';
-import styles from './ThemeProvider.module.css';
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -69,7 +68,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
     <ThemeContext.Provider value={value}>
       {children}
-      <span role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+      <span role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </span>
     </ThemeContext.Provider>

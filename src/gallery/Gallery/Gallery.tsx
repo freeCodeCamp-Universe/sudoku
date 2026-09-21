@@ -215,7 +215,7 @@ export function Gallery() {
         </div>
       )}
 
-      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
     </main>

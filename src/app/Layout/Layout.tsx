@@ -52,7 +52,7 @@ export function Layout({ children }: LayoutProps) {
     <div ref={wrapperRef} tabIndex={-1} className={styles.pageWrapper}>
       <SkipLink />
       {children}
-      <div role="status" aria-live="polite" aria-atomic="true" className={styles.srOnly}>
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
     </div>
