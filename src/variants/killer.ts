@@ -227,13 +227,8 @@ export const killer: Variant = {
   ],
   popularity: 2,
   difficulty: 'intermediate',
-  difficultyRank: 13,
-  // The cageSum constraint forces the slower generic solve() path (not the
-  // fast uniqueness-propagation one), and empirically it cannot prove
-  // uniqueness below ~23-27 givens for this cage layout -- below the target
-  // for every Mode (18/15/12), so Easy/Medium/Expert are indistinguishable
-  // 100% of the time, not just occasionally like other small-target variants.
-  supportsMode: false,
+  difficultyRank: 11,
+  supportsMode: true,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 }, cellSize: 'spacious' },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
@@ -241,5 +236,5 @@ export const killer: Variant = {
   overlayIds: ['cage'],
   annotatorIds: ['cage-sum'],
   deriveStructure: carveCages,
-  generateGivens: makeGenerateGivens(15),
+  generateGivens: makeGenerateGivens({ baseTarget: 15, deriveStructure: carveCages }),
 };

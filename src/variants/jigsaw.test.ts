@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
-import { generate, generateSolution } from '@/engine/generate';
+import { generate } from '@/engine/generate';
 import { range } from '@/engine/grid';
-import { solve } from '@/engine/solve';
+import { hasUniqueSolution } from '@/engine/solve';
 import { validate } from '@/engine/validate';
 import {
   generateJigsawRegions,
@@ -63,10 +63,10 @@ describe('jigsaw validate', () => {
 
 describe('jigsaw generate + solve (preset A)', () => {
   it('should produce a uniquely solvable puzzle', () => {
-    const model = buildModel(makeJigsawVariant(PRESET_LAYOUTS[0]));
+    const model = buildModel(makePlayableJigsawVariant(PRESET_LAYOUTS[0]));
     const { givens } = generate(model, 'intermediate', seeded(50));
 
-    expect(solve(model, givens, { max: 2 })).toHaveLength(1);
+    expect(hasUniqueSolution(model, givens)).toBe(true);
   });
 });
 
@@ -142,7 +142,8 @@ describe('generateJigsawRegions', () => {
       const { givens } = generate(model, 'intermediate', seeded(seed));
 
       expect(Date.now() - start).toBeLessThan(1000);
-      expect(givens.size).toBe(31);
+      expect(givens.size).toBeGreaterThanOrEqual(32);
+      expect(hasUniqueSolution(model, givens)).toBe(true);
     }
   });
 });
@@ -155,17 +156,8 @@ describe('makePlayableJigsawVariant', () => {
     expect(variant.deriveStructure?.({} as never, model)).toEqual({ regions: PRESET_LAYOUTS[1] });
   });
 
-  it('should blank cells to a fixed given count without a uniqueness search', () => {
-    const variant = makePlayableJigsawVariant(PRESET_LAYOUTS[2]);
-    const model = buildModel(variant);
-    const solution = generateSolution(model);
-
-    const givens = variant.generateGivens?.(solution, model, variant.difficulty, seeded(9));
-
-    expect(givens?.size).toBe(31);
-    for (const [id, value] of givens ?? []) {
-      expect(value).toBe(solution.get(id));
-    }
+  it('should support player-facing clue density modes', () => {
+    expect(makePlayableJigsawVariant(PRESET_LAYOUTS[2]).supportsMode).toBe(true);
   });
 });
 
@@ -179,7 +171,8 @@ describe('jigsaw generate perf', () => {
         const { givens } = generate(model, 'intermediate', seeded(p * 100 + i));
 
         expect(Date.now() - start).toBeLessThan(500);
-        expect(givens.size).toBe(31);
+        expect(givens.size).toBeGreaterThanOrEqual(32);
+        expect(hasUniqueSolution(model, givens)).toBe(true);
       }
     }
   });
