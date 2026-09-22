@@ -5,7 +5,6 @@ import { useTheme } from '@/app/ThemeProvider';
 import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { GearIcon, KeyboardIcon, ListIcon } from '@/components/icons';
 import { Button } from '@/components/Button';
-import { useAnimationsPreference } from '@/learn/hooks/useAnimationsPreference';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
 import styles from '@/learn/HeaderControls/HeaderControls.module.css';
@@ -27,7 +26,6 @@ export function HeaderControls({
 }: HeaderControlsProps) {
   const { openDrawer, openShortcuts, openSettings, closeSettings, settingsOpen } =
     useCourseChrome();
-  const { animationsEnabled, setAnimationsEnabled } = useAnimationsPreference();
   const { shortcutsEnabled, setShortcutsEnabled } = useShortcutsPreference();
   const { theme, toggleTheme, highContrast, toggleHighContrast } = useTheme();
 
@@ -63,23 +61,28 @@ export function HeaderControls({
           openButtonClassName={styles.open}
           trigger={<GearIcon />}
         >
-          <Toggle
-            id="learn-settings-dark-theme"
-            label="Dark theme"
-            checked={theme === 'dark'}
-            onChange={toggleTheme}
-          />
+          {themeToggleDesktopOnly ? (
+            <div className={styles.mobileOnly}>
+              <Toggle
+                id="learn-settings-dark-theme"
+                label="Dark theme"
+                checked={theme === 'dark'}
+                onChange={toggleTheme}
+              />
+            </div>
+          ) : (
+            <Toggle
+              id="learn-settings-dark-theme"
+              label="Dark theme"
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+            />
+          )}
           <Toggle
             id="learn-settings-shortcuts"
             label="Keyboard shortcuts"
             checked={shortcutsEnabled}
             onChange={() => setShortcutsEnabled(!shortcutsEnabled)}
-          />
-          <Toggle
-            id="learn-settings-animations"
-            label="Animations"
-            checked={animationsEnabled}
-            onChange={() => setAnimationsEnabled(!animationsEnabled)}
           />
           <Toggle
             id="learn-settings-high-contrast"

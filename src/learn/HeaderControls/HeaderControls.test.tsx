@@ -76,7 +76,7 @@ describe('HeaderControls', () => {
     expect(screen.getByRole('group', { name: 'Settings' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Dark theme' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Keyboard shortcuts' })).toBeInTheDocument();
-    expect(screen.getByRole('switch', { name: 'Animations' })).toBeInTheDocument();
+    expect(screen.queryByRole('switch', { name: 'Animations' })).not.toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'High contrast' })).toBeInTheDocument();
   });
 

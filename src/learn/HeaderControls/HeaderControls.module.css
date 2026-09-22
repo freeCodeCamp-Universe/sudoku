@@ -8,6 +8,10 @@
   display: none;
 }
 
+.mobileOnly {
+  display: contents;
+}
+
 .action {
   display: inline-flex;
   align-items: center;
@@ -58,5 +62,9 @@
 @media (width >= 1024px) {
   .desktopOnly {
     display: contents;
+  }
+
+  .mobileOnly {
+    display: none;
   }
 }
