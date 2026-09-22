@@ -14,6 +14,8 @@
     "docs:colors": "tsx scripts/generateColorDocs.ts",
     "contrast:report": "tsx scripts/contrastReport.ts",
     "contrast:ladder": "tsx scripts/chipLadderReport.ts",
+    "add-lesson": "tsx scripts/add-lesson.ts",
+    "add-module": "tsx scripts/add-module.ts",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "prepare": "husky"
