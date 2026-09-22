@@ -16,7 +16,7 @@ export const orderedLessonIds = modules.flatMap((module) => module.lessonIds);
 
 /**
  * Every lesson is reachable: learners pick freely from the overview or the nav
- * drawer, and `Alt+N`/`Alt+P` step across the whole course. Completion is still
+ * drawer, and `Shift+N`/`Shift+P` step across the whole course. Completion is still
  * tracked (for checkmarks) and the first incomplete lesson is surfaced as the
  * frontier so the overview can highlight where the learner left off.
  */

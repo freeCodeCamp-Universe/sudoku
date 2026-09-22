@@ -14,7 +14,12 @@ interface Shortcut {
   action: string;
 }
 
-const SHORTCUTS: Shortcut[] = [{ keys: ['Alt', '/'], action: 'Show keyboard shortcuts dialog' }];
+const SHORTCUTS: Shortcut[] = [
+  { keys: ['Shift', 'P'], action: 'Go to the previous lesson' },
+  { keys: ['Shift', 'N'], action: 'Go to the next lesson' },
+  { keys: ['Shift', '1'], action: 'Focus the instruction panel' },
+  { keys: ['Shift', '2'], action: 'Focus the interactive panel' },
+];
 
 export function ShortcutsModal({ open, onClose, triggerElement }: ShortcutsModalProps) {
   const { shortcutsEnabled } = useShortcutsPreference();

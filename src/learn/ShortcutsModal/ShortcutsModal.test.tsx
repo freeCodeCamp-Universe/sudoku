@@ -30,16 +30,33 @@ describe('ShortcutsModal', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('should render the Alt+/ binding', async () => {
+  it('should render the lesson shortcut bindings', async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
     await user.click(screen.getByRole('button', { name: 'keyboard shortcuts' }));
 
     const dialog = screen.getByRole('dialog', { name: 'Keyboard Shortcuts' });
-    expect(within(dialog).getByRole('cell', { name: 'Alt + /' })).toBeInTheDocument();
-    expect(within(dialog).getByText('Show keyboard shortcuts dialog')).toBeInTheDocument();
+    expect(within(dialog).getByRole('cell', { name: 'Shift + P' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Go to the previous lesson')).toBeInTheDocument();
     expect(within(dialog).queryByText('The following keyboard shortcuts are enabled.')).toBeNull();
+  });
+
+  it('should render the lesson navigation and focus bindings', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: 'keyboard shortcuts' }));
+
+    const dialog = screen.getByRole('dialog', { name: 'Keyboard Shortcuts' });
+    expect(within(dialog).getByRole('cell', { name: 'Shift + P' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Go to the previous lesson')).toBeInTheDocument();
+    expect(within(dialog).getByRole('cell', { name: 'Shift + N' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Go to the next lesson')).toBeInTheDocument();
+    expect(within(dialog).getByRole('cell', { name: 'Shift + 1' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Focus the instruction panel')).toBeInTheDocument();
+    expect(within(dialog).getByRole('cell', { name: 'Shift + 2' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Focus the interactive panel')).toBeInTheDocument();
   });
 
   it('should close when Got it is clicked', async () => {

@@ -149,7 +149,6 @@ export function LessonWorkspace({
     onFocusInteractivePanel: prose ? () => {} : focusInteractive,
     onFocusInstructions: prose ? () => {} : focusInstructions,
     onOpenDrawer: chrome.openDrawer,
-    onOpenShortcuts: chrome.openShortcuts,
     announce: announceShortcut,
     enabled:
       shortcutsEnabled && !chrome.drawerOpen && !chrome.shortcutsOpen && !chrome.settingsOpen,

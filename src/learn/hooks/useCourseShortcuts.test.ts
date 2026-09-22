@@ -13,7 +13,6 @@ function setup(overrides: Partial<UseCourseShortcutsOptions> = {}) {
   const onFocusInteractivePanel = vi.fn();
   const onFocusInstructions = vi.fn();
   const onOpenDrawer = vi.fn();
-  const onOpenShortcuts = vi.fn();
   const announce = vi.fn();
 
   const options: UseCourseShortcutsOptions = {
@@ -23,7 +22,6 @@ function setup(overrides: Partial<UseCourseShortcutsOptions> = {}) {
     onFocusInteractivePanel,
     onFocusInstructions,
     onOpenDrawer,
-    onOpenShortcuts,
     announce,
     ...overrides,
   };
@@ -40,7 +38,6 @@ function setup(overrides: Partial<UseCourseShortcutsOptions> = {}) {
     onFocusInteractivePanel,
     onFocusInstructions,
     onOpenDrawer,
-    onOpenShortcuts,
     announce,
     rerender,
     unmount,
@@ -71,10 +68,26 @@ describe('useCourseShortcuts', () => {
     expect(onNavigate).toHaveBeenCalledWith('c');
   });
 
+  it('should move to the next reachable lesson on Shift+N', () => {
+    const { onNavigate } = setup();
+
+    press('KeyN', { shiftKey: true });
+
+    expect(onNavigate).toHaveBeenCalledWith('c');
+  });
+
   it('should move to the previous reachable lesson on Alt+P', () => {
     const { onNavigate } = setup();
 
     press('KeyP', { altKey: true });
+
+    expect(onNavigate).toHaveBeenCalledWith('a');
+  });
+
+  it('should move to the previous reachable lesson on Shift+P', () => {
+    const { onNavigate } = setup();
+
+    press('KeyP', { shiftKey: true });
 
     expect(onNavigate).toHaveBeenCalledWith('a');
   });
@@ -105,10 +118,26 @@ describe('useCourseShortcuts', () => {
     expect(onFocusInstructions).toHaveBeenCalledTimes(1);
   });
 
+  it('should focus the instructions panel on Shift+1', () => {
+    const { onFocusInstructions } = setup();
+
+    press('Digit1', { shiftKey: true });
+
+    expect(onFocusInstructions).toHaveBeenCalledTimes(1);
+  });
+
   it('should focus the terminal on Alt+2', () => {
     const { onFocusInteractivePanel } = setup();
 
     press('Digit2', { altKey: true });
+
+    expect(onFocusInteractivePanel).toHaveBeenCalledTimes(1);
+  });
+
+  it('should focus the terminal on Shift+2', () => {
+    const { onFocusInteractivePanel } = setup();
+
+    press('Digit2', { shiftKey: true });
 
     expect(onFocusInteractivePanel).toHaveBeenCalledTimes(1);
   });
@@ -127,14 +156,6 @@ describe('useCourseShortcuts', () => {
     press('KeyK', { altKey: true });
 
     expect(onOpenDrawer).not.toHaveBeenCalled();
-  });
-
-  it('should open the shortcuts modal on Alt+/', () => {
-    const { onOpenShortcuts } = setup();
-
-    press('Slash', { altKey: true });
-
-    expect(onOpenShortcuts).toHaveBeenCalledTimes(1);
   });
 
   it('should leave Cmd/Ctrl+M available to the browser or operating system', () => {
@@ -158,38 +179,28 @@ describe('useCourseShortcuts', () => {
   });
 
   it('should ignore bare keys so typed commands are untouched', () => {
-    const {
-      onNavigate,
-      onFocusInteractivePanel,
-      onFocusInstructions,
-      onOpenDrawer,
-      onOpenShortcuts,
-    } = setup();
+    const { onNavigate, onFocusInteractivePanel, onFocusInstructions, onOpenDrawer } = setup();
 
     press('KeyN');
     press('KeyP');
     press('Digit1');
     press('Digit2');
     press('KeyM');
-    press('Slash');
 
     expect(onNavigate).not.toHaveBeenCalled();
     expect(onFocusInteractivePanel).not.toHaveBeenCalled();
     expect(onFocusInstructions).not.toHaveBeenCalled();
     expect(onOpenDrawer).not.toHaveBeenCalled();
-    expect(onOpenShortcuts).not.toHaveBeenCalled();
   });
 
   it('should not act while disabled', () => {
-    const { onNavigate, onOpenDrawer, onOpenShortcuts } = setup({ enabled: false });
+    const { onNavigate, onOpenDrawer } = setup({ enabled: false });
 
     press('KeyN', { altKey: true });
     press('KeyM', { altKey: true });
-    press('Slash', { shiftKey: true });
 
     expect(onNavigate).not.toHaveBeenCalled();
     expect(onOpenDrawer).not.toHaveBeenCalled();
-    expect(onOpenShortcuts).not.toHaveBeenCalled();
   });
 
   it('should stop firing after unmount', () => {
