@@ -149,14 +149,12 @@ function PuzzleHeader({
         }
       >
         {onBack ? (
-          <button type="button" className={styles.backBtn} onClick={onBack}>
+          <button type="button" className={styles.backBtn} aria-label="Home" onClick={onBack}>
             <HomeIcon width="20" height="20" />
-            <span className={styles.backBtnText}>Home</span>
           </button>
         ) : (
-          <Link to={backHref ?? '/'} className={styles.backBtn}>
+          <Link to={backHref ?? '/'} className={styles.backBtn} aria-label="Home">
             <HomeIcon width="20" height="20" />
-            <span className={styles.backBtnText}>Home</span>
           </Link>
         )}
         <div className={styles.titleGroup}>

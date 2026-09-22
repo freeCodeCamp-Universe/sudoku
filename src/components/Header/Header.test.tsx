@@ -51,7 +51,10 @@ describe('Header', () => {
   it('should render a home link pointing to the provided href', () => {
     renderHeader();
 
-    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    const homeLink = screen.getByRole('link', { name: 'Home' });
+
+    expect(homeLink).toHaveAttribute('href', '/');
+    expect(screen.queryByText('Home')).not.toBeInTheDocument();
   });
 
   it('should render the Donate link with the configured campaign URL', () => {

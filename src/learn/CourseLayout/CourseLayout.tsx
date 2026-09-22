@@ -20,9 +20,8 @@ export function CourseLayout({ children }: Props) {
       </a>
       <Header
         leading={
-          <Link to="/" className={styles.backBtn}>
+          <Link to="/" className={styles.backBtn} aria-label="Home">
             <HomeIcon width="20" height="20" />
-            <span className={styles.backBtnText}>Home</span>
           </Link>
         }
         center={
