@@ -1,4 +1,4 @@
-import type { CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
+import type { CurriculumTreeModule } from '@/learn/CurriculumTree/CurriculumTree';
 import type { LessonDefinition, ModuleDefinition } from '@/learn/curriculum/types';
 
 export function buildTreeModules(

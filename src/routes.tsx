@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import { Gallery } from '@/gallery/Gallery';
 import { GamePage } from '@/game/GamePage';
-import { CourseLayout } from '@/learn/views/CourseLayout/CourseLayout';
-import { LearnPage } from '@/learn/views/LearnPage/LearnPage';
-import { LessonRoute } from '@/learn/views/LessonRoute/LessonRoute';
+import { CourseLayout } from '@/learn/CourseLayout/CourseLayout';
+import { LearnPage } from '@/learn/LearnPage/LearnPage';
+import { LessonRoute } from '@/learn/LessonRoute/LessonRoute';
 
 export function AppRoutes() {
   const showLearn = import.meta.env.SHOW_LEARN === 'true';

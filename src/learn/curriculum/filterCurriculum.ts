@@ -1,4 +1,4 @@
-import type { CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
+import type { CurriculumTreeModule } from '@/learn/CurriculumTree/CurriculumTree';
 
 /**
  * Parses a "#"-prefixed shorthand like "#101" or "#611" into module/lesson coordinates.

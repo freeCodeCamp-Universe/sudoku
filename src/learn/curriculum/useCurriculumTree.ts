@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { CurriculumTreeModule } from '@/learn/features/CurriculumTree/CurriculumTree';
+import type { CurriculumTreeModule } from '@/learn/CurriculumTree/CurriculumTree';
 
 export interface CurriculumTree {
   modules: CurriculumTreeModule[];

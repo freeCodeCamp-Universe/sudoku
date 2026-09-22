@@ -8,7 +8,7 @@ const projectRoot = resolve(import.meta.dirname, '..');
 const curriculumRoot = resolve(projectRoot, 'src/learn/curriculum');
 const lessonBuilder = resolve(projectRoot, 'scripts/build-lesson-data.ts');
 const prebuildRegister = resolve(projectRoot, 'scripts/prebuild-register.ts');
-const markdownRenderer = resolve(projectRoot, 'src/learn/features/Markdown/renderMarkdown.ts');
+const markdownRenderer = resolve(projectRoot, 'src/learn/Markdown/renderMarkdown.ts');
 
 async function buildCurriculumData(): Promise<void> {
   try {

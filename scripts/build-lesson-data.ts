@@ -45,7 +45,7 @@ if (isProductionBuild || env.SHOW_LEARN !== 'true') {
   rmSync(curriculumTreePath, { force: true });
   console.log('Learn pages disabled; skipping lesson data generation.');
 } else {
-  const { renderMarkdown } = await import('@/learn/features/Markdown/renderMarkdown');
+  const { renderMarkdown } = await import('@/learn/Markdown/renderMarkdown');
   const { buildCurriculum, filterVisibleCurriculum } = await import('@/learn/curriculum/loader');
   const { buildTreeModules } = await import('@/learn/curriculum/buildTreeModules');
   const { isProseLesson, toClientLesson } = await import('@/learn/curriculum/types');
