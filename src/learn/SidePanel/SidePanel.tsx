@@ -20,6 +20,8 @@ export interface SidePanelProps {
   ariaLabel?: string;
   /** Element to restore focus to when the Drawer closes. */
   triggerElement?: HTMLElement | null;
+  /** Optional class applied to the visible panel. */
+  className?: string;
   children: ReactNode;
 }
 
@@ -31,6 +33,7 @@ export function SidePanel({
   id,
   ariaLabel,
   triggerElement,
+  className,
   children,
 }: SidePanelProps) {
   // Drawer (via Modal) calls document.createElement in a useState initializer
@@ -46,7 +49,7 @@ export function SidePanel({
     return (
       <nav
         id={id}
-        className={`${styles.sidebar}${open ? ` ${styles['sidebar-open']}` : ''}`}
+        className={`${styles.sidebar}${open ? ` ${styles['sidebar-open']}` : ''}${className ? ` ${className}` : ''}`}
         aria-label={ariaLabel ?? title}
       >
         {children}
@@ -65,7 +68,13 @@ export function SidePanel({
   }
 
   return (
-    <Drawer open={open} onClose={onClose} title={title} triggerElement={triggerElement}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      title={title}
+      triggerElement={triggerElement}
+      className={className}
+    >
       <Drawer.Body>
         <div onClick={handleAnchorClick}>{children}</div>
       </Drawer.Body>

@@ -8,6 +8,7 @@ import { INITIAL_FOCUS_STORAGE_KEY } from '@/learn/hooks/useInitialFocusPreferen
 import { progressStore } from '@/learn/stores/progressStore';
 import { PlaceholderPanel } from '@/learn/PlaceholderPanel/PlaceholderPanel';
 import { LessonWorkspace } from '@/learn/LessonWorkspace/LessonWorkspace';
+import styles from '@/learn/LessonWorkspace/LessonWorkspace.module.css';
 
 vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({
@@ -164,7 +165,9 @@ describe('LessonWorkspace', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'About modes' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Modes' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
+    const reviewNavigation = screen.getByRole('group', { name: 'Review navigation' });
+    expect(reviewNavigation).toHaveClass(styles['review-next']);
+    expect(within(reviewNavigation).getByRole('button', { name: 'Next' })).toBeEnabled();
 
     expect(screen.queryByRole('application')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Reset' })).not.toBeInTheDocument();

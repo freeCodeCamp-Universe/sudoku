@@ -21,6 +21,25 @@
   color: var(--text-muted);
 }
 
+.primary {
+  color: var(--text-subtle);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  font-weight: normal;
+}
+
+.primary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.primary:active,
+.primary[aria-expanded='true'] {
+  background-color: var(--text-primary);
+  color: var(--bg-surface);
+  border-color: var(--text-primary);
+}
+
 .hoverBlue:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);

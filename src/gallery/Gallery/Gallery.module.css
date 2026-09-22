@@ -42,7 +42,30 @@
 }
 
 .learnButton {
-  margin-inline-end: var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.learnButton:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.learnButton:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .searchWrap,

@@ -91,6 +91,7 @@ export function Outline({ id, headings, mode, open, onClose, triggerElement }: O
       title="Outline"
       ariaLabel="Outline"
       triggerElement={triggerElement}
+      className={styles.panel}
     >
       <ol className={styles.list}>
         {headings.map(({ level, text, id: hId }) => (

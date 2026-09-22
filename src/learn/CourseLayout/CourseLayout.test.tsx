@@ -10,11 +10,13 @@ vi.mock('@/learn/HeaderControls/HeaderControls', () => ({
     showShortcuts,
     showSettings,
     showThemeToggle,
+    themeToggleDesktopOnly,
   }: {
     showDrawer?: boolean;
     showShortcuts?: boolean;
     showSettings?: boolean;
     showThemeToggle?: boolean;
+    themeToggleDesktopOnly?: boolean;
   }) => (
     <div
       data-testid="header-controls"
@@ -22,6 +24,7 @@ vi.mock('@/learn/HeaderControls/HeaderControls', () => ({
       data-show-shortcuts={showShortcuts}
       data-show-settings={showSettings}
       data-show-theme-toggle={showThemeToggle}
+      data-theme-toggle-desktop-only={themeToggleDesktopOnly}
     />
   ),
 }));
@@ -50,7 +53,8 @@ describe('CourseLayout', () => {
     );
 
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
-    expect(screen.getByRole('link', { name: 'Home' })).toHaveClass(styles['home-link']);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveClass(styles.backBtn);
+    expect(screen.queryByRole('link', { name: 'Learn' })).not.toBeInTheDocument();
     expect(screen.getByText('Overview')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'false');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'false');
@@ -76,13 +80,17 @@ describe('CourseLayout', () => {
     );
 
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    const learnLink = screen.getByRole('link', { name: 'Learn' });
+    expect(learnLink).toHaveAttribute('href', '/learn');
+    expect(learnLink).toHaveClass(styles.backBtn, styles.learnNavLink);
     expect(screen.getByText('Lesson')).toBeInTheDocument();
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-drawer', 'true');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-shortcuts', 'true');
     expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-settings', 'true');
+    expect(screen.getByTestId('header-controls')).toHaveAttribute('data-show-theme-toggle', 'true');
     expect(screen.getByTestId('header-controls')).toHaveAttribute(
-      'data-show-theme-toggle',
-      'false'
+      'data-theme-toggle-desktop-only',
+      'true'
     );
     expect(screen.getByTestId('course-overlays')).toHaveAttribute('data-current-lesson', '101');
   });

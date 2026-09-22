@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/Button';
 import { DonateButton } from '@/components/DonateButton';
 import { ThemeToggleButton } from '@/components/ThemeToggleButton';
+import { LearnIcon } from '@/components/icons';
 import { Header } from '@/components/Header';
 import type { Variant } from '@/engine/types';
 import { StarIcon } from '@/gallery/StarIcon';
@@ -120,9 +122,9 @@ export function Gallery() {
     <>
       <Header leading={null}>
         {import.meta.env.SHOW_LEARN === 'true' && (
-          <Button href="/learn" className={styles.learnButton}>
-            Learn
-          </Button>
+          <Link to="/learn" className={styles.learnButton} aria-label="Learn">
+            <LearnIcon width="20" height="20" />
+          </Link>
         )}
         <ThemeToggleButton />
         <DonateButton />

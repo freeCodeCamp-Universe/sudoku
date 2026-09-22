@@ -6,8 +6,11 @@
   padding-inline: var(--space-md);
   padding-block: var(--space-sm);
   background-color: var(--bg-secondary);
-  border-block-end: 1px solid var(--cell-border);
   flex: 0 0 auto;
+}
+
+.toolbar-outline {
+  background-color: var(--bg-primary);
 }
 
 /*

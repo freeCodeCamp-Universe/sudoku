@@ -41,6 +41,46 @@
   margin-block: var(--space-md);
 }
 
+.prose code {
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-xs);
+  background-color: var(--bg-surface);
+  padding-inline: 0.2rem;
+  padding-block: 0.1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-inline: 0.05rem;
+}
+
+.prose pre {
+  font-family: 'Fira Mono', Menlo, Consolas, monospace;
+  font-size: var(--text-xs);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--cell-border);
+  border-radius: var(--radius);
+  padding: var(--space-sm);
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.prose pre code {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+}
+
+.prose hr {
+  border: none;
+  height: 1px;
+  background-color: var(--border);
+  width: 50%;
+  margin: var(--space-lg) auto;
+}
+
 .prose ul {
   padding-inline-start: var(--space-lg);
   display: flex;

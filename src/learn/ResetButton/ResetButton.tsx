@@ -50,6 +50,7 @@ export function ResetButton({ onReset }: ResetButtonProps) {
         <span className={styles.prompt}>Reset this lesson?</span>
         <Button
           type="button"
+          className={styles.cancel}
           ref={cancelRef}
           onClick={() => {
             restoreFocus.current = true;
@@ -98,7 +99,12 @@ export function ResetButton({ onReset }: ResetButtonProps) {
           </Drawer.Body>
           <Drawer.Footer>
             <div className={styles['drawer-actions']}>
-              <Button type="button" ref={cancelRef} onClick={() => setDrawerOpen(false)}>
+              <Button
+                type="button"
+                className={styles.cancel}
+                ref={cancelRef}
+                onClick={() => setDrawerOpen(false)}
+              >
                 Cancel
               </Button>
               <Button

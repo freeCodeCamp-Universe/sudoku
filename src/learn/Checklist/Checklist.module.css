@@ -9,6 +9,14 @@
   color: var(--text-primary);
 }
 
+.checklist > hr {
+  border: none;
+  height: 1px;
+  background-color: var(--border);
+  width: 50%;
+  margin: var(--space-lg) auto;
+}
+
 .list {
   list-style: none;
   margin: 0;

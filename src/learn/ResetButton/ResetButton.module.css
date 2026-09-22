@@ -1,18 +1,33 @@
 button.reset {
-  color: var(--text-primary);
+  color: var(--text-muted);
   background-color: transparent;
   border-color: transparent;
 }
 
 button.reset:hover,
-button.reset:active {
+button.reset:active,
+button.reset:focus-visible {
   color: var(--accent-red);
-  background-color: var(--bg-surface);
+  background-color: transparent;
+  border-color: var(--accent-red);
+}
+
+button.cancel:hover,
+button.cancel:focus-visible {
+  color: var(--text-bright);
+  border-color: var(--text-bright);
+}
+
+.confirm button:not(.cancel):hover,
+.confirm button:not(.cancel):focus-visible,
+.drawer-actions button:not(.cancel):hover,
+.drawer-actions button:not(.cancel):focus-visible {
+  color: var(--accent-red);
   border-color: var(--accent-red);
 }
 
 :root[data-theme='light'] button.reset {
-  color: var(--text-primary);
+  color: var(--text-muted);
   background-color: transparent;
   border-color: transparent;
 }
@@ -20,7 +35,7 @@ button.reset:active {
 :root[data-theme='light'] button.reset:hover,
 :root[data-theme='light'] button.reset:active {
   color: var(--accent-red);
-  background-color: var(--bg-surface);
+  background-color: transparent;
   border-color: var(--accent-red);
 }
 

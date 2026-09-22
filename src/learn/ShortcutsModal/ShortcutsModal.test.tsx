@@ -38,7 +38,7 @@ describe('ShortcutsModal', () => {
 
     const dialog = screen.getByRole('dialog', { name: 'Keyboard Shortcuts' });
     expect(within(dialog).getByRole('cell', { name: 'Alt + /' })).toBeInTheDocument();
-    expect(within(dialog).getByText('show keyboard shortcuts dialog')).toBeInTheDocument();
+    expect(within(dialog).getByText('Show keyboard shortcuts dialog')).toBeInTheDocument();
     expect(within(dialog).queryByText('The following keyboard shortcuts are enabled.')).toBeNull();
   });
 

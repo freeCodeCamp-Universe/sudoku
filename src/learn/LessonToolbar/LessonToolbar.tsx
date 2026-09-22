@@ -22,11 +22,19 @@ export function LessonToolbar({
   outlineButtonRef,
 }: LessonToolbarProps) {
   const prose = isProseLesson(lesson);
+  const toolbarClassName = [
+    styles.toolbar,
+    prose ? styles['toolbar-outline'] : '',
+    !prose ? styles['toolbar-interactive'] : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={prose ? styles.toolbar : `${styles.toolbar} ${styles['toolbar-interactive']}`}>
+    <div className={toolbarClassName}>
       {prose ? (
         <Button
+          variant="primary"
           ref={outlineButtonRef}
           aria-expanded={outlineOpen}
           aria-controls="lesson-outline"

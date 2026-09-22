@@ -79,6 +79,7 @@
   font-family: inherit;
   font-size: var(--text-lg);
   line-height: 1.2;
+  color: var(--text-primary);
   margin-block: 0 var(--space-md);
   display: flex;
   align-items: center;
@@ -167,12 +168,13 @@
 .review-page .controls {
   inline-size: 100%;
   box-sizing: border-box;
-  justify-content: flex-end;
   padding-block-start: var(--space-xl);
 }
 
-.review-page .controls > :last-child {
-  margin-inline-start: auto;
+.review-next {
+  display: flex;
+  inline-size: 100%;
+  justify-content: flex-end;
 }
 
 .terminal > :first-child {

@@ -5,7 +5,7 @@ import { SettingsMenu } from '@/components/SettingsMenu';
 import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { useTheme } from '@/app/ThemeProvider';
 import { Toggle } from '@/components/Toggle';
-import { GearIcon, KeyboardIcon } from '@/components/icons';
+import { GearIcon, HomeIcon, KeyboardIcon } from '@/components/icons';
 import { StarIcon } from '@/gallery/StarIcon';
 import styles from './Header.module.css';
 
@@ -13,6 +13,7 @@ interface HeaderProps {
   title?: string;
   leading?: ReactNode;
   leadingClassName?: string;
+  center?: ReactNode;
   children?: ReactNode;
   contentClassName?: string;
   isFavorite?: boolean;
@@ -58,6 +59,7 @@ export function Header(props: HeaderProps) {
         >
           {props.leading}
         </div>
+        <div className={styles.center}>{props.center}</div>
         <div
           className={
             props.contentClassName ? `${styles.content} ${props.contentClassName}` : styles.content
@@ -148,32 +150,13 @@ function PuzzleHeader({
       >
         {onBack ? (
           <button type="button" className={styles.backBtn} onClick={onBack}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 640 640"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M73.4 297.4C60.9 309.9 60.9 330.2 73.4 342.7L233.4 502.7C245.9 515.2 266.2 515.2 278.7 502.7C291.2 490.2 291.2 469.9 278.7 457.4L173.3 352L544 352C561.7 352 576 337.7 576 320C576 302.3 561.7 288 544 288L173.3 288L278.7 182.6C291.2 170.1 291.2 149.8 278.7 137.3C266.2 124.8 245.9 124.8 233.4 137.3L73.4 297.3z" />
-            </svg>
-            <span className={styles.backBtnText}>Back</span>
+            <HomeIcon width="20" height="20" />
+            <span className={styles.backBtnText}>Home</span>
           </button>
         ) : (
           <Link to={backHref ?? '/'} className={styles.backBtn}>
-            {/* !Font Awesome Free v7.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc. */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 640 640"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M73.4 297.4C60.9 309.9 60.9 330.2 73.4 342.7L233.4 502.7C245.9 515.2 266.2 515.2 278.7 502.7C291.2 490.2 291.2 469.9 278.7 457.4L173.3 352L544 352C561.7 352 576 337.7 576 320C576 302.3 561.7 288 544 288L173.3 288L278.7 182.6C291.2 170.1 291.2 149.8 278.7 137.3C266.2 124.8 245.9 124.8 233.4 137.3L73.4 297.3z" />
-            </svg>
-            <span className={styles.backBtnText}>Back</span>
+            <HomeIcon width="20" height="20" />
+            <span className={styles.backBtnText}>Home</span>
           </Link>
         )}
         <div className={styles.titleGroup}>

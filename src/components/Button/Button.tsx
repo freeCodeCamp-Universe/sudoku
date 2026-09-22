@@ -8,7 +8,7 @@ import {
 import { Link, type LinkProps } from 'react-router-dom';
 import styles from './Button.module.css';
 
-type ButtonVariant = 'default' | 'cta';
+type ButtonVariant = 'default' | 'primary' | 'cta';
 type HoverColor = 'blue' | 'yellow' | 'red';
 
 interface CommonProps {

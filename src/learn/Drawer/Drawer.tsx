@@ -46,6 +46,8 @@ export interface DrawerProps {
   triggerElement?: HTMLElement | null;
   /** Element to receive initial focus when the drawer opens. */
   initialFocus?: React.RefObject<HTMLElement | null>;
+  /** Optional class applied to the drawer panel. */
+  className?: string;
 }
 
 const TRANSITION_MS = 180;
@@ -61,6 +63,7 @@ function DrawerRoot({
   children,
   triggerElement: triggerElementProp,
   initialFocus,
+  className,
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -165,6 +168,7 @@ function DrawerRoot({
 
   const panelClassName = [
     styles.panel,
+    className ?? '',
     slideFrom === 'end' ? styles['panel-end'] : '',
     slideFrom === 'bottom' ? styles['panel-bottom'] : '',
     open ? '' : styles.closing,

@@ -13,7 +13,8 @@
 }
 
 .leading,
-.content {
+.content,
+.center {
   display: flex;
   align-items: center;
 }
@@ -26,6 +27,12 @@
   justify-content: flex-end;
   gap: var(--space-xs);
   min-inline-size: 0;
+}
+
+.center {
+  position: absolute;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
 }
 
 .home-link {
@@ -255,6 +262,23 @@
   border: 0;
 }
 
+.learnNavLink {
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 2px;
+}
+
+.learnNavLink .backBtnText {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+}
+
 @media (min-width: 600px) {
   .backBtn {
     width: auto;
@@ -343,7 +367,7 @@
 
 @media (min-width: 1024px) {
   .utilityRow {
-    padding-inline: var(--space-md);
+    padding-inline: 0;
     margin-block-end: 20px;
   }
 

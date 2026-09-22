@@ -48,10 +48,10 @@ describe('Header', () => {
     expect(onToggleFavorite).toHaveBeenCalledTimes(1);
   });
 
-  it('should render a back link pointing to the provided href', () => {
+  it('should render a home link pointing to the provided href', () => {
     renderHeader();
 
-    expect(screen.getByRole('link', { name: /back/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
   });
 
   it('should render the Donate link with the configured campaign URL', () => {
@@ -67,11 +67,11 @@ describe('Header', () => {
     expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
-  it('should navigate with the router when the back link is clicked', async () => {
+  it('should navigate with the router when the home link is clicked', async () => {
     const user = userEvent.setup();
     renderHeader();
 
-    await user.click(screen.getByRole('link', { name: /back/i }));
+    await user.click(screen.getByRole('link', { name: 'Home' }));
 
     expect(screen.getByText('Gallery')).toBeTruthy();
   });

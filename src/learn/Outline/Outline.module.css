@@ -1,5 +1,9 @@
 /* ── List ─────────────────────────────────────────────────────────────────── */
 
+.panel {
+  background-color: var(--bg-primary);
+}
+
 .list {
   display: flex;
   flex-direction: column;

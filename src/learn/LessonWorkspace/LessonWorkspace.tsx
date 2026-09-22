@@ -202,7 +202,9 @@ export function LessonWorkspace({
               <Markdown html={instructionsHtml} />
             )}
             <div className={styles.controls}>
-              <PrimaryAction complete={complete} isCapstone={isLastLesson} onAdvance={advance} />
+              <div className={styles['review-next']} role="group" aria-label="Review navigation">
+                <PrimaryAction complete={complete} isCapstone={isLastLesson} onAdvance={advance} />
+              </div>
             </div>
           </div>
         </main>

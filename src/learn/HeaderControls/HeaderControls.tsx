@@ -15,6 +15,7 @@ interface HeaderControlsProps {
   showShortcuts?: boolean;
   showSettings?: boolean;
   showThemeToggle?: boolean;
+  themeToggleDesktopOnly?: boolean;
 }
 
 export function HeaderControls({
@@ -22,6 +23,7 @@ export function HeaderControls({
   showShortcuts = true,
   showSettings = true,
   showThemeToggle = false,
+  themeToggleDesktopOnly = false,
 }: HeaderControlsProps) {
   const { openDrawer, openShortcuts, openSettings, closeSettings, settingsOpen } =
     useCourseChrome();
@@ -87,7 +89,11 @@ export function HeaderControls({
           />
         </SettingsMenu>
       ) : null}
-      {showThemeToggle ? <ThemeToggleButton /> : null}
+      {showThemeToggle ? (
+        <span className={themeToggleDesktopOnly ? styles.desktopOnly : undefined}>
+          <ThemeToggleButton />
+        </span>
+      ) : null}
       <Button
         variant="cta"
         href={`https://donate.freecodecamp.org?source=${cfg.donationId}&campaign=Sudoku&medium=web`}

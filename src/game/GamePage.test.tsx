@@ -891,23 +891,23 @@ describe('GamePage - solved puzzle', () => {
 });
 
 describe('GamePage - back navigation', () => {
-  it('should navigate immediately when Back is clicked with no progress', async () => {
+  it('should navigate immediately when Home is clicked with no progress', async () => {
     const user = userEvent.setup();
     renderGamePage();
 
-    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(screen.getByRole('button', { name: 'Home' }));
 
     expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
   });
 
-  it('should navigate immediately when Back is clicked after entering a value', async () => {
+  it('should navigate immediately when Home is clicked after entering a value', async () => {
     const user = userEvent.setup();
     renderGamePage();
 
     const [emptyCell] = screen.getAllByRole('gridcell', { name: /empty/ });
     await user.click(emptyCell);
     await user.click(screen.getByRole('button', { name: '5' }));
-    await user.click(screen.getByRole('button', { name: /back/i }));
+    await user.click(screen.getByRole('button', { name: 'Home' }));
 
     expect(screen.queryByRole('dialog', { name: /leave puzzle/i })).toBeNull();
   });
