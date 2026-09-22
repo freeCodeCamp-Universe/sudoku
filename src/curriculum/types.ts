@@ -1,4 +1,4 @@
-import type { InstructionSegment, TabGroupSegment } from '@/learn/curriculum/tabBlocks';
+import type { InstructionSegment, TabGroupSegment } from '@/curriculum/tabBlocks';
 
 /**
  * A lesson's pedagogical category. Drives curriculum grouping and UI wording only;

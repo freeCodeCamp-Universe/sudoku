@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
 import { Button } from '@/components/Button';
 import { LoadingState } from '@/learn/LoadingState/LoadingState';
 import { CurriculumNavigator } from '@/learn/CurriculumNavigator/CurriculumNavigator';

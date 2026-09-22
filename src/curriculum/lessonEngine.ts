@@ -1,4 +1,4 @@
-import type { ChecklistRequirement } from '@/learn/curriculum/types';
+import type { ChecklistRequirement } from '@/curriculum/types';
 
 export interface CheckResult {
   passed: boolean;

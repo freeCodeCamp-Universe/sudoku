@@ -22,11 +22,11 @@ const env = loadEnv(
 );
 Object.assign(process.env, env);
 
-import type { MarkdownSegment } from '@/learn/curriculum/tabBlocks';
+import type { MarkdownSegment } from '@/curriculum/tabBlocks';
 import type { Heading } from '@/learn/utils/extractHeadings';
 
 const projectRoot = resolve(import.meta.dirname, '..');
-const curriculumRoot = join(projectRoot, 'src', 'learn', 'curriculum');
+const curriculumRoot = join(projectRoot, 'src', 'curriculum');
 const lessonsDir = join(curriculumRoot, 'lessons');
 const outputDir = join(projectRoot, 'public', 'data', 'lessons');
 const curriculumTreePath = join(projectRoot, 'public', 'data', 'curriculum-tree.json');
@@ -46,13 +46,13 @@ if (isProductionBuild || env.SHOW_LEARN !== 'true') {
   console.log('Learn pages disabled; skipping lesson data generation.');
 } else {
   const { renderMarkdown } = await import('@/learn/Markdown/renderMarkdown');
-  const { buildCurriculum, filterVisibleCurriculum } = await import('@/learn/curriculum/loader');
-  const { buildTreeModules } = await import('@/learn/curriculum/buildTreeModules');
-  const { isProseLesson, toClientLesson } = await import('@/learn/curriculum/types');
+  const { buildCurriculum, filterVisibleCurriculum } = await import('@/curriculum/loader');
+  const { buildTreeModules } = await import('@/curriculum/buildTreeModules');
+  const { isProseLesson, toClientLesson } = await import('@/curriculum/types');
   const { extractHeadings } = await import('@/learn/utils/extractHeadings');
 
   const SHOW_UPCOMING = process.env.SHOW_UPCOMING_LESSONS === 'true';
-  const ordering = (await import(`${projectRoot}/src/learn/curriculum/ordering.ts`)).curriculum;
+  const ordering = (await import(`${projectRoot}/src/curriculum/ordering.ts`)).curriculum;
   const rawContent = buildCurriculum(ordering, buildMarkdownMap());
   const content = filterVisibleCurriculum(rawContent, SHOW_UPCOMING);
 

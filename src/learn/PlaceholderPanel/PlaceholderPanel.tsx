@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { initChecklist } from '@/learn/curriculum/lessonProgress';
+import { initChecklist } from '@/curriculum/lessonProgress';
 import type { InteractivePanelProps } from '@/learn/LessonWorkspace/LessonWorkspace';
 import styles from '@/learn/PlaceholderPanel/PlaceholderPanel.module.css';
 

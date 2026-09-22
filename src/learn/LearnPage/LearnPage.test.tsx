@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
 import { LearnPage } from '@/learn/LearnPage/LearnPage';
 
-vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
+vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: vi.fn(),
 }));
 

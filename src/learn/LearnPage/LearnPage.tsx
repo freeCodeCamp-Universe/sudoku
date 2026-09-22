@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
 import { LoadingState } from '@/learn/LoadingState/LoadingState';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';

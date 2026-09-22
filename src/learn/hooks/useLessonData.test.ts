@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import type { CurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import type { CurriculumTree } from '@/curriculum/useCurriculumTree';
 import type { LessonData } from '@/learn/hooks/useLessonData';
 
 // ---------------------------------------------------------------------------
@@ -9,7 +9,7 @@ import type { LessonData } from '@/learn/hooks/useLessonData';
 
 const mockUseCurriculumTree = vi.fn<() => CurriculumTree | null>();
 
-vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
+vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: (...args: unknown[]) => mockUseCurriculumTree(...(args as [])),
 }));
 

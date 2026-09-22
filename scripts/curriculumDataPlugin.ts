@@ -5,7 +5,7 @@ import type { Plugin } from 'vite';
 
 const execFile = promisify(execFileCallback);
 const projectRoot = resolve(import.meta.dirname, '..');
-const curriculumRoot = resolve(projectRoot, 'src/learn/curriculum');
+const curriculumRoot = resolve(projectRoot, 'src/curriculum');
 const lessonBuilder = resolve(projectRoot, 'scripts/build-lesson-data.ts');
 const prebuildRegister = resolve(projectRoot, 'scripts/prebuild-register.ts');
 const markdownRenderer = resolve(projectRoot, 'src/learn/Markdown/renderMarkdown.ts');

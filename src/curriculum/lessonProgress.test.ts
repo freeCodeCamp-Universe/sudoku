@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { initChecklist } from '@/learn/curriculum/lessonProgress';
-import type { ChecklistRequirement } from '@/learn/curriculum/types';
+import { initChecklist } from '@/curriculum/lessonProgress';
+import type { ChecklistRequirement } from '@/curriculum/types';
 
 const REQUIREMENTS: ChecklistRequirement[] = [
   { label: 'Step one', hint: 'You can do this.', test: {} },

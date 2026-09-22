@@ -1,7 +1,7 @@
 /**
  * Node.js module hooks for the prebuild script (build-lesson-data.ts).
  *
- * Two problems prevent importing src/learn/curriculum/loader.ts in a plain tsx/Node
+ * Two problems prevent importing src/curriculum/loader.ts in a plain tsx/Node
  * context:
  *
  * 1. The module reads `import.meta.env` at load time. This is a Vite-specific API;
@@ -26,7 +26,7 @@ import type { LoadHook } from 'node:module';
 export const load: LoadHook = async (url, context, next) => {
   const result = await next(url, context);
 
-  if (url.includes('/src/learn/curriculum/loader') && result.source != null) {
+  if (url.includes('/src/curriculum/loader') && result.source != null) {
     const raw =
       typeof result.source === 'string'
         ? result.source

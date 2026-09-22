@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { assertSanitizedHtml } from '@/learn/curriculum/sanitize';
+import { assertSanitizedHtml } from '@/curriculum/sanitize';
 
 const PATH = './01-test/lesson.md';
 

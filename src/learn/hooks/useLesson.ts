@@ -3,8 +3,8 @@ import {
   isProseLesson,
   type ClientLessonDefinition,
   type ClientInteractiveLessonDefinition,
-} from '@/learn/curriculum/types';
-import { initChecklist, type ChecklistItem } from '@/learn/curriculum/lessonProgress';
+} from '@/curriculum/types';
+import { initChecklist, type ChecklistItem } from '@/curriculum/lessonProgress';
 
 export interface LessonSnapshot {
   checklist: readonly ChecklistItem[];

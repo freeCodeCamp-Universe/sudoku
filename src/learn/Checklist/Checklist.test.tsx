@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
-import type { ChecklistItem } from '@/learn/curriculum/lessonProgress';
+import type { ChecklistItem } from '@/curriculum/lessonProgress';
 import { Checklist } from '@/learn/Checklist/Checklist';
 
 function items(...statuses: ChecklistItem['status'][]): ChecklistItem[] {

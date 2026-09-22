@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterCurriculum } from '@/learn/curriculum/filterCurriculum';
+import { filterCurriculum } from '@/curriculum/filterCurriculum';
 import type { CurriculumTreeModule } from '@/learn/CurriculumTree/CurriculumTree';
 
 const modules: CurriculumTreeModule[] = [

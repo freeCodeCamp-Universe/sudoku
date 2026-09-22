@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
-import type { ProseLessonDefinition } from '@/learn/curriculum/types';
+import type { ProseLessonDefinition } from '@/curriculum/types';
 import { LessonPage } from '@/learn/LessonPage/LessonPage';
 
 vi.mock('@/learn/LessonToolbar/LessonToolbar', () => ({

@@ -1,4 +1,4 @@
-import type { OrderingModule } from '@/learn/curriculum/orderingTypes';
+import type { OrderingModule } from '@/curriculum/orderingTypes';
 
 /**
  * Defines module structure and lesson sequence. This is the single source of

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { ClientInteractiveLessonDefinition } from '@/learn/curriculum/types';
+import type { ClientInteractiveLessonDefinition } from '@/curriculum/types';
 import { PlaceholderPanel } from '@/learn/PlaceholderPanel/PlaceholderPanel';
 
 const LESSON: ClientInteractiveLessonDefinition = {

@@ -24,7 +24,7 @@ function renderWithRouter(ui: ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
-vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
+vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({ modules, orderedLessonIds }),
 }));
 

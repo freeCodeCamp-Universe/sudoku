@@ -15,8 +15,8 @@ import process from 'node:process';
 import { join, resolve } from 'node:path';
 
 const projectRoot = resolve(import.meta.dirname, '..');
-const orderingPath = join(projectRoot, 'src', 'learn', 'curriculum', 'ordering.ts');
-const lessonsDir = join(projectRoot, 'src', 'learn', 'curriculum', 'lessons');
+const orderingPath = join(projectRoot, 'src', 'curriculum', 'ordering.ts');
+const lessonsDir = join(projectRoot, 'src', 'curriculum', 'lessons');
 
 type Options = {
   number: number;

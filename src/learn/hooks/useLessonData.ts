@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useCurriculumTree, type CurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import { useCurriculumTree, type CurriculumTree } from '@/curriculum/useCurriculumTree';
 import type { LessonPageProps } from '@/learn/LessonPage/LessonPage';
 
 export type LessonData = LessonPageProps;

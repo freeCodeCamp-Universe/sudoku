@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildCurriculum, filterVisibleCurriculum } from '@/learn/curriculum/loader';
-import type { OrderingModule } from '@/learn/curriculum/orderingTypes';
+import { buildCurriculum, filterVisibleCurriculum } from '@/curriculum/loader';
+import type { OrderingModule } from '@/curriculum/orderingTypes';
 
 const INTRO_ID = '64a2f3b1c7d8e9f0a1b2c3d4';
 const LEARN_ID = '64a2f3b1c7d8e9f0a1b2c3d5';

@@ -124,8 +124,8 @@ interface LessonMetadata {
 }
 
 async function loadLessonMetadata(): Promise<LessonMetadata[]> {
-  const { curriculum } = await import('../src/learn/curriculum/ordering');
-  const lessonsDir = resolve(process.cwd(), 'src/learn/curriculum/lessons');
+  const { curriculum } = await import('../src/curriculum/ordering');
+  const lessonsDir = resolve(process.cwd(), 'src/curriculum/lessons');
   const lessons: LessonMetadata[] = [];
 
   for (const module of curriculum) {

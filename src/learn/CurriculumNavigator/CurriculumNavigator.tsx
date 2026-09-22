@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { filterCurriculum } from '@/learn/curriculum/filterCurriculum';
+import { filterCurriculum } from '@/curriculum/filterCurriculum';
 import {
   CurriculumTree,
   type CurriculumTreeLessonState,

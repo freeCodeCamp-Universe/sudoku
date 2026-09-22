@@ -1,4 +1,4 @@
-import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
 import { NavDrawer } from '@/learn/NavDrawer/NavDrawer';
 import { ShortcutsModal } from '@/learn/ShortcutsModal/ShortcutsModal';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';

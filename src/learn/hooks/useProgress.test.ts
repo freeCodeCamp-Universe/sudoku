@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { orderedLessonIds } from '@/learn/curriculum/lessonOrder';
+import { orderedLessonIds } from '@/curriculum/lessonOrder';
 import { progressStore } from '@/learn/stores/progressStore';
 import { useProgress } from '@/learn/hooks/useProgress';
 

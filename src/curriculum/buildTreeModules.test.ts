@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildTreeModules } from '@/learn/curriculum/buildTreeModules';
-import type { LessonDefinition, ModuleDefinition } from '@/learn/curriculum/types';
+import { buildTreeModules } from '@/curriculum/buildTreeModules';
+import type { LessonDefinition, ModuleDefinition } from '@/curriculum/types';
 
 const lessons: LessonDefinition[] = [
   {

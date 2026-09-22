@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import { isProseLesson, type ClientLessonDefinition } from '@/learn/curriculum/types';
+import { isProseLesson, type ClientLessonDefinition } from '@/curriculum/types';
 import type { TabId } from '@/learn/LessonWorkspace/LessonWorkspace';
 import { Button } from '@/components/Button';
 import styles from '@/learn/LessonToolbar/LessonToolbar.module.css';

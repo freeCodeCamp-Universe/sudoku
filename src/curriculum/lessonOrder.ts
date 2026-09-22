@@ -1,4 +1,4 @@
-import { loadCurriculum } from '@/learn/curriculum/loader';
+import { loadCurriculum } from '@/curriculum/loader';
 
 export interface LessonReachability {
   completedLessonIds: string[];

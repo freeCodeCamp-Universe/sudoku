@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseInstructionSegments, hasTabBlocks } from '@/learn/curriculum/tabBlocks';
+import { parseInstructionSegments, hasTabBlocks } from '@/curriculum/tabBlocks';
 
 const PATH = './test/lesson.md';
 

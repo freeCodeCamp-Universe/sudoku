@@ -1,5 +1,5 @@
 import type { CurriculumTreeModule } from '@/learn/CurriculumTree/CurriculumTree';
-import type { LessonDefinition, ModuleDefinition } from '@/learn/curriculum/types';
+import type { LessonDefinition, ModuleDefinition } from '@/curriculum/types';
 
 export function buildTreeModules(
   modules: ModuleDefinition[],

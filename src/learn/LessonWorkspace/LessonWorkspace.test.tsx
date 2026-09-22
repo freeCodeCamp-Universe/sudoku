@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import type { ProseLessonDefinition, AuthoredLessonDefinition } from '@/learn/curriculum/types';
+import type { ProseLessonDefinition, AuthoredLessonDefinition } from '@/curriculum/types';
 import { renderMarkdown } from '@/learn/Markdown/renderMarkdown';
 import { INITIAL_FOCUS_STORAGE_KEY } from '@/learn/hooks/useInitialFocusPreference';
 import { progressStore } from '@/learn/stores/progressStore';
@@ -10,7 +10,7 @@ import { PlaceholderPanel } from '@/learn/PlaceholderPanel/PlaceholderPanel';
 import { LessonWorkspace } from '@/learn/LessonWorkspace/LessonWorkspace';
 import styles from '@/learn/LessonWorkspace/LessonWorkspace.module.css';
 
-vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
+vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({
     modules: [],
     orderedLessonIds: ['w-1', 'r-1', 'trailing-id'],

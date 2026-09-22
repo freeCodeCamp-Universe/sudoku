@@ -5,8 +5,8 @@ import {
   isProseLesson,
   type ClientLessonDefinition,
   type ClientInteractiveLessonDefinition,
-} from '@/learn/curriculum/types';
-import { useCurriculumTree } from '@/learn/curriculum/useCurriculumTree';
+} from '@/curriculum/types';
+import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
 import { useCourseShortcuts } from '@/learn/hooks/useCourseShortcuts';
 import { useLesson } from '@/learn/hooks/useLesson';
 import type { LessonSnapshot } from '@/learn/hooks/useLesson';

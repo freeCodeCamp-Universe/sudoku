@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadFullCurriculum } from '@/learn/curriculum/loader';
+import { loadFullCurriculum } from '@/curriculum/loader';
 
 const { lessons, modules } = loadFullCurriculum();
 

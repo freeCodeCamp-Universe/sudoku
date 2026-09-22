@@ -5,7 +5,7 @@ import { courseChrome } from '@/learn/stores/courseChromeStore';
 import { CourseOverlays } from '@/learn/CourseOverlays/CourseOverlays';
 import { ThemeProvider } from '@/app/ThemeProvider';
 
-vi.mock('@/learn/curriculum/useCurriculumTree', () => ({
+vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: () => ({ modules: [], orderedLessonIds: [] }),
 }));
 

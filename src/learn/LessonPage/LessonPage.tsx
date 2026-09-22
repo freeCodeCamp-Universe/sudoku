@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
-import { isProseLesson, type ClientLessonDefinition } from '@/learn/curriculum/types';
+import { isProseLesson, type ClientLessonDefinition } from '@/curriculum/types';
 import type { Heading } from '@/learn/utils/extractHeadings';
 import { useMediaQuery } from '@/learn/hooks/useMediaQuery';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';

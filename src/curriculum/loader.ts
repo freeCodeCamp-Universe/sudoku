@@ -1,9 +1,9 @@
-import { curriculum as defaultOrdering } from '@/learn/curriculum/ordering';
+import { curriculum as defaultOrdering } from '@/curriculum/ordering';
 
 const SHOW_UPCOMING_LESSONS = import.meta.env.SHOW_UPCOMING_LESSONS === 'true';
 
-import { assertSanitizedHtml } from '@/learn/curriculum/sanitize';
-import { hasTabBlocks, parseInstructionSegments } from '@/learn/curriculum/tabBlocks';
+import { assertSanitizedHtml } from '@/curriculum/sanitize';
+import { hasTabBlocks, parseInstructionSegments } from '@/curriculum/tabBlocks';
 import type {
   InteractiveLessonDefinition,
   ChecklistRequirement,
@@ -12,10 +12,10 @@ import type {
   LessonType,
   ModuleDefinition,
   ProseLessonDefinition,
-} from '@/learn/curriculum/types';
-import type { OrderingModule } from '@/learn/curriculum/orderingTypes';
+} from '@/curriculum/types';
+import type { OrderingModule } from '@/curriculum/orderingTypes';
 
-export type { LessonEntry, OrderingModule } from '@/learn/curriculum/orderingTypes';
+export type { LessonEntry, OrderingModule } from '@/curriculum/orderingTypes';
 
 export interface CurriculumContent {
   lessons: LessonDefinition[];

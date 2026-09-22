@@ -14,17 +14,18 @@ The app is a React SPA with a Sudoku puzzle engine. Three layers depend on each 
 
 ## Key directories
 
-| Path                            | What lives there                                                                     |
-| ------------------------------- | ------------------------------------------------------------------------------------ |
-| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.                |
-| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.             |
-| `src/game/`                     | Playable board UI, game state, layout strategies, overlays, annotators.              |
-| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                                |
-| `src/learn/`                    | Feature-flagged Sudoku course: curriculum, lesson views, course shell, and progress. |
-| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                               |
-| `src/app/`                      | Shell components: page layout, header, theme provider.                               |
-| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`.      |
-| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                      |
+| Path                            | What lives there                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------- |
+| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.           |
+| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.        |
+| `src/game/`                     | Playable board UI, game state, layout strategies, overlays, annotators.         |
+| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                           |
+| `src/learn/`                    | Feature-flagged Sudoku course: lesson views, course shell, and progress.        |
+| `src/curriculum/`               | Course content, lesson definitions, ordering, and curriculum data loading.      |
+| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                          |
+| `src/app/`                      | Shell components: page layout, header, theme provider.                          |
+| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`. |
+| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                 |
 
 ---
 
@@ -201,7 +202,7 @@ The learn experience is a separate React feature under `src/learn/`. It is enabl
 
 ### Curriculum data and lesson loading
 
-`src/learn/curriculum/ordering.ts` is the source of truth for module order and lesson file order. During development, the Vite `curriculum-data` plugin runs `scripts/build-lesson-data.ts` and generates the curriculum tree and lesson JSON under `public/data/`. Changes to curriculum Markdown or the Markdown renderer trigger regeneration and a full reload.
+`src/curriculum/ordering.ts` is the source of truth for module order and lesson file order. During development, the Vite `curriculum-data` plugin runs `scripts/build-lesson-data.ts` and generates the curriculum tree and lesson JSON under `public/data/`. Changes to curriculum Markdown or the Markdown renderer trigger regeneration and a full reload.
 
 `useCurriculumTree` fetches and caches `/data/curriculum-tree.json`. `useLessonData` resolves a lesson from that tree, fetches `/data/lessons/<dataFile>`, caches it, and prefetches the next lesson. Lesson Markdown is sanitized and transformed by the learn Markdown pipeline before it is serialized for the client.
 

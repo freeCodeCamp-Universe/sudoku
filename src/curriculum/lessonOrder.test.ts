@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { curriculum } from '@/learn/curriculum/ordering';
-import { getLessonReachability, orderedLessonIds } from '@/learn/curriculum/lessonOrder';
+import { curriculum } from '@/curriculum/ordering';
+import { getLessonReachability, orderedLessonIds } from '@/curriculum/lessonOrder';
 
 describe('ordering', () => {
   it('should give every module a title and at least one lesson', () => {
