@@ -56,7 +56,7 @@ It has two parts:
 - [x] A2. Move board files into `src/board/`
 - [x] A3. Add ESLint import-boundary rules
 - [x] A4. Merge the two `useMediaQuery` hooks into `src/hooks/useMediaQuery.ts`
-- [ ] A5. Update `AGENTS.md` and `docs/architecture.md` paths
+- [x] A5. Update `AGENTS.md` and `docs/architecture.md` paths
 
 ### Part B: pending decision
 

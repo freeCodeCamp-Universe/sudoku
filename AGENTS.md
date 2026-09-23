@@ -34,12 +34,14 @@ Note that `pnpm build` runs `tsc --noEmit` over the whole `src` tree, **includin
 
 ## Architecture
 
-Three layers, each depending only on the ones above it: **engine** (pure puzzle logic, no React) → **variants** (declarative specs) → **game / gallery / app** (React UI). Directory roles:
+Four layers, each depending only on the ones above it: **engine** (pure puzzle logic, no React) → **variants** (declarative specs) → **board** (shared board rendering) → **game / gallery / learn / app** (React UI). Directory roles:
 
 - `src/engine/` — grid model, constraint solver/generator, and shared types.
 - `src/variants/` — one declarative spec per puzzle type, plus the registry that collects them.
-- `src/game/` — the playable board UI and its layout / overlay / annotator strategies.
+- `src/board/` — shared board rendering: Board, Cell, NumberPad, layout/overlay/annotator registries, and the grid interaction hook.
+- `src/game/` — game session UI: page, controls, timer, persistence, and pan/zoom.
 - `src/gallery/` — the home grid of puzzles and their canvas previews.
+- `src/learn/` — lesson views and course UI.
 - `src/app/` — shell: routing, page layout, header, theme.
 - `scripts/` — generator scripts run via `pnpm <script-name>` (e.g. `pnpm docs:colors`); not typechecked by `tsc --noEmit`.
 - `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc; `breakpoints.md` lists the allowed media query breakpoints.
@@ -63,10 +65,10 @@ The board pan/zoom viewport (minimap, zoom controls, `boardFrameOversized` clip)
 
 ### Cell sizing
 
-Cell sizing has exactly two owners, and every pixel number lives in `src/game/layouts/cellSizes.ts`:
+Cell sizing has exactly two owners, and every pixel number lives in `src/board/layouts/cellSizes.ts`:
 
 - **Base size** (what a variant's cells measure with no viewport pressure) is owned by the layout strategy via `LayoutStrategy.baseCellSize(variant)`, defined once per layout kind.
-- **Responsive policy** (how the base shrinks on small viewports) is owned by `useResponsiveCellSize`: for non-oversized boards it picks the largest step in `CELL_SIZE_STEPS` (capped at the layout's base) whose canvas plus board frame fits the current viewport bucket's floor (`VIEWPORT_BUCKET_FLOORS`, 320px baseline per WCAG reflow); oversized boards (16×16, multigrids) instead pan at a comfortable size below the desktop cutoff. The frame width depends on the high-contrast setting — the TS constants mirror `--box-boundary-width` in `src/app/layers.css`, and a drift test in `cellSizes.test.ts` keeps them in sync.
+- **Responsive policy** (how the base shrinks on small viewports) is owned by `src/game/useResponsiveCellSize.ts`: for non-oversized boards it picks the largest step in `CELL_SIZE_STEPS` (capped at the layout's base) whose canvas plus board frame fits the current viewport bucket's floor (`VIEWPORT_BUCKET_FLOORS`, 320px baseline per WCAG reflow); oversized boards (16×16, multigrids) instead pan at a comfortable size below the desktop cutoff. The frame width depends on the high-contrast setting — the TS constants mirror `--box-boundary-width` in `src/app/layers.css`, and a drift test in `cellSizes.test.ts` keeps them in sync.
 
 Never write a cell-size or sizing-breakpoint literal in a layout strategy or the hook — add or reuse a named constant in `cellSizes.ts`. New layout strategies must implement `baseCellSize` from those constants and honor the optional `cellSizeOverride` in `cellRects` / `canvasSize`.
 

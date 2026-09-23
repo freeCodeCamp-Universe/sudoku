@@ -1,10 +1,12 @@
 # Architecture
 
-The app is a React SPA with a Sudoku puzzle engine. Three layers depend on each other in one direction only.
+The app is a React SPA with a Sudoku puzzle engine. Four layers depend on each other in one direction only.
 
 ```
 ┌──────────────────────────────────────────────┐
 │  App / Gallery / Game / Learn (React UI)     │  routing, pages, board, course UI
+├──────────────────────────────────────────────┤
+│  Board                  (shared board UI)     │  rendering, interaction, layout registries
 ├──────────────────────────────────────────────┤
 │  Variants               (declarative specs)  │  one data object per puzzle type
 ├──────────────────────────────────────────────┤
@@ -18,7 +20,8 @@ The app is a React SPA with a Sudoku puzzle engine. Three layers depend on each 
 | ------------------------------- | ------------------------------------------------------------------------------- |
 | `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.           |
 | `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.        |
-| `src/game/`                     | Playable board UI, game state, layout strategies, overlays, annotators.         |
+| `src/board/`                    | Shared board rendering, interaction, layout strategies, overlays, annotators.   |
+| `src/game/`                     | Game session UI, game state, controls, timer, persistence, and pan/zoom.        |
 | `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                           |
 | `src/learn/`                    | Feature-flagged Sudoku course: lesson views, course shell, and progress.        |
 | `src/curriculum/`               | Course content, lesson definitions, ordering, and curriculum data loading.      |
@@ -111,9 +114,9 @@ interface Variant {
 
 - **Variant registry** (`src/variants/registry.ts`): `variantRegistry: Record<string, Variant>` keyed by `variant.id`. The gallery and the `/:variantId` route both read it.
 - **Constraint registry** (`src/engine/constraints/registry.ts`): `constraintRegistry: Record<string, Constraint>`. `resolveConstraints(ids)` looks up implementations; throws on an unknown id.
-- **Layout registry** (`src/game/layouts/registry.ts`): `layouts: Record<string, LayoutStrategy>` with keys `'grid'`, `'multigrid'`, `'triangular'`. Maps a `layout.kind` to a strategy that knows cell geometry and canvas sizing.
-- **Overlay registry** (`src/game/overlays/registry.ts`): `overlayRegistry: Record<string, OverlayComponent>`. Overlays are React components that draw variant-specific decorations on the board canvas.
-- **Annotator registry** (`src/game/annotators/registry.ts`): `annotatorRegistry: Record<string, CellAnnotator>`. Annotators produce accessible cell descriptions (e.g. "bulb cell for arrow").
+- **Layout registry** (`src/board/layouts/registry.ts`): `layouts: Record<string, LayoutStrategy>` with keys `'grid'`, `'multigrid'`, `'triangular'`. Maps a `layout.kind` to a strategy that knows cell geometry and canvas sizing.
+- **Overlay registry** (`src/board/overlays/registry.ts`): `overlayRegistry: Record<string, OverlayComponent>`. Overlays are React components that draw variant-specific decorations on the board canvas.
+- **Annotator registry** (`src/board/annotators/registry.ts`): `annotatorRegistry: Record<string, CellAnnotator>`. Annotators produce accessible cell descriptions (e.g. "bulb cell for arrow").
 
 To add a puzzle type, add a spec under `src/variants/` and register it, then register any new constraint, overlay, annotator, or layout strategy in its registry. See the quick reference at the bottom of this doc.
 
@@ -131,7 +134,7 @@ To add a puzzle type, add a spec under `src/variants/` and register it, then reg
 
 Jigsaw regions are generated from a separate seed stream so saved `(jigsawLayoutStart, genKey)` pairs always reproduce the same board.
 
-`assemblePuzzle` in `src/game/assemblePuzzle.ts` handles the full setup call from `GamePage`, including seeding and progress restore.
+`assemblePuzzle` in `src/board/assemblePuzzle.ts` handles the full setup call from `GamePage`, including seeding and progress restore.
 
 ### Game state and reducer
 
@@ -155,9 +158,9 @@ Actions (`GameAction`): `enterValue`, `toggleCandidate`, `erase`, `clearAll`, `u
 
 ### Board rendering
 
-`GamePage` (`src/game/GamePage.tsx`) resolves the layout strategy, overlays, and annotators from registries, then passes them to `Board` (`src/game/Board/`). The board renders cells to a `<canvas>` via the layout strategy's `cellRects(variant)`.
+`GamePage` (`src/game/GamePage.tsx`) resolves the layout strategy, overlays, and annotators from registries, then passes them to `Board` (`src/board/Board/`). The board renders cells to a `<canvas>` via the layout strategy's `cellRects(variant)`.
 
-`useSudokuGrid` (`src/game/useSudokuGrid.ts`) derives per-cell view state (`CellState`) and handles keyboard navigation (roving `tabindex`, arrow keys).
+`useSudokuGrid` (`src/board/useSudokuGrid.ts`) derives per-cell view state (`CellState`) and handles keyboard navigation (roving `tabindex`, arrow keys).
 
 ### Pan/zoom viewport
 
@@ -300,7 +303,7 @@ All test files are co-located with source. Run with `pnpm test` (single run, no 
 1. Create `src/variants/<name>.ts` exporting a `Variant` object with a unique `id`.
 2. Add it to `variantRegistry` in `src/variants/registry.ts`.
 3. Register any new `Constraint` in `src/engine/constraints/registry.ts`.
-4. Register any new overlay component in `src/game/overlays/registry.ts`.
-5. Register any new annotator in `src/game/annotators/registry.ts`.
-6. If the variant needs a new board shape, implement `LayoutStrategy` and add it to `src/game/layouts/registry.ts`.
+4. Register any new overlay component in `src/board/overlays/registry.ts`.
+5. Register any new annotator in `src/board/annotators/registry.ts`.
+6. If the variant needs a new board shape, implement `LayoutStrategy` and add it to `src/board/layouts/registry.ts`.
 7. Add a test file `src/variants/<name>.test.ts` covering at least build and generation.
