@@ -1,4 +1,4 @@
-import type { Arrow } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
 

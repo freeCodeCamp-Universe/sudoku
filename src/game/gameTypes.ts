@@ -1,43 +1,19 @@
 import type React from 'react';
-import type { Cell, CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
+import type {
+  Cell,
+  CellId,
+  GutterSlots,
+  SymbolValue,
+  Values,
+  Variant,
+  VariantModel,
+} from '@/engine/types';
 import type { OverlapCount } from '@/game/overlapCounts';
 
 export type Rect = { x: number; y: number; w: number; h: number };
 export type Size = { w: number; h: number };
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
-
-export interface GutterCell {
-  id: string;
-  row?: number;
-  col?: number;
-  label: string;
-  description?: string;
-}
-
-export interface GutterSlots {
-  top?: GutterCell[];
-  bottom?: GutterCell[];
-  start?: GutterCell[];
-  end?: GutterCell[];
-}
-
-export interface Cage {
-  cells: CellId[];
-  sum: number;
-}
-
-export interface Arrow {
-  bulb: CellId;
-  path: CellId[];
-}
-
-export interface EdgeClues {
-  top: number[];
-  bottom: number[];
-  start: number[];
-  end: number[];
-}
 
 export interface LayoutStrategy {
   baseCellSize(variant: Variant): number;
@@ -127,12 +103,6 @@ export interface CellAnnotator {
   id: string;
   describe(cellId: CellId, ctx: AnnotatorContext): string | null;
 }
-
-export type GameEvent =
-  | { type: 'houseComplete'; cells: CellId[]; message?: string }
-  | { type: 'conflict'; cells: CellId[]; message?: string }
-  | { type: 'solved'; cells?: CellId[]; message?: string }
-  | { type: string & {}; cells?: CellId[]; message?: string };
 
 export type OverlayComponent = (props: {
   rects: Map<CellId, Rect>;

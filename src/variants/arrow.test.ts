@@ -4,7 +4,7 @@ import { generate, generateSolution } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import type { VariantModel } from '@/engine/types';
 import { validate } from '@/engine/validate';
-import type { Arrow } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
 import { arrow } from './arrow';
 
 function seeded(seed: number): () => number {

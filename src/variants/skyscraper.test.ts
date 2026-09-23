@@ -4,7 +4,7 @@ import { generate, generateSolution } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import type { VariantModel } from '@/engine/types';
 import { validate } from '@/engine/validate';
-import type { EdgeClues } from '@/game/gameTypes';
+import type { EdgeClues } from '@/engine/types';
 import { buildGutters, skyscraper } from './skyscraper';
 
 function seeded(seed: number): () => number {

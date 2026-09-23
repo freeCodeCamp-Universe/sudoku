@@ -1,4 +1,4 @@
-import type { Arrow } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
 import type { CellId, Conflict, Constraint, SymbolValue, Values, VariantModel } from '../types';
 
 function getArrows(model: VariantModel): Arrow[] {

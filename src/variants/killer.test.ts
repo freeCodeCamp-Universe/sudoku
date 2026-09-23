@@ -3,7 +3,7 @@ import { buildModel } from '@/engine/buildModel';
 import { generate, generateSolution } from '@/engine/generate';
 import type { VariantModel } from '@/engine/types';
 import { validate } from '@/engine/validate';
-import type { Cage } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
 import { killer } from './killer';
 
 function seeded(seed: number): () => number {

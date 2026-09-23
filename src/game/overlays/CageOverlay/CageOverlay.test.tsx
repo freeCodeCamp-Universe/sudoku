@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { Variant } from '@/engine/types';
-import type { Cage } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
 import { gridLayout } from '@/game/layouts/grid';
 import {
   CAGE_RING,

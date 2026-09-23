@@ -2,7 +2,7 @@ import { cellId, range, shuffle } from '@/engine/grid';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
 import { makeGenerateGivens } from './generateGivens9x9';
-import type { Cage } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
 
 const N = 9;
 const MAX_CARVE_ATTEMPTS = 300;

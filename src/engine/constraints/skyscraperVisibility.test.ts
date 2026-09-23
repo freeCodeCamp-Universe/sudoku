@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { cellId, gridCells, standardHouses } from '../grid';
 import type { VariantModel, Values } from '../types';
 import { skyscraperVisibility } from './skyscraperVisibility';
-import type { EdgeClues } from '@/game/gameTypes';
+import type { EdgeClues } from '@/engine/types';
 
 function makeModel(clues: EdgeClues): VariantModel {
   return {

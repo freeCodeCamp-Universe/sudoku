@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import type { CellId } from '@/engine/types';
-import type { Cage, Rect } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
+import type { Rect } from '@/game/gameTypes';
 import {
   CAGE_RING_INSET_RATIO,
   CAGE_RING_RATIO,

@@ -4,7 +4,7 @@ import { buildModel } from '@/engine/buildModel';
 import { gridCells } from '@/engine/grid';
 import type { Cell as CellType, CellId, Values } from '@/engine/types';
 import type { BoardProps } from '@/game/Board/Board';
-import type { GutterCell, GutterSlots } from '@/game/gameTypes';
+import type { GutterCell, GutterSlots } from '@/engine/types';
 import { gridLayout } from '@/game/layouts/grid';
 import { multigridLayout } from '@/game/layouts/multigrid';
 import { butterfly } from '@/variants/butterfly';

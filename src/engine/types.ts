@@ -1,6 +1,38 @@
 export type CellId = string;
 export type SymbolValue = number;
 
+export interface GutterCell {
+  id: string;
+  row?: number;
+  col?: number;
+  label: string;
+  description?: string;
+}
+
+export interface GutterSlots {
+  top?: GutterCell[];
+  bottom?: GutterCell[];
+  start?: GutterCell[];
+  end?: GutterCell[];
+}
+
+export interface Cage {
+  cells: CellId[];
+  sum: number;
+}
+
+export interface Arrow {
+  bulb: CellId;
+  path: CellId[];
+}
+
+export interface EdgeClues {
+  top: number[];
+  bottom: number[];
+  start: number[];
+  end: number[];
+}
+
 export interface Cell {
   id: CellId;
   row: number;
@@ -112,7 +144,7 @@ export interface Variant {
   annotatorIds?: string[];
   peerHouseFilter?: (house: House) => boolean;
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
-  deriveGutters?: (structure: unknown) => import('@/game/gameTypes').GutterSlots | undefined;
+  deriveGutters?: (structure: unknown) => GutterSlots | undefined;
   renderSymbol?: (value: SymbolValue, structure?: unknown) => string;
   generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
   generateGivens?: (

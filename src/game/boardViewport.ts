@@ -1,5 +1,6 @@
 import type { BoardLayout } from '@/engine/types';
-import type { GutterSlots, Rect, Size } from '@/game/gameTypes';
+import type { GutterSlots } from '@/engine/types';
+import type { Rect, Size } from '@/game/gameTypes';
 import { boardFrameWidth, GUTTER_SIZE } from './layouts/cellSizes';
 
 export interface Transform {

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '@/engine/grid';
 import type { VariantModel } from '@/engine/types';
-import type { Cage, AnnotatorContext, CellState } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
+import type { AnnotatorContext, CellState } from '@/game/gameTypes';
 import { cageSumAnnotator } from './cage';
 
 const cages: Cage[] = [

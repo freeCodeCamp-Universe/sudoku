@@ -1,4 +1,4 @@
-import type { EdgeClues } from '@/game/gameTypes';
+import type { EdgeClues } from '@/engine/types';
 import { cellId, range } from '../grid';
 import type { CellId, Conflict, Constraint, Values, VariantModel } from '../types';
 

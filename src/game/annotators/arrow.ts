@@ -1,4 +1,5 @@
-import type { Arrow, CellAnnotator } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
+import type { CellAnnotator } from '@/game/gameTypes';
 
 function getArrows(ctx: Parameters<CellAnnotator['describe']>[1]): Arrow[] | undefined {
   return (ctx.model.structure as { arrows?: Arrow[] } | undefined)?.arrows;

@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { GutterCell, GutterSlots } from '@/game/gameTypes';
+import type { GutterCell, GutterSlots } from '@/engine/types';
 import { Cell } from '@/game/Cell';
 import { LiveRegion } from '@/game/LiveRegion';
 import type { BoardProps } from '@/game/gameTypes';

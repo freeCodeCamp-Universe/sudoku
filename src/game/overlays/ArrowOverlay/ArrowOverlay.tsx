@@ -1,5 +1,6 @@
 import type { CellId } from '@/engine/types';
-import type { Arrow, Rect } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
+import type { Rect } from '@/game/gameTypes';
 import styles from './ArrowOverlay.module.css';
 
 interface ArrowOverlayProps {

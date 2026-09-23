@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '../grid';
 import type { VariantModel, Values } from '../types';
 import { cageSum } from './cageSum';
-import type { Cage } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
 
 function makeModel(cages: Cage[]): VariantModel {
   return {

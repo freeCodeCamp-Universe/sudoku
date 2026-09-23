@@ -1,6 +1,6 @@
 import { range } from '@/engine/grid';
 import type { Solution, Variant, VariantModel } from '@/engine/types';
-import type { EdgeClues, GutterSlots } from '@/game/gameTypes';
+import type { EdgeClues, GutterSlots } from '@/engine/types';
 import { generateGivens9x9 } from './generateGivens9x9';
 
 function cellId(row: number, col: number): string {

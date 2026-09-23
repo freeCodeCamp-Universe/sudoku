@@ -1,4 +1,5 @@
-import type { Cage, CellAnnotator } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
+import type { CellAnnotator } from '@/game/gameTypes';
 
 function getCages(ctx: Parameters<CellAnnotator['describe']>[1]): Cage[] | undefined {
   return (ctx.model.structure as { cages?: Cage[] } | undefined)?.cages;

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '@/engine/grid';
 import type { VariantModel } from '@/engine/types';
-import type { AnnotatorContext, CellState, EdgeClues } from '@/game/gameTypes';
+import type { EdgeClues } from '@/engine/types';
+import type { AnnotatorContext, CellState } from '@/game/gameTypes';
 import { skyscraperClueAnnotator } from './skyscraper';
 
 const clues: EdgeClues = {

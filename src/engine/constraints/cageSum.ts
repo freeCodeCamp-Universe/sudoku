@@ -1,5 +1,5 @@
 import type { CellId, Conflict, Constraint, SymbolValue, Values, VariantModel } from '../types';
-import type { Cage } from '@/game/gameTypes';
+import type { Cage } from '@/engine/types';
 
 function getCages(model: VariantModel): Cage[] {
   return (model.structure as { cages?: Cage[] } | undefined)?.cages ?? [];

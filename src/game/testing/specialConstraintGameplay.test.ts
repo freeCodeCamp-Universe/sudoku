@@ -12,7 +12,7 @@ import { kropki } from '@/variants/kropki';
 import { sandwich } from '@/variants/sandwich';
 import { skyscraper } from '@/variants/skyscraper';
 import { chainVariant } from '@/variants/chain';
-import type { Arrow, Cage } from '@/game/gameTypes';
+import type { Arrow, Cage } from '@/engine/types';
 import type { Mark as ConsecutiveMark } from '@/engine/constraints/consecutive';
 import type { Relation } from '@/engine/constraints/greaterThan';
 import type { KropkiMark } from '@/engine/constraints/kropki';

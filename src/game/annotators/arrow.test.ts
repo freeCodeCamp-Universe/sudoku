@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '@/engine/grid';
 import type { VariantModel } from '@/engine/types';
-import type { AnnotatorContext, Arrow, CellState } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
+import type { AnnotatorContext, CellState } from '@/game/gameTypes';
 import { arrowBulbAnnotator, arrowPathAnnotator } from './arrow';
 
 const arrows: Arrow[] = [{ bulb: 'r0c0', path: ['r0c1', 'r0c2'] }];

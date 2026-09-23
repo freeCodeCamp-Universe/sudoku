@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '../grid';
 import type { VariantModel, Values } from '../types';
 import { arrowSum } from './arrowSum';
-import type { Arrow } from '@/game/gameTypes';
+import type { Arrow } from '@/engine/types';
 
 function makeModel(arrows: Arrow[]): VariantModel {
   return {

@@ -52,7 +52,7 @@ It has two parts:
 ### Part A: ready for implementation
 
 - [x] A0. Move `StarIcon` from `src/gallery/StarIcon/` into `src/components/icons.tsx` so `src/components/Header/Header.tsx` no longer imports from `@/gallery`
-- [ ] A1. Move engine-facing types from `gameTypes.ts` into `src/engine/types.ts`; delete `GameEvent`
+- [x] A1. Move engine-facing types from `gameTypes.ts` into `src/engine/types.ts`; delete `GameEvent`
 - [ ] A2. Move board files into `src/board/`
 - [ ] A3. Add ESLint import-boundary rules
 - [ ] A4. Merge the two `useMediaQuery` hooks into `src/hooks/useMediaQuery.ts`
