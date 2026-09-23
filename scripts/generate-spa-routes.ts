@@ -110,7 +110,7 @@ function render(
   title: string,
   description: string,
   path: string,
-  type: string
+  type: 'WebSite' | 'WebPage'
 ) {
   return templateHtml.replace(
     '<!-- SEO_META_PLACEHOLDER -->',
