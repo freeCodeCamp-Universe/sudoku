@@ -1,6 +1,6 @@
 import type { CellId } from '@/engine/types';
 import { BUTTON_ZOOM_FACTOR } from '@/game/boardViewport';
-import type { Rect, Size } from '@/game/gameTypes';
+import type { Rect, Size } from '@/board/boardTypes';
 import type { BoardViewport } from '@/game/useBoardViewport';
 import { ZoomControls } from '@/game/ZoomControls';
 

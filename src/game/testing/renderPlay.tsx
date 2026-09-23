@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import type { Variant } from '@/engine/types';
-import { withStructure } from '@/game/assemblePuzzle';
+import { withStructure } from '@/board/assemblePuzzle';
 import { useGameContext } from '@/game/GameContext';
 import { GameProvider } from '@/game/GameProvider';
-import { useSudokuGrid } from '@/game/useSudokuGrid';
+import { useSudokuGrid } from '@/board/useSudokuGrid';
 import { makeFixture, type Fixture } from './makeFixture';
 
 interface PlayOptions {

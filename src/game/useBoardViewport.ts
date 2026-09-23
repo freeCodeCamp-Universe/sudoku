@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Rect, Size } from '@/game/gameTypes';
+import type { Rect, Size } from '@/board/boardTypes';
 import {
   centerOnPoint,
   clampScale,

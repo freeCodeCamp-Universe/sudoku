@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, should } from 'vitest';
 import type { CellId } from '@/engine/types';
 import { buildModel } from '@/engine/buildModel';
-import { Board } from '@/game/Board';
-import { multigridLayout } from '@/game/layouts/multigrid';
+import { Board } from '@/board/Board';
+import { multigridLayout } from '@/board/layouts/multigrid';
 import { butterfly } from './butterfly';
 
 const shouldAssert = should();

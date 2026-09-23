@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { CellId, SymbolValue, Values } from '@/engine/types';
 import { classic } from '@/variants/classic';
-import { useSudokuGrid } from '@/game/useSudokuGrid';
+import { useSudokuGrid } from '@/board/useSudokuGrid';
 import { makeFixture } from './makeFixture';
 
 const noop = () => {};

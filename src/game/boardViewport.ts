@@ -1,7 +1,7 @@
 import type { BoardLayout } from '@/engine/types';
 import type { GutterSlots } from '@/engine/types';
-import type { Rect, Size } from '@/game/gameTypes';
-import { boardFrameWidth, GUTTER_SIZE } from './layouts/cellSizes';
+import type { Rect, Size } from '@/board/boardTypes';
+import { boardFrameWidth, GUTTER_SIZE } from '@/board/layouts/cellSizes';
 
 export interface Transform {
   scale: number;

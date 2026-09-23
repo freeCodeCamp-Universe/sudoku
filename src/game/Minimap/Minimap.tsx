@@ -1,6 +1,6 @@
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import type { CellId } from '@/engine/types';
-import type { Rect, Size } from '@/game/gameTypes';
+import type { Rect, Size } from '@/board/boardTypes';
 import { indicatorRect } from '@/game/boardViewport';
 import styles from './Minimap.module.css';
 

@@ -1,8 +1,8 @@
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import type { CellId, Solution, Values, Variant, VariantModel } from '@/engine/types';
-import type { Rect, Size } from '@/game/gameTypes';
-import { resolveLayout } from '@/game/layouts/registry';
+import type { Rect, Size } from '@/board/boardTypes';
+import { resolveLayout } from '@/board/layouts/registry';
 
 export interface Fixture {
   model: VariantModel;

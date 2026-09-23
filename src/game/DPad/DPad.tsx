@@ -1,4 +1,4 @@
-import type { Direction } from '@/game/gameTypes';
+import type { Direction } from '@/board/boardTypes';
 import styles from './DPad.module.css';
 
 interface DPadProps {

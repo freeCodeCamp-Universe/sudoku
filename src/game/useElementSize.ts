@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
-import type { Size } from '@/game/gameTypes';
+import type { Size } from '@/board/boardTypes';
 
 export function useElementSize(ref: RefObject<HTMLElement | null>): Size {
   const [size, setSize] = useState<Size>({ w: 0, h: 0 });

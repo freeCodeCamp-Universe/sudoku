@@ -8,7 +8,7 @@ import {
   CELL_SIZE_SPACIOUS,
   CELL_SIZE_STANDARD,
   GUTTER_SIZE,
-} from './layouts/cellSizes';
+} from '@/board/layouts/cellSizes';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 
 const originalWidth = window.innerWidth;

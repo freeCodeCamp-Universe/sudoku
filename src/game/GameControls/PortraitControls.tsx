@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { DPad } from '@/game/DPad';
-import type { Direction } from '@/game/gameTypes';
+import type { Direction } from '@/board/boardTypes';
 import { Tabs, type Tab } from '@/game/Tabs';
 import styles from './GameControls.module.css';
 

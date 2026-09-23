@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { CellId } from '@/engine/types';
 import { buildModel } from '@/engine/buildModel';
-import { Board } from '@/game/Board';
-import { triangularLayout } from '@/game/layouts/triangular';
+import { Board } from '@/board/Board';
+import { triangularLayout } from '@/board/layouts/triangular';
 import { renderVariantBoard } from '@/game/testing/renderVariantBoard';
 import { sujiken } from './sujiken';
 

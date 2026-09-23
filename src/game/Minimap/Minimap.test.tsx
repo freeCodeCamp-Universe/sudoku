@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { CellId } from '@/engine/types';
-import type { Rect } from '@/game/gameTypes';
+import type { Rect } from '@/board/boardTypes';
 import { Minimap } from './Minimap';
 
 const rects = new Map<CellId, Rect>([

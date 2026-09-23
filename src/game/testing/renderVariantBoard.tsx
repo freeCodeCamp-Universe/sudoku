@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
-import type { CellState } from '@/game/gameTypes';
-import { Board } from '@/game/Board';
-import { resolveOverlays } from '@/game/overlays/registry';
+import type { CellState } from '@/board/boardTypes';
+import { Board } from '@/board/Board';
+import { resolveOverlays } from '@/board/overlays/registry';
 import { makeFixture, type Fixture } from './makeFixture';
 
 interface CellRenderState {

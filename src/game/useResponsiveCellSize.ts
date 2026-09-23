@@ -8,8 +8,8 @@ import {
   GUTTER_SIZE,
   VIEWPORT_BUCKET_FLOORS,
   VIEWPORT_DESKTOP,
-} from './layouts/cellSizes';
-import { resolveLayout } from './layouts/registry';
+} from '@/board/layouts/cellSizes';
+import { resolveLayout } from '@/board/layouts/registry';
 
 function isOversizedVariant(variant: Variant): boolean {
   const { kind } = variant.layout;
