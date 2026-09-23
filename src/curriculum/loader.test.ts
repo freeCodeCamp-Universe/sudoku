@@ -92,3 +92,58 @@ describe('filterVisibleCurriculum', () => {
     expect(filtered.lessons).toHaveLength(0);
   });
 });
+
+describe('buildCurriculum lesson parsing', () => {
+  const lessonWith = (instructions: string, config: string) => `---
+id: ${LEARN_ID}
+title: 'Learn Lesson'
+type: learn
+layoutType: interactive
+---
+
+# --instructions--
+
+${instructions}
+
+# --config--
+
+${config}
+`;
+
+  const build = (source: string) =>
+    buildCurriculum([{ module: 1, slug: 'basics', title: 'Basics', lessons: ['learn.md'] }], {
+      './lessons/learn.md': source,
+    });
+
+  it('should parse line and block comments in a json config block', () => {
+    const config = [
+      '```json',
+      '{',
+      '  // The learner sees this checklist.',
+      '  /* Items appear in order. */',
+      '  "checklist": [{ "label": "Look", "test": {} }]',
+      '}',
+      '```',
+    ].join('\n');
+
+    const [lesson] = build(lessonWith('Do something.', config)).lessons;
+
+    expect(lesson.config?.checklist).toHaveLength(1);
+  });
+
+  it('should reject a config block fenced as jsonc', () => {
+    const config = ['```jsonc', '{ "checklist": [] }', '```'].join('\n');
+
+    expect(() => build(lessonWith('Do something.', config))).toThrow(
+      '# --config-- section must contain a json code block'
+    );
+  });
+
+  it('should throw when an instruction <img> has no alt attribute', () => {
+    const config = ['```json', '{ "checklist": [] }', '```'].join('\n');
+
+    expect(() => build(lessonWith('<img src="/a.svg">', config))).toThrow(
+      'is missing an alt attribute'
+    );
+  });
+});

@@ -16,6 +16,6 @@ export const curriculum: readonly OrderingModule[] = [
     module: 1,
     slug: 'getting-started',
     title: 'Getting Started',
-    lessons: ['101.md', '102.md', '103.md'],
+    lessons: ['101.md', '102.md', '103.md', '104.md'],
   },
 ];

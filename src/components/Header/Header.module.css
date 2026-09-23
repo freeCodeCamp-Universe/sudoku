@@ -172,7 +172,7 @@
 .topBarRight {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
   flex-shrink: 0;
   margin-inline-start: auto;
 }

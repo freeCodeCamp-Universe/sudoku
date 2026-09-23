@@ -93,4 +93,10 @@ describe('Markdown', () => {
     expect(screen.getByRole('cell', { name: 'Insert' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'i' })).toBeInTheDocument();
   });
+
+  it('should render an <img> with its alt text', () => {
+    render(<Markdown html={renderMarkdown('<img src="/a.svg" alt="A labeled grid">')} />);
+
+    expect(screen.getByRole('img', { name: 'A labeled grid' })).toHaveAttribute('src', '/a.svg');
+  });
 });

@@ -209,45 +209,13 @@ The learn experience is a separate React feature under `src/learn/`. It is enabl
 
 `useCurriculumTree` fetches and caches `/data/curriculum-tree.json`. `useLessonData` resolves a lesson from that tree, fetches `/data/lessons/<dataFile>`, caches it, and prefetches the next lesson. Lesson Markdown is sanitized and transformed by the learn Markdown pipeline before it is serialized for the client.
 
+### Lesson validation
+
+`parseLesson` (`src/curriculum/loader.ts`) validates each lesson as it loads, so a bad lesson fails both `pnpm build` and `curriculumIntegrity.test.ts`. `assertImageAltText` requires an `alt` attribute on every `<img>`. `assertSanitizedHtml` rejects HTML outside `LESSON_HTML_OPTIONS` (`src/curriculum/sanitize.ts`). `parseJsonWithComments` (`src/curriculum/jsonWithComments.ts`) parses the config block's `json` fence, allowing `//` and `/* */` comments.
+
 ### Creating curriculum modules and lessons
 
-Use the curriculum scaffolding scripts from the repository root. Both scripts
-update `src/curriculum/ordering.ts` and create Markdown stubs under
-`src/curriculum/lessons/`.
-
-To create a module with an intro and review lesson:
-
-```bash
-pnpm add-module --number=2 --slug=techniques --title="Techniques"
-pnpm add-module --number=2 --slug=techniques --title="Techniques" --before=3
-pnpm add-module --number=2 --slug=techniques --title="Techniques" --after=1
-```
-
-`--number`, `--slug`, and `--title` are required in non-interactive mode.
-Module numbers determine the lesson filename range: module 2 creates `201.md`
-and `202.md`. Use either `--before=<module-number>` or
-`--after=<module-number>` to place the module, or omit both to append it. With
-no arguments, the script prompts for these values.
-
-To create a lesson in an existing module:
-
-```bash
-pnpm add-lesson --module=2 --title="Candidate notes"
-pnpm add-lesson --module=2 --title="Candidate notes" --type=practice
-pnpm add-lesson --module=2 --title="Candidate notes" --before=201.md
-pnpm add-lesson --module=2 --title="Candidate notes" --after=201.md
-```
-
-`--module` and `--title` are required in non-interactive mode. `--type` is
-`learn` by default and may be `practice`. The script assigns the next unused
-number in the module's range (`201.md` through `299.md`). Without a placement
-flag, it inserts the lesson immediately before the module's final review lesson.
-Use either `--before=<filename>` or `--after=<filename>` to place it elsewhere.
-With no arguments, the script prompts for the values and defaults to inserting
-the lesson before the review.
-
-After filling in the generated front matter and Markdown, verify the
-curriculum with `pnpm build`.
+Scaffolding commands, frontmatter, sections, the HTML allowlist, images, config, and checklist rules are in [`lesson-authoring.md`](lesson-authoring.md).
 
 ### Learn progress
 

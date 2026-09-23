@@ -32,6 +32,13 @@ pnpm build && pnpm test && pnpm lint
 
 Note that `pnpm build` runs `tsc --noEmit` over the whole `src` tree, **including `*.test.ts(x)` files**, so a type error in a test (e.g. a prop change you didn't propagate to its colocated test) fails the build, not just the test run.
 
+## Reference docs
+
+Read the relevant doc before changing that area:
+
+- [`docs/architecture.md`](docs/architecture.md): layers, registries, data flow, game runtime, the learn layer, and the build.
+- [`docs/lesson-authoring.md`](docs/lesson-authoring.md): read before creating or editing anything in `src/curriculum/lessons/`. Covers lesson files, frontmatter, sections, allowed HTML, required image `alt` text, the `json` config block (comments allowed), and checklist rules.
+
 ## Architecture
 
 Four layers, each depending only on the ones above it: **engine** (pure puzzle logic, no React) → **variants** (declarative specs) → **board** (shared board rendering) → **game / gallery / learn / app** (React UI). Directory roles:
@@ -42,9 +49,10 @@ Four layers, each depending only on the ones above it: **engine** (pure puzzle l
 - `src/game/` — game session UI: page, controls, timer, persistence, and pan/zoom.
 - `src/gallery/` — the home grid of puzzles and their canvas previews.
 - `src/learn/` — lesson views and course UI.
+- `src/curriculum/` — lesson Markdown, ordering, and the loader that parses and validates lessons.
 - `src/app/` — shell: routing, page layout, header, theme.
 - `scripts/` — generator scripts run via `pnpm <script-name>` (e.g. `pnpm docs:colors`); not typechecked by `tsc --noEmit`.
-- `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc; `breakpoints.md` lists the allowed media query breakpoints.
+- `docs/` — reference files. `colors.md` is generated (do not hand-edit); `color-contrast.md` is the hand-maintained color/contrast design doc; `breakpoints.md` lists the allowed media query breakpoints; `architecture.md` and `lesson-authoring.md` are described under [Reference docs](#reference-docs).
 
 ### The data-driven variant pipeline (worth understanding up front)
 

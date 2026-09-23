@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 404 168" width="404" height="168">
+<rect width="404" height="168" rx="8" fill="#ffffff"/>
+<g transform="translate(16 16)">
+<rect x="0" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="12" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="24" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="36" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="60" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="72" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="84" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="96" y="48" width="12" height="12" fill="#2c5f8a"/>
+<line x1="0" y1="0" x2="0" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="0" x2="108" y2="0" stroke="#0a0a23" stroke-width="2"/>
+<line x1="12" y1="0" x2="12" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="12" x2="108" y2="12" stroke="#858599" stroke-width="0.75"/>
+<line x1="24" y1="0" x2="24" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="24" x2="108" y2="24" stroke="#858599" stroke-width="0.75"/>
+<line x1="36" y1="0" x2="36" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="36" x2="108" y2="36" stroke="#0a0a23" stroke-width="2"/>
+<line x1="48" y1="0" x2="48" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="48" x2="108" y2="48" stroke="#858599" stroke-width="0.75"/>
+<line x1="60" y1="0" x2="60" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="60" x2="108" y2="60" stroke="#858599" stroke-width="0.75"/>
+<line x1="72" y1="0" x2="72" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="72" x2="108" y2="72" stroke="#0a0a23" stroke-width="2"/>
+<line x1="84" y1="0" x2="84" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="84" x2="108" y2="84" stroke="#858599" stroke-width="0.75"/>
+<line x1="96" y1="0" x2="96" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="96" x2="108" y2="96" stroke="#858599" stroke-width="0.75"/>
+<line x1="108" y1="0" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="108" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<text x="54.0" y="128" text-anchor="middle" font-family="Lato, sans-serif" font-size="14" fill="#0a0a23">Row</text>
+</g>
+<g transform="translate(148 16)">
+<rect x="48" y="0" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="12" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="24" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="36" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="60" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="72" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="84" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="96" width="12" height="12" fill="#2c5f8a"/>
+<line x1="0" y1="0" x2="0" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="0" x2="108" y2="0" stroke="#0a0a23" stroke-width="2"/>
+<line x1="12" y1="0" x2="12" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="12" x2="108" y2="12" stroke="#858599" stroke-width="0.75"/>
+<line x1="24" y1="0" x2="24" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="24" x2="108" y2="24" stroke="#858599" stroke-width="0.75"/>
+<line x1="36" y1="0" x2="36" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="36" x2="108" y2="36" stroke="#0a0a23" stroke-width="2"/>
+<line x1="48" y1="0" x2="48" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="48" x2="108" y2="48" stroke="#858599" stroke-width="0.75"/>
+<line x1="60" y1="0" x2="60" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="60" x2="108" y2="60" stroke="#858599" stroke-width="0.75"/>
+<line x1="72" y1="0" x2="72" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="72" x2="108" y2="72" stroke="#0a0a23" stroke-width="2"/>
+<line x1="84" y1="0" x2="84" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="84" x2="108" y2="84" stroke="#858599" stroke-width="0.75"/>
+<line x1="96" y1="0" x2="96" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="96" x2="108" y2="96" stroke="#858599" stroke-width="0.75"/>
+<line x1="108" y1="0" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="108" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<text x="54.0" y="128" text-anchor="middle" font-family="Lato, sans-serif" font-size="14" fill="#0a0a23">Column</text>
+</g>
+<g transform="translate(280 16)">
+<rect x="36" y="36" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="36" width="12" height="12" fill="#2c5f8a"/>
+<rect x="60" y="36" width="12" height="12" fill="#2c5f8a"/>
+<rect x="36" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="60" y="48" width="12" height="12" fill="#2c5f8a"/>
+<rect x="36" y="60" width="12" height="12" fill="#2c5f8a"/>
+<rect x="48" y="60" width="12" height="12" fill="#2c5f8a"/>
+<rect x="60" y="60" width="12" height="12" fill="#2c5f8a"/>
+<line x1="0" y1="0" x2="0" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="0" x2="108" y2="0" stroke="#0a0a23" stroke-width="2"/>
+<line x1="12" y1="0" x2="12" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="12" x2="108" y2="12" stroke="#858599" stroke-width="0.75"/>
+<line x1="24" y1="0" x2="24" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="24" x2="108" y2="24" stroke="#858599" stroke-width="0.75"/>
+<line x1="36" y1="0" x2="36" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="36" x2="108" y2="36" stroke="#0a0a23" stroke-width="2"/>
+<line x1="48" y1="0" x2="48" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="48" x2="108" y2="48" stroke="#858599" stroke-width="0.75"/>
+<line x1="60" y1="0" x2="60" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="60" x2="108" y2="60" stroke="#858599" stroke-width="0.75"/>
+<line x1="72" y1="0" x2="72" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="72" x2="108" y2="72" stroke="#0a0a23" stroke-width="2"/>
+<line x1="84" y1="0" x2="84" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="84" x2="108" y2="84" stroke="#858599" stroke-width="0.75"/>
+<line x1="96" y1="0" x2="96" y2="108" stroke="#858599" stroke-width="0.75"/>
+<line x1="0" y1="96" x2="108" y2="96" stroke="#858599" stroke-width="0.75"/>
+<line x1="108" y1="0" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<line x1="0" y1="108" x2="108" y2="108" stroke="#0a0a23" stroke-width="2"/>
+<text x="54.0" y="128" text-anchor="middle" font-family="Lato, sans-serif" font-size="14" fill="#0a0a23">Box</text>
+</g>
+</svg>

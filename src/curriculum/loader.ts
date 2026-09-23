@@ -2,7 +2,8 @@ import { curriculum as defaultOrdering } from '@/curriculum/ordering';
 
 const SHOW_UPCOMING_LESSONS = import.meta.env.SHOW_UPCOMING_LESSONS === 'true';
 
-import { assertSanitizedHtml } from '@/curriculum/sanitize';
+import { parseJsonWithComments } from '@/curriculum/jsonWithComments';
+import { assertImageAltText, assertSanitizedHtml } from '@/curriculum/sanitize';
 import { hasTabBlocks, parseInstructionSegments } from '@/curriculum/tabBlocks';
 import type {
   InteractiveLessonDefinition,
@@ -195,9 +196,9 @@ function extractFencedContent(block: string): string {
 function parseConfig(configSection: string): LessonConfig {
   const jsonMatch = /```json\n([\s\S]*?)```/.exec(configSection);
   if (!jsonMatch) {
-    throw new Error('# --config-- section must contain a JSON code block');
+    throw new Error('# --config-- section must contain a json code block');
   }
-  const raw = JSON.parse(jsonMatch[1]) as {
+  const raw = parseJsonWithComments(jsonMatch[1]) as {
     checklist?: Array<{ label: string; hint?: string; test?: Record<string, unknown> }>;
   };
 
@@ -229,6 +230,7 @@ function parseLesson(
 
   const sections = parseSections(body);
   const instructions = sections['instructions'] ?? '';
+  assertImageAltText(instructions, id);
   assertSanitizedHtml(instructions, id);
 
   const hasConfig = Boolean(sections['config']);
