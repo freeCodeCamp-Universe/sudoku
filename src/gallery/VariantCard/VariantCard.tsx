@@ -1,7 +1,7 @@
 import { withUnbreakableTokens } from '@/components/withUnbreakableTokens';
 import type { Variant } from '@/engine/types';
 import { Preview } from '@/gallery/previews';
-import { StarIcon } from '@/gallery/StarIcon';
+import { StarIcon } from '@/components/icons';
 import { Link } from 'react-router-dom';
 import styles from './VariantCard.module.css';
 

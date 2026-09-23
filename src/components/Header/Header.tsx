@@ -5,8 +5,7 @@ import { SettingsMenu } from '@/components/SettingsMenu';
 import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { useTheme } from '@/app/ThemeProvider';
 import { Toggle } from '@/components/Toggle';
-import { GearIcon, HomeIcon, KeyboardIcon } from '@/components/icons';
-import { StarIcon } from '@/gallery/StarIcon';
+import { GearIcon, HomeIcon, KeyboardIcon, StarIcon } from '@/components/icons';
 import styles from './Header.module.css';
 
 interface HeaderProps {
