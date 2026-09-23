@@ -6,12 +6,16 @@ import { curriculumDataPlugin } from './scripts/curriculumDataPlugin';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, ['SHOW_']);
   const showLearn = mode !== 'production' && env.SHOW_LEARN === 'true';
+  const showUpcomingLessons = mode !== 'production' && env.SHOW_UPCOMING_LESSONS === 'true';
 
   return {
     base: '/',
     plugins: [showLearn && curriculumDataPlugin(), react()].filter(Boolean),
     define: {
       'import.meta.env.SHOW_LEARN': JSON.stringify(showLearn ? 'true' : 'false'),
+      'import.meta.env.SHOW_UPCOMING_LESSONS': JSON.stringify(
+        showUpcomingLessons ? 'true' : 'false'
+      ),
     },
     resolve: {
       alias: {
