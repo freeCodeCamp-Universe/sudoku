@@ -3,7 +3,8 @@ import { validate } from '@/engine/validate';
 import { solve } from '@/engine/solve';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
-import { allVariants, NON_UNIQUE_VARIANTS } from './allVariants';
+import { assemblePuzzle } from '@/board/assemblePuzzle';
+import { allVariants } from './allVariants';
 import { makeFixture, seeded } from './makeFixture';
 
 const SEEDS = [1, 2, 3, 4, 5];
@@ -26,16 +27,15 @@ describe('generation soundness', () => {
   );
 
   it.each(allVariants())(
-    'should match its NON_UNIQUE_VARIANTS membership for $id',
+    'should produce a uniquely solvable puzzle for $id',
     (variant) => {
-      const model = buildModel(variant);
+      const baseModel = buildModel(variant);
       const uniqueOnAllSeeds = SEEDS.every((s) => {
-        const { givens } = generate(model, 'intermediate', seeded(s));
+        const { givens, solution } = generate(baseModel, 'intermediate', seeded(s));
+        const { model } = assemblePuzzle(variant, baseModel, solution);
         return solve(model, givens, { max: 2 }).length === 1;
       });
-      const shouldBeUnique = !NON_UNIQUE_VARIANTS.has(variant.id);
-
-      expect(uniqueOnAllSeeds).toBe(shouldBeUnique);
+      expect(uniqueOnAllSeeds).toBe(true);
     },
     SLOW_TEST_TIMEOUT_MS
   );

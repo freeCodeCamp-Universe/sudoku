@@ -75,4 +75,40 @@ describe('cageSum constraint', () => {
     expect(cageSum.permits?.(values, 'r0c1', 4, model)).toBe(false);
     expect(cageSum.permits?.(values, 'r0c1', 5, model)).toBe(true);
   });
+
+  it('should not permit a value that overshoots the cage sum', () => {
+    const cages: Cage[] = [{ cells: ['r0c0', 'r0c1'], sum: 5 }];
+    const model = makeModel(cages);
+    const values: Values = new Map([['r0c0', 3]]);
+
+    expect(cageSum.permits?.(values, 'r0c1', 2, model)).toBe(true);
+    expect(cageSum.permits?.(values, 'r0c1', 7, model)).toBe(false);
+  });
+
+  it('should not permit a value when the remaining cells cannot reach the target sum', () => {
+    const cages: Cage[] = [{ cells: ['r0c0', 'r0c1', 'r0c2'], sum: 24 }];
+    const model = makeModel(cages);
+    const values: Values = new Map([['r0c0', 7]]);
+
+    expect(cageSum.permits?.(values, 'r0c1', 9, model)).toBe(true);
+    expect(cageSum.permits?.(values, 'r0c1', 1, model)).toBe(false);
+  });
+
+  it('should not permit a value when the remaining sum exceeds what available digits can provide', () => {
+    const cages: Cage[] = [{ cells: ['r0c0', 'r0c1', 'r0c2'], sum: 7 }];
+    const model = makeModel(cages);
+    const values: Values = new Map([['r0c0', 1]]);
+
+    expect(cageSum.permits?.(values, 'r0c1', 2, model)).toBe(true);
+    expect(cageSum.permits?.(values, 'r0c1', 5, model)).toBe(false);
+  });
+
+  it('should reject the last cell placement when the sum does not match exactly', () => {
+    const cages: Cage[] = [{ cells: ['r0c0', 'r0c1'], sum: 9 }];
+    const model = makeModel(cages);
+    const values: Values = new Map([['r0c0', 5]]);
+
+    expect(cageSum.permits?.(values, 'r0c1', 4, model)).toBe(true);
+    expect(cageSum.permits?.(values, 'r0c1', 3, model)).toBe(false);
+  });
 });

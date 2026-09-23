@@ -91,32 +91,23 @@ export function pickNextCell(
   orderCandidates?: (candidates: SymbolValue[]) => SymbolValue[]
 ): { cellId: CellId | null; candidates: SymbolValue[] } {
   let nextCellId: CellId | null = null;
-  let nextEstimate: number | null = null;
+  let nextCandidates: SymbolValue[] | null = null;
 
   for (const cellId of state.cellIds) {
     if (values.has(cellId)) {
       continue;
     }
 
-    const usedValues = new Set<SymbolValue>();
-
-    for (const houseIndex of state.cellHouses.get(cellId) ?? []) {
-      for (const value of state.houseValues[houseIndex]) {
-        usedValues.add(value);
-      }
-    }
-
-    const estimate = model.symbols.length - usedValues.size;
-
-    if (estimate === 0) {
+    const candidates = candidatesForCell(state, values, model, cellId);
+    if (candidates.length === 0) {
       return { cellId: null, candidates: [] };
     }
 
-    if (nextEstimate === null || estimate < nextEstimate) {
+    if (nextCandidates === null || candidates.length < nextCandidates.length) {
       nextCellId = cellId;
-      nextEstimate = estimate;
+      nextCandidates = candidates;
 
-      if (estimate === 1) {
+      if (candidates.length === 1) {
         break;
       }
     }
@@ -126,14 +117,8 @@ export function pickNextCell(
     return { cellId: null, candidates: [] };
   }
 
-  const candidates = candidatesForCell(state, values, model, nextCellId);
-
-  if (candidates.length === 0) {
-    return { cellId: null, candidates: [] };
-  }
-
   return {
     cellId: nextCellId,
-    candidates: orderCandidates ? orderCandidates(candidates) : candidates,
+    candidates: orderCandidates ? orderCandidates(nextCandidates ?? []) : (nextCandidates ?? []),
   };
 }

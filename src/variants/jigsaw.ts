@@ -1,15 +1,7 @@
 import { buildModel } from '@/engine/buildModel';
-import { cellId, range, shuffle } from '@/engine/grid';
+import { cellId, range } from '@/engine/grid';
 import { findSolution } from '@/engine/solve';
-import type {
-  BoardLayout,
-  Difficulty,
-  House,
-  Solution,
-  Values,
-  Variant,
-  VariantModel,
-} from '@/engine/types';
+import type { BoardLayout, House, Variant } from '@/engine/types';
 
 const JIGSAW_SIZE = 9;
 
@@ -139,10 +131,7 @@ export function makeJigsawVariant(regions: number[][]): Variant {
     popularity: 5,
     difficulty: 'intermediate',
     difficultyRank: 10,
-    // The jigsaw generator never proves uniqueness (see generateJigsawGivens
-    // below), so a Mode-driven clue reduction risks shipping an ambiguous
-    // puzzle rather than just running slower.
-    supportsMode: false,
+    supportsMode: true,
     layout: { kind: 'grid', size: JIGSAW_SIZE, box: { rows: 3, cols: 3 } },
     symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     constraintIds: ['uniqueness'],
@@ -155,37 +144,8 @@ export function makeJigsawVariant(regions: number[][]): Variant {
   };
 }
 
-// Matches the original jigsaw generator: blank a fixed number of cells from the
-// solved grid in a single pass, with no per-removal uniqueness search. Proving
-// uniqueness on irregular regions is expensive and heavy-tailed, which froze the
-// page; the original never verified uniqueness and so never paid that cost.
-const JIGSAW_GIVEN_COUNT = 31;
-
-function generateJigsawGivens(
-  solution: Solution,
-  _model: VariantModel,
-  _difficulty: Difficulty,
-  rng: (() => number) | undefined = Math.random
-): Values {
-  const safeRng = rng ?? Math.random;
-  const givens: Values = new Map(solution);
-
-  for (const id of shuffle([...givens.keys()], safeRng)) {
-    if (givens.size <= JIGSAW_GIVEN_COUNT) {
-      break;
-    }
-
-    givens.delete(id);
-  }
-
-  return givens;
-}
-
 export function makePlayableJigsawVariant(regions: number[][]): Variant {
-  return {
-    ...makeJigsawVariant(regions),
-    generateGivens: generateJigsawGivens,
-  };
+  return { ...makeJigsawVariant(regions) };
 }
 
 export const jigsaw: Variant = makePlayableJigsawVariant(PRESET_LAYOUTS[0]);

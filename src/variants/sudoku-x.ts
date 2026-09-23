@@ -40,7 +40,7 @@ export const sudokuX: Variant = {
   popularity: 4,
   generateGivens: generateGivens9x9,
   difficulty: 'intermediate',
-  difficultyRank: 5,
+  difficultyRank: 7,
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],

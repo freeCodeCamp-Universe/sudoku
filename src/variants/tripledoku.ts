@@ -96,7 +96,7 @@ export const tripledoku: Variant = {
   ],
   popularity: 25,
   difficulty: 'intermediate',
-  difficultyRank: 12,
+  difficultyRank: 14,
   tags: ['multidoku'],
   layout,
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
