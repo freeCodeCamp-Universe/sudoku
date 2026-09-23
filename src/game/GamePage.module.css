@@ -475,6 +475,7 @@
   .gameLayout {
     flex-direction: row;
     gap: 48px;
+    padding-block-start: 48px;
   }
 
   .boardFrame {
