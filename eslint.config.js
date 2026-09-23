@@ -34,6 +34,56 @@ export default tseslint.config(
     },
   },
   {
+    files: ['src/engine/**/*.{ts,tsx}', 'src/variants/**/*.{ts,tsx}'],
+    ignores: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/board', '@/board/*', '@/game', '@/game/*', '@/learn', '@/learn/*'],
+              message: 'engine and variants must not depend on UI layers.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/board/**/*.{ts,tsx}'],
+    ignores: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/game', '@/game/*', '@/learn', '@/learn/*'],
+              message: 'board is shared; it must not depend on game or learn.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/learn/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/game', '@/game/*'],
+              message: 'learn must not import from game; move shared code to src/board.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.test.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
     plugins: {
       'testing-library': testingLibraryPlugin,
