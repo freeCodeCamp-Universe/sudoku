@@ -32,7 +32,7 @@ the parent layout without touching SidePanel:
 
 ```tsx
 import { useState, useRef } from 'react';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { SidePanel } from '@/components/core/side-panel/side-panel';
 
 const [open, setOpen] = useState(false);

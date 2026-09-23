@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 import { isProseLesson, type ClientLessonDefinition } from '@/curriculum/types';
 import type { Heading } from '@/learn/utils/extractHeadings';
-import { useMediaQuery } from '@/learn/hooks/useMediaQuery';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
 import { LessonToolbar } from '@/learn/LessonToolbar/LessonToolbar';

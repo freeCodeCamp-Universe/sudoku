@@ -22,7 +22,7 @@ import { PortraitControls } from '@/game/GameControls/PortraitControls';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
-import { useMediaQuery } from '@/game/useMediaQuery';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getVariant } from '@/variants/registry';
 import { isJigsawStructure } from '@/variants/jigsaw';
 import { assemblePuzzle } from '@/board/assemblePuzzle';

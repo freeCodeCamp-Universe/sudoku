@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Drawer } from '@/learn/Drawer/Drawer';
-import { useMediaQuery } from '@/learn/hooks/useMediaQuery';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import styles from '@/learn/ResetButton/ResetButton.module.css';
 
 export interface ResetButtonProps {
