@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A10 and A17 done; A11-A16, A18-A22 ready for implementation; Part B pending decisions
+status: A0-A11 and A17 done; A12-A16, A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -101,7 +101,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A9. Extract `useBoardInput` (numpad entry, candidate toggling, announcements) from `GamePage`
 - [x] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
 - [x] A17. Separate focus from selection; add multi-cell selection (after A7, before A11)
-- [ ] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
+- [x] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
 - [ ] A12. Container-based cell sizing for boards outside the game page
 - [ ] A13. (Optional) Replace the `variant.id` branches in `Board.tsx` with variant-declared cell tags
 - [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)

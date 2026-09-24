@@ -26,8 +26,6 @@ import { getVariant } from '@/variants/registry';
 import { Board } from '@/board/Board';
 import { Toggle } from '@/components/Toggle';
 import { SegmentedControl, type SegmentedControlOption } from '@/components/SegmentedControl';
-import { findOverusedSymbols } from '@/board/overusedSymbols';
-import { findUsedSymbols } from '@/board/usedSymbols';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
@@ -41,10 +39,8 @@ import { ToastStack } from './ToastStack';
 import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
-import { useBoardView } from '@/board/useBoardView';
-import { useBoardInput } from '@/board/useBoardInput';
+import { usePlayableBoard } from '@/board/usePlayableBoard';
 import { useSeoMeta } from '@/hooks/useSeoMeta';
-import { useSudokuGrid } from '@/board/useSudokuGrid';
 import { seoConfig } from '@/utils/seo.config';
 import { useFavorites } from '@/gallery/useFavorites';
 import styles from './GamePage.module.css';
@@ -107,7 +103,6 @@ function GameInner({
 }: GameInnerProps) {
   const { state, dispatch, variant, model: baseModel, givens, solution } = useGameContext();
   const { favorites, toggleFavorite } = useFavorites();
-  const [candidateMode, setCandidateMode] = useState(false);
   // Per-page "Highlight overlaps" state for multigrid variants: ON by default,
   // session-only (deliberately outside usePersistence, so a fresh mount is ON).
   const [highlightOverlaps, setHighlightOverlaps] = useState(true);
@@ -142,6 +137,8 @@ function GameInner({
   const isLandscape = useMediaQuery('(orientation: landscape)');
   const isLandscapeMobile = !isDesktop && isLandscape;
   const { highContrast } = useTheme();
+  const cellNavigationRef = useRef<(id: CellId) => void>(() => {});
+  const onCellNavigate = useCallback((id: CellId) => cellNavigationRef.current(id), []);
 
   useEffect(() => {
     setVerifyMode(false);
@@ -180,20 +177,22 @@ function GameInner({
   }, [isBoardFull]);
 
   const cellSize = useResponsiveCellSize(variant);
-  const {
-    model,
-    rects,
-    size,
-    overlapMap,
-    gutters,
-    overlays,
-    annotators,
-    renderSymbol,
-    describeSymbol,
-    markerGaps,
-    displaySymbols,
-    parityMap,
-  } = useBoardView({ variant, baseModel, solution, cellSize, seedBase });
+  const { boardProps, numberPadProps, inputModeProps, grid, model, describeSymbol } =
+    usePlayableBoard({
+      variant,
+      baseModel,
+      givens,
+      solution,
+      seedBase,
+      cellSize,
+      state,
+      dispatch,
+      checkEnabled,
+      highlights: { peers: settings.highlightPeers },
+      inputLocked: isPaused || completed,
+      onCellNavigate,
+    });
+  const { rects, size, gutters } = boardProps;
 
   const frameEdge = boardFrameEdge(variant.layout.kind, highContrast);
   // The full rendered extent the viewport must fit and pan: framed canvas
@@ -242,6 +241,7 @@ function GameInner({
     },
     [boardViewport, rects, cellOrigin]
   );
+  cellNavigationRef.current = panZoomActive ? ensureCellVisible : () => {};
 
   const viewportState: BoardViewportState | undefined = !isDesktop
     ? {
@@ -261,36 +261,6 @@ function GameInner({
     for (const id of state.values.keys()) set.add(id);
     return set;
   }, [givensSet, state.values]);
-
-  const { onEnterValue, onToggleCandidate, handleNumberEntry } = useBoardInput({
-    state,
-    solution,
-    dispatch,
-    candidateMode,
-    checkEnabled,
-    inputLocked: isPaused || completed,
-  });
-
-  const grid = useSudokuGrid({
-    cells: model.cells,
-    model,
-    values: state.values,
-    candidates: state.candidates,
-    givens: givensSet,
-    revealed: state.revealed,
-    solution,
-    onEnterValue,
-    onToggleCandidate,
-    checkEnabled,
-    highlights: { peers: settings.highlightPeers },
-    candidateMode,
-    annotators,
-    renderSymbol,
-    describeSymbol,
-    displaySymbols,
-    onSetCandidateMode: setCandidateMode,
-    onCellNavigate: panZoomActive ? ensureCellVisible : undefined,
-  });
 
   // Ticks unconditionally (independent of settings.timerEnabled) so
   // elapsed time keeps accumulating in the background while the timer is
@@ -404,14 +374,7 @@ function GameInner({
     handleNewGame(mode);
   }
 
-  const overusedSymbols = useMemo(
-    () => findOverusedSymbols(state.values, solution, model.symbols),
-    [model.symbols, solution, state.values]
-  );
-  const usedSymbols = useMemo(
-    () => findUsedSymbols(state.values, solution, model.symbols),
-    [model.symbols, solution, state.values]
-  );
+  const { overusedSymbols } = numberPadProps;
 
   // The hint fires each time a symbol crosses into the overused state, however
   // the entry was made (numpad tap or keyboard on the board), so it watches the
@@ -519,27 +482,7 @@ function GameInner({
     </div>
   );
 
-  const numberPad = (
-    <NumberPad
-      symbols={displaySymbols}
-      overusedSymbols={overusedSymbols}
-      usedSymbols={usedSymbols}
-      columns={
-        model.symbols.length === 16
-          ? 4
-          : model.symbols.length === 4
-            ? 4
-            : model.symbols.length === 6
-              ? 3
-              : undefined
-      }
-      onEnter={(value) => handleNumberEntry(value, selectedCellId, grid)}
-      candidateMode={candidateMode}
-      renderSymbol={renderSymbol}
-      describeSymbol={describeSymbol}
-      symbolKind={variant.symbolKind}
-    />
-  );
+  const numberPad = <NumberPad {...numberPadProps} />;
 
   // The stack's live region is the sole overuse announcement (the persistent
   // numpad label carries ongoing state), so no cell announcement duplicates it.
@@ -563,15 +506,14 @@ function GameInner({
   // in pen vs. pencil. Below tablet width a Controls tab is appended to swap in
   // the reveal/clear/new-game actions; at desktop width those actions live in a
   // standalone toolbar + New Game button instead, so the tab is dropped.
-  const activeControlTab =
-    !isDesktop && controlsOpen ? 'controls' : candidateMode ? 'candidate' : 'normal';
+  const activeControlTab = !isDesktop && controlsOpen ? 'controls' : inputModeProps.activeId;
   const selectControlTab = (id: string) => {
     if (id === 'controls') {
       setControlsOpen(true);
       return;
     }
     setControlsOpen(false);
-    setCandidateMode(id === 'candidate');
+    inputModeProps.onSelect(id);
   };
   const navTabs: Tab[] = [
     { id: 'move', label: 'Move', panelId: 'nav-panel-move' },
@@ -785,19 +727,9 @@ function GameInner({
               </div>
             ) : (
               <Board
-                variant={variant}
-                cells={model.cells}
-                rects={rects}
-                overlapCounts={highlightOverlaps ? overlapMap : undefined}
-                size={size}
-                gutters={gutters}
-                overlays={overlays}
-                grid={grid}
-                renderSymbol={renderSymbol}
-                displaySymbols={displaySymbols}
-                markerGaps={markerGaps}
+                {...boardProps}
+                overlapCounts={highlightOverlaps ? boardProps.overlapCounts : undefined}
                 wordCells={wordCellIds}
-                parityMap={parityMap}
                 viewport={viewportState}
                 checkEnabled={checkEnabled}
                 showColorLabel={settings.showColorLabels}
