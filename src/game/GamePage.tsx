@@ -42,6 +42,7 @@ import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
 import { useBoardView } from '@/board/useBoardView';
+import { useBoardInput } from '@/board/useBoardInput';
 import { useSeoMeta } from '@/hooks/useSeoMeta';
 import { useSudokuGrid } from '@/board/useSudokuGrid';
 import { seoConfig } from '@/utils/seo.config';
@@ -261,27 +262,14 @@ function GameInner({
     return set;
   }, [givensSet, state.values]);
 
-  // Board edits are gated on `completed` so that turning the check setting
-  // off after a confirmed solve does not make the finished board editable.
-  const onEnterValue = useCallback(
-    (cellId: CellId, value: SymbolValue | 0) => {
-      if (completed) {
-        return;
-      }
-      dispatch({ type: 'enterValue', cellId, value });
-    },
-    [completed, dispatch]
-  );
-
-  const onToggleCandidate = useCallback(
-    (cellId: CellId, value: SymbolValue) => {
-      if (completed) {
-        return;
-      }
-      dispatch({ type: 'toggleCandidate', cellId, value });
-    },
-    [completed, dispatch]
-  );
+  const { onEnterValue, onToggleCandidate, handleNumberEntry } = useBoardInput({
+    state,
+    solution,
+    dispatch,
+    candidateMode,
+    checkEnabled,
+    inputLocked: isPaused || completed,
+  });
 
   const grid = useSudokuGrid({
     cells: model.cells,
@@ -531,46 +519,6 @@ function GameInner({
     </div>
   );
 
-  const handleNumberEntry = (value: SymbolValue | 0) => {
-    if (isPaused || completed || !selectedCellId) {
-      return;
-    }
-
-    const isCorrectlyFilled =
-      checkEnabled &&
-      solution.has(selectedCellId) &&
-      state.values.get(selectedCellId) === solution.get(selectedCellId);
-
-    if (isCorrectlyFilled) {
-      return;
-    }
-
-    if (value === 0) {
-      dispatch({ type: 'erase', cellId: selectedCellId });
-      const nextValues = new Map(state.values);
-      nextValues.delete(selectedCellId);
-      const nextCandidates = new Map(state.candidates);
-      if (!state.values.has(selectedCellId)) {
-        nextCandidates.delete(selectedCellId);
-      }
-      grid.announceErase(selectedCellId, nextCandidates);
-      return;
-    }
-
-    if (candidateMode) {
-      const current = state.candidates.get(selectedCellId) ?? [];
-      const adding = !current.includes(value);
-      onToggleCandidate(selectedCellId, value);
-      grid.announceCandidateToggle(selectedCellId, value, adding);
-      return;
-    }
-
-    onEnterValue(selectedCellId, value);
-    const nextValues = new Map(state.values);
-    nextValues.set(selectedCellId, value);
-    grid.announceCellState(selectedCellId, nextValues);
-  };
-
   const numberPad = (
     <NumberPad
       symbols={displaySymbols}
@@ -585,7 +533,7 @@ function GameInner({
               ? 3
               : undefined
       }
-      onEnter={handleNumberEntry}
+      onEnter={(value) => handleNumberEntry(value, selectedCellId, grid)}
       candidateMode={candidateMode}
       renderSymbol={renderSymbol}
       describeSymbol={describeSymbol}
