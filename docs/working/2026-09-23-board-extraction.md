@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A15 and A17 done; A16, A18-A22 ready for implementation; Part B pending decisions
+status: A0-A17 done; A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -106,7 +106,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A13. (Optional) Replace the decoration `variant.id` branches in `Board.tsx` with variant-declared cell tags
 - [x] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [x] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
-- [ ] A16. Add `puzzleFromConfig` for predefined boards
+- [x] A16. Add `puzzleFromConfig` for predefined boards
 - [ ] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
 - [ ] A19. Build the lesson board panel and its `LessonEngine` (after A11, A12, A16, A17, A18)
 - [ ] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
