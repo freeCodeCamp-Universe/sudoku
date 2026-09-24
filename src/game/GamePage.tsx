@@ -4,13 +4,13 @@ import { Header, HeaderUtilityRow } from '@/components/Header';
 import type { Tab } from '@/components/Tabs';
 import { useTheme } from '@/app/ThemeProvider';
 import type { CellId, Mode, SymbolValue } from '@/engine/types';
+import { isOversized } from '@/game/boardViewport';
 import {
   boardFrameEdge,
   framedBoardSize,
   gutteredBoardSize,
   gutterOrigin,
-  isOversized,
-} from '@/game/boardViewport';
+} from '@/board/boardFrame';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import type { BoardViewportState } from '@/board/boardTypes';
@@ -20,7 +20,7 @@ import { DesktopControls } from '@/game/GameControls/DesktopControls';
 import { PortraitControls } from '@/game/GameControls/PortraitControls';
 import { useBoardGestures } from '@/game/useBoardGestures';
 import { useBoardViewport } from '@/game/useBoardViewport';
-import { useElementSize } from '@/game/useElementSize';
+import { useElementSize } from '@/hooks/useElementSize';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getVariant } from '@/variants/registry';
 import { Board } from '@/board/Board';

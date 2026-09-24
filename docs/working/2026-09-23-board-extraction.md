@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A11 and A17 done; A12-A16, A18-A22 ready for implementation; Part B pending decisions
+status: A0-A12 and A17 done; A13-A16, A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -102,7 +102,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
 - [x] A17. Separate focus from selection; add multi-cell selection (after A7, before A11)
 - [x] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
-- [ ] A12. Container-based cell sizing for boards outside the game page
+- [x] A12. Container-based cell sizing for boards outside the game page
 - [ ] A13. (Optional) Replace the `variant.id` branches in `Board.tsx` with variant-declared cell tags
 - [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [ ] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
@@ -395,7 +395,7 @@ Decided 2026-09-25:
 - **Done when:** `GameInner` no longer calls `useSudokuGrid`, `assemblePuzzle` or the layout registries directly, and every `GamePage` test passes unchanged.
 - **Tests:** `src/board/usePlayableBoard.test.tsx` renders `Board` and `InputModeTabs` from the hook's output for a classic 9×9 board, enters a value and a candidate, and checks the resulting cell state. This is also the smoke test for the future lesson panel.
 
-### A12. Container-based cell sizing
+### A12. Container-based cell sizing (done)
 
 - **Decided:** a lesson board sits beside the number pad inside the interactive panel, so it sizes against its container rather than the viewport. It stacks above the number pad on narrow widths: a column by default, side by side at a `min-width` breakpoint from `docs/breakpoints.md`.
 - **What:**
