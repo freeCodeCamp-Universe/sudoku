@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 import { isProseLesson, type ClientLessonDefinition } from '@/curriculum/types';
 import type { Heading } from '@/learn/utils/extractHeadings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useSeoMeta } from '@/learn/hooks/useSeoMeta';
+import { useSeoMeta } from '@/hooks/useSeoMeta';
 import { seoConfig } from '@/utils/seo.config';
 import { LessonToolbar } from '@/learn/LessonToolbar/LessonToolbar';
 import { Outline } from '@/learn/Outline/Outline';
@@ -36,10 +36,6 @@ export function LessonPage({
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const pageTitle = `${lesson.title} | ${seoConfig.siteTitle}`;
-
-  useEffect(() => {
-    document.title = pageTitle;
-  }, [pageTitle]);
 
   useSeoMeta({
     title: pageTitle,

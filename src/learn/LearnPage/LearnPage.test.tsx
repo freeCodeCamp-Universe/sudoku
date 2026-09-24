@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useCurriculumTree } from '@/curriculum/useCurriculumTree';
+import { useSeoMeta } from '@/hooks/useSeoMeta';
 import { LearnPage } from '@/learn/LearnPage/LearnPage';
 
 vi.mock('@/curriculum/useCurriculumTree', () => ({
   useCurriculumTree: vi.fn(),
 }));
 
-vi.mock('@/learn/hooks/useSeoMeta', () => ({
+vi.mock('@/hooks/useSeoMeta', () => ({
   useSeoMeta: vi.fn(),
 }));
 
@@ -28,7 +29,11 @@ describe('LearnPage', () => {
 
     render(<LearnPage />);
 
-    expect(document.title).toBe('Sudoku | freeCodeCamp.org');
+    expect(useSeoMeta).toHaveBeenCalledWith({
+      title: 'Sudoku | freeCodeCamp.org',
+      description: undefined,
+      path: '/learn',
+    });
     expect(screen.getByRole('status', { name: 'Loading course' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Learn Sudoku' })).toBeNull();
     expect(screen.queryByRole('contentinfo')).toBeNull();
