@@ -45,7 +45,7 @@ Four layers, each depending only on the ones above it: **engine** (pure puzzle l
 
 - `src/engine/` — grid model, constraint solver/generator, and shared types.
 - `src/variants/` — one declarative spec per puzzle type, plus the registry that collects them.
-- `src/board/` — shared board rendering: Board, Cell, NumberPad, layout/overlay/annotator registries, and the grid interaction hook.
+- `src/board/` — shared board state, input, and rendering: reducer, playable-board hooks, Board, Cell, NumberPad, layout/overlay/annotator registries, and grid interaction.
 - `src/game/` — game session UI: page, controls, timer, persistence, and pan/zoom.
 - `src/gallery/` — the home grid of puzzles and their canvas previews.
 - `src/learn/` — lesson views and course UI.
@@ -69,7 +69,10 @@ So **adding a puzzle type** is usually: add a spec under `src/variants/` and reg
 
 ### Game runtime
 
-The game area builds the model and generates the puzzle once per variant (memoized), exposes board state through a context backed by a reducer, and renders the board to a canvas via the resolved layout strategy and overlays. A grid hook derives per-cell view state and owns keyboard navigation (roving `tabindex`, arrow-key movement); a persistence hook stores settings and progress.
+The game area builds the model and generates the puzzle once per variant
+(memoized), exposes game state through `GameContext`, and uses the shared
+`usePlayableBoard` pipeline for board interaction and rendering. A persistence
+hook stores settings and progress.
 
 The board pan/zoom viewport (minimap, zoom controls, `boardFrameOversized` clip) is **mobile-only**: at desktop widths (≥ 1024px) boards always render at natural size and a short window scrolls. `GamePage` gates `panZoomActive` on `!isDesktop` — keep it that way. The clip's wrapper is percentage-width with absolutely positioned content, so it has no intrinsic width; if it ever mounts inside the desktop layout's shrink-to-fit board column, the column silently collapses to 0px and the board disappears.
 
@@ -79,6 +82,7 @@ Cell sizing has exactly two owners, and every pixel number lives in `src/board/l
 
 - **Base size** (what a variant's cells measure with no viewport pressure) is owned by the layout strategy via `LayoutStrategy.baseCellSize(variant)`, defined once per layout kind.
 - **Responsive policy** (how the base shrinks on small viewports) is owned by `src/game/useResponsiveCellSize.ts`: for non-oversized boards it picks the largest step in `CELL_SIZE_STEPS` (capped at the layout's base) whose canvas plus board frame fits the current viewport bucket's floor (`VIEWPORT_BUCKET_FLOORS`, 320px baseline per WCAG reflow); oversized boards (16×16, multigrids) instead pan at a comfortable size below the desktop cutoff. The frame width depends on the high-contrast setting — the TS constants mirror `--box-boundary-width` in `src/app/layers.css`, and a drift test in `cellSizes.test.ts` keeps them in sync.
+- **Container sizing** for boards outside the game viewport is provided by `cellSizeForWidth(availableWidth, variant, highContrast)` in `src/board/layouts/`: it picks the largest supported step, capped at the layout's base, whose framed and guttered canvas fits the available width. If no step fits, it falls back to the smallest supported step capped at the base.
 
 Never write a cell-size or sizing-breakpoint literal in a layout strategy or the hook — add or reuse a named constant in `cellSizes.ts`. New layout strategies must implement `baseCellSize` from those constants and honor the optional `cellSizeOverride` in `cellRects` / `canvasSize`.
 

@@ -16,19 +16,21 @@ The app is a React SPA with a Sudoku puzzle engine. Four layers depend on each o
 
 ## Key directories
 
-| Path                            | What lives there                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------- |
-| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.           |
-| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.        |
-| `src/board/`                    | Shared board rendering, interaction, layout strategies, overlays, annotators.   |
-| `src/game/`                     | Game session UI, game state, controls, timer, persistence, and pan/zoom.        |
-| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                           |
-| `src/learn/`                    | Feature-flagged Sudoku course: lesson views, course shell, and progress.        |
-| `src/curriculum/`               | Course content, lesson definitions, ordering, and curriculum data loading.      |
-| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                          |
-| `src/app/`                      | Shell components: page layout, header, theme provider.                          |
-| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`. |
-| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                 |
+| Path                            | What lives there                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/engine/`                   | Grid model, constraint solver, puzzle generator. Pure functions only.                       |
+| `src/variants/`                 | One spec object per puzzle type, plus the variant/constraint registries.                    |
+| `src/board/`                    | Shared board state, input, rendering, interaction, layout strategies, overlays, annotators. |
+| `src/game/`                     | Game session UI, game state, controls, timer, persistence, and pan/zoom.                    |
+| `src/gallery/`                  | Home screen grid of puzzle cards and canvas previews.                                       |
+| `src/learn/`                    | Feature-flagged Sudoku course: lesson views, course shell, and progress.                    |
+| `src/curriculum/`               | Course content, lesson definitions, ordering, and curriculum data loading.                  |
+| `src/components/Tabs/`          | Generic accessible tabs used by the game and shared board controls.                         |
+| `src/hooks/`                    | Shared hooks, including media queries, element sizing, and SEO metadata.                    |
+| `src/App.tsx`, `src/routes.tsx` | App entry point and route definitions.                                                      |
+| `src/app/`                      | Shell components: page layout, header, theme provider.                                      |
+| `scripts/`                      | Build-time Node scripts run via `pnpm <script-name>`. Not typechecked by `tsc`.             |
+| `docs/`                         | Reference files. `colors.md` is generated; do not hand-edit it.                             |
 
 ---
 
@@ -124,6 +126,64 @@ To add a puzzle type, add a spec under `src/variants/` and register it, then reg
 
 ---
 
+## Board layer
+
+`src/board/` contains the shared playable board used by the game and learn
+features. It owns board state and input as well as rendering, so consumers
+provide their puzzle data and page-specific layout without duplicating board
+behavior.
+
+### Board state and reducer
+
+`boardReducer` and `createBoardState` (`src/board/boardReducer.ts`) are pure
+board-state functions. `BoardState` contains values, candidates, undo history,
+and revealed cells; `BoardAction` covers entering or erasing values, toggling
+candidates, clearing, undoing, and revealing a cell.
+
+`GameProvider` (`src/game/GameProvider.tsx`) composes that reducer with the
+game-only timer and `newGame` behavior. Its game state also tracks elapsed
+time, whether the puzzle is solved, and whether the timer has started.
+
+### Playable board
+
+`usePlayableBoard` (`src/board/usePlayableBoard.ts`) composes the shared board
+hooks and returns props for `Board`, `NumberPad`, and `InputModeTabs`. It accepts
+board state and a dispatch function, so a consumer can route input through its
+own state owner.
+
+- `useBoardView` (`src/board/useBoardView.ts`) assembles the puzzle view and
+  resolves layout, overlays, annotators, gutters, symbols, and other derived
+  rendering props.
+- `useBoardInput` (`src/board/useBoardInput.ts`) handles number-pad entry,
+  candidate toggling, input locking, and screen-reader announcements.
+- `InputModeTabs` (`src/board/InputModeTabs/`) provides Normal and Candidate
+  modes around the shared number pad. It can include extra tabs, as the game's
+  mobile Controls tab does; `Tabs` (`src/components/Tabs/`) supplies the
+  generic accessible tab behavior.
+
+`useSudokuGrid` (`src/board/useSudokuGrid.ts`) derives per-cell state,
+highlights, accessible descriptions, and keyboard navigation. Its `highlights`
+option independently controls peers, same-value cells, and conflicts, all on
+by default. The game maps its persisted peer-highlight setting to this option;
+correct-answer checking remains controlled separately by `checkEnabled`.
+
+Grid focus and cell selection are separate. Focus drives the roving `tabindex`,
+arrow-key navigation, number entry, and peer/same-value highlights. The default
+`cellSelection: 'single'` mode keeps the focused cell selected, preserving game
+behavior. In `multiple` mode, arrow keys move focus without changing the
+selection, while Space and click toggle selected cells; the grid exposes
+`aria-multiselectable`. Selection can be controlled through `selectedIds` and
+`onSelectionChange`.
+
+`Board` (`src/board/Board/`) renders cells through the resolved layout
+strategy's `cellRects(variant)`. The game and learn features own their page
+layouts and decide how the returned board and number-pad props are arranged.
+
+For boards sized to a containing panel, `useElementSize` (`src/hooks/`) observes
+the container, and `cellSizeForWidth` (`src/board/layouts/`) selects a fitting
+cell-size step using the board frame and any gutters. The game uses its separate
+viewport-based responsive sizing and pan/zoom behavior.
+
 ## Game layer
 
 ### Puzzle generation pipeline
@@ -138,31 +198,15 @@ Jigsaw regions are generated from a separate seed stream so saved `(jigsawLayout
 
 `assemblePuzzle` in `src/board/assemblePuzzle.ts` handles the full setup call from `GamePage`, including seeding and progress restore.
 
-### Game state and reducer
+`GamePage` owns the game-specific controls, timer, persistence, dialogs,
+pan/zoom viewport, and responsive layouts. It uses `usePlayableBoard` for
+shared board state presentation, input, and rendering rather than resolving
+board registries or deriving board props itself.
 
-`GameProvider` (`src/game/GameProvider.tsx`) holds all mutable puzzle state in `useReducer`. The state shape (`src/game/GameContext.ts`):
-
-```ts
-interface GameState {
-  values: Values; // all cell values (givens + player entries)
-  candidates: Map<CellId, SymbolValue[]>; // pencil marks
-  history: HistoryEntry[]; // undo stack; each entry snapshots values/candidates/revealed
-  elapsedSeconds: number;
-  solved: boolean;
-  revealed: Set<CellId>; // cells revealed via hint
-  timerStarted: boolean;
-}
-```
-
-Actions (`GameAction`): `enterValue`, `toggleCandidate`, `erase`, `clearAll`, `undo`, `reveal`, `tick`, `newGame`. Givens and revealed cells are immutable.
-
-`GameContext` exposes `{ state, dispatch, variant, model, givens, solution }`. Any component in the game tree reads it via `useGameContext()`.
-
-### Board rendering
-
-`GamePage` (`src/game/GamePage.tsx`) resolves the layout strategy, overlays, and annotators from registries, then passes them to `Board` (`src/board/Board/`). The board renders cells to a `<canvas>` via the layout strategy's `cellRects(variant)`.
-
-`useSudokuGrid` (`src/board/useSudokuGrid.ts`) derives per-cell view state (`CellState`) and handles keyboard navigation (roving `tabindex`, arrow keys).
+`GameContext` exposes `{ state, dispatch, variant, model, givens, solution }`
+to components in the game tree through `useGameContext()`. `GameState` extends
+the shared `BoardState` with elapsed time, solved status, and timer status;
+`GameAction` adds the game-only `tick` and `newGame` actions.
 
 ### Pan/zoom viewport
 

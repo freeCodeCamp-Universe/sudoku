@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A13 and A17 done; A14-A16, A18-A22 ready for implementation; Part B pending decisions
+status: A0-A14 and A17 done; A15-A16, A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -104,7 +104,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
 - [x] A12. Container-based cell sizing for boards outside the game page
 - [x] A13. (Optional) Replace the decoration `variant.id` branches in `Board.tsx` with variant-declared cell tags
-- [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
+- [x] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [ ] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
 - [ ] A16. Add `puzzleFromConfig` for predefined boards
 - [ ] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
