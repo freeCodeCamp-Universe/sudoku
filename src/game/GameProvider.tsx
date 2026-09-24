@@ -1,6 +1,7 @@
 import { useMemo, useReducer } from 'react';
-import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engine/types';
-import { GameContext, type GameAction, type GameState, type HistoryEntry } from './GameContext';
+import { boardReducer, createBoardState } from '@/board/boardReducer';
+import type { Values, Variant, VariantModel } from '@/engine/types';
+import { GameContext, type GameAction, type GameState } from './GameContext';
 import type { SavedProgress } from './useProgressPersistence';
 
 interface GameProviderProps {
@@ -10,18 +11,6 @@ interface GameProviderProps {
   solution: Values;
   initialProgress?: SavedProgress | null;
   children: React.ReactNode;
-}
-
-function cloneCandidates(candidates: Map<CellId, SymbolValue[]>): Map<CellId, SymbolValue[]> {
-  return new Map([...candidates.entries()].map(([cellId, values]) => [cellId, [...values]]));
-}
-
-function snapshotState(state: GameState): HistoryEntry {
-  return {
-    values: new Map(state.values),
-    candidates: cloneCandidates(state.candidates),
-    revealed: new Set(state.revealed),
-  };
 }
 
 function isSolved(values: Values, solution: Values): boolean {
@@ -39,171 +28,46 @@ function isSolved(values: Values, solution: Values): boolean {
 }
 
 function createInitialState(givens: Values, solution: Values): GameState {
-  const values = new Map(givens);
-
   return {
-    values,
-    candidates: new Map(),
-    history: [],
+    ...createBoardState(givens),
     elapsedSeconds: 0,
-    solved: isSolved(values, solution),
-    revealed: new Set(),
+    solved: isSolved(givens, solution),
     timerStarted: false,
   };
 }
 
 function createReducer(initialGivens: Values, solution: Values) {
-  const givenSet = new Set(initialGivens.keys());
-
   return function reducer(state: GameState, action: GameAction): GameState {
-    switch (action.type) {
-      case 'enterValue': {
-        if (givenSet.has(action.cellId) || state.revealed.has(action.cellId)) {
-          return state;
-        }
-
-        const nextValues = new Map(state.values);
-        const nextCandidates = cloneCandidates(state.candidates);
-
-        if (action.value === 0) {
-          if (state.values.has(action.cellId)) {
-            nextValues.delete(action.cellId);
-          } else {
-            nextCandidates.delete(action.cellId);
-          }
-        } else {
-          nextValues.set(action.cellId, action.value);
-        }
-
-        return {
-          ...state,
-          values: nextValues,
-          candidates: nextCandidates,
-          history: [...state.history, snapshotState(state)],
-          solved: isSolved(nextValues, solution),
-          timerStarted: true,
-        };
-      }
-      case 'toggleCandidate': {
-        if (
-          givenSet.has(action.cellId) ||
-          state.revealed.has(action.cellId) ||
-          state.values.has(action.cellId)
-        ) {
-          return state;
-        }
-
-        const cellCandidates = new Set(state.candidates.get(action.cellId) ?? []);
-
-        if (cellCandidates.has(action.value)) {
-          cellCandidates.delete(action.value);
-        } else {
-          cellCandidates.add(action.value);
-        }
-
-        const nextCandidates = cloneCandidates(state.candidates);
-        nextCandidates.set(
-          action.cellId,
-          [...cellCandidates].sort((left, right) => left - right) as SymbolValue[]
-        );
-
-        return {
-          ...state,
-          candidates: nextCandidates,
-          timerStarted: true,
-        };
-      }
-      case 'erase': {
-        if (givenSet.has(action.cellId) || state.revealed.has(action.cellId)) {
-          return state;
-        }
-
-        if (!state.values.has(action.cellId) && !state.candidates.has(action.cellId)) {
-          return state;
-        }
-
-        const nextValues = new Map(state.values);
-        const nextCandidates = cloneCandidates(state.candidates);
-
-        if (state.values.has(action.cellId)) {
-          nextValues.delete(action.cellId);
-        } else {
-          nextCandidates.delete(action.cellId);
-        }
-
-        return {
-          ...state,
-          values: nextValues,
-          candidates: nextCandidates,
-          history: [...state.history, snapshotState(state)],
-          solved: isSolved(nextValues, solution),
-        };
-      }
-      case 'clearAll': {
-        const clearedValues = new Map(state.values);
-        const clearedCandidates = cloneCandidates(state.candidates);
-        for (const cellId of clearedValues.keys()) {
-          if (!givenSet.has(cellId)) {
-            clearedValues.delete(cellId);
-          }
-        }
-        for (const cellId of clearedCandidates.keys()) {
-          if (!givenSet.has(cellId)) clearedCandidates.delete(cellId);
-        }
-        return {
-          ...state,
-          values: clearedValues,
-          candidates: clearedCandidates,
-          revealed: new Set(),
-          history: [...state.history, snapshotState(state)],
-          solved: false,
-        };
-      }
-      case 'undo': {
-        const previous = state.history[state.history.length - 1];
-
-        if (!previous) {
-          return state;
-        }
-
-        return {
-          ...state,
-          values: new Map(previous.values),
-          candidates: cloneCandidates(previous.candidates),
-          revealed: new Set(previous.revealed),
-          history: state.history.slice(0, -1),
-          solved: isSolved(previous.values, solution),
-        };
-      }
-      case 'reveal': {
-        if (givenSet.has(action.cellId) || state.revealed.has(action.cellId)) {
-          return state;
-        }
-
-        const nextValues = new Map(state.values);
-        const nextCandidates = cloneCandidates(state.candidates);
-        const nextRevealed = new Set(state.revealed);
-
-        nextValues.set(action.cellId, action.solutionValue);
-        nextCandidates.delete(action.cellId);
-        nextRevealed.add(action.cellId);
-
-        return {
-          ...state,
-          values: nextValues,
-          candidates: nextCandidates,
-          revealed: nextRevealed,
-          history: [...state.history, snapshotState(state)],
-          solved: isSolved(nextValues, solution),
-        };
-      }
-      case 'tick':
-        return state.solved ? state : { ...state, elapsedSeconds: state.elapsedSeconds + 1 };
-      case 'newGame':
-        return createInitialState(initialGivens, solution);
-      default:
-        return state;
+    if (action.type === 'tick') {
+      return state.solved ? state : { ...state, elapsedSeconds: state.elapsedSeconds + 1 };
     }
+
+    if (action.type === 'newGame') {
+      return createInitialState(initialGivens, solution);
+    }
+
+    const boardState = boardReducer(state, action, initialGivens);
+    if (boardState === state) {
+      return state;
+    }
+
+    return {
+      ...state,
+      ...boardState,
+      solved:
+        action.type === 'clearAll'
+          ? false
+          : action.type === 'enterValue' ||
+              action.type === 'erase' ||
+              action.type === 'undo' ||
+              action.type === 'reveal'
+            ? isSolved(boardState.values, solution)
+            : state.solved,
+      timerStarted:
+        action.type === 'enterValue' || action.type === 'toggleCandidate'
+          ? true
+          : state.timerStarted,
+    };
   };
 }
 

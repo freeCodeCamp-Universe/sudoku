@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A5 done; A6-A22 ready for implementation; Part B pending decisions
+status: A0-A6 done; A7-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -91,7 +91,7 @@ Facts as of 2026-09-25, after A0-A5:
 - [x] A3. Add ESLint import-boundary rules
 - [x] A4. Merge the two `useMediaQuery` hooks into `src/hooks/useMediaQuery.ts`
 - [x] A5. Update `AGENTS.md` and `docs/architecture.md` paths
-- [ ] A6. Export the reducer from `GameProvider` as a pure `boardReducer`
+- [x] A6. Export the reducer from `GameProvider` as a pure `boardReducer`
 - [ ] A7. Replace `highlightPeers` with a `highlights` options object in `useSudokuGrid`
 - [ ] A8. Extract `useBoardView` (board prop derivation) from `GamePage`
 - [ ] A9. Extract `useBoardInput` (numpad entry, candidate toggling, announcements) from `GamePage`
