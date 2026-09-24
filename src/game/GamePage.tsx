@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header, HeaderUtilityRow } from '@/components/Header';
+import type { Tab } from '@/components/Tabs';
 import { useTheme } from '@/app/ThemeProvider';
 import type { CellId, Mode, SymbolValue } from '@/engine/types';
 import {
@@ -23,7 +24,6 @@ import { useElementSize } from '@/game/useElementSize';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getVariant } from '@/variants/registry';
 import { Board } from '@/board/Board';
-import type { Tab } from './Tabs';
 import { Toggle } from '@/components/Toggle';
 import { SegmentedControl, type SegmentedControlOption } from '@/components/SegmentedControl';
 import { findOverusedSymbols } from '@/board/overusedSymbols';
@@ -563,13 +563,6 @@ function GameInner({
   // in pen vs. pencil. Below tablet width a Controls tab is appended to swap in
   // the reveal/clear/new-game actions; at desktop width those actions live in a
   // standalone toolbar + New Game button instead, so the tab is dropped.
-  const controlTabs: Tab[] = [
-    { id: 'normal', label: 'Normal', panelId: 'control-panel-input' },
-    { id: 'candidate', label: 'Candidate', panelId: 'control-panel-input' },
-    ...(isDesktop
-      ? []
-      : [{ id: 'controls', label: 'Controls', panelId: 'control-panel-controls' }]),
-  ];
   const activeControlTab =
     !isDesktop && controlsOpen ? 'controls' : candidateMode ? 'candidate' : 'normal';
   const selectControlTab = (id: string) => {
@@ -645,7 +638,6 @@ function GameInner({
       </Button>
     </div>
   );
-  const inputTabLabelledBy = `${candidateMode ? 'candidate' : 'normal'}-tab`;
   const canPause = settings.timerEnabled && state.timerStarted && !done;
   const togglePause = () => {
     const next = !isPaused;
@@ -817,10 +809,8 @@ function GameInner({
         <div className={styles.gameRight}>
           {isDesktop ? (
             <DesktopControls
-              controlTabs={controlTabs}
               activeControlTab={activeControlTab}
               onSelectControlTab={selectControlTab}
-              inputTabLabelledBy={inputTabLabelledBy}
               numberPad={numberPad}
               onClearAll={handleClearAll}
               onReveal={handleReveal}
@@ -829,11 +819,8 @@ function GameInner({
             />
           ) : (
             <PortraitControls
-              controlTabs={controlTabs}
               activeControlTab={activeControlTab}
               onSelectControlTab={selectControlTab}
-              inputTabLabelledBy={inputTabLabelledBy}
-              controlsOpen={controlsOpen}
               numberPad={numberPad}
               controlsPanel={controlsPanel}
               settingToggles={settingToggles}

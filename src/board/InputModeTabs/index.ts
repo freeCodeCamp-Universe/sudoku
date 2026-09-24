@@ -1,0 +1,1 @@
+export { InputModeTabs } from './InputModeTabs';

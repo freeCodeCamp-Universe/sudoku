@@ -12,6 +12,7 @@ interface TabsProps {
   activeId: string;
   onSelect: (id: string) => void;
   ariaLabel: string;
+  idPrefix?: string;
   className?: string;
   /*
    * Landscape-mobile layouts pass this to keep the base (320px-column) tab
@@ -32,6 +33,7 @@ export function Tabs({
   activeId,
   onSelect,
   ariaLabel,
+  idPrefix,
   className,
   compact = false,
 }: TabsProps) {
@@ -84,7 +86,7 @@ export function Tabs({
             }}
             type="button"
             role="tab"
-            id={`${tab.id}-tab`}
+            id={`${idPrefix ? `${idPrefix}-` : ''}${tab.id}-tab`}
             aria-selected={selected}
             aria-controls={tab.panelId}
             tabIndex={selected ? 0 : -1}

@@ -1,13 +1,11 @@
 import type { ReactNode } from 'react';
+import { InputModeTabs } from '@/board/InputModeTabs';
 import { Toolbar } from '@/game/Toolbar';
-import { Tabs, type Tab } from '@/game/Tabs';
 import styles from './GameControls.module.css';
 
 interface DesktopControlsProps {
-  controlTabs: Tab[];
   activeControlTab: string;
   onSelectControlTab: (id: string) => void;
-  inputTabLabelledBy: string;
   numberPad: ReactNode;
   onClearAll: () => void;
   onReveal: () => void;
@@ -16,10 +14,8 @@ interface DesktopControlsProps {
 }
 
 export function DesktopControls({
-  controlTabs,
   activeControlTab,
   onSelectControlTab,
-  inputTabLabelledBy,
   numberPad,
   onClearAll,
   onReveal,
@@ -29,20 +25,11 @@ export function DesktopControls({
   return (
     <>
       {modeControl}
-      <Tabs
-        tabs={controlTabs}
+      <InputModeTabs
         activeId={activeControlTab}
         onSelect={onSelectControlTab}
-        ariaLabel="Input mode"
+        numberPad={numberPad}
       />
-      <div
-        role="tabpanel"
-        id="control-panel-input"
-        aria-labelledby={inputTabLabelledBy}
-        className={styles.panel}
-      >
-        {numberPad}
-      </div>
       <div className={styles.actionStack}>
         <Toolbar onClearAll={onClearAll} onReveal={onReveal} />
         {settingToggles ? <div className={styles.settingRow}>{settingToggles}</div> : null}

@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { withUnbreakableTokens } from '@/components/withUnbreakableTokens';
 import type { HelpRule, HelpSection } from '@/engine/types';
 import { Dialog } from '@/components/Dialog';
-import { Tabs } from '@/game/Tabs';
-import type { Tab } from '@/game/Tabs';
+import { Tabs, type Tab } from '@/components/Tabs';
 import styles from './HelpDialog.module.css';
 
 const HELP_TABS: Tab[] = [

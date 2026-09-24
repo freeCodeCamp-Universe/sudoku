@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A9 done; A10-A22 ready for implementation; Part B pending decisions
+status: A0-A10 done; A11-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -95,7 +95,7 @@ Facts as of 2026-09-25, after A0-A5:
 - [x] A7. Replace `highlightPeers` with a `highlights` options object in `useSudokuGrid`
 - [x] A8. Extract `useBoardView` (board prop derivation) from `GamePage`
 - [x] A9. Extract `useBoardInput` (numpad entry, candidate toggling, announcements) from `GamePage`
-- [ ] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
+- [x] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
 - [ ] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10)
 - [ ] A12. Container-based cell sizing for boards outside the game page
 - [ ] A13. (Optional) Replace the `variant.id` branches in `Board.tsx` with variant-declared cell tags

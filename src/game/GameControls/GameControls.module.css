@@ -48,19 +48,6 @@
   inline-size: 100%;
 }
 
-.inputPanels {
-  display: grid;
-  inline-size: 100%;
-}
-
-.inputPanels > .panel {
-  grid-area: 1 / 1;
-}
-
-.inputPanels > .panel:not([data-active='true']) {
-  visibility: hidden;
-}
-
 .inputPanelToggle {
   inline-size: 100%;
   margin-block-start: 12px;

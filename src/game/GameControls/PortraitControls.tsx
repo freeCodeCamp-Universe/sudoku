@@ -1,15 +1,13 @@
 import type { ReactNode } from 'react';
 import { DPad } from '@/game/DPad';
 import type { Direction } from '@/board/boardTypes';
-import { Tabs, type Tab } from '@/game/Tabs';
+import { InputModeTabs } from '@/board/InputModeTabs';
+import { Tabs, type Tab } from '@/components/Tabs';
 import styles from './GameControls.module.css';
 
 interface PortraitControlsProps {
-  controlTabs: Tab[];
   activeControlTab: string;
   onSelectControlTab: (id: string) => void;
-  inputTabLabelledBy: string;
-  controlsOpen: boolean;
   numberPad: ReactNode;
   controlsPanel: ReactNode;
   settingToggles: ReactNode;
@@ -30,11 +28,8 @@ interface PortraitControlsProps {
 }
 
 export function PortraitControls({
-  controlTabs,
   activeControlTab,
   onSelectControlTab,
-  inputTabLabelledBy,
-  controlsOpen,
   numberPad,
   controlsPanel,
   settingToggles,
@@ -58,36 +53,22 @@ export function PortraitControls({
   return (
     <div className={classNames}>
       <div className={styles.controlsMain}>
-        <Tabs
-          tabs={controlTabs}
+        <InputModeTabs
           activeId={activeControlTab}
           onSelect={onSelectControlTab}
           ariaLabel="Input mode and controls"
+          numberPad={numberPad}
+          inputPanelFooter={
+            settingToggles ? <div className={styles.inputPanelToggle}>{settingToggles}</div> : null
+          }
+          extraTabs={[
+            {
+              tab: { id: 'controls', label: 'Controls', panelId: 'unused' },
+              panel: controlsPanel,
+            },
+          ]}
           compact={landscape}
         />
-        <div className={styles.inputPanels}>
-          <div
-            role="tabpanel"
-            id="control-panel-input"
-            aria-labelledby={inputTabLabelledBy}
-            className={styles.panel}
-            data-active={!controlsOpen}
-          >
-            {numberPad}
-            {settingToggles ? (
-              <div className={styles.inputPanelToggle}>{settingToggles}</div>
-            ) : null}
-          </div>
-          <div
-            role="tabpanel"
-            id="control-panel-controls"
-            aria-labelledby="controls-tab"
-            className={styles.panel}
-            data-active={controlsOpen}
-          >
-            {controlsPanel}
-          </div>
-        </div>
       </div>
       <div className={styles.mapGroup}>
         <Tabs

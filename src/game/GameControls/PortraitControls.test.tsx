@@ -3,11 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { PortraitControls } from './PortraitControls';
 
 const defaultProps = {
-  controlTabs: [{ id: 'input', label: 'Input', panelId: 'control-panel-input' }],
-  activeControlTab: 'input',
+  activeControlTab: 'normal',
   onSelectControlTab: vi.fn(),
-  inputTabLabelledBy: 'input-tab',
-  controlsOpen: false,
   numberPad: null,
   controlsPanel: null,
   settingToggles: null,
@@ -38,7 +35,7 @@ describe('PortraitControls', () => {
   it('should render the input tab panel', () => {
     render(<PortraitControls {...defaultProps} />);
 
-    expect(screen.getByRole('tabpanel', { name: /input/i })).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel', { name: /normal/i })).toBeInTheDocument();
   });
 
   it('should render the move and map nav tab panels', () => {
