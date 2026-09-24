@@ -27,7 +27,7 @@ pnpm add-lesson --module=2 --title="Candidate notes"
 pnpm add-lesson --module=2 --title="Candidate notes" --type=practice --after=201.md
 ```
 
-`add-module` creates an intro and a review lesson. It places the module with `--before=<module>` or `--after=<module>`, or appends it. `add-lesson` takes the next free number in the module's range and inserts it before the module's review lesson, or where `--before=<file>` or `--after=<file>` says. `add-lesson` marks the new entry `wip: true`. Both scripts prompt for their values when run with no arguments.
+`add-module` creates an intro and a review lesson, and places the module with `--before=<module>` or `--after=<module>`, or at the end. `add-lesson` takes the next free number in the module's range, marks the entry `wip: true`, and inserts it before the review lesson or where `--before=<file>` or `--after=<file>` says. Run either script with no arguments to be prompted for its values.
 
 **Frontmatter**
 
@@ -147,7 +147,7 @@ The `# --config--` section holds one code fence labeled `json`. Any other label,
     {
       "label": "See the three kinds of house",
       "hint": "You can find a row, a column, and a box shaded in the diagram.",
-      /* Engine-specific. The placeholder panel never evaluates it. */
+      /* Graded by the panel's LessonEngine. */
       "test": { "placeholder": true }
     }
   ]
@@ -158,6 +158,38 @@ The `# --config--` section holds one code fence labeled `json`. Any other label,
 | Property    | Notes                                                                                |
 | ----------- | ------------------------------------------------------------------------------------ |
 | `checklist` | Array of checklist items. See [Checklist items](#checklist-items). Defaults to `[]`. |
+| `board`     | Optional playable board. See [Board config](#board-config).                          |
+
+### Board config
+
+A `board` object gives the lesson a playable puzzle. The panel shows the board beside the Normal/Candidate input tabs, with no game toolbar.
+
+Cell ids use the 1-based rc notation learners see, so `"r1c1"` is the top-left cell. The loader converts them to the engine's 0-based ids. Never write engine ids (`r0c0`) in a lesson: they parse, but grade the wrong cell.
+
+```json
+{
+  "board": {
+    "variant": "mini",
+    "givens": { "r1c1": 1, "r2c3": 1 },
+    // every cell on the board
+    "solution": { "r1c1": 1, "r1c2": 2, "r1c3": 3, "r1c4": 4 },
+    "cellSelection": "multiple",
+    "highlights": { "sameValue": false }
+  }
+}
+```
+
+| Field           | Notes                                                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`       | Required. A registered variant id.                                                                                                                   |
+| `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                      |
+| `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                      |
+| `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells.                                                  |
+| `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label. |
+
+Values must be symbols of the variant. Any other field fails the build.
+
+Variants with a `deriveStructure` or `deriveGutters` hook (killer, jigsaw, arrow, and others) are not supported yet, because the config can't pin their cages, regions, or clues. The loader rejects them, and it rejects a `structure` field. Don't invent a `structure` shape from the variant's engine or overlay types.
 
 ## Checklist items
 
@@ -165,7 +197,33 @@ Structure: `{ "label": "...", "hint": "...", "test": { ... } }`. `hint` is optio
 
 - **`label`** appears in the checklist. Name the action the learner completes.
 - **`hint`** appears under an unfinished item when the learner tries to go to the next lesson before finishing it. It must start with `You can` or `You should`, or `curriculumIntegrity.test.ts` fails.
-- **`test`** is an engine-specific object the curriculum layer never reads. The interactive panel's `LessonEngine`, defined in `src/curriculum/lessonEngine.ts`, evaluates it. The current `PlaceholderPanel` marks every item complete, so `{ "placeholder": true }` is the only test in use.
+- **`test`** is graded by the panel's `LessonEngine` (`src/curriculum/lessonEngine.ts`). The placeholder panel ignores it.
+
+A lesson with a `board` grades its checklist live after every value, candidate, or selection change. Give each item exactly one of these tests:
+
+| Test                                   | Passes when                                                        |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| `{ "selected": ["r1c1", "r1c2"] }`     | The selection is exactly these cells, in any order.                |
+| `{ "values": { "r1c1": 5 } }`          | Each listed cell holds that value. Other cells don't matter.       |
+| `{ "candidates": { "r1c1": [2, 5] } }` | Each listed cell has exactly these candidates. An extra one fails. |
+| `{ "solved": true }`                   | Every cell matches `solution`.                                     |
+
+## Authoring a board
+
+1. Decide what the learner practices, and keep the board and checklist to that goal.
+2. Generate a puzzle. This prints a ready-to-paste `board` object with 1-based ids. `--seed` takes an integer and makes the output reproducible.
+
+   ```bash
+   pnpm lesson:board <variantId> [--seed n]
+   ```
+
+3. Paste it into the `# --config--` block. Trim `givens` for the lesson, and keep the full `solution`.
+4. Write the checklist.
+5. Check that the board is valid and has exactly one solution, equal to `solution`. A second valid solution would fail `{ "solved": true }` for a learner who found it.
+
+   ```bash
+   pnpm exec vitest run src/curriculum/curriculumIntegrity.test.ts
+   ```
 
 ## Files block
 

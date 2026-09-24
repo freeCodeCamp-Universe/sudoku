@@ -259,6 +259,32 @@ The learn experience is a separate React feature under `src/learn/`. It is enabl
 
 `parseLesson` (`src/curriculum/loader.ts`) validates each lesson as it loads, so a bad lesson fails both `pnpm build` and `curriculumIntegrity.test.ts`. `assertImageAltText` requires an `alt` attribute on every `<img>`. `assertSanitizedHtml` rejects HTML outside `LESSON_HTML_OPTIONS` (`src/curriculum/sanitize.ts`). `parseJsonWithComments` (`src/curriculum/jsonWithComments.ts`) parses the config block's `json` fence, allowing `//` and `/* */` comments.
 
+### Interactive lesson boards
+
+A lesson can define a `board` object in its config to show a playable puzzle
+instead of the placeholder panel. The board identifies a registered `variant`
+and supplies `givens` and a complete `solution`, keyed by the learner-facing,
+1-based cell ids (for example, `"r1c1"` is the top-left cell). Optional
+`cellSelection` is `"single"` by default or `"multiple"`, and `highlights` can
+set `peers`, `sameValue`, and `conflicts` independently. Variants with
+`deriveStructure` or `deriveGutters` are not supported for lesson boards yet;
+the structure must be pinned before those variants can be used.
+
+The loader validates the variant, cells, symbols, givens, solution, selection,
+highlights, and board checklist tests, then converts cell ids to the engine's
+0-based form. `BoardPanel` (`src/learn/BoardPanel/BoardPanel.tsx`) maps the
+validated config through `puzzleFromConfig` (`src/board/puzzleFromConfig.ts`)
+and `usePlayableBoard` (`src/board/usePlayableBoard.ts`). It lays out the
+shared `Board` beside the Normal/Candidate input tabs. The panel sizes its
+board from its available width using `useElementSize` and
+`cellSizeForWidth`, rather than the game's viewport sizing or pan/zoom.
+
+`createBoardLessonEngine` (`src/curriculum/lessonEngine.ts`) wraps the shared
+`boardReducer` and grades `selected`, `values`, `candidates`, and `solved`
+checklist tests. Grading runs after every board or selection change, so the
+checklist updates live without a Check button. Reset remounts the panel from
+the configured starting board.
+
 ### Creating curriculum modules and lessons
 
 Scaffolding commands, frontmatter, sections, the HTML allowlist, images, config, and checklist rules are in [`lesson-authoring.md`](lesson-authoring.md).

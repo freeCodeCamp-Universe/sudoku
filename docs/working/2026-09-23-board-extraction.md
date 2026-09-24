@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A19 done; A20-A22 ready for implementation; Part B pending decisions
+status: A0-A21 done; A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -109,8 +109,8 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A16. Add `puzzleFromConfig` for predefined boards
 - [x] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
 - [x] A19. Build the lesson board panel and its `LessonEngine` (after A11, A12, A16, A17, A18)
-- [ ] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
-- [ ] A21. Add a `lesson-board-authoring` project skill (after A18 and A20)
+- [x] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
+- [x] A21. ~~Add a `lesson-board-authoring` project skill~~ Superseded: the workflow lives in `docs/lesson-authoring.md` ("Authoring a board")
 - [ ] A22. Dissolve `src/game/testing/` and colocate every file with its source (after A11)
 
 ### Part B: pending decision
@@ -524,7 +524,11 @@ Update these after A18 and A19 land, since they describe code that doesn't exist
 - **`docs/architecture.md` "Learn layer":** add a subsection on the lesson board panel covering the config `board` block, `puzzleFromConfig`, the lesson engine, live checking, and container sizing.
 - **`docs/lesson-authoring.md`:** document the `board` block under "Config block", the four `test` kinds under "Checklist items", and the `pnpm lesson:board` script.
 
-### A21. `lesson-board-authoring` skill
+### A21. `lesson-board-authoring` skill (superseded 2026-09-25)
+
+- **Outcome:** the skill was added, then deleted. It repeated most of `docs/lesson-authoring.md`, so every schema change meant editing two files, and `AGENTS.md` already tells agents to read that doc before editing lessons. The workflow steps now live in the doc's "Authoring a board" section. When B1 adds a variant's `structure`, document it in the doc's "Board config" section.
+
+Original plan, kept for the record:
 
 - **Why:** boards are set up in a separate authoring pass, where the author works with Claude. A project skill keeps that workflow the same across sessions, so the format, script and checks don't have to be worked out again each time.
 - **What:** add `.claude/skills/lesson-board-authoring/SKILL.md` (the repo has no `.claude/skills/` directory yet). It covers:
@@ -606,6 +610,7 @@ Each item lists the exact questions it's waiting on and why each answer changes 
 - Types defined in the UI layer ended up imported by the engine (`engine/types.ts:115` used an inline `import('@/game/gameTypes')`). Put a type in the lowest layer that uses it.
 - The two `useMediaQuery` copies had drifted: the learn copy rendered `false` first, which caused a layout flash on desktop. Duplicates drift, so shared hooks belong in `src/hooks/`.
 - Some tests reference source paths as strings (`process.cwd()` + `'src/game/...'`). TypeScript won't catch them during a move, so grep for them.
+- A21's skill duplicated the authoring doc despite a "don't duplicate" rule. When the schema is still changing and `AGENTS.md` already points agents to a doc, add the workflow to the doc instead of creating a skill.
 - An earlier draft of this plan proposed a separate `LessonBoard` component. Even as a thin wrapper, it would have duplicated `GamePage`'s wiring. The shared `usePlayableBoard` hook replaces it.
 
 ## Potential issues
