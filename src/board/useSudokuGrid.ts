@@ -58,6 +58,9 @@ interface UseSudokuGridOptions {
   // typing 1-9 spell out the hidden word.
   displaySymbols?: SymbolValue[];
   onSetCandidateMode?: (candidate: boolean) => void;
+  cellSelection?: 'single' | 'multiple';
+  selectedIds?: Set<CellId>;
+  onSelectionChange?: (ids: Set<CellId>) => void;
 }
 
 function formatLocation(cell: Cell, boxNumber: number | undefined): string {
@@ -131,16 +134,41 @@ export function useSudokuGrid({
   describeSymbol = renderSymbol,
   displaySymbols,
   onSetCandidateMode,
+  cellSelection = 'single',
+  selectedIds: controlledSelectedIds,
+  onSelectionChange,
 }: UseSudokuGridOptions): GridInteraction {
   const highlightPeers = highlights.peers ?? true;
   const highlightSameValue = highlights.sameValue ?? true;
   const highlightConflicts = highlights.conflicts ?? true;
-  const [selectedId, setSelectedId] = useState<CellId | null>(null);
+  const [focusedId, setFocusedId] = useState<CellId | null>(null);
+  const [uncontrolledSelectedIds, setUncontrolledSelectedIds] = useState<Set<CellId>>(
+    () => new Set()
+  );
+  const effectiveSelectedIds = useMemo(() => {
+    if (cellSelection === 'single') {
+      return focusedId === null ? new Set<CellId>() : new Set([focusedId]);
+    }
+
+    return controlledSelectedIds ?? uncontrolledSelectedIds;
+  }, [cellSelection, controlledSelectedIds, focusedId, uncontrolledSelectedIds]);
   const announcerRef = useRef<HTMLDivElement | null>(null);
-  const mouseDownSelectionRef = useRef<{ active: boolean; selectedId: CellId | null }>({
+  const mouseDownSelectionRef = useRef<{
+    active: boolean;
+    selectedIds: Set<CellId>;
+  }>({
     active: false,
-    selectedId: null,
+    selectedIds: new Set(),
   });
+  const commitSelection = useCallback(
+    (nextIds: Set<CellId>) => {
+      if (controlledSelectedIds === undefined) {
+        setUncontrolledSelectedIds(nextIds);
+      }
+      onSelectionChange?.(nextIds);
+    },
+    [controlledSelectedIds, onSelectionChange]
+  );
 
   const cellsById = useMemo(() => new Map(cells.map((cell) => [cell.id, cell])), [cells]);
 
@@ -166,7 +194,7 @@ export function useSudokuGrid({
   const peerIds = useMemo(() => {
     const peers = new Set<CellId>();
 
-    if (selectedId === null || !highlightPeers) {
+    if (focusedId === null || !highlightPeers) {
       return peers;
     }
 
@@ -175,17 +203,17 @@ export function useSudokuGrid({
       : model.houses;
 
     for (const house of peerHouses) {
-      if (house.cells.includes(selectedId)) {
+      if (house.cells.includes(focusedId)) {
         for (const cellInHouse of house.cells) {
           peers.add(cellInHouse);
         }
       }
     }
 
-    peers.delete(selectedId);
+    peers.delete(focusedId);
 
     return peers;
-  }, [selectedId, highlightPeers, model.houses, model.peerHouseFilter]);
+  }, [focusedId, highlightPeers, model.houses, model.peerHouseFilter]);
 
   const getCellState = useCallback(
     (id: CellId): CellState => {
@@ -195,17 +223,18 @@ export function useSudokuGrid({
         checkEnabled && !given && value !== undefined && solution.has(id)
           ? value === solution.get(id)
           : undefined;
-      const selectedValue = selectedId !== null ? values.get(selectedId) : undefined;
+      const focusedValue = focusedId !== null ? values.get(focusedId) : undefined;
 
       return {
         value,
         candidates: candidates.get(id) ?? [],
         given,
         revealed: revealed.has(id),
-        selected: selectedId === id,
+        focused: focusedId === id,
+        selected: effectiveSelectedIds.has(id),
         conflict: highlightConflicts && conflictSet.has(id),
         correct,
-        sameValue: highlightSameValue && selectedValue !== undefined && value === selectedValue,
+        sameValue: highlightSameValue && focusedValue !== undefined && value === focusedValue,
         peer: peerIds.has(id),
       };
     },
@@ -213,12 +242,13 @@ export function useSudokuGrid({
       candidates,
       checkEnabled,
       conflictSet,
+      effectiveSelectedIds,
+      focusedId,
       givens,
       highlightConflicts,
       highlightSameValue,
       peerIds,
       revealed,
-      selectedId,
       solution,
       values,
     ]
@@ -290,7 +320,7 @@ export function useSudokuGrid({
       const projectedConflictSet = new Set(
         validate(nextValues, model).flatMap((conflict) => conflict.cells)
       );
-      const projectedSelectedValue = selectedId !== null ? nextValues.get(selectedId) : undefined;
+      const projectedFocusedValue = focusedId !== null ? nextValues.get(focusedId) : undefined;
       const projectedCellState = (cellId: CellId): CellState => {
         const isGiven = givens.has(cellId) || revealed.has(cellId);
 
@@ -299,7 +329,8 @@ export function useSudokuGrid({
           candidates: nextCandidates.get(cellId) ?? [],
           given: isGiven,
           revealed: revealed.has(cellId),
-          selected: selectedId === cellId,
+          focused: focusedId === cellId,
+          selected: effectiveSelectedIds.has(cellId),
           conflict: highlightConflicts && projectedConflictSet.has(cellId),
           correct:
             checkEnabled && !isGiven && nextValues.get(cellId) !== undefined && solution.has(cellId)
@@ -307,8 +338,8 @@ export function useSudokuGrid({
               : undefined,
           sameValue:
             highlightSameValue &&
-            projectedSelectedValue !== undefined &&
-            nextValues.get(cellId) === projectedSelectedValue,
+            projectedFocusedValue !== undefined &&
+            nextValues.get(cellId) === projectedFocusedValue,
           peer: peerIds.has(cellId),
         };
       };
@@ -356,7 +387,8 @@ export function useSudokuGrid({
       model,
       peerIds,
       revealed,
-      selectedId,
+      effectiveSelectedIds,
+      focusedId,
       solution,
     ]
   );
@@ -420,13 +452,25 @@ export function useSudokuGrid({
     [announce, boxNumberByCell, cellsById, describeSymbol]
   );
 
-  // Selection only moves DOM focus; the focused cell's accessible name is what
-  // the screen reader speaks. Pushing the same description into the live region
-  // here would double-announce every move, so navigation stays silent and the
-  // live region is reserved for in-place changes (value entry, mode switch).
-  const selectCell = useCallback((id: CellId | null) => {
-    setSelectedId(id);
+  // The focused cell's accessible name announces navigation; the live region
+  // stays reserved for in-place changes such as value entry and mode switches.
+  const focusCell = useCallback((id: CellId | null) => {
+    setFocusedId(id);
   }, []);
+  const toggleSelection = useCallback(
+    (id: CellId) => {
+      const nextIds = new Set(effectiveSelectedIds);
+
+      if (nextIds.has(id)) {
+        nextIds.delete(id);
+      } else {
+        nextIds.add(id);
+      }
+
+      commitSelection(nextIds);
+    },
+    [commitSelection, effectiveSelectedIds]
+  );
 
   const handleKey = useCallback(
     (key: string, currentId: CellId, event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -460,10 +504,16 @@ export function useSudokuGrid({
           break;
         case 'Escape':
           event.preventDefault();
-          selectCell(null);
+          focusCell(null);
           return;
         default:
           break;
+      }
+
+      if ((key === ' ' || key === 'Spacebar') && cellSelection === 'multiple') {
+        event.preventDefault();
+        toggleSelection(currentId);
+        return;
       }
 
       if (nextId && !cellsById.has(nextId)) {
@@ -472,7 +522,7 @@ export function useSudokuGrid({
 
       if (nextId) {
         event.preventDefault();
-        selectCell(nextId);
+        focusCell(nextId);
         const grid = event.currentTarget.closest?.('[role="grid"]');
         const target = grid?.querySelector<HTMLElement>(`[data-cell="${nextId}"]`);
         target?.focus({ preventScroll: true });
@@ -578,7 +628,9 @@ export function useSudokuGrid({
       onToggleCandidate,
       renderSymbol,
       revealed,
-      selectCell,
+      cellSelection,
+      focusCell,
+      toggleSelection,
       solution,
       values,
     ]
@@ -588,9 +640,9 @@ export function useSudokuGrid({
 
   const moveSelection = useCallback(
     (direction: Direction) => {
-      if (!selectedId) {
+      if (!focusedId) {
         if (firstCellId) {
-          selectCell(firstCellId);
+          focusCell(firstCellId);
           document
             .querySelector<HTMLElement>(`[data-cell="${firstCellId}"]`)
             ?.focus({ preventScroll: true });
@@ -598,7 +650,7 @@ export function useSudokuGrid({
         }
         return;
       }
-      const cell = cellsById.get(selectedId);
+      const cell = cellsById.get(focusedId);
       if (!cell) {
         return;
       }
@@ -606,43 +658,60 @@ export function useSudokuGrid({
       if (!nextId) {
         return;
       }
-      selectCell(nextId);
+      focusCell(nextId);
       document
         .querySelector<HTMLElement>(`[data-cell="${nextId}"]`)
         ?.focus({ preventScroll: true });
       onCellNavigate?.(nextId);
     },
-    [selectedId, firstCellId, cells, cellsById, selectCell, onCellNavigate]
+    [focusedId, firstCellId, cells, cellsById, focusCell, onCellNavigate]
   );
 
   const cellProps = useCallback(
     (id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId } => ({
       'data-cell': id,
-      tabIndex: selectedId === id || (selectedId === null && firstCellId === id) ? 0 : -1,
+      tabIndex: focusedId === id || (focusedId === null && firstCellId === id) ? 0 : -1,
       onMouseDown() {
-        mouseDownSelectionRef.current = { active: true, selectedId };
+        mouseDownSelectionRef.current = {
+          active: true,
+          selectedIds: new Set(effectiveSelectedIds),
+        };
       },
       onClick() {
         const wasSelected = mouseDownSelectionRef.current.active
-          ? mouseDownSelectionRef.current.selectedId === id
-          : selectedId === id;
+          ? mouseDownSelectionRef.current.selectedIds.has(id)
+          : effectiveSelectedIds.has(id);
 
-        mouseDownSelectionRef.current = { active: false, selectedId: null };
-        selectCell(wasSelected ? null : id);
+        mouseDownSelectionRef.current = { active: false, selectedIds: new Set() };
+        if (cellSelection === 'multiple') {
+          focusCell(id);
+          toggleSelection(id);
+        } else {
+          focusCell(wasSelected ? null : id);
+        }
       },
       onFocus() {
-        if (selectedId !== id) {
-          selectCell(id);
+        if (focusedId !== id) {
+          focusCell(id);
         }
       },
       onKeyDown(event) {
         handleKey(event.key, id, event);
       },
     }),
-    [firstCellId, handleKey, selectCell, selectedId]
+    [
+      cellSelection,
+      effectiveSelectedIds,
+      firstCellId,
+      focusCell,
+      focusedId,
+      handleKey,
+      toggleSelection,
+    ]
   );
 
   return {
+    cellSelection,
     cellState: getCellState,
     cellProps,
     describeCell,

@@ -16,6 +16,7 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   symbols: SymbolValue[];
   given: boolean;
   revealed?: boolean;
+  focused: boolean;
   selected: boolean;
   conflict: boolean;
   correct?: boolean;
@@ -66,6 +67,7 @@ export function Cell({
   symbols,
   given,
   revealed = false,
+  focused,
   selected,
   conflict,
   correct,
@@ -107,6 +109,7 @@ export function Cell({
       data-col={col >= 0 ? col : undefined}
       data-given={given || undefined}
       data-revealed={revealed || undefined}
+      data-focused={focused || undefined}
       data-selected={selected || undefined}
       data-conflict={conflict || undefined}
       data-correct={correct === true || undefined}

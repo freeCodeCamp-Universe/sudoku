@@ -63,6 +63,7 @@ describe('useBoardView', () => {
         cellState: () => ({
           candidates: [],
           given: false,
+          focused: false,
           selected: false,
           conflict: false,
         }),

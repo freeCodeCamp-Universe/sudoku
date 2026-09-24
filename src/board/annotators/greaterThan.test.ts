@@ -20,6 +20,7 @@ function makeCtx(relations: Relation[], values: Values = new Map()): AnnotatorCo
     cellState: (_id: string): CellState => ({
       candidates: [],
       given: false,
+      focused: false,
       selected: false,
       conflict: false,
     }),

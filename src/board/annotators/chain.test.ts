@@ -20,6 +20,7 @@ function makeCtx(chains: ChainType[], values: Values = new Map()): AnnotatorCont
     cellState: (_id: string): CellState => ({
       candidates: [],
       given: false,
+      focused: false,
       selected: false,
       conflict: false,
     }),

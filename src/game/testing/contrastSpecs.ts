@@ -245,6 +245,13 @@ export const contrastPairs: ContrastPair[] = [
       theme,
     },
     {
+      label: 'focus ring vs base',
+      fg: '--cell-selected-border',
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    },
+    {
       label: 'peer-even bg vs peer-odd bg',
       fg: '--cell-peer-even-bg',
       bg: '--cell-peer-odd-bg',

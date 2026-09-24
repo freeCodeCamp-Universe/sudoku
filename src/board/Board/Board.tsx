@@ -103,6 +103,7 @@ export function Board({
       aria-label="Sudoku grid"
       aria-rowcount={rowCount}
       aria-colcount={colCount}
+      aria-multiselectable={grid.cellSelection === 'multiple' || undefined}
       data-check={checkEnabled || undefined}
       data-variant={variant.id}
       className={`${styles.grid}${variant.layout.kind === 'multigrid' || variant.layout.kind === 'triangular' ? ` ${styles.multigrid}` : ''}`}
@@ -125,7 +126,9 @@ export function Board({
                 key={cell.id}
                 role="presentation"
                 className={
-                  state.selected ? `${styles.cellSlot} ${styles.cellSlotSelected}` : styles.cellSlot
+                  state.selected || state.focused
+                    ? `${styles.cellSlot} ${styles.cellSlotSelected}`
+                    : styles.cellSlot
                 }
                 style={{
                   insetInlineStart: rect.x,
@@ -142,6 +145,7 @@ export function Board({
                   symbols={displaySymbols ?? variant.symbols}
                   given={state.given}
                   revealed={state.revealed}
+                  focused={state.focused}
                   selected={state.selected}
                   conflict={state.conflict}
                   correct={state.correct}

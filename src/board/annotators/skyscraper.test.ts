@@ -26,6 +26,7 @@ const ctx: AnnotatorContext = {
   cellState: (_id: string): CellState => ({
     candidates: [],
     given: false,
+    focused: false,
     selected: false,
     conflict: false,
   }),

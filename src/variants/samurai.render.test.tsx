@@ -22,6 +22,7 @@ describe('Samurai Board renders correct cell count', () => {
           cellState: (_id: CellId) => ({
             candidates: [],
             given: false,
+            focused: false,
             selected: false,
             conflict: false,
           }),

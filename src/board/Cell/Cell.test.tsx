@@ -10,6 +10,7 @@ const baseProps = {
   candidates: [] as number[],
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9] as number[],
   given: false,
+  focused: false,
   selected: false,
   conflict: false,
   onClick: () => {},
@@ -39,6 +40,13 @@ describe('Cell', () => {
     render(<Cell {...baseProps} selected />);
 
     expect(screen.getByRole('gridcell')).toHaveAttribute('data-selected', 'true');
+  });
+
+  it('should expose focus separately from selection', () => {
+    render(<Cell {...baseProps} focused />);
+
+    expect(screen.getByRole('gridcell')).toHaveAttribute('data-focused', 'true');
+    expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-selected');
   });
 
   it('should apply the conflict modifier when conflict=true', () => {

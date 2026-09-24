@@ -27,6 +27,7 @@ export interface CellState {
   candidates: SymbolValue[];
   given: boolean;
   revealed?: boolean;
+  focused: boolean;
   selected: boolean;
   conflict: boolean;
   correct?: boolean;
@@ -41,6 +42,7 @@ export interface BoardHighlights {
 }
 
 export interface GridInteraction {
+  cellSelection?: 'single' | 'multiple';
   cellState(id: CellId): CellState;
   cellProps(id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId };
   describeCell(id: CellId): string;

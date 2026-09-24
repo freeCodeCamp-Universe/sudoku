@@ -9,6 +9,7 @@ interface CellRenderState {
   value?: SymbolValue;
   candidates: SymbolValue[];
   given: boolean;
+  focused: boolean;
   selected: boolean;
   conflict: boolean;
   correct?: boolean;
@@ -29,6 +30,7 @@ function defaultCellState(): CellState {
   return {
     candidates: [],
     given: false,
+    focused: false,
     selected: false,
     conflict: false,
   };

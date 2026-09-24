@@ -180,6 +180,23 @@
   pointer-events: none;
 }
 
+.cell[data-focused]:not([data-selected]) {
+  z-index: var(--layer-grid-lines);
+}
+
+.cell[data-focused]:not([data-selected])::before {
+  content: none;
+}
+
+.cell[data-focused]:not([data-selected])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px dashed var(--cell-selected-border);
+  z-index: var(--layer-selection);
+  pointer-events: none;
+}
+
 /* Dim the selected cell's peers (its row, column, box, and any other house
    it shares). Subtler than the same-value highlight, which overrides it. */
 .cell[data-peer] {

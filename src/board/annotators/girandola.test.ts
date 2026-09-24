@@ -10,7 +10,13 @@ function ctx(): AnnotatorContext {
   return {
     values: new Map(),
     model,
-    cellState: () => ({ candidates: [], given: false, selected: false, conflict: false }),
+    cellState: () => ({
+      candidates: [],
+      given: false,
+      focused: false,
+      selected: false,
+      conflict: false,
+    }),
   };
 }
 

@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A10 done; A11-A22 ready for implementation; Part B pending decisions
+status: A0-A10 and A17 done; A11-A16, A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -24,10 +24,12 @@ It has two parts:
 
 - **Part A (ready):** work that needs no further decisions.
   - A0-A5 (done) moved the board files into `src/board/` and fixed the layering.
-  - A6-A12 extract shared board state, input and prop derivation from `GamePage` so the game and lessons use the same code. The game must behave exactly as before after each of them.
+  - A6-A10 extract shared board state, input and prop derivation from `GamePage` so the game and lessons use the same code. The game must behave exactly as before after each of them.
+  - A17 separates focus from selection and adds multi-cell selection; it must precede A11.
+  - A11-A12 compose the shared playable-board hook and add container-based sizing.
   - A13 is optional cleanup.
-  - A14 updates the reference docs for A6-A12.
-  - A15 merges the duplicate `useSeoMeta` hooks, and A16 builds a puzzle from predefined givens. A17 adds multi-cell selection. A18-A21 add the lesson config, the lesson panel, their docs, and the board authoring skill. A22 removes `src/game/testing/` and colocates its files.
+  - A14 updates the reference docs for A6-A12 and A17, so it follows A12 and A17.
+  - A15 merges the duplicate `useSeoMeta` hooks, and A16 builds a puzzle from predefined givens. A18-A21 add the lesson config, the lesson panel, their docs, and the board authoring skill. A22 removes `src/game/testing/` and colocates its files.
 - **Part B (pending):** pinned structure (cages, regions, clues) for variants like killer and jigsaw, which waits on the board authoring pass.
 
 ### Lesson board requirements (confirmed 2026-09-25)
@@ -83,6 +85,8 @@ Facts as of 2026-09-25, after A0-A5:
 
 ## Checklist
 
+The checklist is ordered so every prerequisite appears above the item that depends on it. Independent items may appear between a prerequisite and its dependent.
+
 ### Part A: ready for implementation
 
 - [x] A0. Move `StarIcon` from `src/gallery/StarIcon/` into `src/components/icons.tsx` so `src/components/Header/Header.tsx` no longer imports from `@/gallery`
@@ -96,13 +100,13 @@ Facts as of 2026-09-25, after A0-A5:
 - [x] A8. Extract `useBoardView` (board prop derivation) from `GamePage`
 - [x] A9. Extract `useBoardInput` (numpad entry, candidate toggling, announcements) from `GamePage`
 - [x] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
-- [ ] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10)
+- [x] A17. Separate focus from selection; add multi-cell selection (after A7, before A11)
+- [ ] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
 - [ ] A12. Container-based cell sizing for boards outside the game page
 - [ ] A13. (Optional) Replace the `variant.id` branches in `Board.tsx` with variant-declared cell tags
-- [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17
+- [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [ ] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
 - [ ] A16. Add `puzzleFromConfig` for predefined boards
-- [ ] A17. Separate focus from selection; add multi-cell selection (after A7, before A11)
 - [ ] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
 - [ ] A19. Build the lesson board panel and its `LessonEngine` (after A11, A12, A16, A17, A18)
 - [ ] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
@@ -345,13 +349,43 @@ Place these blocks after the main `src/**/*.{ts,tsx}` block. Tests are excluded 
   4. Make `DesktopControls` and `PortraitControls` render `InputModeTabs`.
 - **Tests:** `src/board/InputModeTabs/InputModeTabs.test.tsx` covers switching modes, arrow-key movement between tabs, and an extra tab joining the tablist. The existing `PortraitControls` and `GamePage` tests pass unchanged.
 
+### A17. Separate focus from selection; multi-cell selection
+
+Decided 2026-09-25:
+
+- A lesson can ask the learner to select several cells.
+- Cells are announced one way everywhere. Lesson text can refer to a cell as "r3c5", but the screen reader always speaks the full form, "Row 3, column 5, box 2" (today's `formatLocation` output). There is no per-lesson announcement format. Lesson text keeps rc notation as written, and the Markdown pipeline doesn't rewrite it.
+
+- **Current state:** `useSudokuGrid` (`src/board/useSudokuGrid.ts`) has one `selectedId: CellId | null`. It is both the roving-tabindex focus and the selection. Number entry targets it, and `peerIds` and `sameValue` key off it. `Cell` (`src/board/Cell/Cell.tsx`) sets `data-selected` and `aria-selected={selected || undefined}` on `role="gridcell"`. `Board` renders `role="grid"` with `aria-label="Sudoku grid"`. `formatLocation(cell, boxNumber)` always returns "Row 3, column 5, box 2".
+- **Change:**
+  1. Split the state into `focusedId: CellId | null` (roving tabindex, arrow keys, number entry, peers and same-value highlights) and `selectedIds: Set<CellId>`.
+  2. Add options to `UseSudokuGridOptions`:
+     ```ts
+     cellSelection?: 'single' | 'multiple'; // default 'single'
+     selectedIds?: Set<CellId>;              // controlled; omit for uncontrolled
+     onSelectionChange?: (ids: Set<CellId>) => void;
+     ```
+  3. **Single mode (the game):** `selectedIds` always equals `{focusedId}`. Behavior, labels and tests stay the same.
+  4. **Multiple mode:** arrow keys move focus without changing the selection. Space and click toggle the focused cell's selection (a click also moves focus). `Board` sets `aria-multiselectable="true"`. Number entry still targets the focused cell, so a lesson can ask for a digit in r3c5 in the same mode.
+  5. Add `focused: boolean` to `CellState` in `src/board/boardTypes.ts`, next to `selected`. In multiple mode a cell can be focused without being selected, so `Cell` needs a separate `data-focused` style (a focus ring) that is distinct from the selected fill.
+  6. Leave `formatLocation` as it is.
+- **Color gate:** the focused-but-not-selected style is a new visual state. Read `docs/color-contrast.md` first, add the new pair to `src/game/testing/contrastSpecs.ts`, and verify it with `pnpm contrast:report` (the selected-border specs are near line 267 and line 460). If the change adds color tokens, run `pnpm docs:colors`.
+- **Tests** in `src/board/useSudokuGrid.test.ts`:
+  - single mode: the existing cases pass unchanged
+  - multiple mode: "should toggle selection with Space", "should keep the selection when arrow keys move focus", "should toggle selection on click", "should call onSelectionChange with the new set", "should enter a digit in the focused cell"
+  - `Board`: "should set aria-multiselectable in multiple mode"
+- **Order:** do A17 after A7 (both edit `useSudokuGrid`) and before A11, so `usePlayableBoard` exposes the new options from the start.
+
 ### A11. `usePlayableBoard`
 
-- **What:** `src/board/usePlayableBoard.ts` composes `boardReducer` (A6), `useSudokuGrid` with `highlights` (A7), `useBoardView` (A8) and `useBoardInput` (A9). It returns the props for `Board`, `NumberPad` and `InputModeTabs` (A10), and renders nothing itself. Sketch:
+- **What:** `src/board/usePlayableBoard.ts` composes `boardReducer` (A6), `useSudokuGrid` with `highlights` (A7), `useBoardView` (A8) and `useBoardInput` (A9). It returns the props for `Board`, `NumberPad` and `InputModeTabs` (A10), and renders nothing itself. It also exposes A17's `cellSelection`, `selectedIds` and `onSelectionChange` options. Sketch:
   ```ts
   usePlayableBoard({
     variant, baseModel, givens, solution, seedBase, cellSize,
     highlights?: BoardHighlights,
+    cellSelection?: 'single' | 'multiple',
+    selectedIds?: Set<CellId>,
+    onSelectionChange?: (ids: Set<CellId>) => void,
     state: BoardState,
     dispatch: (action: BoardAction) => void,
     inputLocked?: boolean,
@@ -403,33 +437,6 @@ Place these blocks after the main `src/**/*.{ts,tsx}` block. Tests are excluded 
 - **What:** add `puzzleFromConfig(variant, givens, solution)` in `src/board/puzzleFromConfig.ts`. It's a sibling of `buildPuzzle` (`src/game/buildPuzzle.ts`) that calls `buildModel` and skips `generate`. `givens` and `solution` are already-parsed `Values` maps, so the function doesn't depend on how the lesson config writes them (A18 does that parsing).
 - **`solution` is required.** Confirmed 2026-09-25: lessons ship precomputed givens and solutions. Every board, game or lesson, has a solution, so nothing needs to become optional, and the lesson code never runs `solve`.
 - **Tests:** `src/board/puzzleFromConfig.test.ts` covers building a classic board from givens and a solution, and checks that the model, givens and solution match the input.
-
-### A17. Separate focus from selection; multi-cell selection
-
-Decided 2026-09-25:
-
-- A lesson can ask the learner to select several cells.
-- Cells are announced one way everywhere. Lesson text can refer to a cell as "r3c5", but the screen reader always speaks the full form, "Row 3, column 5, box 2" (today's `formatLocation` output). There is no per-lesson announcement format. Lesson text keeps rc notation as written, and the Markdown pipeline doesn't rewrite it.
-
-- **Current state:** `useSudokuGrid` (`src/board/useSudokuGrid.ts`) has one `selectedId: CellId | null`. It is both the roving-tabindex focus and the selection. Number entry targets it, and `peerIds` and `sameValue` key off it. `Cell` (`src/board/Cell/Cell.tsx`) sets `data-selected` and `aria-selected={selected || undefined}` on `role="gridcell"`. `Board` renders `role="grid"` with `aria-label="Sudoku grid"`. `formatLocation(cell, boxNumber)` always returns "Row 3, column 5, box 2".
-- **Change:**
-  1. Split the state into `focusedId: CellId | null` (roving tabindex, arrow keys, number entry, peers and same-value highlights) and `selectedIds: Set<CellId>`.
-  2. Add options to `UseSudokuGridOptions`:
-     ```ts
-     cellSelection?: 'single' | 'multiple'; // default 'single'
-     selectedIds?: Set<CellId>;              // controlled; omit for uncontrolled
-     onSelectionChange?: (ids: Set<CellId>) => void;
-     ```
-  3. **Single mode (the game):** `selectedIds` always equals `{focusedId}`. Behavior, labels and tests stay the same.
-  4. **Multiple mode:** arrow keys move focus without changing the selection. Space and click toggle the focused cell's selection (a click also moves focus). `Board` sets `aria-multiselectable="true"`. Number entry still targets the focused cell, so a lesson can ask for a digit in r3c5 in the same mode.
-  5. Add `focused: boolean` to `CellState` in `src/board/boardTypes.ts`, next to `selected`. In multiple mode a cell can be focused without being selected, so `Cell` needs a separate `data-focused` style (a focus ring) that is distinct from the selected fill.
-  6. Leave `formatLocation` as it is.
-- **Color gate:** the focused-but-not-selected style is a new visual state. Read `docs/color-contrast.md` first, add the new pair to `src/game/testing/contrastSpecs.ts`, and verify it with `pnpm contrast:report` (the selected-border specs are near line 267 and line 460). If the change adds color tokens, run `pnpm docs:colors`.
-- **Tests** in `src/board/useSudokuGrid.test.ts`:
-  - single mode: the existing cases pass unchanged
-  - multiple mode: "should toggle selection with Space", "should keep the selection when arrow keys move focus", "should toggle selection on click", "should call onSelectionChange with the new set", "should enter a digit in the focused cell"
-  - `Board`: "should set aria-multiselectable in multiple mode"
-- **Order:** do A17 after A7 (both edit `useSudokuGrid`) and before A11, so `usePlayableBoard` exposes the new options from the start.
 
 ### A18. Lesson config `board` block (digit-only variants)
 

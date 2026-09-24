@@ -1,5 +1,6 @@
 import React from 'react';
 import { renderHook, act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, should, vi } from 'vitest';
 import { uniqueness } from '@/engine/constraints/uniqueness';
 import { gridCells, standardHouses } from '@/engine/grid';
@@ -47,6 +48,9 @@ interface TestBoardProps {
   solution?: Values;
   onCellNavigate?: (id: CellId) => void;
   onSetCandidateMode?: (candidate: boolean) => void;
+  cellSelection?: 'single' | 'multiple';
+  selectedIds?: Set<CellId>;
+  onSelectionChange?: (ids: Set<CellId>) => void;
 }
 
 function TestBoard({
@@ -62,6 +66,9 @@ function TestBoard({
   solution = new Map(),
   onCellNavigate,
   onSetCandidateMode,
+  cellSelection,
+  selectedIds,
+  onSelectionChange,
 }: TestBoardProps) {
   const grid = useSudokuGrid({
     cells,
@@ -79,6 +86,9 @@ function TestBoard({
     solution,
     onCellNavigate,
     onSetCandidateMode,
+    cellSelection,
+    selectedIds,
+    onSelectionChange,
   });
 
   return React.createElement(Board, {
@@ -278,6 +288,82 @@ describe('useSudokuGrid', () => {
     expect(targetCell).toBeTruthy();
     shouldAssert.equal(targetCell.getAttribute('aria-selected'), 'true');
     shouldAssert.equal(targetCell.getAttribute('tabindex'), '0');
+  });
+
+  it('should toggle selection with Space in multiple-selection mode', async () => {
+    const user = userEvent.setup();
+    render(React.createElement(TestBoard, { cellSelection: 'multiple' }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    await user.tab();
+    expect(cell).toHaveFocus();
+    await user.keyboard(' ');
+
+    expect(cell.getAttribute('aria-selected')).toBe('true');
+    await user.keyboard(' ');
+    expect(cell.getAttribute('aria-selected')).toBeNull();
+  });
+
+  it('should keep the selection when arrow keys move focus in multiple-selection mode', () => {
+    render(React.createElement(TestBoard, { cellSelection: 'multiple' }));
+
+    const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    fireEvent.focus(firstCell);
+    fireEvent.keyDown(firstCell, { key: ' ' });
+    fireEvent.keyDown(firstCell, { key: 'ArrowRight' });
+
+    const nextCell = screen.getByRole('gridcell', { name: 'Row 1, column 2, box 1, empty' });
+    expect(firstCell.getAttribute('aria-selected')).toBe('true');
+    expect(nextCell.getAttribute('aria-selected')).toBeNull();
+    expect(nextCell.getAttribute('data-focused')).toBe('true');
+  });
+
+  it('should toggle selection on click in multiple-selection mode', async () => {
+    const user = userEvent.setup();
+    render(React.createElement(TestBoard, { cellSelection: 'multiple' }));
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    await user.click(cell);
+    expect(cell.getAttribute('aria-selected')).toBe('true');
+
+    await user.click(cell);
+    expect(cell.getAttribute('aria-selected')).toBeNull();
+  });
+
+  it('should call onSelectionChange with the new selection', async () => {
+    const user = userEvent.setup();
+    const onSelectionChange = vi.fn();
+    render(
+      React.createElement(TestBoard, {
+        cellSelection: 'multiple',
+        onSelectionChange,
+      })
+    );
+
+    const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    await user.click(cell);
+
+    expect(onSelectionChange).toHaveBeenCalledWith(new Set(['r0c0']));
+  });
+
+  it('should enter a digit in the focused but unselected cell', () => {
+    const onEnterValue = vi.fn();
+    render(
+      React.createElement(TestBoard, {
+        cellSelection: 'multiple',
+        onEnterValue,
+      })
+    );
+
+    const firstCell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+    fireEvent.focus(firstCell);
+    fireEvent.keyDown(firstCell, { key: 'ArrowRight' });
+
+    const nextCell = screen.getByRole('gridcell', { name: 'Row 1, column 2, box 1, empty' });
+    fireEvent.keyDown(nextCell, { key: '4' });
+
+    expect(firstCell.getAttribute('aria-selected')).toBeNull();
+    expect(onEnterValue).toHaveBeenCalledWith('r0c1', 4);
   });
 
   it('should include sorted candidates in the cell label when no value is present', () => {

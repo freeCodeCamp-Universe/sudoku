@@ -38,6 +38,7 @@ describe('Butterfly Board renders correct cell count', () => {
           cellState: (_id: CellId) => ({
             candidates: [],
             given: false,
+            focused: false,
             selected: false,
             conflict: false,
           }),
@@ -72,6 +73,7 @@ describe('Butterfly Board renders correct cell count', () => {
           cellState: (_id: CellId) => ({
             candidates: [],
             given: false,
+            focused: false,
             selected: false,
             conflict: false,
           }),

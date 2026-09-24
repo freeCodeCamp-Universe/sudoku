@@ -35,6 +35,7 @@ function makeBoardProps(
       cellState: (_id: CellId) => ({
         candidates: [],
         given: false,
+        focused: false,
         selected: false,
         conflict: false,
       }),
@@ -127,6 +128,15 @@ describe('Board', () => {
     render(<Board {...makeClassicBoardProps()} />);
 
     expect(screen.getByRole('grid', { name: /sudoku grid/i })).toBeTruthy();
+  });
+
+  it('should mark the grid as multi-selectable when selection mode is multiple', () => {
+    const props = makeClassicBoardProps();
+    render(<Board {...props} grid={{ ...props.grid, cellSelection: 'multiple' }} />);
+
+    expect(
+      screen.getByRole('grid', { name: 'Sudoku grid' }).getAttribute('aria-multiselectable')
+    ).toBe('true');
   });
 
   it('should render 81 gridcells for a 9x9 board', () => {
