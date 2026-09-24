@@ -2,7 +2,13 @@ import type React from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { validate } from '@/engine/validate';
 import type { Cell, CellId, SymbolValue, Values, VariantModel } from '@/engine/types';
-import type { CellAnnotator, CellState, Direction, GridInteraction } from './boardTypes';
+import type {
+  BoardHighlights,
+  CellAnnotator,
+  CellState,
+  Direction,
+  GridInteraction,
+} from './boardTypes';
 
 function findNextCell(cells: Cell[], cell: Cell, direction: Direction): CellId | null {
   const candidates = cells.filter((candidate) => {
@@ -42,7 +48,7 @@ interface UseSudokuGridOptions {
   onEnterValue: (id: CellId, value: SymbolValue | 0) => void;
   onToggleCandidate: (id: CellId, value: SymbolValue) => void;
   checkEnabled?: boolean;
-  highlightPeers?: boolean;
+  highlights?: BoardHighlights;
   candidateMode?: boolean;
   annotators?: CellAnnotator[];
   renderSymbol?: (value: SymbolValue) => string;
@@ -118,7 +124,7 @@ export function useSudokuGrid({
   onEnterValue,
   onToggleCandidate,
   checkEnabled = false,
-  highlightPeers = true,
+  highlights = {},
   candidateMode = false,
   annotators = [],
   renderSymbol = (value) => String(value),
@@ -126,6 +132,9 @@ export function useSudokuGrid({
   displaySymbols,
   onSetCandidateMode,
 }: UseSudokuGridOptions): GridInteraction {
+  const highlightPeers = highlights.peers ?? true;
+  const highlightSameValue = highlights.sameValue ?? true;
+  const highlightConflicts = highlights.conflicts ?? true;
   const [selectedId, setSelectedId] = useState<CellId | null>(null);
   const announcerRef = useRef<HTMLDivElement | null>(null);
   const mouseDownSelectionRef = useRef<{ active: boolean; selectedId: CellId | null }>({
@@ -194,13 +203,25 @@ export function useSudokuGrid({
         given,
         revealed: revealed.has(id),
         selected: selectedId === id,
-        conflict: conflictSet.has(id),
+        conflict: highlightConflicts && conflictSet.has(id),
         correct,
-        sameValue: selectedValue !== undefined && value === selectedValue,
+        sameValue: highlightSameValue && selectedValue !== undefined && value === selectedValue,
         peer: peerIds.has(id),
       };
     },
-    [candidates, checkEnabled, conflictSet, givens, peerIds, revealed, selectedId, solution, values]
+    [
+      candidates,
+      checkEnabled,
+      conflictSet,
+      givens,
+      highlightConflicts,
+      highlightSameValue,
+      peerIds,
+      revealed,
+      selectedId,
+      solution,
+      values,
+    ]
   );
 
   const announce = useCallback((message: string) => {
@@ -279,12 +300,13 @@ export function useSudokuGrid({
           given: isGiven,
           revealed: revealed.has(cellId),
           selected: selectedId === cellId,
-          conflict: projectedConflictSet.has(cellId),
+          conflict: highlightConflicts && projectedConflictSet.has(cellId),
           correct:
             checkEnabled && !isGiven && nextValues.get(cellId) !== undefined && solution.has(cellId)
               ? nextValues.get(cellId) === solution.get(cellId)
               : undefined,
           sameValue:
+            highlightSameValue &&
             projectedSelectedValue !== undefined &&
             nextValues.get(cellId) === projectedSelectedValue,
           peer: peerIds.has(cellId),
@@ -301,7 +323,11 @@ export function useSudokuGrid({
           ? value === solution.get(id)
           : undefined;
       const inConflict =
-        value !== undefined && correct !== true && checkEnabled && projectedConflictSet.has(id);
+        highlightConflicts &&
+        value !== undefined &&
+        correct !== true &&
+        checkEnabled &&
+        projectedConflictSet.has(id);
 
       const cellLabel = getCellLabel(
         cell,
@@ -325,6 +351,8 @@ export function useSudokuGrid({
       checkEnabled,
       describeSymbol,
       givens,
+      highlightConflicts,
+      highlightSameValue,
       model,
       peerIds,
       revealed,

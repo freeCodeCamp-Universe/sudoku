@@ -34,6 +34,12 @@ export interface CellState {
   peer?: boolean;
 }
 
+export interface BoardHighlights {
+  peers?: boolean;
+  sameValue?: boolean;
+  conflicts?: boolean;
+}
+
 export interface GridInteraction {
   cellState(id: CellId): CellState;
   cellProps(id: CellId): React.HTMLAttributes<HTMLDivElement> & { 'data-cell': CellId };

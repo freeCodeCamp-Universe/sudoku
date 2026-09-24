@@ -414,6 +414,26 @@ describe('useSudokuGrid', () => {
     expect(result.current.describeCell('r0c1')).toBe('Row 1, column 2, box 1, empty');
   });
 
+  it('should not flag conflicts or announce them when highlights.conflicts is false', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([
+          ['r0c0', 5],
+          ['r0c4', 5],
+        ]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        highlights: { conflicts: false },
+      })
+    );
+
+    expect(result.current.cellState('r0c0').conflict).toBe(false);
+    expect(result.current.describeCell('r0c0')).toBe('Row 1, column 1, box 1, 5');
+  });
+
   it('should include "in conflict" in the cell label even when checkEnabled is false', () => {
     const values: Values = new Map([
       ['r0c0', 5],
@@ -721,6 +741,30 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellState('r2c2').sameValue).toBe(false);
   });
 
+  it('should not flag same values when highlights.sameValue is false', () => {
+    const { result } = renderHook(() =>
+      useSudokuGrid({
+        cells,
+        model,
+        values: new Map([
+          ['r0c0', 5],
+          ['r3c3', 5],
+        ]),
+        givens: new Set(),
+        onEnterValue: noop,
+        onToggleCandidate: noop,
+        highlights: { sameValue: false },
+      })
+    );
+
+    act(() => {
+      result.current.cellProps('r0c0').onClick?.({} as React.MouseEvent<HTMLDivElement>);
+    });
+
+    expect(result.current.cellState('r0c0').sameValue).toBe(false);
+    expect(result.current.cellState('r3c3').sameValue).toBe(false);
+  });
+
   it('should mark the selected cell row, column, and box peers', () => {
     const { result } = renderHook(() =>
       useSudokuGrid({
@@ -744,7 +788,7 @@ describe('useSudokuGrid', () => {
     expect(result.current.cellState('r5c5').peer).toBe(false); // unrelated
   });
 
-  it('should mark no peers when highlightPeers is false', () => {
+  it('should not flag peers when highlights.peers is false', () => {
     const { result } = renderHook(() =>
       useSudokuGrid({
         cells,
@@ -753,7 +797,7 @@ describe('useSudokuGrid', () => {
         givens: new Set(),
         onEnterValue: noop,
         onToggleCandidate: noop,
-        highlightPeers: false,
+        highlights: { peers: false },
       })
     );
 

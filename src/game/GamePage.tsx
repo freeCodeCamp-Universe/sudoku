@@ -367,7 +367,7 @@ function GameInner({
     onEnterValue,
     onToggleCandidate,
     checkEnabled,
-    highlightPeers: settings.highlightPeers,
+    highlights: { peers: settings.highlightPeers },
     candidateMode,
     annotators,
     renderSymbol,
