@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ToastItem } from './ToastStack';
 import { ToastStack } from './ToastStack';
@@ -54,6 +54,29 @@ describe('ToastStack', () => {
 
     const bodies = screen.getAllByText(/body$/);
     expect(bodies.map((element) => element.textContent)).toEqual(['Second body', 'First body']);
+  });
+
+  it('should render the newest toast at the bottom edge of its container', () => {
+    const container = document.createElement('div');
+    document.body.append(container);
+
+    render(
+      <ToastStack
+        toasts={[first, second]}
+        onDismiss={vi.fn()}
+        placement="bottom"
+        container={container}
+      />
+    );
+
+    expect(
+      within(container)
+        .getAllByText(/body$/)
+        .map((element) => element.textContent)
+    ).toEqual(['First body', 'Second body']);
+    expect(within(container).getAllByRole('button', { name: 'Dismiss' })).toHaveLength(2);
+    expect(screen.getByRole('status')).toHaveTextContent('Second announced');
+    expect(container).not.toContainElement(screen.getByRole('status'));
   });
 
   it('should fall back to the message as visible content when no content is given', () => {

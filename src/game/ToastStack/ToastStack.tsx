@@ -25,6 +25,14 @@ interface ToastStackProps {
   onDismiss: (id: number) => void;
   durationMs?: number;
   exitMs?: number;
+  /** Whether the stack is anchored to the top or bottom edge. */
+  placement?: 'top' | 'bottom';
+  /**
+   * Optional positioned element to render the visual stack into. Use the
+   * interactive content area as the container to keep bottom toasts above its
+   * toolbar.
+   */
+  container?: HTMLElement;
 }
 
 interface ToastProps {
@@ -32,6 +40,7 @@ interface ToastProps {
   onDismiss: (id: number) => void;
   durationMs: number;
   exitMs: number;
+  placement: 'top' | 'bottom';
   /** Registers/unregisters this toast's root node for the stack's FLIP pass. */
   registerRef: (id: number, node: HTMLDivElement | null) => void;
 }
@@ -40,7 +49,7 @@ interface ToastProps {
 // the countdown (WCAG 2.2.1: give readers time) and leaving restarts the full
 // duration. The visible copy is aria-hidden because the stack's live region
 // already speaks it, so it would otherwise be read twice.
-function Toast({ toast, onDismiss, durationMs, exitMs, registerRef }: ToastProps) {
+function Toast({ toast, onDismiss, durationMs, exitMs, placement, registerRef }: ToastProps) {
   const [closing, setClosing] = useState(false);
   const [paused, setPaused] = useState(false);
 
@@ -78,6 +87,7 @@ function Toast({ toast, onDismiss, durationMs, exitMs, registerRef }: ToastProps
       ref={(node) => registerRef(toast.id, node)}
       className={styles.toast}
       data-closing={closing || undefined}
+      data-placement={placement}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -91,20 +101,24 @@ function Toast({ toast, onDismiss, durationMs, exitMs, registerRef }: ToastProps
   );
 }
 
-// Portaled to <body>: the stack is fixed-positioned, and rendering it inside
-// the game layout would let a transformed ancestor (the pan/zoom clip) become
-// its containing block and anchor it to the board instead of the viewport.
-// The status region stays mounted permanently and only its text changes:
-// screen readers skip live regions that enter the DOM with content already in
-// them, so mounting the region together with a toast would not announce.
+// By default the visual stack is portaled to <body>: rendering it inside the
+// game layout would let a transformed ancestor (the pan/zoom clip) become its
+// containing block and anchor it to the board instead of the viewport. Callers
+// can target a positioned container for local placement. The status region
+// always stays mounted in <body> and only its text changes: screen readers skip
+// live regions that enter the DOM with content already in them.
 export function ToastStack({
   toasts,
   onDismiss,
   durationMs = TOAST_DURATION_MS,
   exitMs = TOAST_EXIT_MS,
+  placement = 'top',
+  container,
 }: ToastStackProps) {
   const [announced, setAnnounced] = useState('');
   const seenIdsRef = useRef(new Set<number>());
+  const portalTarget = container ?? document.body;
+  const portalTargetRef = useRef(portalTarget);
   // Live map of mounted toast nodes and the offsetTop each occupied on the
   // previous commit, so the FLIP pass can animate the ones that shifted.
   const nodesRef = useRef(new Map<number, HTMLDivElement>());
@@ -132,6 +146,8 @@ export function ToastStack({
   // offsets all 0) and under reduced motion.
   useLayoutEffect(() => {
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const targetChanged = portalTargetRef.current !== portalTarget;
+    portalTargetRef.current = portalTarget;
     const nextTops = new Map<number, number>();
 
     nodesRef.current.forEach((node, id) => {
@@ -141,6 +157,7 @@ export function ToastStack({
       const previousTop = topsRef.current.get(id);
       if (
         reduced ||
+        targetChanged ||
         previousTop === undefined ||
         previousTop === top ||
         typeof node.animate !== 'function'
@@ -155,7 +172,7 @@ export function ToastStack({
     });
 
     topsRef.current = nextTops;
-  }, [toasts]);
+  }, [toasts, placement, portalTarget]);
 
   // Announce each toast once, when it is first pushed; dismissing a newer
   // toast must not re-announce the older ones still on screen. A re-pushed
@@ -175,29 +192,39 @@ export function ToastStack({
     }
   }, [toasts]);
 
-  return createPortal(
+  const orderedToasts = placement === 'top' ? [...toasts].reverse() : toasts;
+
+  return (
     <>
-      <span role="status" className="sr-only">
-        {announced}
-      </span>
-      {toasts.length > 0 ? (
-        <div className={styles.stack}>
-          {/* Newest first: a fresh toast appears at the top and pushes older
-              ones down. Reversing the array rather than using column-reverse
-              keeps DOM and tab order matching the visual order. */}
-          {[...toasts].reverse().map((toast) => (
-            <Toast
-              key={toast.id}
-              toast={toast}
-              onDismiss={onDismiss}
-              durationMs={durationMs}
-              exitMs={exitMs}
-              registerRef={registerRef}
-            />
-          ))}
-        </div>
-      ) : null}
-    </>,
-    document.body
+      {createPortal(
+        <span role="status" className="sr-only">
+          {announced}
+        </span>,
+        document.body
+      )}
+      {toasts.length > 0
+        ? createPortal(
+            <div
+              className={styles.stack}
+              data-placement={placement}
+              data-container={container ? '' : undefined}
+            >
+              {/* Keep DOM and tab order aligned with the visual order at either edge. */}
+              {orderedToasts.map((toast) => (
+                <Toast
+                  key={toast.id}
+                  toast={toast}
+                  onDismiss={onDismiss}
+                  durationMs={durationMs}
+                  exitMs={exitMs}
+                  placement={placement}
+                  registerRef={registerRef}
+                />
+              ))}
+            </div>,
+            portalTarget
+          )
+        : null}
+    </>
   );
 }

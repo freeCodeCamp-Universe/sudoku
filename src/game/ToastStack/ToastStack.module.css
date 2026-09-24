@@ -12,6 +12,21 @@
   gap: 8px;
 }
 
+.stack[data-placement='bottom'] {
+  inset-block-start: auto;
+  inset-block-end: 32px;
+}
+
+.stack[data-container] {
+  position: absolute;
+  inset-block-start: 0;
+}
+
+.stack[data-container][data-placement='bottom'] {
+  inset-block-start: auto;
+  inset-block-end: 0;
+}
+
 .toast {
   display: flex;
   align-items: center;
@@ -40,11 +55,19 @@
     animation: toast-in 0.2s ease-out;
   }
 
+  .toast[data-placement='bottom'] {
+    animation-name: toast-in-bottom;
+  }
+
   .toast[data-closing] {
     transform: translateY(-8px);
     transition:
       opacity 0.2s ease-in,
       transform 0.2s ease-in;
+  }
+
+  .toast[data-placement='bottom'][data-closing] {
+    transform: translateY(8px);
   }
 }
 
@@ -52,6 +75,18 @@
   from {
     opacity: 0;
     transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 
   to {
