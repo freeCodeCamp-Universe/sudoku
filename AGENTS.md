@@ -56,12 +56,14 @@ Four layers, each depending only on the ones above it: **engine** (pure puzzle l
 
 ### The data-driven variant pipeline (worth understanding up front)
 
-A puzzle type is a plain data object, not a class hierarchy. A `Variant` declares everything as **IDs and layout descriptors** — a `layout` kind (e.g. `grid`, `multigrid`), `symbols`, `constraintIds`, optional `overlayIds` / `annotatorIds`, and optional hooks (`buildHouses`, `deriveStructure`, `renderSymbol`, `generateGivens`, …). These are resolved through registries at runtime:
+A puzzle type is a plain data object, not a class hierarchy. A `Variant` declares everything as **IDs and layout descriptors** — a `layout` kind (e.g. `grid`, `multigrid`), `symbols`, `constraintIds`, optional `overlayIds` / `annotatorIds`, and optional hooks (`cellTags`, `buildHouses`, `deriveStructure`, `renderSymbol`, `generateGivens`, …). These are resolved through registries at runtime:
 
 1. Variants are collected in the **variant registry**, keyed by `variant.id`; the `/:variantId` route and the gallery both read it.
 2. `buildModel(variant)` turns a `Variant` into a `VariantModel` — it builds cells/houses for the layout and resolves `constraintIds` against the **constraint registry**.
 3. `generate(model, difficulty, rng)` produces `{ givens, solution }`; `solve` is the backtracking solver used for uniqueness checks. Constraints implement `conflicts()` and optionally `permits()`.
 4. The UI resolves the visual side from IDs too: a **layout registry** maps the `layout` kind → a layout strategy (cell geometry + canvas size), and **overlay / annotator registries** map the variant's IDs → React overlays and canvas annotators.
+
+Variants can also declare per-cell decorations with `cellTags(cellId)`. The shared board renderer turns those tags into cell data attributes, keeping variant-specific cell membership out of `src/board/`.
 
 So **adding a puzzle type** is usually: add a spec under `src/variants/` and register it, then register any new constraint, overlay, annotator, or layout strategy in its registry. No bespoke UI wiring.
 

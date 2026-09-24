@@ -13,6 +13,7 @@ export const ASTERISK_CELLS: [number, number][] = [
   [6, 6],
   [7, 4],
 ];
+const asteriskCells = new Set(ASTERISK_CELLS.map(([row, col]) => cellId(row, col)));
 
 function asteriskExtraHouses(_layout: BoardLayout): House[] {
   return [
@@ -55,6 +56,7 @@ export const asterisk: Variant = {
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
+  cellTags: (id) => (asteriskCells.has(id) ? ['asterisk'] : []),
   extraHouses: asteriskExtraHouses,
   overlayIds: [],
   annotatorIds: ['asterisk'],

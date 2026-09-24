@@ -48,6 +48,7 @@ export const WINDOKU_WINDOWS: [number, number][][] = [
     [7, 7],
   ],
 ];
+const windowCells = new Set(WINDOKU_WINDOWS.flat().map(([row, col]) => cellId(row, col)));
 
 function windokuExtraHouses(_layout: BoardLayout): House[] {
   return WINDOKU_WINDOWS.map((cells, index) => ({
@@ -85,6 +86,7 @@ export const windoku: Variant = {
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
+  cellTags: (id) => (windowCells.has(id) ? ['window'] : []),
   extraHouses: windokuExtraHouses,
   overlayIds: [],
   annotatorIds: ['windoku'],

@@ -13,6 +13,7 @@ export const GIRANDOLA_CELLS: [number, number][] = [
   [8, 0],
   [8, 8],
 ];
+const girandolaCells = new Set(GIRANDOLA_CELLS.map(([row, col]) => cellId(row, col)));
 
 function girandolaExtraHouse(_layout: BoardLayout): House[] {
   return [
@@ -56,6 +57,7 @@ export const girandola: Variant = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
+  cellTags: (id) => (girandolaCells.has(id) ? ['girandola'] : []),
   extraHouses: girandolaExtraHouse,
   overlayIds: [],
   annotatorIds: ['girandola'],

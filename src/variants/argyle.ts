@@ -7,6 +7,30 @@ const ARGYLE_SIZE = 9;
 export const ARGYLE_D1_OFFSETS = [-4, -1, 1, 4] as const;
 export const ARGYLE_D2_SUMS = [4, 7, 9, 12] as const;
 
+function argyleCellTags(cell: string): string[] {
+  const match = /^r(\d+)c(\d+)$/.exec(cell);
+
+  if (!match) {
+    return [];
+  }
+
+  const row = Number.parseInt(match[1], 10);
+  const col = Number.parseInt(match[2], 10);
+
+  if (row < 0 || row >= ARGYLE_SIZE || col < 0 || col >= ARGYLE_SIZE) {
+    return [];
+  }
+
+  return [
+    ...(ARGYLE_D1_OFFSETS.includes((row - col) as (typeof ARGYLE_D1_OFFSETS)[number])
+      ? ['argyle-d1']
+      : []),
+    ...(ARGYLE_D2_SUMS.includes((row + col) as (typeof ARGYLE_D2_SUMS)[number])
+      ? ['argyle-d2']
+      : []),
+  ];
+}
+
 function buildD1Stripe(offset: number): string[] {
   return range(ARGYLE_SIZE)
     .map((row) => ({ row, col: row - offset }))
@@ -37,23 +61,7 @@ function argyleExtraHouses(_layout: BoardLayout): House[] {
 }
 
 export function isArgyleCell(cell: string): boolean {
-  const match = /^r(\d+)c(\d+)$/.exec(cell);
-
-  if (!match) {
-    return false;
-  }
-
-  const row = Number.parseInt(match[1], 10);
-  const col = Number.parseInt(match[2], 10);
-
-  if (row < 0 || row >= ARGYLE_SIZE || col < 0 || col >= ARGYLE_SIZE) {
-    return false;
-  }
-
-  return (
-    ARGYLE_D1_OFFSETS.includes((row - col) as (typeof ARGYLE_D1_OFFSETS)[number]) ||
-    ARGYLE_D2_SUMS.includes((row + col) as (typeof ARGYLE_D2_SUMS)[number])
-  );
+  return argyleCellTags(cell).length > 0;
 }
 
 export const argyle: Variant = {
@@ -89,6 +97,7 @@ export const argyle: Variant = {
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
+  cellTags: argyleCellTags,
   extraHouses: argyleExtraHouses,
   peerHouseFilter: (house) => !house.id.startsWith('argyle-'),
   overlayIds: ['argyle'],

@@ -140,6 +140,7 @@ export interface Variant {
   extraHouses?: (layout: BoardLayout) => House[];
   overlayIds?: string[];
   annotatorIds?: string[];
+  cellTags?: (cellId: CellId) => readonly string[];
   peerHouseFilter?: (house: House) => boolean;
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
   deriveGutters?: (structure: unknown) => GutterSlots | undefined;

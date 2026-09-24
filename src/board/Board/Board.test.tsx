@@ -2,7 +2,7 @@ import { describe, expect, it, should } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { buildModel } from '@/engine/buildModel';
 import { gridCells } from '@/engine/grid';
-import type { Cell as CellType, CellId, Values } from '@/engine/types';
+import type { Cell as CellType, CellId, Values, Variant } from '@/engine/types';
 import type { BoardProps } from '@/board/Board/Board';
 import type { GutterCell, GutterSlots } from '@/engine/types';
 import { gridLayout } from '@/board/layouts/grid';
@@ -10,6 +10,12 @@ import { multigridLayout } from '@/board/layouts/multigrid';
 import { butterfly } from '@/variants/butterfly';
 import { killer } from '@/variants/killer';
 import { samurai } from '@/variants/samurai';
+import { sudokuX } from '@/variants/sudoku-x';
+import { windoku } from '@/variants/windoku';
+import { asterisk } from '@/variants/asterisk';
+import { centerDot } from '@/variants/centerDot';
+import { girandola } from '@/variants/girandola';
+import { argyle } from '@/variants/argyle';
 import { Board } from './Board';
 import { isBoxBoundary } from './boxBoundary';
 
@@ -123,6 +129,17 @@ function makeKillerBoardProps(overrides: Partial<BoardProps> = {}): BoardProps {
   );
 }
 
+function makeVariantBoardProps(variant: Variant): BoardProps {
+  const model = buildModel(variant);
+
+  return makeBoardProps({
+    variant,
+    cells: model.cells,
+    rects: gridLayout.cellRects(variant),
+    size: gridLayout.canvasSize(variant),
+  });
+}
+
 describe('Board', () => {
   it('should render a grid element with aria-label', () => {
     render(<Board {...makeClassicBoardProps()} />);
@@ -226,6 +243,20 @@ describe('Board', () => {
     render(<Board {...makeKillerBoardProps()} />);
 
     expect(getRenderedCell('r0c0')).toHaveAttribute('data-caged', 'true');
+  });
+
+  it.each([
+    [sudokuX, 'r0c0', 'data-diagonal'],
+    [windoku, 'r1c1', 'data-window'],
+    [asterisk, 'r1c4', 'data-asterisk'],
+    [centerDot, 'r1c1', 'data-center-dot'],
+    [girandola, 'r0c0', 'data-girandola'],
+    [argyle, 'r0c1', 'data-argyle-d1'],
+    [argyle, 'r0c4', 'data-argyle-d2'],
+  ] as const)('should render %s cell tags from its variant spec', (variant, id, attribute) => {
+    render(<Board {...makeVariantBoardProps(variant)} />);
+
+    expect(getRenderedCell(id)).toHaveAttribute(attribute, 'true');
   });
 });
 

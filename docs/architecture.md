@@ -96,6 +96,7 @@ interface Variant {
   constraintIds: string[]; // resolved via constraint registry
   overlayIds?: string[]; // resolved via overlay registry
   annotatorIds?: string[]; // resolved via annotator registry
+  cellTags?: (cellId: CellId) => readonly string[]; // visual tags for a cell
   // optional hooks that override defaults
   buildHouses?;
   extraHouses?;
@@ -117,6 +118,7 @@ interface Variant {
 - **Layout registry** (`src/board/layouts/registry.ts`): `layouts: Record<string, LayoutStrategy>` with keys `'grid'`, `'multigrid'`, `'triangular'`. Maps a `layout.kind` to a strategy that knows cell geometry and canvas sizing.
 - **Overlay registry** (`src/board/overlays/registry.ts`): `overlayRegistry: Record<string, OverlayComponent>`. Overlays are React components that draw variant-specific decorations on the board canvas.
 - **Annotator registry** (`src/board/annotators/registry.ts`): `annotatorRegistry: Record<string, CellAnnotator>`. Annotators produce accessible cell descriptions (e.g. "bulb cell for arrow").
+- **Cell tags:** `Variant.cellTags(cellId)` declares per-cell decorations. The shared `Board` maps those tags to the cell's existing visual data attributes.
 
 To add a puzzle type, add a spec under `src/variants/` and register it, then register any new constraint, overlay, annotator, or layout strategy in its registry. See the quick reference at the bottom of this doc.
 

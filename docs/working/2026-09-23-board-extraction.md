@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A12 and A17 done; A13-A16, A18-A22 ready for implementation; Part B pending decisions
+status: A0-A13 and A17 done; A14-A16, A18-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -103,7 +103,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A17. Separate focus from selection; add multi-cell selection (after A7, before A11)
 - [x] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10 and A17)
 - [x] A12. Container-based cell sizing for boards outside the game page
-- [ ] A13. (Optional) Replace the `variant.id` branches in `Board.tsx` with variant-declared cell tags
+- [x] A13. (Optional) Replace the decoration `variant.id` branches in `Board.tsx` with variant-declared cell tags
 - [ ] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [ ] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
 - [ ] A16. Add `puzzleFromConfig` for predefined boards
@@ -405,10 +405,10 @@ Decided 2026-09-25:
 - **Scope:** grid-layout boards that fit without pan/zoom. Whether lessons ever show oversized boards (16×16, multigrid) is still open. If they do, that's a later change.
 - **Tests:** `cellSizeForWidth` gets unit tests at the 320px baseline, at an in-between width, and at a width above the base size. The side-by-side layout itself is CSS and can't be checked in jsdom, so test it by hand in the browser.
 
-### A13. (Optional) Variant-declared cell tags in `Board.tsx`
+### A13. (Optional) Variant-declared cell tags in `Board.tsx` (done)
 
-- **What:** `src/board/Board/Board.tsx` imports constants from six variant files (`sudoku-x`, `windoku`, `asterisk`, `centerDot`, `girandola`, `argyle`) and branches on `variant.id` for each cell. A `cellTags?(cellId) => string[]` hook on `Variant` would move that knowledge into the variant specs.
-- **Why optional:** lessons don't need it. Do it if lessons add new decorated variants, or as a separate cleanup.
+- **What:** Add an optional `cellTags(cellId)` hook to `Variant`. The six decorated variants declare their cell membership, and `Board.tsx` maps those tags to the existing `Cell` decoration props without importing variant specs or branching on their IDs.
+- **Coverage:** `Board.test.tsx` checks rendered tags for Sudoku X, Windoku, Asterisk, Center Dot, Girandola and both Argyle stripe directions.
 
 ### A14. Update the reference docs for A6-A12 and A17
 

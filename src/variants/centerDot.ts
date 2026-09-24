@@ -13,6 +13,7 @@ export const CENTER_DOT_CELLS: [number, number][] = [
   [7, 4],
   [7, 7],
 ];
+const centerDotCells = new Set(CENTER_DOT_CELLS.map(([row, col]) => cellId(row, col)));
 
 function centerDotExtraHouse(_layout: BoardLayout): House[] {
   return [
@@ -53,6 +54,7 @@ export const centerDot: Variant = {
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   symbolKind: 'digit',
   constraintIds: ['uniqueness'],
+  cellTags: (id) => (centerDotCells.has(id) ? ['center-dot'] : []),
   extraHouses: centerDotExtraHouse,
   overlayIds: [],
   annotatorIds: ['center-dot'],

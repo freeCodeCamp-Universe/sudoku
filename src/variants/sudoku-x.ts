@@ -4,6 +4,7 @@ import type { BoardLayout, House, Variant } from '@/engine/types';
 
 export const MAIN_DIAGONAL_CELLS = range(9).map((index) => cellId(index, index));
 export const ANTI_DIAGONAL_CELLS = range(9).map((index) => cellId(index, 8 - index));
+const diagonalCells = new Set([...MAIN_DIAGONAL_CELLS, ...ANTI_DIAGONAL_CELLS]);
 
 function diagonalHouses(_layout: BoardLayout): House[] {
   return [
@@ -44,6 +45,7 @@ export const sudokuX: Variant = {
   layout: { kind: 'grid', size: 9, box: { rows: 3, cols: 3 } },
   symbols: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   constraintIds: ['uniqueness'],
+  cellTags: (id) => (diagonalCells.has(id) ? ['diagonal'] : []),
   extraHouses: diagonalHouses,
   annotatorIds: ['sudoku-x'],
 };

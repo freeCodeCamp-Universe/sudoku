@@ -4,37 +4,9 @@ import { Cell } from '@/board/Cell';
 import { LiveRegion } from '@/board/LiveRegion';
 import type { BoardProps } from '@/board/boardTypes';
 import { BoardViewport } from './BoardViewport';
-import { ANTI_DIAGONAL_CELLS, MAIN_DIAGONAL_CELLS } from '@/variants/sudoku-x';
-import { WINDOKU_WINDOWS } from '@/variants/windoku';
-import { ASTERISK_CELLS } from '@/variants/asterisk';
-import { CENTER_DOT_CELLS } from '@/variants/centerDot';
-import { GIRANDOLA_CELLS } from '@/variants/girandola';
-import { ARGYLE_D1_OFFSETS, ARGYLE_D2_SUMS } from '@/variants/argyle';
 import { isBoxBoundary } from './boxBoundary';
 import { buildMultigridLines } from './multigridLines';
-
-const argyleD1Set = new Set(
-  ARGYLE_D1_OFFSETS.flatMap((offset) =>
-    Array.from({ length: 9 }, (_, r) => ({ r, c: r - offset }))
-      .filter(({ c }) => c >= 0 && c < 9)
-      .map(({ r, c }) => `r${r}c${c}`)
-  )
-);
-const argyleD2Set = new Set(
-  ARGYLE_D2_SUMS.flatMap((sum) =>
-    Array.from({ length: 9 }, (_, r) => ({ r, c: sum - r }))
-      .filter(({ c }) => c >= 0 && c < 9)
-      .map(({ r, c }) => `r${r}c${c}`)
-  )
-);
-
-const windokuWindowSet = new Set(WINDOKU_WINDOWS.flat().map(([r, c]) => `r${r}c${c}`));
-const asteriskCellSet = new Set(ASTERISK_CELLS.map(([r, c]) => `r${r}c${c}`));
-const centerDotCellSet = new Set(CENTER_DOT_CELLS.map(([r, c]) => `r${r}c${c}`));
-const girandolaCellSet = new Set(GIRANDOLA_CELLS.map(([r, c]) => `r${r}c${c}`));
 import styles from './Board.module.css';
-
-const diagonalSet = new Set([...MAIN_DIAGONAL_CELLS, ...ANTI_DIAGONAL_CELLS]);
 
 export type { BoardProps };
 
@@ -120,6 +92,7 @@ export function Board({
 
             const state = grid.cellState(cell.id);
             const props = grid.cellProps(cell.id);
+            const cellTags = variant.cellTags?.(cell.id) ?? [];
 
             return (
               <div
@@ -165,13 +138,13 @@ export function Board({
                     isBoxBoundary(variant, cell, 'row')
                   }
                   overlayBorders={variant.layout.kind === 'multigrid'}
-                  diagonal={variant.id === 'sudoku-x' && diagonalSet.has(cell.id)}
-                  window={variant.id === 'windoku' && windokuWindowSet.has(cell.id)}
-                  asterisk={variant.id === 'asterisk' && asteriskCellSet.has(cell.id)}
-                  centerDot={variant.id === 'center-dot' && centerDotCellSet.has(cell.id)}
-                  girandola={variant.id === 'girandola' && girandolaCellSet.has(cell.id)}
-                  argyleD1={variant.id === 'argyle' && argyleD1Set.has(cell.id)}
-                  argyleD2={variant.id === 'argyle' && argyleD2Set.has(cell.id)}
+                  diagonal={cellTags.includes('diagonal')}
+                  window={cellTags.includes('window')}
+                  asterisk={cellTags.includes('asterisk')}
+                  centerDot={cellTags.includes('center-dot')}
+                  girandola={cellTags.includes('girandola')}
+                  argyleD1={cellTags.includes('argyle-d1')}
+                  argyleD2={cellTags.includes('argyle-d2')}
                   small={rect.w <= 30}
                   medium={rect.w > 30 && rect.w <= 44}
                   overlap={overlapCounts?.get(cell.id)}
