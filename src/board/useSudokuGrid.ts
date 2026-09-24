@@ -454,9 +454,15 @@ export function useSudokuGrid({
 
   // The focused cell's accessible name announces navigation; the live region
   // stays reserved for in-place changes such as value entry and mode switches.
-  const focusCell = useCallback((id: CellId | null) => {
-    setFocusedId(id);
-  }, []);
+  const focusCell = useCallback(
+    (id: CellId | null) => {
+      setFocusedId(id);
+      if (cellSelection === 'single') {
+        onSelectionChange?.(id === null ? new Set() : new Set([id]));
+      }
+    },
+    [cellSelection, onSelectionChange]
+  );
   const toggleSelection = useCallback(
     (id: CellId) => {
       const nextIds = new Set(effectiveSelectedIds);

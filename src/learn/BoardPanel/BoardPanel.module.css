@@ -1,0 +1,39 @@
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-block-size: 0;
+  padding: var(--space-md);
+}
+
+.boardRegion {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.inputRegion {
+  flex: 0 0 auto;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+@media (min-width: 768px) {
+  .panel {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .boardRegion {
+    min-inline-size: 0;
+  }
+
+  .inputRegion {
+    flex: 0 0 min(40%, 20rem);
+  }
+}

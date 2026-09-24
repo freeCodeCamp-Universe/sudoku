@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { LessonPage } from '@/learn/LessonPage/LessonPage';
 import { PlaceholderPanel } from '@/learn/PlaceholderPanel/PlaceholderPanel';
+import { BoardPanel } from '@/learn/BoardPanel/BoardPanel';
+import { isInteractiveLesson } from '@/curriculum/types';
 import { useLessonData } from '@/learn/hooks/useLessonData';
 import { LoadingState } from '@/learn/LoadingState/LoadingState';
 
@@ -20,6 +22,9 @@ export function LessonRoute() {
     );
   }
 
+  const InteractivePanel =
+    isInteractiveLesson(data.lesson) && data.lesson.config.board ? BoardPanel : PlaceholderPanel;
+
   return (
     <LessonPage
       key={data.lesson.id}
@@ -29,7 +34,7 @@ export function LessonRoute() {
       instructionsHtml={data.instructionsHtml}
       segmentHtmls={data.segmentHtmls}
       headings={data.headings}
-      InteractivePanel={PlaceholderPanel}
+      InteractivePanel={InteractivePanel}
     />
   );
 }
