@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A7 done; A8-A22 ready for implementation; Part B pending decisions
+status: A0-A8 done; A9-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -93,7 +93,7 @@ Facts as of 2026-09-25, after A0-A5:
 - [x] A5. Update `AGENTS.md` and `docs/architecture.md` paths
 - [x] A6. Export the reducer from `GameProvider` as a pure `boardReducer`
 - [x] A7. Replace `highlightPeers` with a `highlights` options object in `useSudokuGrid`
-- [ ] A8. Extract `useBoardView` (board prop derivation) from `GamePage`
+- [x] A8. Extract `useBoardView` (board prop derivation) from `GamePage`
 - [ ] A9. Extract `useBoardInput` (numpad entry, candidate toggling, announcements) from `GamePage`
 - [ ] A10. Move `Tabs` to `src/components/` and extract `InputModeTabs` into `src/board/`
 - [ ] A11. Add `usePlayableBoard` in `src/board/` and make `GamePage` use it (after A6-A10)

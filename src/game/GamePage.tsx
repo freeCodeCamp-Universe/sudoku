@@ -2,7 +2,6 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Header, HeaderUtilityRow } from '@/components/Header';
 import { useTheme } from '@/app/ThemeProvider';
-import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, Mode, SymbolValue } from '@/engine/types';
 import {
   boardFrameEdge,
@@ -15,7 +14,6 @@ import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import type { BoardViewportState } from '@/board/boardTypes';
 import { Minimap } from '@/game/Minimap';
-import { buildMarkerGaps } from '@/board/markerGaps';
 import { BoardZoomControls } from './BoardZoomControls';
 import { DesktopControls } from '@/game/GameControls/DesktopControls';
 import { PortraitControls } from '@/game/GameControls/PortraitControls';
@@ -24,41 +22,31 @@ import { useBoardViewport } from '@/game/useBoardViewport';
 import { useElementSize } from '@/game/useElementSize';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getVariant } from '@/variants/registry';
-import { isJigsawStructure } from '@/variants/jigsaw';
-import { assemblePuzzle } from '@/board/assemblePuzzle';
-import { resolveAnnotators } from '@/board/annotators/registry';
-import { jigsawAnnotator } from '@/board/annotators/jigsaw';
 import { Board } from '@/board/Board';
 import type { Tab } from './Tabs';
 import { Toggle } from '@/components/Toggle';
 import { SegmentedControl, type SegmentedControlOption } from '@/components/SegmentedControl';
 import { findOverusedSymbols } from '@/board/overusedSymbols';
 import { findUsedSymbols } from '@/board/usedSymbols';
-import { overlapCounts } from '@/board/overlapCounts';
 import { buildPuzzle } from './buildPuzzle';
 import { useGameContext } from './GameContext';
 import { HelpDialog } from './HelpDialog';
 import { OnboardingDialog } from './OnboardingDialog';
 import { KeyboardShortcutsDialog } from './KeyboardShortcutsDialog/KeyboardShortcutsDialog';
 import { GameProvider } from './GameProvider';
-import { resolveLayout } from '@/board/layouts/registry';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 import { NumberPad } from '@/board/NumberPad';
-import { resolveOverlays } from '@/board/overlays/registry';
 import { Timer } from './Timer';
 import { ToastStack } from './ToastStack';
 import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';
-import { useSudokuGrid } from '@/board/useSudokuGrid';
+import { useBoardView } from '@/board/useBoardView';
 import { useSeoMeta } from '@/hooks/useSeoMeta';
+import { useSudokuGrid } from '@/board/useSudokuGrid';
 import { seoConfig } from '@/utils/seo.config';
 import { useFavorites } from '@/gallery/useFavorites';
 import styles from './GamePage.module.css';
-
-type VariantWithColorNames = {
-  colorNames?: string[];
-};
 
 const MODE_OPTIONS: SegmentedControlOption<Mode>[] = [
   { value: 'easy', label: 'Easy' },
@@ -69,20 +57,6 @@ const MODE_OPTIONS: SegmentedControlOption<Mode>[] = [
 const MODE_LABELS: Record<Mode, string> = Object.fromEntries(
   MODE_OPTIONS.map((option) => [option.value, option.label])
 ) as Record<Mode, string>;
-
-// Letter variants can't show symbols in value order — for wordoku, values
-// 1-9 spell the hidden word, so value order on the pad would give it away.
-// A seeded shuffle keeps the order stable for the lifetime of the puzzle
-// (including restores from saved progress) without revealing anything.
-function shuffledDisplayOrder(symbols: SymbolValue[], seed: number): SymbolValue[] {
-  const rng = createSeededRng(seed);
-  const order = [...symbols];
-  for (let i = order.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(rng() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
-  }
-  return order;
-}
 
 interface GameInnerProps {
   title: string;
@@ -204,29 +178,21 @@ function GameInner({
     }
   }, [isBoardFull]);
 
-  const { model, structure } = useMemo(
-    () => assemblePuzzle(variant, baseModel, solution),
-    [baseModel, solution, variant]
-  );
-  const layoutStrategy = useMemo(() => resolveLayout(variant.layout.kind), [variant.layout.kind]);
   const cellSize = useResponsiveCellSize(variant);
-  const rects = useMemo(
-    () => layoutStrategy.cellRects(variant, cellSize),
-    [layoutStrategy, variant, cellSize]
-  );
-  const size = useMemo(
-    () => layoutStrategy.canvasSize(variant, cellSize),
-    [layoutStrategy, variant, cellSize]
-  );
-  const overlapMap = useMemo(
-    () => (variant.layout.kind === 'multigrid' ? overlapCounts(variant.layout) : undefined),
-    [variant.layout]
-  );
-
-  const gutters = useMemo(
-    () => variant.deriveGutters?.(structure) ?? layoutStrategy.gutters?.(variant),
-    [layoutStrategy, variant, structure]
-  );
+  const {
+    model,
+    rects,
+    size,
+    overlapMap,
+    gutters,
+    overlays,
+    annotators,
+    renderSymbol,
+    describeSymbol,
+    markerGaps,
+    displaySymbols,
+    parityMap,
+  } = useBoardView({ variant, baseModel, solution, cellSize, seedBase });
 
   const frameEdge = boardFrameEdge(variant.layout.kind, highContrast);
   // The full rendered extent the viewport must fit and pan: framed canvas
@@ -288,37 +254,6 @@ function GameInner({
       }
     : undefined;
 
-  const overlays = useMemo(
-    () =>
-      resolveOverlays(variant.overlayIds ?? []).map((Overlay, index) => (
-        <Overlay key={`${variant.id}-overlay-${index}`} rects={rects} structure={structure} />
-      )),
-    [variant.id, variant.overlayIds, rects, structure]
-  );
-  const annotators = useMemo(
-    () =>
-      variant.id === 'jigsaw' && isJigsawStructure(structure)
-        ? [jigsawAnnotator(structure)]
-        : resolveAnnotators(variant.annotatorIds ?? []),
-    [variant.annotatorIds, structure, variant.id]
-  );
-  const renderSymbol = useMemo(
-    () =>
-      variant.renderSymbol
-        ? (value: SymbolValue) => variant.renderSymbol!(value, structure)
-        : (value: SymbolValue) => String(value),
-    [variant, structure]
-  );
-  const describeSymbol = useMemo(() => {
-    const colorNames = (variant as VariantWithColorNames).colorNames;
-
-    if (Array.isArray(colorNames)) {
-      return (value: SymbolValue) => colorNames[value - 1] ?? renderSymbol(value);
-    }
-
-    return renderSymbol;
-  }, [variant, renderSymbol]);
-  const markerGaps = useMemo(() => buildMarkerGaps(structure), [structure]);
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
   const filled = useMemo(() => {
     const set = new Set<CellId>(givensSet);
@@ -346,14 +281,6 @@ function GameInner({
       dispatch({ type: 'toggleCandidate', cellId, value });
     },
     [completed, dispatch]
-  );
-
-  const displaySymbols = useMemo(
-    () =>
-      variant.symbolKind === 'letter'
-        ? shuffledDisplayOrder(model.symbols, hashSeed(seedBase, variant.id, 'display-order'))
-        : model.symbols,
-    [variant.symbolKind, variant.id, model.symbols, seedBase]
   );
 
   const grid = useSudokuGrid({
@@ -930,7 +857,7 @@ function GameInner({
                 displaySymbols={displaySymbols}
                 markerGaps={markerGaps}
                 wordCells={wordCellIds}
-                parityMap={(structure as { parityMap?: Map<CellId, 0 | 1> } | undefined)?.parityMap}
+                parityMap={parityMap}
                 viewport={viewportState}
                 checkEnabled={checkEnabled}
                 showColorLabel={settings.showColorLabels}
