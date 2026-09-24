@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A17 done; A18-A22 ready for implementation; Part B pending decisions
+status: A0-A18 done; A19-A22 ready for implementation; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -81,7 +81,7 @@ Facts as of 2026-09-25, after A0-A5:
 - `src/game/GamePage.tsx` (1,217 lines) builds every board prop inline in `GameInner` (around lines 207-357) and handles numpad input in `handleNumberEntry` (around lines 607-645). None of this can be reused without an extraction (A8, A9).
 - `Board` (`src/board/Board/Board.tsx`) requires `grid: GridInteraction`, which only `useSudokuGrid` (`src/board/useSudokuGrid.ts`) produces. Any consumer of `Board` therefore needs `useSudokuGrid` too.
 - `useSudokuGrid` has a single `selectedId: CellId | null` that is both the roving-tabindex focus and the selection.
-- `parseConfig` in `src/curriculum/loader.ts` keeps only `checklist` from a lesson's config and silently drops every other key.
+- `parseConfig` in `src/curriculum/loader.ts` parses and validates the lesson `board` block, including solution conflicts and conversion of 1-based lesson cell ids.
 
 ## Checklist
 
@@ -107,7 +107,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A14. Update `docs/architecture.md` and `AGENTS.md` for A6-A12 and A17 (after A12 and A17)
 - [x] A15. Merge the two `useSeoMeta` hooks into `src/hooks/useSeoMeta.ts`
 - [x] A16. Add `puzzleFromConfig` for predefined boards
-- [ ] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
+- [x] A18. Parse and validate a `board` block in the lesson config; add the `lesson:board` script
 - [ ] A19. Build the lesson board panel and its `LessonEngine` (after A11, A12, A16, A17, A18)
 - [ ] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
 - [ ] A21. Add a `lesson-board-authoring` project skill (after A18 and A20)

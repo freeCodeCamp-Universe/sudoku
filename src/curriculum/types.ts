@@ -1,4 +1,5 @@
 import type { InstructionSegment, TabGroupSegment } from '@/curriculum/tabBlocks';
+import type { CellId, SymbolValue } from '@/engine/types';
 
 /**
  * A lesson's pedagogical category. Drives curriculum grouping and UI wording only;
@@ -30,8 +31,21 @@ export interface ChecklistRequirement {
   test: Record<string, unknown>;
 }
 
+export interface LessonBoardConfig {
+  variant: string;
+  givens: Record<CellId, SymbolValue>;
+  solution: Record<CellId, SymbolValue>;
+  cellSelection: 'single' | 'multiple';
+  highlights: {
+    peers?: boolean;
+    sameValue?: boolean;
+    conflicts?: boolean;
+  };
+}
+
 export interface LessonConfig {
   checklist: ChecklistRequirement[];
+  board?: LessonBoardConfig;
   [key: string]: unknown;
 }
 

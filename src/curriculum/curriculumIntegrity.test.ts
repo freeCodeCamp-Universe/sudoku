@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { loadFullCurriculum } from '@/curriculum/loader';
+import { buildModel } from '@/engine/buildModel';
+import { solve } from '@/engine/solve';
+import { variantRegistry } from '@/variants/registry';
 
 const { lessons, modules } = loadFullCurriculum();
 
@@ -38,5 +41,22 @@ describe('curriculum integrity', () => {
       });
     });
     expect(broken.join('\n')).toBe('');
+  });
+
+  it('should give every lesson board a unique solution matching its configured solution', () => {
+    const boards = lessons.flatMap((lesson) =>
+      lesson.config?.board ? [{ lessonId: lesson.id, board: lesson.config.board }] : []
+    );
+
+    for (const { lessonId, board } of boards) {
+      const variant = variantRegistry[board.variant];
+      if (!variant) throw new Error(`${lessonId} uses an unknown board variant`);
+      const model = buildModel(variant);
+      const solutions = solve(model, new Map(Object.entries(board.givens)), { max: 2 });
+      expect(solutions, `${lessonId} should have exactly one solution`).toHaveLength(1);
+      expect(solutions[0], `${lessonId} solution should match its config`).toEqual(
+        new Map(Object.entries(board.solution))
+      );
+    }
   });
 });

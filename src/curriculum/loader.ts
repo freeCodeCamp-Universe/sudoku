@@ -3,17 +3,24 @@ import { curriculum as defaultOrdering } from '@/curriculum/ordering';
 const SHOW_UPCOMING_LESSONS = import.meta.env.SHOW_UPCOMING_LESSONS === 'true';
 
 import { parseJsonWithComments } from '@/curriculum/jsonWithComments';
+import { cellIdToLessonCellId, lessonCellIdToCellId } from '@/curriculum/lessonCellId';
 import { assertImageAltText, assertSanitizedHtml } from '@/curriculum/sanitize';
 import { hasTabBlocks, parseInstructionSegments } from '@/curriculum/tabBlocks';
+import { buildModel } from '@/engine/buildModel';
+import { validate } from '@/engine/validate';
+import { variantRegistry } from '@/variants/registry';
 import type {
   InteractiveLessonDefinition,
   ChecklistRequirement,
+  LessonBoardConfig,
   LessonConfig,
   LessonDefinition,
   LessonType,
   ModuleDefinition,
   ProseLessonDefinition,
 } from '@/curriculum/types';
+import type { BoardHighlights } from '@/board/boardTypes';
+import type { CellId, SymbolValue, Values, Variant } from '@/engine/types';
 import type { OrderingModule } from '@/curriculum/orderingTypes';
 
 export type { LessonEntry, OrderingModule } from '@/curriculum/orderingTypes';
@@ -193,22 +200,279 @@ function extractFencedContent(block: string): string {
   return match ? match[1] : block;
 }
 
-function parseConfig(configSection: string): LessonConfig {
+function parseConfig(configSection: string, lessonId: string): LessonConfig {
   const jsonMatch = /```json\n([\s\S]*?)```/.exec(configSection);
   if (!jsonMatch) {
-    throw new Error('# --config-- section must contain a json code block');
+    throw new Error(`Lesson ${lessonId} # --config-- section must contain a json code block`);
   }
-  const raw = parseJsonWithComments(jsonMatch[1]) as {
-    checklist?: Array<{ label: string; hint?: string; test?: Record<string, unknown> }>;
+  const raw = parseJsonWithComments(jsonMatch[1]);
+  if (!isRecord(raw)) {
+    throw new Error(`Lesson ${lessonId} config must be a JSON object`);
+  }
+
+  const checklist = parseChecklist(raw.checklist, lessonId);
+  const parsedBoard =
+    raw.board === undefined ? undefined : parseBoardConfig(raw.board, checklist, lessonId);
+
+  return {
+    checklist: parsedBoard?.checklist ?? checklist,
+    ...(parsedBoard ? { board: parsedBoard.config } : {}),
   };
+}
 
-  const checklist: ChecklistRequirement[] = (raw.checklist ?? []).map((item) => ({
-    label: item.label,
-    ...(item.hint ? { hint: item.hint } : {}),
-    test: item.test ?? {},
-  }));
+function parseChecklist(value: unknown, lessonId: string): ChecklistRequirement[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) {
+    throw new Error(`Lesson ${lessonId} config.checklist must be an array`);
+  }
 
-  return { checklist };
+  return value.map((item, index) => {
+    if (!isRecord(item) || typeof item.label !== 'string' || !item.label.trim()) {
+      throw new Error(
+        `Lesson ${lessonId} config.checklist[${index}].label must be a non-empty string`
+      );
+    }
+    if (item.hint !== undefined && typeof item.hint !== 'string') {
+      throw new Error(`Lesson ${lessonId} config.checklist[${index}].hint must be a string`);
+    }
+    if (item.test !== undefined && !isRecord(item.test)) {
+      throw new Error(`Lesson ${lessonId} config.checklist[${index}].test must be an object`);
+    }
+
+    return {
+      label: item.label,
+      ...(item.hint ? { hint: item.hint } : {}),
+      test: (item.test as Record<string, unknown> | undefined) ?? {},
+    };
+  });
+}
+
+function parseBoardConfig(
+  value: unknown,
+  checklist: ChecklistRequirement[],
+  lessonId: string
+): { config: LessonBoardConfig; checklist: ChecklistRequirement[] } {
+  const field = `Lesson ${lessonId} config.board`;
+  if (!isRecord(value)) {
+    throw new Error(`${field} must be an object`);
+  }
+  if (typeof value.variant !== 'string' || !value.variant) {
+    throw new Error(`${field}.variant must be a registered variant id`);
+  }
+
+  const variant = variantRegistry[value.variant];
+  if (!variant) {
+    throw new Error(`${field}.variant is unknown: ${value.variant}`);
+  }
+  if (variant.deriveStructure || variant.deriveGutters || value.structure !== undefined) {
+    throw new Error(
+      `${field}.variant: variant ${variant.id} needs a structure field, which lesson boards don't support yet`
+    );
+  }
+
+  const unknownKeys = Object.keys(value).filter(
+    (key) => !['variant', 'givens', 'solution', 'cellSelection', 'highlights'].includes(key)
+  );
+  if (unknownKeys.length > 0) {
+    throw new Error(`${field}.${unknownKeys[0]} is not supported`);
+  }
+
+  const model = buildModel(variant);
+  const cellIds = new Set(model.cells.map((cell) => cell.id));
+  const givens = parseValueMap(
+    value.givens,
+    'givens',
+    model.cells.map((cell) => cell.id),
+    variant,
+    field
+  );
+  const solution = parseValueMap(
+    value.solution,
+    'solution',
+    model.cells.map((cell) => cell.id),
+    variant,
+    field
+  );
+
+  for (const cellId of cellIds) {
+    if (!Object.prototype.hasOwnProperty.call(solution, cellId)) {
+      throw new Error(`${field}.solution is missing cell ${cellIdToLessonCellId(cellId)}`);
+    }
+  }
+  for (const [cellId, given] of Object.entries(givens)) {
+    if (solution[cellId] !== given) {
+      throw new Error(`${field}.givens.${cellIdToLessonCellId(cellId)} does not match solution`);
+    }
+  }
+
+  const solutionValues: Values = new Map(Object.entries(solution));
+  const conflicts = validate(solutionValues, model);
+  if (conflicts.length > 0) {
+    throw new Error(`${field}.solution has conflicts for variant ${variant.id}`);
+  }
+
+  const cellSelection = value.cellSelection ?? 'single';
+  if (cellSelection !== 'single' && cellSelection !== 'multiple') {
+    throw new Error(`${field}.cellSelection must be "single" or "multiple"`);
+  }
+  const highlights = parseHighlights(value.highlights, field);
+  const parsedChecklist = parseBoardChecklist(checklist, cellIds, variant, field);
+
+  return {
+    config: {
+      variant: variant.id,
+      givens,
+      solution,
+      cellSelection,
+      highlights,
+    },
+    checklist: parsedChecklist,
+  };
+}
+
+function parseValueMap(
+  value: unknown,
+  name: 'givens' | 'solution',
+  boardCellIds: CellId[],
+  variant: Variant,
+  field: string
+): Record<CellId, SymbolValue> {
+  if (!isRecord(value)) {
+    throw new Error(`${field}.${name} must be an object keyed by 1-based cell ids`);
+  }
+  const boardCellIdsSet = new Set(boardCellIds);
+  const parsed: Record<CellId, SymbolValue> = {};
+
+  for (const [lessonCellId, symbol] of Object.entries(value)) {
+    let cellId: CellId;
+    try {
+      cellId = lessonCellIdToCellId(lessonCellId);
+    } catch {
+      throw new Error(`${field}.${name}.${lessonCellId} is not a valid 1-based cell id`);
+    }
+    if (!boardCellIdsSet.has(cellId)) {
+      throw new Error(`${field}.${name}.${lessonCellId} is not on the ${variant.id} board`);
+    }
+    if (typeof symbol !== 'number' || !variant.symbols.includes(symbol)) {
+      throw new Error(`${field}.${name}.${lessonCellId} must be one of the ${variant.id} symbols`);
+    }
+    parsed[cellId] = symbol;
+  }
+
+  return parsed;
+}
+
+function parseHighlights(value: unknown, field: string): BoardHighlights {
+  if (value === undefined) return {};
+  if (!isRecord(value)) {
+    throw new Error(`${field}.highlights must be an object`);
+  }
+
+  const highlights: BoardHighlights = {};
+  for (const [key, enabled] of Object.entries(value)) {
+    if (key !== 'peers' && key !== 'sameValue' && key !== 'conflicts') {
+      throw new Error(`${field}.highlights.${key} is not supported`);
+    }
+    if (typeof enabled !== 'boolean') {
+      throw new Error(`${field}.highlights.${key} must be a boolean`);
+    }
+    highlights[key] = enabled;
+  }
+  return highlights;
+}
+
+function parseBoardChecklist(
+  checklist: ChecklistRequirement[],
+  cellIds: Set<CellId>,
+  variant: Variant,
+  field: string
+): ChecklistRequirement[] {
+  return checklist.map((requirement, index) => {
+    const { test } = requirement;
+    const testField = `${field.replace('config.board', 'config')}.checklist[${index}].test`;
+    const kinds = Object.keys(test);
+    if (kinds.length !== 1) {
+      throw new Error(`${testField} must contain exactly one board test kind`);
+    }
+    const [kind] = kinds;
+    const cells = test[kind];
+
+    if (kind === 'solved') {
+      if (cells !== true) throw new Error(`${testField}.solved must be true`);
+      return { ...requirement, test: { solved: true } };
+    }
+    if (kind === 'selected') {
+      if (!Array.isArray(cells)) {
+        throw new Error(`${testField}.selected must be an array of cell ids`);
+      }
+      const selected = new Set<CellId>();
+      const parsedSelected: CellId[] = [];
+      for (const lessonCellId of cells) {
+        const cellId = parseTestCellId(lessonCellId, testField, cellIds, kind);
+        if (selected.has(cellId)) {
+          throw new Error(`${testField}.selected contains duplicate cell ${lessonCellId}`);
+        }
+        selected.add(cellId);
+        parsedSelected.push(cellId);
+      }
+      return { ...requirement, test: { selected: parsedSelected } };
+    }
+    if (kind === 'values' || kind === 'candidates') {
+      if (!isRecord(cells)) {
+        throw new Error(`${testField}.${kind} must be an object keyed by cell ids`);
+      }
+      const parsedCells: Record<CellId, SymbolValue | SymbolValue[]> = {};
+      for (const [lessonCellId, expected] of Object.entries(cells)) {
+        const cellId = parseTestCellId(lessonCellId, testField, cellIds, kind);
+        let expectedValues: unknown[];
+        if (kind === 'candidates') {
+          if (!Array.isArray(expected)) {
+            throw new Error(`${testField}.candidates.${lessonCellId} must be an array of symbols`);
+          }
+          expectedValues = expected;
+        } else {
+          expectedValues = [expected];
+        }
+        const parsedValues = expectedValues.map((symbol): SymbolValue => {
+          if (typeof symbol !== 'number' || !variant.symbols.includes(symbol)) {
+            throw new Error(`${testField}.${kind}.${lessonCellId} must use ${variant.id} symbols`);
+          }
+          return symbol;
+        });
+        if (kind === 'candidates' && new Set(parsedValues).size !== parsedValues.length) {
+          throw new Error(`${testField}.candidates.${lessonCellId} must not contain duplicates`);
+        }
+        parsedCells[cellId] = kind === 'candidates' ? parsedValues : parsedValues[0];
+      }
+      return { ...requirement, test: { [kind]: parsedCells } };
+    }
+    throw new Error(`${testField} has unsupported board test kind "${kind}"`);
+  });
+}
+
+function parseTestCellId(
+  value: unknown,
+  field: string,
+  cellIds: Set<CellId>,
+  kind: string
+): CellId {
+  if (typeof value !== 'string') {
+    throw new Error(`${field}.${kind} must use string cell ids`);
+  }
+  let cellId: CellId;
+  try {
+    cellId = lessonCellIdToCellId(value);
+  } catch {
+    throw new Error(`${field}.${kind} contains invalid cell id "${value}"`);
+  }
+  if (!cellIds.has(cellId)) {
+    throw new Error(`${field}.${kind} cell "${value}" is not on the board`);
+  }
+  return cellId;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function parseLesson(
@@ -238,7 +502,7 @@ function parseLesson(
 
   if (hasConfig || (layoutType === 'interactive' && hasFiles)) {
     const files = hasFiles ? parseFiles(sections['files']) : {};
-    const config = hasConfig ? parseConfig(sections['config']) : { checklist: [] };
+    const config = hasConfig ? parseConfig(sections['config'], id) : { checklist: [] };
 
     const def: InteractiveLessonDefinition = {
       id,
