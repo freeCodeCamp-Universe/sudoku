@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { gridCells, standardHouses } from '../grid';
-import type { VariantModel, Values } from '../types';
+import type { CellId, VariantModel, Values } from '../types';
 import { cageSum } from './cageSum';
 import type { Cage } from '@/engine/types';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { killer } from '@/variants/killer';
 
 function makeModel(cages: Cage[]): VariantModel {
   return {
@@ -25,6 +28,41 @@ describe('cageSum constraint', () => {
 
     expect(conflicts.some((conflict) => conflict.constraintId === 'cageSum')).toBe(true);
     expect(conflicts[0]?.cells).toEqual(expect.arrayContaining(['r0c0', 'r0c1']));
+  });
+
+  describe('cageSum', () => {
+    it('should report no cage-sum conflict on the solution', () => {
+      const fixture = findFixture(killer, (structure) =>
+        Boolean((structure as { cages?: Cage[] } | undefined)?.cages?.length)
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some((c) => c.constraintId === 'cageSum')
+      ).toBe(false);
+    });
+
+    it('should flag a cage whose total no longer matches its target', () => {
+      const fixture = findFixture(killer, (structure) =>
+        Boolean((structure as { cages?: Cage[] } | undefined)?.cages?.length)
+      );
+      const cages = (fixture.structure as { cages?: Cage[] } | undefined)?.cages ?? [];
+      const cage = cages.find((entry) => entry.cells.length >= 2);
+      if (!cage) throw new Error('no cage in killer fixture');
+
+      const candidates = fixture.model.symbols.filter(
+        (value) => !cage.cells.some((cell) => fixture.solution.get(cell) === value)
+      );
+      const replacement = candidates[0];
+      if (replacement === undefined)
+        throw new Error('no replacement value found for killer fixture');
+
+      const targetCell = cage.cells[0] as CellId;
+      const bad: Values = new Map(fixture.solution);
+      bad.set(targetCell, replacement);
+
+      expect(validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'cageSum')).toBe(
+        true
+      );
+    });
   });
 
   it('should report no conflict when cage sum is correct', () => {

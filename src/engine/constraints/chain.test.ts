@@ -3,6 +3,10 @@ import { cellId, gridCells, standardHouses } from '../grid';
 import type { Values, VariantModel } from '../types';
 import { chain } from './chain';
 import type { Chain as ChainType } from './chain';
+import type { CellId } from '../types';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { chainVariant } from '@/variants/chain';
 
 function makeModel(chains: ChainType[]): VariantModel {
   return {
@@ -27,6 +31,34 @@ describe('chain constraint', () => {
 
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 0)))).toBe(true);
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 1)))).toBe(true);
+  });
+
+  describe('chain', () => {
+    it('should report no chain conflict on the solution', () => {
+      const fixture = findFixture(chainVariant, (structure) =>
+        Boolean((structure as { chains?: ChainType[] } | undefined)?.chains?.length)
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some((c) => c.constraintId === 'chain')
+      ).toBe(false);
+    });
+
+    it('should flag a chain whose values are no longer consecutive or unique', () => {
+      const fixture = findFixture(chainVariant, (structure) =>
+        Boolean((structure as { chains?: ChainType[] } | undefined)?.chains?.length)
+      );
+      const chains = (fixture.structure as { chains?: ChainType[] } | undefined)?.chains ?? [];
+      const chain = chains[0];
+      if (!chain) throw new Error('no chain in chain fixture');
+
+      const bad: Values = new Map(fixture.solution);
+      bad.set(chain.cells[0] as CellId, 5);
+      bad.set(chain.cells[1] as CellId, 5);
+
+      expect(validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'chain')).toBe(
+        true
+      );
+    });
   });
 
   it('should report a conflict when the range of filled chain values >= chain length', () => {

@@ -1,4 +1,4 @@
-import { contrastRatio, TEXT_AA, UI_AA } from './contrast';
+import { contrastRatio, TEXT_AA, UI_AA } from '@/utils/contrast';
 import { readThemeTokens, type TokenValue } from './themeTokens';
 
 export type Theme = 'dark' | 'light' | 'dark-hc' | 'light-hc';

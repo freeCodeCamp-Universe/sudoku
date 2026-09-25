@@ -17,7 +17,7 @@
    reliably keeps the ring below cell content and clue overlays on all four
    sides — markers stay visible, like given digits already do when selected.
    Kept separate from theme.css, whose :root block is parsed as color tokens
-   by src/game/testing/themeTokens.ts and docs generation. */
+   by src/app/themeTokens.ts and docs generation. */
 :root {
   --layer-selection: -1;
   --layer-chain: 0;

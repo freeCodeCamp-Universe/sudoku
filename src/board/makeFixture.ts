@@ -3,6 +3,7 @@ import { generate } from '@/engine/generate';
 import type { CellId, Solution, Values, Variant, VariantModel } from '@/engine/types';
 import type { Rect, Size } from '@/board/boardTypes';
 import { resolveLayout } from '@/board/layouts/registry';
+import { withStructure as assembleStructure } from '@/board/assemblePuzzle';
 
 export interface Fixture {
   model: VariantModel;
@@ -49,4 +50,20 @@ export function makeFixture(variant: Variant, seed = 1): Fixture {
     structure,
     parityMap: getParityMap(structure),
   };
+}
+
+export function findFixture(variant: Variant, predicate: (structure: unknown) => boolean): Fixture {
+  for (let seed = 1; seed <= 50; seed += 1) {
+    const fixture = makeFixture(variant, seed);
+
+    if (predicate(fixture.structure)) {
+      return fixture;
+    }
+  }
+
+  throw new Error(`no suitable fixture found for ${variant.id}`);
+}
+
+export function withFixtureStructure(fixture: Fixture): VariantModel {
+  return assembleStructure(fixture.model, fixture.structure);
 }

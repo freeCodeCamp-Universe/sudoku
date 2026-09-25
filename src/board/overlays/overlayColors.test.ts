@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { readThemeTokens } from '@/game/testing/themeTokens';
+import { readThemeTokens } from '@/app/themeTokens';
 
 const OVERLAY_DIR = resolve(process.cwd(), 'src/board/overlays');
 

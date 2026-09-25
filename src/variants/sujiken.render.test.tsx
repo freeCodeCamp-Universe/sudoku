@@ -4,7 +4,7 @@ import type { CellId } from '@/engine/types';
 import { buildModel } from '@/engine/buildModel';
 import { Board } from '@/board/Board';
 import { triangularLayout } from '@/board/layouts/triangular';
-import { renderVariantBoard } from '@/game/testing/renderVariantBoard';
+import { renderVariantBoard } from '@/board/Board/renderVariantBoard';
 import { sujiken } from './sujiken';
 
 describe('Sujiken Board renders correct cell count', () => {

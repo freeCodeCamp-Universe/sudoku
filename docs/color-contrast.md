@@ -6,12 +6,12 @@ themselves live in `src/app/theme.css` and are tabulated in the generated
 
 ## Tooling
 
-| What                           | Where                                                         |
-| ------------------------------ | ------------------------------------------------------------- |
-| WCAG contrast math             | `src/game/testing/contrast.ts`                                |
-| Declared color pairs + CI gate | `src/game/testing/contrastSpecs.ts` / `contrastSpecs.test.ts` |
-| Ratio report                   | `pnpm contrast:report`                                        |
-| Chip luminance-ladder solver   | `src/game/testing/colorLadder.ts`, `pnpm contrast:ladder`     |
+| What                           | Where                                                |
+| ------------------------------ | ---------------------------------------------------- |
+| WCAG contrast math             | `src/utils/contrast.ts`                              |
+| Declared color pairs + CI gate | `src/app/contrastSpecs.ts` / `contrastSpecs.test.ts` |
+| Ratio report                   | `pnpm contrast:report`                               |
+| Chip luminance-ladder solver   | `src/utils/colorLadder.ts`, `pnpm contrast:ladder`   |
 
 Ratios are **never rounded up**: 4.4999:1 fails a 4.5:1 threshold. Only relative
 luminance determines a contrast ratio, so any search over background shades can sweep

@@ -3,7 +3,7 @@ title: Extract a shared board layer from src/game
 date: 2026-09-23
 updated: 2026-09-25
 project: sudoku
-status: A0-A21 done; A22 ready for implementation; Part B pending decisions
+status: A0-A22 done; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -111,7 +111,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A19. Build the lesson board panel and its `LessonEngine` (after A11, A12, A16, A17, A18)
 - [x] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
 - [x] A21. ~~Add a `lesson-board-authoring` project skill~~ Superseded: the workflow lives in `docs/lesson-authoring.md` ("Authoring a board")
-- [ ] A22. Dissolve `src/game/testing/` and colocate every file with its source (after A11)
+- [x] A22. Dissolve `src/game/testing/` and colocate every file with its source (after A11)
 
 ### Part B: pending decision
 
@@ -269,7 +269,7 @@ Add `no-restricted-imports` blocks to `eslint.config.js` for non-test source fil
 },
 ```
 
-Place these blocks after the main `src/**/*.{ts,tsx}` block. Tests are excluded for engine, variants and board because their render tests legitimately use `Board` and `src/game/testing/`. Learn tests are not excluded.
+Place these blocks after the main `src/**/*.{ts,tsx}` block. Tests are excluded for engine, variants and board because their render tests legitimately use `Board` and board test helpers. Learn tests are not excluded.
 
 **Done when:** `pnpm lint` passes. Also sanity-check by temporarily adding `import '@/game/GamePage';` to a learn file, confirming lint fails, then reverting.
 
@@ -369,7 +369,7 @@ Decided 2026-09-25:
   4. **Multiple mode:** arrow keys move focus without changing the selection. Space and click toggle the focused cell's selection (a click also moves focus). `Board` sets `aria-multiselectable="true"`. Number entry still targets the focused cell, so a lesson can ask for a digit in r3c5 in the same mode.
   5. Add `focused: boolean` to `CellState` in `src/board/boardTypes.ts`, next to `selected`. In multiple mode a cell can be focused without being selected, so `Cell` needs a separate `data-focused` style (a focus ring) that is distinct from the selected fill.
   6. Leave `formatLocation` as it is.
-- **Color gate:** the focused-but-not-selected style is a new visual state. Read `docs/color-contrast.md` first, add the new pair to `src/game/testing/contrastSpecs.ts`, and verify it with `pnpm contrast:report` (the selected-border specs are near line 267 and line 460). If the change adds color tokens, run `pnpm docs:colors`.
+- **Color gate:** the focused-but-not-selected style is a new visual state. Read `docs/color-contrast.md` first, add the new pair to `src/app/contrastSpecs.ts`, and verify it with `pnpm contrast:report` (the selected-border specs are near line 267 and line 460). If the change adds color tokens, run `pnpm docs:colors`.
 - **Tests** in `src/board/useSudokuGrid.test.ts`:
   - single mode: the existing cases pass unchanged
   - multiple mode: "should toggle selection with Space", "should keep the selection when arrow keys move focus", "should toggle selection on click", "should call onSelectionChange with the new set", "should enter a digit in the focused cell"
@@ -542,6 +542,7 @@ Original plan, kept for the record:
 ### A22. Dissolve `src/game/testing/`; colocate every file with its source
 
 - **Decided 2026-09-25:** there is no testing folder anywhere in the repo. Each test sits next to the unit it tests, and each test-support helper sits next to the code it supports. This replaces the June 2026 decision to keep `src/game/testing/` for now.
+- **Completed 2026-09-25:** moved color tooling to `src/app/`, generic contrast math to `src/utils/`, variant and board test helpers beside their owners, and split special-constraint integration tests across their constraint suites. `renderPlay` now composes `boardReducer` and `useSudokuGrid`; the game-only solved/new-game assertions retain a test-local `GameProvider` harness. The full suite passes with 2,623 tests.
 - **Naming:** a test that covers one aspect of a unit uses `<unit>.<aspect>.test.ts`, following the existing `GamePage.regeneration.test.tsx` and `butterfly.render.test.tsx`. Never `index.test.ts`.
 - **Mapping** (use `git mv` so history follows):
 

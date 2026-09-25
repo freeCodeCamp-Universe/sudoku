@@ -3,6 +3,10 @@ import { cellId, gridCells, standardHouses } from '../grid';
 import type { Values, VariantModel } from '../types';
 import { consecutive } from './consecutive';
 import type { Mark } from './consecutive';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { consecutiveVariant } from '@/variants/consecutive';
+import type { Mark as ConsecutiveMark } from './consecutive';
 
 function makeModel(marks: Mark[]): VariantModel {
   return {
@@ -25,6 +29,36 @@ describe('consecutive constraint', () => {
     const conflicts = consecutive.conflicts(values, makeModel(marks));
 
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 0)))).toBe(true);
+  });
+
+  describe('consecutive', () => {
+    it('should report no consecutive conflict on the solution', () => {
+      const fixture = findFixture(consecutiveVariant, (structure) =>
+        Boolean((structure as { marks?: ConsecutiveMark[] } | undefined)?.marks?.length)
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some(
+          (c) => c.constraintId === 'consecutive'
+        )
+      ).toBe(false);
+    });
+
+    it('should flag an adjacent pair that is no longer consecutive when it should be', () => {
+      const fixture = findFixture(consecutiveVariant, (structure) =>
+        Boolean((structure as { marks?: ConsecutiveMark[] } | undefined)?.marks?.length)
+      );
+      const marks = (fixture.structure as { marks?: ConsecutiveMark[] } | undefined)?.marks ?? [];
+      const mark = marks[0];
+      if (!mark) throw new Error('no consecutive mark in consecutive fixture');
+
+      const bad: Values = new Map(fixture.solution);
+      bad.set(mark.a, 2);
+      bad.set(mark.b, 7);
+
+      expect(
+        validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'consecutive')
+      ).toBe(true);
+    });
   });
 
   it('should report no conflict when a marked pair differs by exactly 1', () => {

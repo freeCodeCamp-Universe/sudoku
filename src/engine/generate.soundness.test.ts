@@ -4,8 +4,8 @@ import { solve } from '@/engine/solve';
 import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { assemblePuzzle } from '@/board/assemblePuzzle';
-import { allVariants } from './allVariants';
-import { makeFixture, seeded } from './makeFixture';
+import { allVariants } from '@/variants/allVariants';
+import { makeFixture, seeded } from '@/board/makeFixture';
 
 const SEEDS = [1, 2, 3, 4, 5];
 

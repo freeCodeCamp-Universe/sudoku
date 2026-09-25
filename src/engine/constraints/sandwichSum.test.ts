@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { cellId, gridCells, range, standardHouses } from '../grid';
 import type { Values, VariantModel } from '../types';
 import { sandwichSum } from './sandwichSum';
+import type { CellId } from '../types';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { sandwich } from '@/variants/sandwich';
 
 function makeModel(rows: number[], cols: number[] = Array(9).fill(0)): VariantModel {
   return {
@@ -28,6 +32,69 @@ describe('sandwichSum constraint', () => {
     ]);
 
     expect(sandwichSum.conflicts(values, makeModel([5, 0, 0, 0, 0, 0, 0, 0, 0]))).toEqual([]);
+  });
+
+  describe('sandwichSum', () => {
+    it('should report no sandwich-sum conflict on the solution', () => {
+      const fixture = findFixture(
+        sandwich,
+        (structure) =>
+          Boolean(
+            (structure as { rows?: number[]; cols?: number[] } | undefined)?.rows?.some(
+              (value) => value > 0
+            )
+          ) ||
+          Boolean(
+            (structure as { rows?: number[]; cols?: number[] } | undefined)?.cols?.some(
+              (value) => value > 0
+            )
+          )
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some(
+          (c) => c.constraintId === 'sandwichSum'
+        )
+      ).toBe(false);
+    });
+
+    it('should flag a row or column whose between-sum no longer matches its clue', () => {
+      const fixture = findFixture(
+        sandwich,
+        (structure) =>
+          Boolean(
+            (structure as { rows?: number[]; cols?: number[] } | undefined)?.rows?.some(
+              (value) => value > 0
+            )
+          ) ||
+          Boolean(
+            (structure as { rows?: number[]; cols?: number[] } | undefined)?.cols?.some(
+              (value) => value > 0
+            )
+          )
+      );
+      const structure = fixture.structure as { rows?: number[]; cols?: number[] } | undefined;
+      const rowIndex = structure?.rows?.findIndex((value) => value > 0) ?? -1;
+      if (rowIndex < 0) throw new Error('no sandwich row clue in sandwich fixture');
+
+      const rowCells = range(9).map((col) => cellId(rowIndex, col) as CellId);
+      const currentValues = rowCells.map((cellId) => fixture.solution.get(cellId) ?? 0);
+      const firstOne = currentValues.indexOf(1);
+      const lastNine = currentValues.lastIndexOf(9);
+      if (firstOne === -1 || lastNine === -1 || lastNine <= firstOne + 1) {
+        throw new Error('no sandwich between-sum cells in sandwich fixture');
+      }
+
+      const targetIndex = firstOne + 1;
+      const currentValue = currentValues[targetIndex] ?? 0;
+      const replacement = currentValue < 9 ? currentValue + 1 : currentValue - 1;
+      const targetCell = rowCells[targetIndex] as CellId;
+      const bad: Values = new Map(fixture.solution);
+      bad.set(targetCell, replacement);
+
+      expect(
+        validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'sandwichSum')
+      ).toBe(true);
+    });
   });
 
   it('should report a conflict for a complete row whose between-sum does not match its clue', () => {

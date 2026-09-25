@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readThemeTokens } from '@/game/testing/themeTokens';
+import { readThemeTokens } from '@/app/themeTokens';
 
 describe('preview overlap tokens', () => {
   it('should define one consistent overlap scale for all previews', () => {

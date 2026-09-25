@@ -1,7 +1,13 @@
-import { act } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { CellId } from '@/engine/types';
-import { allVariants, houseCellIds } from './allVariants';
+import { withStructure } from '@/board/assemblePuzzle';
+import { useGameContext } from '@/game/GameContext';
+import { GameProvider } from '@/game/GameProvider';
+import { useSudokuGrid } from '@/board/useSudokuGrid';
+import { makeFixture } from '@/board/makeFixture';
+import { allVariants, houseCellIds } from '@/variants/allVariants';
 import { renderPlay, type Fixture } from './renderPlay';
 
 function openCells(fixture: Fixture): CellId[] {
@@ -38,6 +44,45 @@ function otherSymbol(fixture: Fixture, value: number): number {
   }
 
   return symbol;
+}
+
+function useGamePlay() {
+  const { state, dispatch, model, givens, solution } = useGameContext();
+  const grid = useSudokuGrid({
+    cells: model.cells,
+    model,
+    values: state.values,
+    candidates: state.candidates,
+    givens: new Set(givens.keys()),
+    revealed: state.revealed,
+    solution,
+    onEnterValue: () => {},
+    onToggleCandidate: () => {},
+  });
+
+  return { state, dispatch, cellState: grid.cellState };
+}
+
+function renderGamePlay(variant: Parameters<typeof renderPlay>[0]) {
+  const fixture = makeFixture(variant);
+  const model = withStructure(fixture.model, fixture.structure);
+
+  function Wrapper({ children }: { children: ReactNode }) {
+    return (
+      <GameProvider
+        variant={variant}
+        model={model}
+        givens={fixture.givens}
+        solution={fixture.solution}
+      >
+        {children}
+      </GameProvider>
+    );
+  }
+
+  const { result } = renderHook(() => useGamePlay(), { wrapper: Wrapper });
+
+  return { result, fixture };
 }
 
 describe('variant gameplay: duplicate-in-house conflict', () => {
@@ -86,7 +131,7 @@ describe('variant gameplay: solved transition', () => {
   it.each(allVariants())(
     'should mark $id solved only when every non-given cell matches the solution',
     (variant) => {
-      const { result, fixture } = renderPlay(variant);
+      const { result, fixture } = renderGamePlay(variant);
       const open = openCells(fixture);
 
       // Fill every open cell with the solution except the first, which gets a
@@ -195,7 +240,7 @@ describe('variant gameplay: reducer actions', () => {
   });
 
   it.each(allVariants())('should reset to givens on newGame for $id', (variant) => {
-    const { result, fixture } = renderPlay(variant);
+    const { result, fixture } = renderGamePlay(variant);
     const cell = firstOpenCell(fixture);
 
     act(() =>

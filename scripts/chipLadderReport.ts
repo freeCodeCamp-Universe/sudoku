@@ -3,9 +3,9 @@
  * and print them next to the committed tokens. Use when re-tuning the color
  * sudoku chips; see docs/color-contrast.md for the design rules.
  */
-import { atLuminance, luminanceLadder } from '../src/game/testing/colorLadder';
-import { contrastRatio, relativeLuminance, TEXT_AA, UI_AA } from '../src/game/testing/contrast';
-import { readThemeTokens } from '../src/game/testing/themeTokens';
+import { atLuminance, luminanceLadder } from '../src/utils/colorLadder';
+import { contrastRatio, relativeLuminance, TEXT_AA, UI_AA } from '../src/utils/contrast';
+import { readThemeTokens } from '../src/app/themeTokens';
 
 // Saturated hue anchors, keyed by the colorNames hue each chip index carries.
 const ANCHORS: Record<string, string> = {

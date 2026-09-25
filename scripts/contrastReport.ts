@@ -1,5 +1,5 @@
-import { contrastPairs, evaluatePair } from '../src/game/testing/contrastSpecs';
-import { readThemeTokens } from '../src/game/testing/themeTokens';
+import { contrastPairs, evaluatePair } from '../src/app/contrastSpecs';
+import { readThemeTokens } from '../src/app/themeTokens';
 
 const tokens = readThemeTokens();
 

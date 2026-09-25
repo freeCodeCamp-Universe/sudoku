@@ -3,6 +3,9 @@ import { cellId, gridCells, standardHouses } from '../grid';
 import type { Values, VariantModel } from '../types';
 import { greaterThan } from './greaterThan';
 import type { Relation } from './greaterThan';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { greaterThanVariant } from '@/variants/greaterThan';
 
 function makeModel(relations: Relation[]): VariantModel {
   return {
@@ -26,6 +29,36 @@ describe('greaterThan constraint', () => {
 
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 0)))).toBe(true);
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 1)))).toBe(true);
+  });
+
+  describe('greaterThan', () => {
+    it('should report no greater-than conflict on the solution', () => {
+      const fixture = findFixture(greaterThanVariant, (structure) =>
+        Boolean((structure as { relations?: Relation[] } | undefined)?.relations?.length)
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some(
+          (c) => c.constraintId === 'greaterThan'
+        )
+      ).toBe(false);
+    });
+
+    it('should flag an adjacent pair whose inequality is inverted', () => {
+      const fixture = findFixture(greaterThanVariant, (structure) =>
+        Boolean((structure as { relations?: Relation[] } | undefined)?.relations?.length)
+      );
+      const relations =
+        (fixture.structure as { relations?: Relation[] } | undefined)?.relations ?? [];
+      const relation = relations[0];
+      if (!relation) throw new Error('no greater-than relation in greaterThan fixture');
+
+      const bad: Values = new Map(fixture.solution);
+      bad.set(relation.greater, fixture.solution.get(relation.lesser) ?? 1);
+
+      expect(
+        validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'greaterThan')
+      ).toBe(true);
+    });
   });
 
   it('should report no conflict when the greater cell truly holds a larger value', () => {

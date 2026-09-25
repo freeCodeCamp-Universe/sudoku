@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { cellId, gridCells, standardHouses } from '../grid';
+import { cellId, gridCells, range, standardHouses } from '../grid';
 import type { VariantModel, Values } from '../types';
 import { skyscraperVisibility } from './skyscraperVisibility';
 import type { EdgeClues } from '@/engine/types';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { skyscraper } from '@/variants/skyscraper';
 
 function makeModel(clues: EdgeClues): VariantModel {
   return {
@@ -36,6 +39,67 @@ describe('skyscraperVisibility constraint', () => {
     expect(conflicts.some((conflict) => conflict.constraintId === 'skyscraperVisibility')).toBe(
       true
     );
+  });
+
+  describe('skyscraperVisibility', () => {
+    it('should report no skyscraper conflict on the solution', () => {
+      const fixture = findFixture(
+        skyscraper,
+        (structure) =>
+          Boolean(
+            (
+              structure as
+                | {
+                    clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] };
+                  }
+                | undefined
+            )?.clues?.start?.some((value) => value > 0)
+          ) ||
+          Boolean(
+            (
+              structure as
+                | {
+                    clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] };
+                  }
+                | undefined
+            )?.clues?.top?.some((value) => value > 0)
+          )
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some(
+          (c) => c.constraintId === 'skyscraperVisibility'
+        )
+      ).toBe(false);
+    });
+
+    it('should flag a row whose visible count no longer matches its start clue', () => {
+      const fixture = findFixture(skyscraper, (structure) =>
+        Boolean(
+          (
+            structure as
+              | { clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] } }
+              | undefined
+          )?.clues?.start?.some((value) => value > 0)
+        )
+      );
+      const clues = (
+        fixture.structure as
+          | { clues?: { start?: number[]; end?: number[]; top?: number[]; bottom?: number[] } }
+          | undefined
+      )?.clues;
+      const rowIndex = clues?.start?.findIndex((value) => value > 0) ?? -1;
+      if (rowIndex < 0) throw new Error('no skyscraper start clue in skyscraper fixture');
+      const clue = clues?.start?.[rowIndex] ?? 0;
+
+      const ascending = range(9).map((n) => n + 1);
+      const arrangement = clue === 9 ? [...ascending].reverse() : ascending;
+      const bad: Values = new Map(fixture.solution);
+      arrangement.forEach((value, col) => bad.set(cellId(rowIndex, col), value));
+
+      expect(
+        validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'skyscraperVisibility')
+      ).toBe(true);
+    });
   });
 
   it('should report no conflict when the start clue matches visible count', () => {

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { cellId, gridCells, standardHouses } from '../grid';
-import type { Values, VariantModel } from '../types';
+import { validate } from '../validate';
+import type { CellId, Values, VariantModel } from '../types';
 import { evenOdd } from './evenOdd';
+import { makeFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { evenOdd as evenOddVariant } from '@/variants/evenOdd';
 
 function makeModel(parityMap: Map<string, 0 | 1>): VariantModel {
   return {
@@ -20,6 +23,26 @@ describe('evenOdd constraint', () => {
     const conflicts = evenOdd.conflicts(values, makeModel(parityMap));
 
     expect(conflicts.some((conflict) => conflict.cells.includes(cellId(0, 0)))).toBe(true);
+  });
+
+  describe('even-odd', () => {
+    it('should report no parity conflict on the solution', () => {
+      const fixture = makeFixture(evenOddVariant, 5);
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some((c) => c.constraintId === 'evenOdd')
+      ).toBe(false);
+    });
+
+    it('should flag a cell whose value breaks its required parity', () => {
+      const fixture = makeFixture(evenOddVariant, 5);
+      const evenCell = [...(fixture.parityMap ?? [])].find(([, p]) => p === 0)?.[0] as CellId;
+      const oddValue = fixture.model.symbols.find((s) => Number(s) % 2 === 1)!;
+      const bad: Values = new Map(fixture.solution);
+      bad.set(evenCell, oddValue);
+      expect(validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'evenOdd')).toBe(
+        true
+      );
+    });
   });
 
   it('should report a conflict when an odd-marked cell holds an even value', () => {

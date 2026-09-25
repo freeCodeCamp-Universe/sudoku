@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { cellId, gridCells, standardHouses } from '../grid';
 import type { Values, VariantModel } from '../types';
 import { kropki, type KropkiMark } from './kropki';
+import { validate } from '@/engine/validate';
+import { findFixture, withFixtureStructure as withStructure } from '@/board/makeFixture';
+import { kropki as kropkiVariant } from '@/variants/kropki';
 
 function makeModel(marks: KropkiMark[]): VariantModel {
   return {
@@ -22,6 +25,40 @@ describe('kropki constraint', () => {
     ]);
 
     expect(kropki.conflicts(values, makeModel(marks))).toEqual([]);
+  });
+
+  describe('kropki', () => {
+    it('should report no kropki conflict on the solution', () => {
+      const fixture = findFixture(kropkiVariant, (structure) =>
+        Boolean((structure as { kropkiMarks?: KropkiMark[] } | undefined)?.kropkiMarks?.length)
+      );
+      expect(
+        validate(fixture.solution, withStructure(fixture)).some((c) => c.constraintId === 'kropki')
+      ).toBe(false);
+    });
+
+    it('should flag a pair that breaks its kropki relationship', () => {
+      const fixture = findFixture(kropkiVariant, (structure) =>
+        Boolean((structure as { kropkiMarks?: KropkiMark[] } | undefined)?.kropkiMarks?.length)
+      );
+      const marks =
+        (fixture.structure as { kropkiMarks?: KropkiMark[] } | undefined)?.kropkiMarks ?? [];
+      const mark = marks[0];
+      if (!mark) throw new Error('no kropki mark in kropki fixture');
+
+      const bad: Values = new Map(fixture.solution);
+      if (mark.kind === 'black') {
+        bad.set(mark.a, 3);
+        bad.set(mark.b, 5);
+      } else {
+        bad.set(mark.a, 2);
+        bad.set(mark.b, 6);
+      }
+
+      expect(validate(bad, withStructure(fixture)).some((c) => c.constraintId === 'kropki')).toBe(
+        true
+      );
+    });
   });
 
   it('should report a conflict for a white-dot pair that is not consecutive', () => {

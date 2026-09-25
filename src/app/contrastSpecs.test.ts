@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { contrastRatio, relativeLuminance } from './contrast';
+import { contrastRatio, relativeLuminance } from '@/utils/contrast';
 import {
   CHIP_LADDER_MIN,
   CHIP_TOKENS,

@@ -1,6 +1,6 @@
 # Board Colors
 
-_Generated from `src/app/theme.css` and `src/game/testing/colorSpecs.ts`. Run `pnpm docs:colors` to regenerate._
+_Generated from `src/app/theme.css` and `src/app/colorSpecs.ts`. Run `pnpm docs:colors` to regenerate._
 
 ## Tokens
 

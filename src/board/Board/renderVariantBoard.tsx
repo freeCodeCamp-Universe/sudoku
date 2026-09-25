@@ -3,7 +3,7 @@ import type { CellId, SymbolValue, Values, Variant, VariantModel } from '@/engin
 import type { CellState } from '@/board/boardTypes';
 import { Board } from '@/board/Board';
 import { resolveOverlays } from '@/board/overlays/registry';
-import { makeFixture, type Fixture } from './makeFixture';
+import { makeFixture, type Fixture } from '../makeFixture';
 
 interface CellRenderState {
   value?: SymbolValue;

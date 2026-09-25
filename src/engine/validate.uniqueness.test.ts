@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import type { Values, VariantModel } from '@/engine/types';
 import { buildModel } from '@/engine/buildModel';
 import { validate } from '@/engine/validate';
-import { allVariants, houseCellIds } from './allVariants';
-import { makeFixture } from './makeFixture';
+import { allVariants, houseCellIds } from '@/variants/allVariants';
+import { makeFixture } from '@/board/makeFixture';
 
 function hasUniqueness(model: VariantModel): boolean {
   return model.constraints.some((c) => c.id === 'uniqueness');

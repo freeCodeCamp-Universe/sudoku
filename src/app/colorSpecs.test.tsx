@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { CHAIN_TOKENS } from './contrastSpecs';
 import { readThemeTokens } from './themeTokens';
-import { renderVariantBoard } from './renderVariantBoard';
-import { makeFixture } from './makeFixture';
+import { renderVariantBoard } from '@/board/Board/renderVariantBoard';
+import { makeFixture } from '@/board/makeFixture';
 import { colorSpecs } from './colorSpecs';
 
 describe('per-variant color specs', () => {

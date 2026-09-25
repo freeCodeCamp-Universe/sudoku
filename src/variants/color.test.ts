@@ -3,7 +3,7 @@ import { buildModel } from '@/engine/buildModel';
 import { generate } from '@/engine/generate';
 import { solve } from '@/engine/solve';
 import { validate } from '@/engine/validate';
-import { readThemeTokens } from '@/game/testing/themeTokens';
+import { readThemeTokens } from '@/app/themeTokens';
 import { color } from './color';
 
 function seeded(seed: number): () => number {
