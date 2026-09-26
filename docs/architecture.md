@@ -316,10 +316,11 @@ counts as progress rather than a miss.
 `LessonWorkspace` owns the toast. It wraps the panel in a clipping `.work-area`
 above the Reset/Next toolbar and renders `ToastStack`
 (`src/components/ToastStack/`) into it with `placement="bottom"`, so the hint
-slides out of the edge the working area shares with the toolbar. It shows at
-most one hint at a time, clears it on reset, and keeps an unchanged hint on
-screen instead of replaying it. Cmd/Ctrl+Enter only works while Next is
-visible.
+slides out of the edge the working area shares with the toolbar. Lesson hints
+do not auto-dismiss; learners can dismiss them or clear them by meeting the
+requirement. It shows at most one hint at a time, clears it on reset, and keeps
+an unchanged hint on screen instead of replaying it. Cmd/Ctrl+Enter only works
+while Next is visible.
 
 On load, and on the focus-panel shortcut, the workspace focuses the panel's
 first focusable element (the board's active cell) and falls back to the

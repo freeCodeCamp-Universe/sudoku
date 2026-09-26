@@ -23,6 +23,8 @@ interface ToastStackProps {
   toasts: ToastItem[];
   /** Called once a toast's exit transition finishes; remove it from the list. */
   onDismiss: (id: number) => void;
+  /** Whether toasts dismiss themselves after the configured duration. */
+  autoDismiss?: boolean;
   durationMs?: number;
   exitMs?: number;
   /** Whether the stack is anchored to the top or bottom edge. */
@@ -38,6 +40,7 @@ interface ToastStackProps {
 interface ToastProps {
   toast: ToastItem;
   onDismiss: (id: number) => void;
+  autoDismiss: boolean;
   durationMs: number;
   exitMs: number;
   placement: 'top' | 'bottom';
@@ -49,12 +52,20 @@ interface ToastProps {
 // the countdown (WCAG 2.2.1: give readers time) and leaving restarts the full
 // duration. The visible copy is aria-hidden because the stack's live region
 // already speaks it, so it would otherwise be read twice.
-function Toast({ toast, onDismiss, durationMs, exitMs, placement, registerRef }: ToastProps) {
+function Toast({
+  toast,
+  onDismiss,
+  autoDismiss,
+  durationMs,
+  exitMs,
+  placement,
+  registerRef,
+}: ToastProps) {
   const [closing, setClosing] = useState(false);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused || closing) {
+    if (!autoDismiss || paused || closing) {
       return undefined;
     }
 
@@ -65,7 +76,7 @@ function Toast({ toast, onDismiss, durationMs, exitMs, placement, registerRef }:
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [paused, closing, durationMs]);
+  }, [autoDismiss, paused, closing, durationMs]);
 
   // Stay mounted through the exit transition, then hand removal to the owner.
   useEffect(() => {
@@ -110,6 +121,7 @@ function Toast({ toast, onDismiss, durationMs, exitMs, placement, registerRef }:
 export function ToastStack({
   toasts,
   onDismiss,
+  autoDismiss = true,
   durationMs = TOAST_DURATION_MS,
   exitMs = TOAST_EXIT_MS,
   placement = 'top',
@@ -215,6 +227,7 @@ export function ToastStack({
                   key={toast.id}
                   toast={toast}
                   onDismiss={onDismiss}
+                  autoDismiss={autoDismiss}
                   durationMs={durationMs}
                   exitMs={exitMs}
                   placement={placement}

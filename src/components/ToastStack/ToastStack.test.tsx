@@ -138,6 +138,24 @@ describe('ToastStack', () => {
     expect(screen.queryByText('First body')).toBeNull();
   });
 
+  it('should keep a toast visible until dismissed when auto-dismiss is disabled', () => {
+    const onDismiss = vi.fn();
+    render(<ToastStack toasts={[first]} onDismiss={onDismiss} autoDismiss={false} />);
+
+    act(() => {
+      vi.advanceTimersByTime(60000);
+    });
+
+    expect(screen.getByText('First body')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(onDismiss).toHaveBeenCalledWith(first.id);
+  });
+
   it('should pause the auto-dismiss countdown while hovered and restart it on leave', () => {
     render(<Harness initial={[first]} />);
 

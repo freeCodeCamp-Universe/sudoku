@@ -282,6 +282,7 @@ export function LessonWorkspace({
           <ToastStack
             toasts={hintToast ? [hintToast] : []}
             onDismiss={dismissHint}
+            autoDismiss={false}
             placement="bottom"
             container={workArea}
           />

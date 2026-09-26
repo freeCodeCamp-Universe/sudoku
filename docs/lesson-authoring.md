@@ -198,7 +198,7 @@ Structure: `{ "label": "...", "hint": "...", "test": { ... } }`. `hint` is optio
 Learners don't see the checklist. Each item is a requirement, and the Next button appears once every requirement passes. Because learners don't see the list, the instructions must say what to do.
 
 - **`label`** names the action the learner completes. Only authors and tests read it.
-- **`hint`** appears in a toast at the bottom of the interactive panel when the learner's input misses the item. It must start with `You can` or `You should`, or `curriculumIntegrity.test.ts` fails. An item without a hint never shows a toast, so give every board item one.
+- **`hint`** appears in a toast at the bottom of the interactive panel when the learner's input misses the item. The hint stays visible until the learner dismisses it or meets the requirement. It must start with `You can` or `You should`, or `curriculumIntegrity.test.ts` fails. An item without a hint never shows a toast, so give every board item one.
 - **`test`** is graded by the panel's `LessonEngine` (`src/curriculum/lessonEngine.ts`). The placeholder panel ignores it.
 
 A lesson with a `board` grades its checklist live after every value, candidate, or selection change. Give each item exactly one of these tests:
