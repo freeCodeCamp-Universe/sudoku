@@ -145,6 +145,9 @@ const ACCEPTED_FAILURES = new Set<string>([
   'dark|even bg vs odd bg',
   'dark|peer-even bg vs peer-odd bg',
   'dark|error bg vs base',
+  // The requested historical fills stay below 3:1 in standard palettes; the
+  // high-contrast palettes override them with compliant selection shades.
+  'dark|selection fill vs base',
   // The deepened light hint gold (#7b5e2c) clears 4.5:1 on most cell
   // backgrounds; these two peer-highlight tints remain slightly too light.
   'light|hint text on --cell-peer-structural-bg',
@@ -166,13 +169,10 @@ const ACCEPTED_FAILURES = new Set<string>([
       (fill) => `${theme}|overlap fill ${fill} vs base`
     )
   ),
-  // The multi-select fill reinforces the check mark, which carries the state
-  // (gated above). A fill at 3:1 vs base would leave no room for 4.5:1 digit
-  // text, the same squeeze as the overlap tints.
-  ...THEMES.map((theme) => `${theme}|selection fill vs base`),
   'light|even bg vs odd bg',
   'light|peer-even bg vs peer-odd bg',
   'light|error bg vs base',
+  'light|selection fill vs base',
   // These chips sit below 3:1 on the white light-theme cells; the
   // high-contrast palette carries the compliant set.
   'light|chip --color-2 vs base',
@@ -228,6 +228,16 @@ function textPairs(): PairInput[] {
 export const contrastPairs: ContrastPair[] = [
   ...textPairs(),
 
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'lesson workspace text on background',
+      fg: '--text-subtle',
+      bg: '--bg-secondary',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+
   // Incorrect digits render only on the error background.
   ...THEMES.map(
     (theme): PairInput => ({
@@ -235,6 +245,24 @@ export const contrastPairs: ContrastPair[] = [
       fg: refFor(TEXT.incorrect, theme),
       bg: '--cell-error-bg',
       threshold: TEXT_AA,
+      theme,
+    })
+  ),
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'incorrect text on selection fill',
+      fg: refFor(TEXT.incorrect, theme),
+      bg: '--cell-selection-bg',
+      threshold: TEXT_AA,
+      theme,
+    })
+  ),
+  ...THEMES.map(
+    (theme): PairInput => ({
+      label: 'selection check mark on fill',
+      fg: refFor(TEXT.given, theme),
+      bg: '--cell-selection-bg',
+      threshold: UI_AA,
       theme,
     })
   ),
@@ -275,24 +303,15 @@ export const contrastPairs: ContrastPair[] = [
       theme,
     },
     {
-      label: 'selection ring vs base',
-      fg: '--cell-selected-border',
+      label: 'selection fill vs base',
+      fg: '--cell-selection-bg',
       bg: refFor(BASE, theme),
       threshold: UI_AA,
       theme,
     },
-    // Multi-select marks a selected cell with a fill plus a check mark in the
-    // given-digit color. The check mark carries the state; the fill reinforces it.
     {
-      label: 'selection check mark on --cell-selection-bg',
-      fg: refFor(TEXT.given, theme),
-      bg: '--cell-selection-bg',
-      threshold: UI_AA,
-      theme,
-    },
-    {
-      label: 'selection fill vs base',
-      fg: '--cell-selection-bg',
+      label: 'selection ring vs base',
+      fg: '--cell-selected-border',
       bg: refFor(BASE, theme),
       threshold: UI_AA,
       theme,

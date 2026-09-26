@@ -56,10 +56,10 @@
   --board-overlap-4-bg: #32326c;
   --board-overlap-5-bg: #383878;
   --cell-selected-border: #4a90d9;
+  --cell-selection-bg: #2c3f66;
   --cell-peer-bg: #272948;
   --cell-peer-structural-bg: #2e2e44;
   --cell-same-value-bg: #1a4f4f;
-  --cell-selection-bg: #2c3f66;
   --cell-error-bg: #2a1515;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;
@@ -172,10 +172,10 @@
   --board-overlap-3-bg: #e3e3f7;
   --board-overlap-4-bg: #e4e4f2;
   --board-overlap-5-bg: #e0e0ee;
+  --cell-selection-bg: #d6e6fa;
   --cell-peer-bg: #ededf6;
   --cell-peer-structural-bg: #d8d8f0;
   --cell-same-value-bg: #cdeaea;
-  --cell-selection-bg: #d6e6fa;
   --cell-error-bg: #f8dede;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;
@@ -256,6 +256,7 @@
   /* The standard ring (#4a90d9) sits at 1.66:1 on the mid-gray region fills;
      a brighter blue clears 3:1 on every fill a selected cell can carry. */
   --cell-selected-border: #a8d4ff;
+  --cell-selection-bg: #5f5f81;
   --cell-even-bg: #60607a;
   --cell-odd-bg: #0f0f2c;
   --cell-peer-even-bg: #5e5e78;
@@ -312,6 +313,7 @@
 }
 
 .light.high-contrast {
+  --cell-selection-bg: #8f8fa8;
   /* Light cells render --cell-bg-light, so the dark palette's base darkening
      has no light counterpart; this re-declares the standard light value only
      because .light.high-contrast must override every .high-contrast token. */

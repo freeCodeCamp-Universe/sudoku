@@ -26,6 +26,12 @@ describe('cell color tokens', () => {
       darkHc: '#a8d4ff',
       lightHc: '#08306b',
     });
+    expect(tokens['--cell-selection-bg']).toEqual({
+      dark: '#2c3f66',
+      light: '#d6e6fa',
+      darkHc: '#5f5f81',
+      lightHc: '#8f8fa8',
+    });
   });
 
   it('should wire each structural marker to its token', () => {
@@ -33,6 +39,16 @@ describe('cell color tokens', () => {
     expect(CELL_CSS).toMatch(/\[data-window\]\s*\{\s*background:\s*var\(--cell-window-bg\)/);
     expect(CELL_CSS).toMatch(/\[data-even\]\s*\{\s*background:\s*var\(--cell-even-bg\)/);
     expect(CELL_CSS).toMatch(/\[data-odd\]\s*\{\s*background:\s*var\(--cell-odd-bg\)/);
+  });
+
+  it('should use the selection fill for marked multi-select cells', () => {
+    expect(CELL_CSS).toMatch(
+      /\.cell\[data-marked\]\[data-selected\][\s\S]*?background:\s*var\(--cell-selection-bg\)/
+    );
+  });
+
+  it('should keep given cells pointer-interactive', () => {
+    expect(CELL_CSS).toMatch(/\.cell\[data-given\]\s*\{[^}]*cursor:\s*pointer;/);
   });
 
   it('should not leave bare hex in the structural marker rules', () => {

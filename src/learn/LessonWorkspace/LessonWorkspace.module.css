@@ -35,7 +35,7 @@
   pointer-events: none;
 }
 
-/* ── Prose page (no terminal) ────────────────────────────────────────────── */
+/* ── Prose page (no interactive workspace) ───────────────────────────────── */
 
 .prose-page {
   flex: 1;
@@ -114,7 +114,7 @@
 
 /* Both hidden at mobile by default; the tab selector reveals the active one. */
 .instructions,
-.terminal {
+.interactive-workspace {
   display: none;
 }
 
@@ -134,16 +134,16 @@
   outline-offset: -2px;
 }
 
-/* ── Terminal panel ──────────────────────────────────────────────────────── */
+/* ── Interactive workspace panel ────────────────────────────────────────── */
 
-.terminal {
+.interactive-workspace {
   flex: 1;
   min-block-size: 0;
   background-color: var(--bg-secondary);
 }
 
 .page[data-tab='instructions'] .instructions,
-.page[data-tab='terminal'] .terminal {
+.page[data-tab='terminal'] .interactive-workspace {
   display: flex;
   flex-direction: column;
 }
@@ -188,7 +188,7 @@
   min-block-size: 0;
 }
 
-.terminal > .controls {
+.interactive-workspace > .controls {
   flex: 0 0 auto;
   justify-content: space-between;
   margin-block-start: 0;
@@ -215,7 +215,7 @@
     padding-block: var(--space-md);
   }
 
-  .terminal {
+  .interactive-workspace {
     flex: 1;
     min-inline-size: 0;
     border-inline-start: 1px solid var(--cell-border);
@@ -226,7 +226,7 @@
    * with the tab selectors (0,3,0) so source order wins at this breakpoint.
    */
   .page[data-tab] .instructions,
-  .page[data-tab] .terminal {
+  .page[data-tab] .interactive-workspace {
     display: flex;
     flex-direction: column;
   }

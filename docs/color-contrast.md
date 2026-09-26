@@ -176,21 +176,20 @@ fill is the binding pair at 3.21:1) and `#08306b` light (navy — the error fill
 luminance 0.256 caps the ring at L ≈ 0.052, which forces it well past the standard
 blue toward black).
 
-## Multi-select fill
+The ring is `--cell-ring-width` wide (`src/app/layers.css`): 2px, matching the
+app's 2px focus outlines and thinner than the 3px box boundaries, so a focused
+cell doesn't read as a box edge. High contrast widens it to 3px, still under its
+5px box boundaries.
 
-In a multi-select board, a selected cell shows `--cell-selection-bg` plus a check
-mark in the given-digit color (`--text-subtle`, `#0a0a23` in the light palettes).
-The blue ring is kept for focus. The check mark carries the selected state and
-gates at 3:1 on the fill in all four palettes. `--cell-selection-bg` sits in
-`CELL_BGS`, so every text role gates at 4.5:1 on it, and in high contrast the
-grid lines and focus ring gate at 3:1 on it.
+## Multi-select fill and check mark
 
-The fill against the plain cell is an accepted advisory in all four palettes
-(about 1.3:1 to 1.8:1). It hits the same limit as the overlap tints: a fill at
-3:1 against the base leaves no room for 4.5:1 digit text. In high contrast, the
-narrow window that remains is the region fills' luminance rung, where the
-selection fill would read the same as a region. The fill reinforces the check
-mark and is never the only cue.
+Multi-select uses `--cell-selection-bg` and a check mark as its selection cues,
+with the focus ring reserved for the active cell. The standard fills restore the
+earlier blue shades (`#2c3f66` dark, `#d6e6fa` light), but they do not reach 3:1
+against the plain cell base (1.61:1 dark, 1.27:1 light). The check mark uses the
+given-digit text color, which clears 3:1 on the fill; all cell text roles are
+gated at 4.5:1 against it. High contrast uses `#5f5f81` dark and `#8f8fa8` light
+to clear 3:1 against the base.
 
 ## Board clue text
 
@@ -367,3 +366,6 @@ including the error background.
    when touching high-contrast chips.
 3. New colors: add pairs to `contrastPairs` so they land in the report and the gate.
 4. `pnpm docs:colors` to regenerate `colors.md`, then `pnpm build && pnpm test && pnpm lint`.
+
+The lesson interactive workspace uses `--bg-secondary`, and its default text is
+gated at 4.5:1 against that surface in all four palettes.

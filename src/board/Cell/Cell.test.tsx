@@ -58,7 +58,7 @@ describe('Cell', () => {
     expect(screen.queryByTestId('cell-selection-mark')).not.toBeInTheDocument();
   });
 
-  it('should mark a selected cell with a check mark instead of the ring in multi-select', () => {
+  it('should show a selected fill and check mark in multi-select', () => {
     render(<Cell {...baseProps} selected multiSelect />);
 
     const cell = screen.getByRole('gridcell');

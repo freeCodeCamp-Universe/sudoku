@@ -159,7 +159,7 @@
 
 .cell[data-given] {
   font-weight: 900;
-  cursor: default;
+  cursor: pointer;
 }
 
 /* The multi-select check mark shares the given digits' color. */
@@ -169,7 +169,13 @@
 }
 
 /* The ring marks the focused cell. With single selection, the selected cell
-   is the focused one, so it carries the ring too. */
+   is the focused one, so it carries the ring too. The ring replaces the
+   browser's rounded, white-haloed outline. A cell that keeps DOM focus
+   without the ring (after Escape clears it) falls back to that outline. */
+.cell[data-ring]:focus-visible {
+  outline: none;
+}
+
 .cell[data-ring] {
   z-index: var(--layer-grid-lines);
 }
@@ -182,7 +188,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border: 3px solid var(--cell-selected-border);
+  border: var(--cell-ring-width, 2px) solid var(--cell-selected-border);
   z-index: var(--layer-selection);
   pointer-events: none;
 }
@@ -459,11 +465,7 @@
   background: var(--cell-error-bg);
 }
 
-/* A cell in a multi-select grid shows its selection as a fill plus a check
-   mark, so the ring stays free for focus. The fill alone can't clear 3:1
-   against the plain cell while digits keep 4.5:1 on it, so the check mark
-   carries the state. The doubled attribute ties the most specific peer,
-   region, and error fills in each theme, and sitting last wins the tie. */
+/* Selection takes precedence over peer, region, and error tints. */
 .cell[data-marked][data-selected],
 :global(.light) .cell[data-marked][data-selected] {
   background: var(--cell-selection-bg);

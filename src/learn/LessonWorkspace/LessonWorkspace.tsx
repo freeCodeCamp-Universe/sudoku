@@ -259,7 +259,7 @@ export function LessonWorkspace({
         </section>
         <div
           ref={interactiveRef}
-          className={styles.terminal}
+          className={styles['interactive-workspace']}
           tabIndex={-1}
           role="application"
           aria-label="interactive lesson workspace"

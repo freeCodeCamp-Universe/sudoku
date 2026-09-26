@@ -39,6 +39,11 @@
      as one system. Lives here rather than theme.css, whose blocks are parsed
      as color tokens. */
   --box-boundary-width: 3px;
+
+  /* The board's focus ring, drawn inside the cell. It matches the 2px focus
+     outline used across the app and stays thinner than the box boundaries,
+     so a focused cell doesn't read as a structural line. */
+  --cell-ring-width: 2px;
 }
 
 /* High contrast widens the structural lines: the compliant palette caps the
@@ -46,4 +51,5 @@
    width ratio carries the box structure instead. */
 .high-contrast {
   --box-boundary-width: 5px;
+  --cell-ring-width: 3px;
 }

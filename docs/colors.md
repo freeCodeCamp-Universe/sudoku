@@ -50,10 +50,10 @@ _Generated from `src/app/theme.css` and `src/app/colorSpecs.ts`. Run `pnpm docs:
 | `--board-overlap-4-bg` | #32326c | #e4e4f2 | #5c5c81 | #a0a0b2 |
 | `--board-overlap-5-bg` | #383878 | #e0e0ee | #63638a | #8f8f9e |
 | `--cell-selected-border` | #4a90d9 | #4a90d9 | #a8d4ff | #08306b |
+| `--cell-selection-bg` | #2c3f66 | #d6e6fa | #5f5f81 | #8f8fa8 |
 | `--cell-peer-bg` | #272948 | #ededf6 | #272948 | #ededf6 |
 | `--cell-peer-structural-bg` | #2e2e44 | #d8d8f0 | #2e2e44 | #d8d8f0 |
 | `--cell-same-value-bg` | #1a4f4f | #cdeaea | #1a4f4f | #cdeaea |
-| `--cell-selection-bg` | #2c3f66 | #d6e6fa | #2c3f66 | #d6e6fa |
 | `--cell-error-bg` | #2a1515 | #f8dede | #8a5252 | #cc7070 |
 | `--numpad-chip-label` | #000000 | #000000 | #000000 | #ffffff |
 | `--numpad-chip-label-bright` | #000000 | #000000 | #000000 | #000000 |

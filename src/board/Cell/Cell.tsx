@@ -20,8 +20,8 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   focused: boolean;
   selected: boolean;
   /**
-   * The grid allows selecting several cells. Selection then shows as a fill
-   * and check mark, leaving the ring to the focused cell alone.
+   * The grid allows selecting several cells. Selection shows as a fill and
+   * check mark, leaving the ring to the focused cell alone.
    */
   multiSelect?: boolean;
   conflict: boolean;

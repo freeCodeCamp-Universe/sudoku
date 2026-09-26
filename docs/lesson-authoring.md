@@ -179,13 +179,13 @@ Cell ids use the 1-based rc notation learners see, so `"r1c1"` is the top-left c
 }
 ```
 
-| Field           | Notes                                                                                                                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`       | Required. A registered variant id.                                                                                                                                                                   |
-| `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                                                                      |
-| `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                                                                      |
-| `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells. Selected cells then show a fill and a check mark, and the blue ring marks only the focused cell. |
-| `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label.                                                 |
+| Field           | Notes                                                                                                                                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`       | Required. A registered variant id.                                                                                                                                                                            |
+| `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                                                                               |
+| `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                                                                               |
+| `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells. Selected cells then show a background fill and check mark, and the blue ring marks only the focused cell. |
+| `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label.                                                          |
 
 Values must be symbols of the variant. Any other field fails the build.
 

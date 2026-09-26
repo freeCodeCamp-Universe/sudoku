@@ -175,13 +175,14 @@ selection, while Space and click toggle selected cells; the grid exposes
 `aria-multiselectable`. Selection can be controlled through `selectedIds` and
 `onSelectionChange`.
 
-`Cell` draws the solid blue ring (`data-ring`) on the focused cell, and in
+`Cell` draws the solid blue ring (`data-ring`, `--cell-ring-width` wide) on the focused cell in place of the browser focus outline, and in
 single mode on the selected cell, which is the focused one. In `multiple` mode
-(`Board` passes `multiSelect`), a selected cell instead gets `data-marked`: the
-`--cell-selection-bg` fill plus a `CheckIcon` in the given-digit color. Every
-cell carries an explicit `aria-selected` of `true` or `false`, and each toggle
-is spoken through the live region ("…, selected" / "…, not selected"), because
-screen readers don't reliably re-announce `aria-selected` on the focused cell.
+(`Board` passes `multiSelect`), a selected cell instead gets `data-marked` and a
+`--cell-selection-bg` fill and check mark; the focus ring stays on the active
+cell. Every cell carries an explicit `aria-selected` of `true` or `false`, and
+each toggle is spoken through the live region ("…, selected" / "…, not
+selected"), because screen readers don't reliably re-announce `aria-selected` on
+the focused cell.
 
 `Board` (`src/board/Board/`) renders cells through the resolved layout
 strategy's `cellRects(variant)`. The game and learn features own their page
