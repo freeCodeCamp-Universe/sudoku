@@ -8,6 +8,7 @@ export interface SettingsMenuProps {
   buttonLabel?: string;
   panelLabel?: string;
   panelId: string;
+  panelClassName?: string;
   buttonClassName: string;
   openButtonClassName?: string;
   children: ReactNode;
@@ -21,6 +22,7 @@ export function SettingsMenu({
   buttonLabel = 'Settings',
   panelLabel = 'Settings',
   panelId,
+  panelClassName,
   buttonClassName,
   openButtonClassName,
   children,
@@ -65,7 +67,12 @@ export function SettingsMenu({
         {trigger}
       </button>
       {open ? (
-        <div id={panelId} className={styles.panel} role="group" aria-label={panelLabel}>
+        <div
+          id={panelId}
+          className={[styles.panel, panelClassName].filter(Boolean).join(' ')}
+          role="group"
+          aria-label={panelLabel}
+        >
           {children}
         </div>
       ) : null}

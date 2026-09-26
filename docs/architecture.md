@@ -324,7 +324,11 @@ while Next is visible.
 
 On load, and on the focus-panel shortcut, the workspace focuses the panel's
 first focusable element (the board's active cell) and falls back to the
-`role="application"` container for a panel with no controls.
+`role="application"` container for a panel with no controls. The lesson settings
+menu's "Focus instructions panel when a lesson starts" toggle is off by default
+and persists in `localStorage`; when enabled, it focuses the instructions
+section on lesson load instead. Changing the toggle does not move focus until
+the next lesson load.
 
 ### Creating curriculum modules and lessons
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import type { ComponentType } from 'react';
@@ -11,7 +11,10 @@ import type {
 import { ThemeProvider } from '@/app/ThemeProvider/ThemeProvider';
 import { BoardPanel } from '@/learn/BoardPanel/BoardPanel';
 import { renderMarkdown } from '@/learn/Markdown/renderMarkdown';
-import { INITIAL_FOCUS_STORAGE_KEY } from '@/learn/hooks/useInitialFocusPreference';
+import {
+  INITIAL_FOCUS_PREFERENCE_EVENT,
+  INITIAL_FOCUS_STORAGE_KEY,
+} from '@/learn/hooks/useInitialFocusPreference';
 import { progressStore } from '@/learn/stores/progressStore';
 import { PlaceholderPanel } from '@/learn/PlaceholderPanel/PlaceholderPanel';
 import {
@@ -254,6 +257,28 @@ describe('LessonWorkspace', () => {
 
       const instructions = screen.getByRole('region', { name: /Delete a character/i });
       expect(instructions).toHaveFocus();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should not move focus when the initial focus preference changes mid-lesson', () => {
+    vi.useFakeTimers();
+
+    try {
+      renderWorkspace(boardLesson, 'terminal', BoardPanel);
+      vi.runAllTimers();
+
+      const boardCell = screen.getByRole('gridcell', { name: /row 1, column 1/i });
+      expect(boardCell).toHaveFocus();
+
+      act(() => {
+        localStorage.setItem(INITIAL_FOCUS_STORAGE_KEY, 'true');
+        window.dispatchEvent(new Event(INITIAL_FOCUS_PREFERENCE_EVENT));
+      });
+      vi.runAllTimers();
+
+      expect(boardCell).toHaveFocus();
     } finally {
       vi.useRealTimers();
     }

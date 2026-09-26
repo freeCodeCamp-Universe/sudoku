@@ -69,12 +69,14 @@ export function LessonWorkspace({
   const [resetKey, setResetKey] = useState(0);
   const pendingInteractiveFocus = useRef(false);
   const pendingInstructionsFocus = useRef(false);
+  const focusInstructionsOnLoadRef = useRef(focusInstructionsOnLoad);
   const interactiveRef = useRef<HTMLDivElement>(null);
   const instructionsRef = useRef<HTMLElement>(null);
   const isFirstTabRender = useRef(true);
   const [workArea, setWorkArea] = useState<HTMLDivElement | null>(null);
   const [hintToast, setHintToast] = useState<ToastItem | null>(null);
   const hintToastId = useRef(0);
+  focusInstructionsOnLoadRef.current = focusInstructionsOnLoad;
 
   // Land on the panel's first control (the board's active cell), falling back
   // to the workspace itself for a panel with nothing to focus.
@@ -107,7 +109,7 @@ export function LessonWorkspace({
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (cancelled) return;
-        if (focusInstructionsOnLoad) {
+        if (focusInstructionsOnLoadRef.current) {
           instructionsRef.current?.focus();
         } else {
           focusInteractivePanel();
@@ -117,7 +119,7 @@ export function LessonWorkspace({
     return () => {
       cancelled = true;
     };
-  }, [prose, focusInstructionsOnLoad, focusInteractivePanel]);
+  }, [lesson.id, prose, focusInteractivePanel]);
 
   const isCompleted = completed.includes(lesson.id);
 

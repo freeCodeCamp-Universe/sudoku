@@ -4,6 +4,10 @@
   gap: var(--space-xs);
 }
 
+.settings-panel {
+  min-inline-size: 360px;
+}
+
 .desktopOnly {
   display: none;
 }

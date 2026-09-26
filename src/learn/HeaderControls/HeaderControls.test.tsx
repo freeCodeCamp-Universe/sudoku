@@ -5,6 +5,8 @@ import { courseChrome } from '@/learn/stores/courseChromeStore';
 import cfg from '@/../donation-config.json';
 import { HeaderControls } from '@/learn/HeaderControls/HeaderControls';
 import { ThemeProvider } from '@/app/ThemeProvider';
+import { INITIAL_FOCUS_STORAGE_KEY } from '@/learn/hooks/useInitialFocusPreference';
+import styles from '@/learn/HeaderControls/HeaderControls.module.css';
 
 afterEach(() => {
   localStorage.clear();
@@ -78,6 +80,26 @@ describe('HeaderControls', () => {
     expect(screen.getByRole('switch', { name: 'Keyboard shortcuts' })).toBeInTheDocument();
     expect(screen.queryByRole('switch', { name: 'Animations' })).not.toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'High contrast' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('switch', { name: 'Focus instructions panel when a lesson starts' })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Settings' })).toHaveClass(styles['settings-panel']);
+  });
+
+  it('should persist the focus instructions preference when toggled', async () => {
+    const user = userEvent.setup();
+    renderControls();
+
+    await user.click(screen.getByRole('button', { name: 'Settings' }));
+    const focusToggle = screen.getByRole('switch', {
+      name: 'Focus instructions panel when a lesson starts',
+    });
+
+    expect(focusToggle).not.toBeChecked();
+    await user.click(focusToggle);
+
+    expect(focusToggle).toBeChecked();
+    expect(localStorage.getItem(INITIAL_FOCUS_STORAGE_KEY)).toBe('true');
   });
 
   it('should close the settings dropdown with Escape and restore focus', async () => {

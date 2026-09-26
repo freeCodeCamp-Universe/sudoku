@@ -5,6 +5,7 @@ import { useTheme } from '@/app/ThemeProvider';
 import { ThemeToggleButton } from '@/components/ThemeToggleButton';
 import { GearIcon, KeyboardIcon, ListIcon } from '@/components/icons';
 import { Button } from '@/components/Button';
+import { useInitialFocusPreference } from '@/learn/hooks/useInitialFocusPreference';
 import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
 import styles from '@/learn/HeaderControls/HeaderControls.module.css';
@@ -26,6 +27,7 @@ export function HeaderControls({
 }: HeaderControlsProps) {
   const { openDrawer, openShortcuts, openSettings, closeSettings, settingsOpen } =
     useCourseChrome();
+  const { focusInstructionsOnLoad, setFocusInstructionsOnLoad } = useInitialFocusPreference();
   const { shortcutsEnabled, setShortcutsEnabled } = useShortcutsPreference();
   const { theme, toggleTheme, highContrast, toggleHighContrast } = useTheme();
 
@@ -57,6 +59,7 @@ export function HeaderControls({
           onToggle={() => (settingsOpen ? closeSettings() : openSettings())}
           onClose={closeSettings}
           panelId="learn-settings-panel"
+          panelClassName={styles['settings-panel']}
           buttonClassName={styles.action}
           openButtonClassName={styles.open}
           trigger={<GearIcon />}
@@ -83,6 +86,12 @@ export function HeaderControls({
             label="Keyboard shortcuts"
             checked={shortcutsEnabled}
             onChange={() => setShortcutsEnabled(!shortcutsEnabled)}
+          />
+          <Toggle
+            id="learn-settings-focus-instructions"
+            label="Focus instructions panel when a lesson starts"
+            checked={focusInstructionsOnLoad}
+            onChange={() => setFocusInstructionsOnLoad(!focusInstructionsOnLoad)}
           />
           <Toggle
             id="learn-settings-high-contrast"
