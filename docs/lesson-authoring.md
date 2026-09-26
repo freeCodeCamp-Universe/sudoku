@@ -116,21 +116,11 @@ The allowlist is `LESSON_HTML_OPTIONS` in `src/curriculum/sanitize.ts`.
 
 ## Images
 
-Every `<img>` needs an `alt` attribute, or the build fails. Describe what the image shows. Use `alt=""` when the image is decorative or its meaning is already in the text.
-
-```html
-<img
-  src="/images/learn/houses.svg"
-  alt="Three 9 by 9 grids side by side. The first shades the fifth row, the second shades the fifth column, and the third shades the center 3 by 3 box."
-  width="404"
-  height="168"
-/>
-```
+Use Markdown image syntax, `![description](/images/learn/<file>)`, rather than writing an `<img>` tag. The description becomes the image's `alt` text; use `![](...)` when the image is decorative or its meaning is already in the text.
 
 - Put local images in `public/images/learn/` and reference them from the site root, as `/images/learn/<file>`.
 - Remote images must use `https`. They add a third-party request for every learner and can change or disappear, so prefer local files for anything the lesson depends on.
-- Set `width` and `height` so the page does not shift while the image loads. The image shrinks to fit narrow columns and keeps its aspect ratio.
-- Markdown syntax like `![alt text](/images/learn/houses.svg)` also works and always produces an `alt`, but it cannot set `width` or `height`.
+- Images shrink to fit narrow columns and keep their aspect ratio. Markdown image syntax does not set `width` or `height`.
 - Text inside an image is invisible to screen readers. Put anything the learner must read into the `alt` or the prose.
 
 ## Config block
