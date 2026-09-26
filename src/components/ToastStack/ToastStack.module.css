@@ -22,9 +22,12 @@
   inset-block-start: 0;
 }
 
+/* Inside a clipping container, the toast rises out of the container's bottom edge. */
 .stack[data-container][data-placement='bottom'] {
+  --toast-edge-offset: var(--space-md);
+
   inset-block-start: auto;
-  inset-block-end: 0;
+  inset-block-end: var(--toast-edge-offset);
 }
 
 .toast {
@@ -69,6 +72,14 @@
   .toast[data-placement='bottom'][data-closing] {
     transform: translateY(8px);
   }
+
+  .stack[data-container][data-placement='bottom'] .toast {
+    animation-name: toast-in-edge;
+  }
+
+  .stack[data-container][data-placement='bottom'] .toast[data-closing] {
+    transform: translateY(calc(100% + var(--toast-edge-offset)));
+  }
 }
 
 @keyframes toast-in {
@@ -79,6 +90,16 @@
 
   to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in-edge {
+  from {
+    transform: translateY(calc(100% + var(--toast-edge-offset)));
+  }
+
+  to {
     transform: translateY(0);
   }
 }

@@ -176,6 +176,22 @@ fill is the binding pair at 3.21:1) and `#08306b` light (navy — the error fill
 luminance 0.256 caps the ring at L ≈ 0.052, which forces it well past the standard
 blue toward black).
 
+## Multi-select fill
+
+In a multi-select board, a selected cell shows `--cell-selection-bg` plus a check
+mark in the given-digit color (`--text-subtle`, `#0a0a23` in the light palettes).
+The blue ring is kept for focus. The check mark carries the selected state and
+gates at 3:1 on the fill in all four palettes. `--cell-selection-bg` sits in
+`CELL_BGS`, so every text role gates at 4.5:1 on it, and in high contrast the
+grid lines and focus ring gate at 3:1 on it.
+
+The fill against the plain cell is an accepted advisory in all four palettes
+(about 1.3:1 to 1.8:1). It hits the same limit as the overlap tints: a fill at
+3:1 against the base leaves no room for 4.5:1 digit text. In high contrast, the
+narrow window that remains is the region fills' luminance rung, where the
+selection fill would read the same as a region. The fill reinforces the check
+mark and is never the only cue.
+
 ## Board clue text
 
 `--board-clue-text` colors outer board clues (the skyscraper gutter numbers) on the

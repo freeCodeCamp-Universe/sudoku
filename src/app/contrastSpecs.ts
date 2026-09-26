@@ -55,6 +55,7 @@ const CELL_BGS = [
   '--cell-peer-even-bg',
   '--cell-peer-odd-bg',
   '--cell-same-value-bg',
+  '--cell-selection-bg',
   '--cell-special-bg',
   '--cell-diagonal-bg',
   '--cell-window-bg',
@@ -165,6 +166,10 @@ const ACCEPTED_FAILURES = new Set<string>([
       (fill) => `${theme}|overlap fill ${fill} vs base`
     )
   ),
+  // The multi-select fill reinforces the check mark, which carries the state
+  // (gated above). A fill at 3:1 vs base would leave no room for 4.5:1 digit
+  // text, the same squeeze as the overlap tints.
+  ...THEMES.map((theme) => `${theme}|selection fill vs base`),
   'light|even bg vs odd bg',
   'light|peer-even bg vs peer-odd bg',
   'light|error bg vs base',
@@ -272,6 +277,22 @@ export const contrastPairs: ContrastPair[] = [
     {
       label: 'selection ring vs base',
       fg: '--cell-selected-border',
+      bg: refFor(BASE, theme),
+      threshold: UI_AA,
+      theme,
+    },
+    // Multi-select marks a selected cell with a fill plus a check mark in the
+    // given-digit color. The check mark carries the state; the fill reinforces it.
+    {
+      label: 'selection check mark on --cell-selection-bg',
+      fg: refFor(TEXT.given, theme),
+      bg: '--cell-selection-bg',
+      threshold: UI_AA,
+      theme,
+    },
+    {
+      label: 'selection fill vs base',
+      fg: '--cell-selection-bg',
       bg: refFor(BASE, theme),
       threshold: UI_AA,
       theme,

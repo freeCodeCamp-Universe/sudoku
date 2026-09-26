@@ -1,23 +1,18 @@
 import { useEffect } from 'react';
-import { initChecklist } from '@/curriculum/lessonProgress';
 import type { InteractivePanelProps } from '@/learn/LessonWorkspace/LessonWorkspace';
 import styles from '@/learn/PlaceholderPanel/PlaceholderPanel.module.css';
 
 /**
- * Stub interactive panel. Renders a styled placeholder and immediately marks
- * all checklist items as complete so the lesson flow works out of the box.
+ * Stub interactive panel. Renders a styled placeholder and immediately reports
+ * the lesson complete so the lesson flow works out of the box.
  *
  * Replace this component with your own when building a real course.
  * See architecture.md → "Replacing the placeholder panel".
  */
-export function PlaceholderPanel({ lesson, onUpdate, onReset: _onReset }: InteractivePanelProps) {
+export function PlaceholderPanel({ onUpdate }: InteractivePanelProps) {
   useEffect(() => {
-    const checklist = initChecklist(lesson.config.checklist).map((item) => ({
-      ...item,
-      status: 'completed' as const,
-    }));
-    onUpdate({ checklist, complete: true });
-  }, [lesson, onUpdate]);
+    onUpdate({ complete: true });
+  }, [onUpdate]);
 
   return (
     <div className={styles.placeholder}>

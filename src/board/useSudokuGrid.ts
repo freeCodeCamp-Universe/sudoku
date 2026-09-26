@@ -463,19 +463,29 @@ export function useSudokuGrid({
     },
     [cellSelection, onSelectionChange]
   );
+  // Screen readers don't reliably re-announce aria-selected on the focused
+  // cell, so the live region speaks each toggle.
   const toggleSelection = useCallback(
     (id: CellId) => {
       const nextIds = new Set(effectiveSelectedIds);
+      const selecting = !nextIds.has(id);
 
-      if (nextIds.has(id)) {
-        nextIds.delete(id);
-      } else {
+      if (selecting) {
         nextIds.add(id);
+      } else {
+        nextIds.delete(id);
       }
 
       commitSelection(nextIds);
+
+      const cell = cellsById.get(id);
+      if (cell) {
+        announce(
+          `${formatLocation(cell, boxNumberByCell.get(id))}, ${selecting ? 'selected' : 'not selected'}`
+        );
+      }
     },
-    [commitSelection, effectiveSelectedIds]
+    [announce, boxNumberByCell, cellsById, commitSelection, effectiveSelectedIds]
   );
 
   const handleKey = useCallback(

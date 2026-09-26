@@ -15,6 +15,13 @@ export type BoardLessonInput =
   | { type: 'selection'; selectedIds: Set<CellId> };
 
 /**
+ * What an input means for the topmost unmet requirement: show that
+ * requirement's hint, clear any hint on screen because the input met it, or
+ * say nothing.
+ */
+export type InputReview = { kind: 'hint'; index: number } | { kind: 'clear' } | { kind: 'none' };
+
+/**
  * The interface an interactive panel's engine must implement.
  *
  * `S` is the engine state type. The engine is purely functional — every method
@@ -32,8 +39,8 @@ export interface LessonEngine<S, I = unknown> {
   /** Evaluate all checklist requirements against the current state. */
   checkRequirements(state: S, requirements: ChecklistRequirement[]): CheckResult[];
 
-  /** Return a human-readable explanation of why a requirement is not yet met. */
-  explainIncomplete(state: S, requirement: ChecklistRequirement): string;
+  /** Judge one input by the states before and after it. */
+  reviewInput(previous: S, next: S, input: I, requirements: ChecklistRequirement[]): InputReview;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -84,6 +91,87 @@ function requirementPasses(
   return false;
 }
 
+/** Matching cells or candidates minus wrong ones, so an input's direction can be compared. */
+function requirementScore(
+  state: BoardLessonState,
+  requirement: ChecklistRequirement,
+  solution: Solution
+): number {
+  const { test } = requirement;
+  const score = (actual: Iterable<unknown>, expected: Set<unknown>) =>
+    [...actual].reduce<number>((total, item) => total + (expected.has(item) ? 1 : -1), 0);
+
+  if (Array.isArray(test.selected)) {
+    return score(state.selectedIds, new Set(test.selected));
+  }
+
+  if (isRecord(test.values)) {
+    return Object.entries(test.values).reduce((total, [cellId, value]) => {
+      const actual = state.values.get(cellId);
+      return actual === undefined ? total : total + (actual === value ? 1 : -1);
+    }, 0);
+  }
+
+  if (isRecord(test.candidates)) {
+    return Object.entries(test.candidates).reduce(
+      (total, [cellId, value]) =>
+        total +
+        score(state.candidates.get(cellId) ?? [], new Set(Array.isArray(value) ? value : [])),
+      0
+    );
+  }
+
+  if (test.solved === true) {
+    return [...state.values].reduce((total, [cellId, value]) => {
+      const expected = solution.get(cellId);
+      return expected === undefined ? total : total + (expected === value ? 1 : -1);
+    }, 0);
+  }
+
+  return 0;
+}
+
+/** A `selected` test grades selection input; every other test grades board input. */
+function inputKindFor(requirement: ChecklistRequirement): BoardLessonInput['type'] {
+  return Array.isArray(requirement.test.selected) ? 'selection' : 'board';
+}
+
+function reviewBoardInput(
+  previous: BoardLessonState,
+  next: BoardLessonState,
+  input: BoardLessonInput,
+  requirements: ChecklistRequirement[],
+  solution: Solution
+): InputReview {
+  const unchanged =
+    input.type === 'selection'
+      ? sameSet(previous.selectedIds, next.selectedIds)
+      : previous === next;
+  if (unchanged) {
+    return { kind: 'none' };
+  }
+
+  const firstUnmet = (state: BoardLessonState) =>
+    requirements.findIndex((requirement) => !requirementPasses(state, requirement, solution));
+  const target = firstUnmet(next);
+  const previousTarget = firstUnmet(previous);
+
+  if (target === -1 || (previousTarget !== -1 && target > previousTarget)) {
+    return { kind: 'clear' };
+  }
+
+  const requirement = requirements[target];
+  if (inputKindFor(requirement) !== input.type) {
+    return { kind: 'none' };
+  }
+
+  const progressed =
+    target === previousTarget &&
+    requirementScore(next, requirement, solution) >
+      requirementScore(previous, requirement, solution);
+  return progressed ? { kind: 'none' } : { kind: 'hint', index: target };
+}
+
 export function createBoardLessonEngine(
   givens: Values,
   solution: Solution
@@ -104,10 +192,8 @@ export function createBoardLessonEngine(
         passed: requirementPasses(state, requirement, solution),
       }));
     },
-    explainIncomplete(state, requirement) {
-      return requirementPasses(state, requirement, solution)
-        ? ''
-        : `Complete "${requirement.label}" on the board.`;
+    reviewInput(previous, next, input, requirements) {
+      return reviewBoardInput(previous, next, input, requirements, solution);
     },
   };
 }
@@ -127,7 +213,7 @@ export const stubEngine: LessonEngine<StubState> = {
   checkRequirements(_, requirements) {
     return requirements.map(() => ({ passed: true }));
   },
-  explainIncomplete() {
-    return '';
+  reviewInput() {
+    return { kind: 'none' };
   },
 };

@@ -301,7 +301,31 @@ describe('useSudokuGrid', () => {
 
     expect(cell.getAttribute('aria-selected')).toBe('true');
     await user.keyboard(' ');
-    expect(cell.getAttribute('aria-selected')).toBeNull();
+    expect(cell.getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('should announce each selection toggle in multiple-selection mode', () => {
+    vi.useFakeTimers();
+
+    try {
+      render(React.createElement(TestBoard, { cellSelection: 'multiple' }));
+
+      const cell = screen.getByRole('gridcell', { name: 'Row 1, column 1, box 1, empty' });
+      fireEvent.focus(cell);
+      fireEvent.keyDown(cell, { key: ' ' });
+      act(() => {
+        vi.runAllTimers();
+      });
+      expect(screen.getByRole('status')).toHaveTextContent('Row 1, column 1, box 1, selected');
+
+      fireEvent.keyDown(cell, { key: ' ' });
+      act(() => {
+        vi.runAllTimers();
+      });
+      expect(screen.getByRole('status')).toHaveTextContent('Row 1, column 1, box 1, not selected');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should keep the selection when arrow keys move focus in multiple-selection mode', () => {
@@ -314,7 +338,7 @@ describe('useSudokuGrid', () => {
 
     const nextCell = screen.getByRole('gridcell', { name: 'Row 1, column 2, box 1, empty' });
     expect(firstCell.getAttribute('aria-selected')).toBe('true');
-    expect(nextCell.getAttribute('aria-selected')).toBeNull();
+    expect(nextCell.getAttribute('aria-selected')).toBe('false');
     expect(nextCell.getAttribute('data-focused')).toBe('true');
   });
 
@@ -327,7 +351,7 @@ describe('useSudokuGrid', () => {
     expect(cell.getAttribute('aria-selected')).toBe('true');
 
     await user.click(cell);
-    expect(cell.getAttribute('aria-selected')).toBeNull();
+    expect(cell.getAttribute('aria-selected')).toBe('false');
   });
 
   it('should call onSelectionChange with the new selection', async () => {
@@ -362,7 +386,7 @@ describe('useSudokuGrid', () => {
     const nextCell = screen.getByRole('gridcell', { name: 'Row 1, column 2, box 1, empty' });
     fireEvent.keyDown(nextCell, { key: '4' });
 
-    expect(firstCell.getAttribute('aria-selected')).toBeNull();
+    expect(firstCell.getAttribute('aria-selected')).toBe('false');
     expect(onEnterValue).toHaveBeenCalledWith('r0c1', 4);
   });
 

@@ -120,6 +120,7 @@ export function Board({
                   revealed={state.revealed}
                   focused={state.focused}
                   selected={state.selected}
+                  multiSelect={grid.cellSelection === 'multiple'}
                   conflict={state.conflict}
                   correct={state.correct}
                   sameValue={state.sameValue}

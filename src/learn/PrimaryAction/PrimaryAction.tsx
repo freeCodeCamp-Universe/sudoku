@@ -11,28 +11,20 @@ export interface PrimaryActionProps {
   isCapstone?: boolean;
   /** Advance to the next lesson, or return to Home on the completed capstone. */
   onAdvance: () => void;
-  /** Report the attempt when the lesson is not finished; no navigation happens. */
-  onBlocked?: () => void;
 }
 
 /**
  * The single primary control for a completed lesson, bound to the platform's
- * modifier key plus Enter. An unfinished lesson has no visible advance control,
- * but its shortcut still reports the blocked attempt so the workspace can explain
- * what is still missing.
+ * modifier key plus Enter. An unfinished lesson has no advance control, and the
+ * shortcut only works while the control is on screen.
  */
-export function PrimaryAction({
-  complete,
-  isCapstone = false,
-  onAdvance,
-  onBlocked,
-}: PrimaryActionProps) {
+export function PrimaryAction({ complete, isCapstone = false, onAdvance }: PrimaryActionProps) {
   const { shortcutsEnabled } = useShortcutsPreference();
   const modifier = usePlatformModifier();
   const label = isCapstone ? 'Finish' : 'Next';
 
   useEffect(() => {
-    if (!shortcutsEnabled) {
+    if (!shortcutsEnabled || !complete) {
       return;
     }
 
@@ -41,16 +33,12 @@ export function PrimaryAction({
         return;
       }
       event.preventDefault();
-      if (complete) {
-        onAdvance();
-      } else {
-        onBlocked?.();
-      }
+      onAdvance();
     }
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [shortcutsEnabled, complete, onAdvance, onBlocked]);
+  }, [shortcutsEnabled, complete, onAdvance]);
 
   if (!complete) {
     return null;

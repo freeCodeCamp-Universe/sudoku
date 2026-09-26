@@ -49,6 +49,34 @@ describe('Cell', () => {
     expect(screen.getByRole('gridcell')).not.toHaveAttribute('data-selected');
   });
 
+  it('should ring the selected cell with single selection, without a check mark', () => {
+    render(<Cell {...baseProps} selected />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-ring', 'true');
+    expect(cell).not.toHaveAttribute('data-marked');
+    expect(screen.queryByTestId('cell-selection-mark')).not.toBeInTheDocument();
+  });
+
+  it('should mark a selected cell with a check mark instead of the ring in multi-select', () => {
+    render(<Cell {...baseProps} selected multiSelect />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-marked', 'true');
+    expect(cell).not.toHaveAttribute('data-ring');
+    expect(cell).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByTestId('cell-selection-mark')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('should ring the focused cell and report it unselected in multi-select', () => {
+    render(<Cell {...baseProps} focused multiSelect />);
+
+    const cell = screen.getByRole('gridcell');
+    expect(cell).toHaveAttribute('data-ring', 'true');
+    expect(cell).toHaveAttribute('aria-selected', 'false');
+    expect(screen.queryByTestId('cell-selection-mark')).not.toBeInTheDocument();
+  });
+
   it('should apply the conflict modifier when conflict=true', () => {
     render(<Cell {...baseProps} value={5} conflict />);
 

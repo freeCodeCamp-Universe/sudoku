@@ -20,23 +20,19 @@ const LESSON: ClientInteractiveLessonDefinition = {
 
 describe('PlaceholderPanel', () => {
   it('should render the placeholder text', () => {
-    render(<PlaceholderPanel lesson={LESSON} onUpdate={vi.fn()} onReset={vi.fn()} />);
+    render(
+      <PlaceholderPanel lesson={LESSON} onUpdate={vi.fn()} onReset={vi.fn()} onHint={vi.fn()} />
+    );
 
     expect(screen.getByText(/replace this component/i)).toBeInTheDocument();
   });
 
-  it('should immediately mark all checklist items as complete', () => {
+  it('should immediately report the lesson complete', () => {
     const onUpdate = vi.fn();
-    render(<PlaceholderPanel lesson={LESSON} onUpdate={onUpdate} onReset={vi.fn()} />);
-
-    expect(onUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        complete: true,
-        checklist: expect.arrayContaining([
-          expect.objectContaining({ label: 'Item one', status: 'completed' }),
-          expect.objectContaining({ label: 'Item two', status: 'completed' }),
-        ]),
-      })
+    render(
+      <PlaceholderPanel lesson={LESSON} onUpdate={onUpdate} onReset={vi.fn()} onHint={vi.fn()} />
     );
+
+    expect(onUpdate).toHaveBeenCalledWith({ complete: true });
   });
 });

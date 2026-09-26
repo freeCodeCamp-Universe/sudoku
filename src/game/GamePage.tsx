@@ -35,7 +35,7 @@ import { GameProvider } from './GameProvider';
 import { useResponsiveCellSize } from './useResponsiveCellSize';
 import { NumberPad } from '@/board/NumberPad';
 import { Timer } from './Timer';
-import { ToastStack } from './ToastStack';
+import { ToastStack } from '@/components/ToastStack';
 import { Toolbar } from './Toolbar';
 import { usePersistence } from './usePersistence';
 import { clearProgress, loadProgress, saveProgress } from './useProgressPersistence';

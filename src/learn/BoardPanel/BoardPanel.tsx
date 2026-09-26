@@ -9,9 +9,7 @@ import { usePlayableBoard } from '@/board/usePlayableBoard';
 import { useElementSize } from '@/hooks/useElementSize';
 import type { ClientInteractiveLessonDefinition, LessonBoardConfig } from '@/curriculum/types';
 import { createBoardLessonEngine } from '@/curriculum/lessonEngine';
-import type { BoardLessonInput, BoardLessonState } from '@/curriculum/lessonEngine';
-import { initChecklist } from '@/curriculum/lessonProgress';
-import type { LessonSnapshot } from '@/learn/hooks/useLesson';
+import type { BoardLessonInput, BoardLessonState, InputReview } from '@/curriculum/lessonEngine';
 import type { InteractivePanelProps } from '@/learn/LessonWorkspace/LessonWorkspace';
 import { useTheme } from '@/app/ThemeProvider/context';
 import type { Variant } from '@/engine/types';
@@ -23,9 +21,22 @@ interface BoardPanelContentProps {
   boardConfig: LessonBoardConfig;
   variant: Variant;
   onUpdate: InteractivePanelProps['onUpdate'];
+  onHint: InteractivePanelProps['onHint'];
 }
 
-function BoardPanelContent({ lesson, boardConfig, variant, onUpdate }: BoardPanelContentProps) {
+/** The board plus a fresh review object per input, so a repeated hint still fires. */
+interface PanelState {
+  board: BoardLessonState;
+  review: InputReview;
+}
+
+function BoardPanelContent({
+  lesson,
+  boardConfig,
+  variant,
+  onUpdate,
+  onHint,
+}: BoardPanelContentProps) {
   const givens = useMemo(() => new Map(Object.entries(boardConfig.givens)), [boardConfig.givens]);
   const solution = useMemo(
     () => new Map(Object.entries(boardConfig.solution)),
@@ -36,10 +47,17 @@ function BoardPanelContent({ lesson, boardConfig, variant, onUpdate }: BoardPane
     [variant, givens, solution]
   );
   const engine = useMemo(() => createBoardLessonEngine(givens, solution), [givens, solution]);
-  const [state, dispatch] = useReducer(
-    (current: BoardLessonState, input: BoardLessonInput) => engine.feed(current, input),
+  const requirements = lesson.config.checklist;
+  const [{ board: state, review }, dispatch] = useReducer(
+    (current: PanelState, input: BoardLessonInput): PanelState => {
+      const next = engine.feed(current.board, input);
+      return {
+        board: next,
+        review: engine.reviewInput(current.board, next, input, requirements),
+      };
+    },
     undefined,
-    () => engine.seed(lesson)
+    (): PanelState => ({ board: engine.seed(lesson), review: { kind: 'none' } })
   );
   const dispatchBoard = useCallback(
     (action: Parameters<typeof boardReducer>[1]) => dispatch({ type: 'board', action }),
@@ -70,17 +88,20 @@ function BoardPanelContent({ lesson, boardConfig, variant, onUpdate }: BoardPane
   });
 
   useEffect(() => {
-    const results = engine.checkRequirements(state, lesson.config.checklist);
-    const checklist = initChecklist(lesson.config.checklist).map((item, index) => ({
-      ...item,
-      status: results[index].passed ? ('completed' as const) : ('not-done' as const),
-    }));
-    const snapshot: LessonSnapshot = {
-      checklist,
-      complete: results.every((result) => result.passed),
-    };
-    onUpdate(snapshot);
-  }, [engine, lesson.config.checklist, onUpdate, state]);
+    const results = engine.checkRequirements(state, requirements);
+    onUpdate({ complete: results.every((result) => result.passed) });
+  }, [engine, requirements, onUpdate, state]);
+
+  useEffect(() => {
+    if (review.kind === 'clear') {
+      onHint(null);
+    } else if (review.kind === 'hint') {
+      const { hint } = requirements[review.index];
+      if (hint) {
+        onHint(hint);
+      }
+    }
+  }, [onHint, requirements, review]);
 
   return (
     <div className={styles.panel}>
@@ -99,7 +120,7 @@ function BoardPanelContent({ lesson, boardConfig, variant, onUpdate }: BoardPane
   );
 }
 
-export function BoardPanel({ lesson, onUpdate }: InteractivePanelProps) {
+export function BoardPanel({ lesson, onUpdate, onHint }: InteractivePanelProps) {
   const boardConfig = lesson.config.board;
   if (!boardConfig) {
     throw new Error(`Lesson ${lesson.id} does not have a board configuration`);
@@ -116,6 +137,7 @@ export function BoardPanel({ lesson, onUpdate }: InteractivePanelProps) {
       boardConfig={boardConfig}
       variant={variant}
       onUpdate={onUpdate}
+      onHint={onHint}
     />
   );
 }

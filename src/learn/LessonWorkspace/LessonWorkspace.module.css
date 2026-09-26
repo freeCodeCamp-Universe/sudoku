@@ -148,13 +148,6 @@
   flex-direction: column;
 }
 
-/* ── Instructions panel content ─────────────────────────────────────────── */
-
-.instruction-body {
-  display: flex;
-  flex-direction: column;
-}
-
 /* ── Controls ────────────────────────────────────────────────────────────── */
 
 .controls {
@@ -177,7 +170,20 @@
   justify-content: flex-end;
 }
 
-.terminal > :first-child {
+/*
+ * The panel's working area, above the toolbar. It anchors the hint toast and
+ * clips it, so the toast slides out of the edge shared with the toolbar.
+ */
+.work-area {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.work-area > :first-child {
   flex: 1;
   min-block-size: 0;
 }

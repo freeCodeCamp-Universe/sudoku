@@ -53,6 +53,7 @@ _Generated from `src/app/theme.css` and `src/app/colorSpecs.ts`. Run `pnpm docs:
 | `--cell-peer-bg` | #272948 | #ededf6 | #272948 | #ededf6 |
 | `--cell-peer-structural-bg` | #2e2e44 | #d8d8f0 | #2e2e44 | #d8d8f0 |
 | `--cell-same-value-bg` | #1a4f4f | #cdeaea | #1a4f4f | #cdeaea |
+| `--cell-selection-bg` | #2c3f66 | #d6e6fa | #2c3f66 | #d6e6fa |
 | `--cell-error-bg` | #2a1515 | #f8dede | #8a5252 | #cc7070 |
 | `--numpad-chip-label` | #000000 | #000000 | #000000 | #ffffff |
 | `--numpad-chip-label-bright` | #000000 | #000000 | #000000 | #000000 |

@@ -59,6 +59,7 @@
   --cell-peer-bg: #272948;
   --cell-peer-structural-bg: #2e2e44;
   --cell-same-value-bg: #1a4f4f;
+  --cell-selection-bg: #2c3f66;
   --cell-error-bg: #2a1515;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;
@@ -174,6 +175,7 @@
   --cell-peer-bg: #ededf6;
   --cell-peer-structural-bg: #d8d8f0;
   --cell-same-value-bg: #cdeaea;
+  --cell-selection-bg: #d6e6fa;
   --cell-error-bg: #f8dede;
   --numpad-chip-label: #000000;
   --numpad-chip-label-bright: #000000;

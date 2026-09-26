@@ -1,5 +1,6 @@
 import type React from 'react';
 import type { SymbolValue } from '@/engine/types';
+import { CheckIcon } from '@/components/icons';
 import type { MarkerEdge } from '@/board/boardTypes';
 import type { OverlapCount } from '@/board/overlapCounts';
 import styles from './Cell.module.css';
@@ -18,6 +19,11 @@ interface CellProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'
   revealed?: boolean;
   focused: boolean;
   selected: boolean;
+  /**
+   * The grid allows selecting several cells. Selection then shows as a fill
+   * and check mark, leaving the ring to the focused cell alone.
+   */
+  multiSelect?: boolean;
   conflict: boolean;
   correct?: boolean;
   sameValue?: boolean;
@@ -69,6 +75,7 @@ export function Cell({
   revealed = false,
   focused,
   selected,
+  multiSelect = false,
   conflict,
   correct,
   sameValue = false,
@@ -100,6 +107,9 @@ export function Cell({
 }: CellProps) {
   const { row, col } = parseCellCoordinates(id);
   const candidateColumns = Math.max(1, Math.ceil(Math.sqrt(symbols.length)));
+  // Single selection follows focus, so the selected cell carries the ring.
+  const ring = focused || (selected && !multiSelect);
+  const marked = selected && multiSelect;
 
   return (
     <div
@@ -111,6 +121,8 @@ export function Cell({
       data-revealed={revealed || undefined}
       data-focused={focused || undefined}
       data-selected={selected || undefined}
+      data-ring={ring || undefined}
+      data-marked={marked || undefined}
       data-conflict={conflict || undefined}
       data-correct={correct === true || undefined}
       data-incorrect={correct === false || undefined}
@@ -134,13 +146,16 @@ export function Cell({
       data-even={even || undefined}
       data-odd={odd || undefined}
       data-caged={caged || undefined}
-      aria-selected={selected || undefined}
+      aria-selected={multiSelect ? selected : selected || undefined}
       aria-readonly={given || undefined}
       className={[styles.cell, className].filter(Boolean).join(' ')}
       onClick={onClick}
       {...rest}
     >
       <span className="sr-only">{description}</span>
+      {marked ? (
+        <CheckIcon className={styles.selectionMark} data-testid="cell-selection-mark" />
+      ) : null}
       {value !== undefined ? (
         symbolKind === 'color' ? (
           <>

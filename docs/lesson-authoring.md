@@ -51,7 +51,7 @@ Any other `# --name--` marker fails the build.
 
 **Layout**
 
-A lesson is **interactive** when it has a `# --config--` section, or when it declares `layoutType: interactive` and has a `# --files--` section. An interactive lesson shows the instructions and checklist beside the interactive panel. Every other lesson is an **article**, a centered prose column with an outline built from its H2 and H3 headings.
+A lesson is **interactive** when it has a `# --config--` section, or when it declares `layoutType: interactive` and has a `# --files--` section. An interactive lesson shows the instructions beside the interactive panel. Every other lesson is an **article**, a centered prose column with an outline built from its H2 and H3 headings.
 
 ## Instructions
 
@@ -142,7 +142,7 @@ The `# --config--` section holds one code fence labeled `json`. Any other label,
 
 ```json
 {
-  // Each checklist item appears under the instructions.
+  // Each checklist item is a requirement the learner must meet.
   "checklist": [
     {
       "label": "See the three kinds of house",
@@ -179,13 +179,13 @@ Cell ids use the 1-based rc notation learners see, so `"r1c1"` is the top-left c
 }
 ```
 
-| Field           | Notes                                                                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`       | Required. A registered variant id.                                                                                                                   |
-| `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                      |
-| `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                      |
-| `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells.                                                  |
-| `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label. |
+| Field           | Notes                                                                                                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`       | Required. A registered variant id.                                                                                                                                                                   |
+| `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                                                                      |
+| `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                                                                      |
+| `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells. Selected cells then show a fill and a check mark, and the blue ring marks only the focused cell. |
+| `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label.                                                 |
 
 Values must be symbols of the variant. Any other field fails the build.
 
@@ -195,8 +195,10 @@ Variants with a `deriveStructure` or `deriveGutters` hook (killer, jigsaw, arrow
 
 Structure: `{ "label": "...", "hint": "...", "test": { ... } }`. `hint` is optional.
 
-- **`label`** appears in the checklist. Name the action the learner completes.
-- **`hint`** appears under an unfinished item when the learner tries to go to the next lesson before finishing it. It must start with `You can` or `You should`, or `curriculumIntegrity.test.ts` fails.
+Learners don't see the checklist. Each item is a requirement, and the Next button appears once every requirement passes. Because learners don't see the list, the instructions must say what to do.
+
+- **`label`** names the action the learner completes. Only authors and tests read it.
+- **`hint`** appears in a toast at the bottom of the interactive panel when the learner's input misses the item. It must start with `You can` or `You should`, or `curriculumIntegrity.test.ts` fails. An item without a hint never shows a toast, so give every board item one.
 - **`test`** is graded by the panel's `LessonEngine` (`src/curriculum/lessonEngine.ts`). The placeholder panel ignores it.
 
 A lesson with a `board` grades its checklist live after every value, candidate, or selection change. Give each item exactly one of these tests:
@@ -207,6 +209,17 @@ A lesson with a `board` grades its checklist live after every value, candidate, 
 | `{ "values": { "r1c1": 5 } }`          | Each listed cell holds that value. Other cells don't matter.       |
 | `{ "candidates": { "r1c1": [2, 5] } }` | Each listed cell has exactly these candidates. An extra one fails. |
 | `{ "solved": true }`                   | Every cell matches `solution`.                                     |
+
+### When hints show
+
+Items are checked from the top of the list, and only the topmost unfinished item can show its hint:
+
+- An input that misses that item shows its hint. For a `selected` test, a miss is a selection change that doesn't add a target cell. For the other tests, a miss is a board entry that doesn't fill or fix a listed cell.
+- An input that moves toward the item shows nothing, so selecting the third of nine target cells stays quiet.
+- A `selected` test ignores board entries, and the other tests ignore selection changes. Selecting a cell before typing into it never shows a hint.
+- Meeting the item clears the hint. The next miss shows the hint of the item below it.
+
+Lessons `102.md` (a `selected` test) and `103.md` (two `values` tests) show both patterns.
 
 ## Authoring a board
 

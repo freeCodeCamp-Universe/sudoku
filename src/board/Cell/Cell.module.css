@@ -131,13 +131,13 @@
   pointer-events: none;
 }
 
-/* Box boundaries draw on ::after (free while the cell is unselected), one
+/* Box boundaries draw on ::after (free while the cell has no ring), one
    layer above the grid lines: the thick edge overshoots into the neighbour
    cell, and on its own layer no neighbour's 1px line can cut across it. A
    separate pseudo also avoids the mitred corner joint the 1px and thick
    borders would form if they shared one border box. */
-.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after,
-.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::after {
+.cell[data-box-right]:not([data-overlay-borders]):not([data-ring])::after,
+.cell[data-box-bottom]:not([data-overlay-borders]):not([data-ring])::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -145,54 +145,44 @@
   pointer-events: none;
 }
 
-.cell[data-box-right]:not([data-overlay-borders]):not([data-selected])::after {
+.cell[data-box-right]:not([data-overlay-borders]):not([data-ring])::after {
   /* The overshoot scales with the width so the line stays straddling the
      seam: -1px at the standard 3px, -2px at the high-contrast 5px. */
   inset-inline-end: calc((var(--box-boundary-width, 3px) - 1px) / -2);
   border-inline-end: var(--box-boundary-width, 3px) solid var(--box-boundary);
 }
 
-.cell[data-box-bottom]:not([data-overlay-borders]):not([data-selected])::after {
+.cell[data-box-bottom]:not([data-overlay-borders]):not([data-ring])::after {
   inset-block-end: calc((var(--box-boundary-width, 3px) - 1px) / -2);
   border-block-end: var(--box-boundary-width, 3px) solid var(--box-boundary);
 }
 
 .cell[data-given] {
   font-weight: 900;
-  color: var(--text-subtle);
   cursor: default;
 }
 
-.cell[data-selected] {
+/* The multi-select check mark shares the given digits' color. */
+.cell[data-given],
+.selectionMark {
+  color: var(--text-subtle);
+}
+
+/* The ring marks the focused cell. With single selection, the selected cell
+   is the focused one, so it carries the ring too. */
+.cell[data-ring] {
   z-index: var(--layer-grid-lines);
 }
 
-.cell[data-selected]::before {
+.cell[data-ring]::before {
   content: none;
 }
 
-.cell[data-selected]::after {
+.cell[data-ring]::after {
   content: '';
   position: absolute;
   inset: 0;
   border: 3px solid var(--cell-selected-border);
-  z-index: var(--layer-selection);
-  pointer-events: none;
-}
-
-.cell[data-focused]:not([data-selected]) {
-  z-index: var(--layer-grid-lines);
-}
-
-.cell[data-focused]:not([data-selected])::before {
-  content: none;
-}
-
-.cell[data-focused]:not([data-selected])::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 3px dashed var(--cell-selected-border);
   z-index: var(--layer-selection);
   pointer-events: none;
 }
@@ -455,7 +445,8 @@
   color: var(--cell-text-light);
 }
 
-:global(.light) .cell[data-given] {
+:global(.light) .cell[data-given],
+:global(.light) .selectionMark {
   color: #0a0a23;
 }
 
@@ -466,4 +457,24 @@
 :global(.light) [data-check] .cell[data-conflict],
 :global(.light) [data-check] .cell[data-incorrect] {
   background: var(--cell-error-bg);
+}
+
+/* A cell in a multi-select grid shows its selection as a fill plus a check
+   mark, so the ring stays free for focus. The fill alone can't clear 3:1
+   against the plain cell while digits keep 4.5:1 on it, so the check mark
+   carries the state. The doubled attribute ties the most specific peer,
+   region, and error fills in each theme, and sitting last wins the tie. */
+.cell[data-marked][data-selected],
+:global(.light) .cell[data-marked][data-selected] {
+  background: var(--cell-selection-bg);
+}
+
+.selectionMark {
+  position: absolute;
+  inset-block-start: 0.125rem;
+  inset-inline-end: 0.125rem;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  z-index: var(--layer-cell-content);
+  pointer-events: none;
 }

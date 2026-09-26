@@ -175,6 +175,14 @@ selection, while Space and click toggle selected cells; the grid exposes
 `aria-multiselectable`. Selection can be controlled through `selectedIds` and
 `onSelectionChange`.
 
+`Cell` draws the solid blue ring (`data-ring`) on the focused cell, and in
+single mode on the selected cell, which is the focused one. In `multiple` mode
+(`Board` passes `multiSelect`), a selected cell instead gets `data-marked`: the
+`--cell-selection-bg` fill plus a `CheckIcon` in the given-digit color. Every
+cell carries an explicit `aria-selected` of `true` or `false`, and each toggle
+is spoken through the live region ("…, selected" / "…, not selected"), because
+screen readers don't reliably re-announce `aria-selected` on the focused cell.
+
 `Board` (`src/board/Board/`) renders cells through the resolved layout
 strategy's `cellRects(variant)`. The game and learn features own their page
 layouts and decide how the returned board and number-pad props are arranged.
@@ -281,9 +289,40 @@ board from its available width using `useElementSize` and
 
 `createBoardLessonEngine` (`src/curriculum/lessonEngine.ts`) wraps the shared
 `boardReducer` and grades `selected`, `values`, `candidates`, and `solved`
-checklist tests. Grading runs after every board or selection change, so the
-checklist updates live without a Check button. Reset remounts the panel from
-the configured starting board.
+checklist tests. The checklist is not rendered. Its items are the lesson's
+requirements, and grading runs after every board or selection change. The panel
+reports `{ complete }` through `onUpdate`, and the Next button appears once
+every requirement passes. Reset remounts the panel from the configured starting
+board.
+
+### Requirement hints
+
+After each input, `LessonEngine.reviewInput(previous, next, input,
+requirements)` returns an `InputReview`:
+
+- `{ kind: 'hint', index }`: the input left the topmost unmet requirement unmet
+  and did not move toward it. The panel calls `onHint(requirements[index].hint)`.
+- `{ kind: 'clear' }`: the input met that requirement, or every requirement now
+  passes. The panel calls `onHint(null)`.
+- `{ kind: 'none' }`: the input changed nothing, moved toward the requirement,
+  or is an input kind the requirement ignores.
+
+A `selected` test only reacts to selection input. `values`, `candidates`, and
+`solved` only react to board input. Progress is a score: matching cells or
+candidates minus wrong ones, so adding a correct cell of a multi-cell selection
+counts as progress rather than a miss.
+
+`LessonWorkspace` owns the toast. It wraps the panel in a clipping `.work-area`
+above the Reset/Next toolbar and renders `ToastStack`
+(`src/components/ToastStack/`) into it with `placement="bottom"`, so the hint
+slides out of the edge the working area shares with the toolbar. It shows at
+most one hint at a time, clears it on reset, and keeps an unchanged hint on
+screen instead of replaying it. Cmd/Ctrl+Enter only works while Next is
+visible.
+
+On load, and on the focus-panel shortcut, the workspace focuses the panel's
+first focusable element (the board's active cell) and falls back to the
+`role="application"` container for a panel with no controls.
 
 ### Creating curriculum modules and lessons
 

@@ -38,13 +38,17 @@ function makeLesson(
   };
 }
 
-function renderPanel(lesson: ClientInteractiveLessonDefinition, onUpdate = vi.fn()) {
+function renderPanel(
+  lesson: ClientInteractiveLessonDefinition,
+  onUpdate = vi.fn(),
+  onHint = vi.fn()
+) {
   const view = render(
     <ThemeProvider>
-      <BoardPanel lesson={lesson} onUpdate={onUpdate} onReset={vi.fn()} />
+      <BoardPanel lesson={lesson} onUpdate={onUpdate} onReset={vi.fn()} onHint={onHint} />
     </ThemeProvider>
   );
-  return { ...view, onUpdate };
+  return { ...view, onUpdate, onHint };
 }
 
 describe('BoardPanel', () => {
@@ -116,11 +120,77 @@ describe('BoardPanel', () => {
 
     rerender(
       <ThemeProvider>
-        <BoardPanel key="reset" lesson={lesson} onUpdate={vi.fn()} onReset={vi.fn()} />
+        <BoardPanel
+          key="reset"
+          lesson={lesson}
+          onUpdate={vi.fn()}
+          onReset={vi.fn()}
+          onHint={vi.fn()}
+        />
       </ThemeProvider>
     );
 
     expect(targetCell()).not.toHaveTextContent('4');
     expect(screen.getByRole('gridcell', { name: /row 1, column 1.*1/i })).toHaveTextContent('1');
+  });
+
+  it('should show the hint when a selection moves away from the target', async () => {
+    const user = userEvent.setup();
+    const onHint = vi.fn();
+    const lesson = makeLesson(
+      [
+        {
+          label: 'Select r1c2',
+          hint: 'You should select the cell in row 1, column 2.',
+          test: { selected: ['r0c1'] },
+        },
+      ],
+      'multiple'
+    );
+    renderPanel(lesson, vi.fn(), onHint);
+
+    await user.click(screen.getByRole('gridcell', { name: /row 1, column 3/i }));
+
+    expect(onHint).toHaveBeenLastCalledWith('You should select the cell in row 1, column 2.');
+  });
+
+  it('should clear the hint once the target requirement is met', async () => {
+    const user = userEvent.setup();
+    const onHint = vi.fn();
+    renderPanel(
+      makeLesson([{ label: 'Enter 2', hint: 'You can enter 2.', test: { values: { r0c1: 2 } } }]),
+      vi.fn(),
+      onHint
+    );
+
+    await user.click(screen.getByRole('gridcell', { name: /row 1, column 2/i }));
+    expect(onHint).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: '5' }));
+    expect(onHint).toHaveBeenLastCalledWith('You can enter 2.');
+
+    await user.click(screen.getByRole('button', { name: '2' }));
+    expect(onHint).toHaveBeenLastCalledWith(null);
+  });
+
+  it('should only hint the topmost unmet requirement', async () => {
+    const user = userEvent.setup();
+    const onHint = vi.fn();
+    renderPanel(
+      makeLesson([
+        { label: 'Enter 2', hint: 'You can enter 2 first.', test: { values: { r0c1: 2 } } },
+        { label: 'Enter 3', hint: 'You can enter 3 next.', test: { values: { r0c2: 3 } } },
+      ]),
+      vi.fn(),
+      onHint
+    );
+
+    await user.click(screen.getByRole('gridcell', { name: /row 1, column 3/i }));
+    await user.click(screen.getByRole('button', { name: '3' }));
+    expect(onHint).toHaveBeenLastCalledWith('You can enter 2 first.');
+
+    await user.click(screen.getByRole('gridcell', { name: /row 1, column 2/i }));
+    await user.click(screen.getByRole('button', { name: '2' }));
+    expect(onHint).toHaveBeenLastCalledWith(null);
   });
 });

@@ -39,6 +39,14 @@ Read the relevant doc before changing that area:
 - [`docs/architecture.md`](docs/architecture.md): layers, registries, data flow, game runtime, the learn layer, and the build.
 - [`docs/lesson-authoring.md`](docs/lesson-authoring.md): read before creating or editing anything in `src/curriculum/lessons/`. Covers lesson files, frontmatter, sections, allowed HTML, required image `alt` text, the `json` config block (comments allowed), and checklist rules.
 
+### Keep reference docs in sync
+
+Both docs describe code that is still changing, so update them in the same change as the code. Work is not done while either doc describes old behavior.
+
+- **`docs/lesson-authoring.md`**: update it when you change anything a lesson author writes or sees. That includes the config schema and its validation (`src/curriculum/loader.ts`, `src/curriculum/types.ts`), checklist test kinds and grading or hint behavior (`src/curriculum/lessonEngine.ts`), how the panel renders a lesson (`src/learn/`), allowed HTML, and scaffolding scripts. If an example lesson (`src/curriculum/lessons/102.md`, `103.md`) documents the changed behavior, update it too.
+- **`docs/architecture.md`**: update it when you add, move, rename, or delete a module, change a layer boundary or registry, or change data flow, a component contract (props, callbacks), or runtime behavior it describes.
+- Before finishing, search both docs for the names you changed (files, types, functions, props) and fix every stale mention.
+
 ## Architecture
 
 Four layers, each depending only on the ones above it: **engine** (pure puzzle logic, no React) → **variants** (declarative specs) → **board** (shared board rendering) → **game / gallery / learn / app** (React UI). Directory roles:

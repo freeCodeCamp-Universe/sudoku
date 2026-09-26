@@ -15,12 +15,13 @@ import { useShortcutsPreference } from '@/learn/hooks/useShortcutsPreference';
 import { useProgress } from '@/learn/hooks/useProgress';
 import { useCourseChrome } from '@/learn/stores/courseChromeStore';
 import { CheckCircleIcon } from '@/components/icons';
+import { ToastStack, type ToastItem } from '@/components/ToastStack';
 import { Markdown } from '@/learn/Markdown/Markdown';
 import { renderInline } from '@/learn/Markdown/RenderInline';
 import { TabGroup } from '@/learn/TabGroup/TabGroup';
-import { Checklist } from '@/learn/Checklist/Checklist';
 import { PrimaryAction } from '@/learn/PrimaryAction/PrimaryAction';
 import { ResetButton } from '@/learn/ResetButton/ResetButton';
+import { getFocusableElements } from '@/learn/utils/focusTrap';
 import styles from '@/learn/LessonWorkspace/LessonWorkspace.module.css';
 
 export type TabId = 'instructions' | 'terminal';
@@ -29,6 +30,8 @@ export interface InteractivePanelProps {
   lesson: ClientInteractiveLessonDefinition;
   onUpdate: (snapshot: LessonSnapshot) => void;
   onReset: () => void;
+  /** Show a requirement's hint in a toast, or clear the toast with `null`. */
+  onHint: (hint: string | null) => void;
 }
 
 export interface LessonWorkspaceProps {
@@ -58,7 +61,7 @@ export function LessonWorkspace({
   const { shortcutsEnabled } = useShortcutsPreference();
   const { focusInstructionsOnLoad } = useInitialFocusPreference();
   const { completed, markComplete } = useProgress();
-  const { checklist, complete, feedback, onUpdate, reportIncomplete, reset } = useLesson(lesson);
+  const { complete, onUpdate, reset } = useLesson(lesson);
 
   const prose = isProseLesson(lesson);
   const [tabAnnouncement, setTabAnnouncement] = useState('');
@@ -69,6 +72,33 @@ export function LessonWorkspace({
   const interactiveRef = useRef<HTMLDivElement>(null);
   const instructionsRef = useRef<HTMLElement>(null);
   const isFirstTabRender = useRef(true);
+  const [workArea, setWorkArea] = useState<HTMLDivElement | null>(null);
+  const [hintToast, setHintToast] = useState<ToastItem | null>(null);
+  const hintToastId = useRef(0);
+
+  // Land on the panel's first control (the board's active cell), falling back
+  // to the workspace itself for a panel with nothing to focus.
+  const focusInteractivePanel = useCallback(() => {
+    const [firstControl] = workArea ? getFocusableElements(workArea) : [];
+    (firstControl ?? interactiveRef.current)?.focus();
+  }, [workArea]);
+
+  const showHint = useCallback((hint: string | null) => {
+    setHintToast((current) => {
+      if (hint === null) {
+        return null;
+      }
+      if (current?.message === hint) {
+        return current;
+      }
+      hintToastId.current += 1;
+      return { id: hintToastId.current, message: hint, content: renderInline(hint) };
+    });
+  }, []);
+
+  const dismissHint = useCallback((id: number) => {
+    setHintToast((current) => (current?.id === id ? null : current));
+  }, []);
 
   // Focus the interactive panel or instructions on mount for interactive lessons.
   useEffect(() => {
@@ -80,14 +110,14 @@ export function LessonWorkspace({
         if (focusInstructionsOnLoad) {
           instructionsRef.current?.focus();
         } else {
-          interactiveRef.current?.focus();
+          focusInteractivePanel();
         }
       });
     });
     return () => {
       cancelled = true;
     };
-  }, [prose, focusInstructionsOnLoad]);
+  }, [prose, focusInstructionsOnLoad, focusInteractivePanel]);
 
   const isCompleted = completed.includes(lesson.id);
 
@@ -106,19 +136,19 @@ export function LessonWorkspace({
 
   const focusInteractive = useCallback(() => {
     if (tab === 'terminal') {
-      interactiveRef.current?.focus();
+      focusInteractivePanel();
       return;
     }
     pendingInteractiveFocus.current = true;
     onSelectTab('terminal');
-  }, [tab, onSelectTab]);
+  }, [tab, onSelectTab, focusInteractivePanel]);
 
   useEffect(() => {
     if (tab === 'terminal' && pendingInteractiveFocus.current) {
       pendingInteractiveFocus.current = false;
-      interactiveRef.current?.focus();
+      focusInteractivePanel();
     }
-  }, [tab]);
+  }, [tab, focusInteractivePanel]);
 
   const focusInstructions = useCallback(() => {
     if (tab === 'instructions') {
@@ -156,6 +186,7 @@ export function LessonWorkspace({
 
   const handleReset = useCallback(() => {
     reset();
+    setHintToast(null);
     setResetKey((k) => k + 1);
   }, [reset]);
 
@@ -224,13 +255,7 @@ export function LessonWorkspace({
           aria-labelledby="lesson-heading"
         >
           {heading}
-          <div className={styles['instruction-body']}>
-            <Markdown html={instructionsHtml} />
-            <Checklist items={checklist} muteAnnouncement={feedback !== null} />
-          </div>
-          <div className="sr-only" role="status" aria-live="polite">
-            {feedback}
-          </div>
+          <Markdown html={instructionsHtml} />
         </section>
         <div
           ref={interactiveRef}
@@ -239,22 +264,28 @@ export function LessonWorkspace({
           role="application"
           aria-label="interactive lesson workspace"
         >
-          <InteractivePanel
-            key={resetKey}
-            lesson={interactiveLesson}
-            onUpdate={onUpdate}
-            onReset={handleReset}
-          />
-          <div className={styles.controls}>
-            <ResetButton onReset={handleReset} />
-            <PrimaryAction
-              complete={complete}
-              isCapstone={isLastLesson}
-              onAdvance={advance}
-              onBlocked={reportIncomplete}
+          <div ref={setWorkArea} className={styles['work-area']}>
+            <InteractivePanel
+              key={resetKey}
+              lesson={interactiveLesson}
+              onUpdate={onUpdate}
+              onReset={handleReset}
+              onHint={showHint}
             />
           </div>
+          <div className={styles.controls}>
+            <ResetButton onReset={handleReset} />
+            <PrimaryAction complete={complete} isCapstone={isLastLesson} onAdvance={advance} />
+          </div>
         </div>
+        {workArea ? (
+          <ToastStack
+            toasts={hintToast ? [hintToast] : []}
+            onDismiss={dismissHint}
+            placement="bottom"
+            container={workArea}
+          />
+        ) : null}
 
         <div className="sr-only" role="status" aria-live="polite">
           {tabAnnouncement}
