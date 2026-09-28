@@ -17,6 +17,7 @@ interface UsePlayableBoardOptions {
   solution: Solution;
   seedBase: number;
   cellSize: number;
+  structure?: unknown;
   highlights?: BoardHighlights;
   cellSelection?: 'single' | 'multiple';
   selectedIds?: Set<CellId>;
@@ -50,6 +51,7 @@ export function usePlayableBoard({
   solution,
   seedBase,
   cellSize,
+  structure,
   highlights,
   cellSelection,
   selectedIds,
@@ -69,7 +71,7 @@ export function usePlayableBoard({
   describeSymbol: (value: SymbolValue) => string;
 } {
   const [candidateMode, setCandidateMode] = useState(false);
-  const view = useBoardView({ variant, baseModel, solution, cellSize, seedBase });
+  const view = useBoardView({ variant, baseModel, solution, cellSize, seedBase, structure });
   const givensSet = useMemo(() => new Set(givens.keys()), [givens]);
   const {
     onEnterValue,

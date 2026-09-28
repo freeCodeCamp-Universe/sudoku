@@ -1,9 +1,9 @@
 ---
 title: Extract a shared board layer from src/game
 date: 2026-09-23
-updated: 2026-09-25
+updated: 2026-09-28
 project: sudoku
-status: A0-A22 done; Part B pending decisions
+status: A0-A23 done; Part B pending decisions
 ---
 
 # Extract a shared board layer from `src/game`
@@ -30,7 +30,8 @@ It has two parts:
   - A13 is optional cleanup.
   - A14 updates the reference docs for A6-A12 and A17, so it follows A12 and A17.
   - A15 merges the duplicate `useSeoMeta` hooks, and A16 builds a puzzle from predefined givens. A18-A21 add the lesson config, the lesson panel, their docs, and the board authoring skill. A22 removes `src/game/testing/` and colocates its files.
-- **Part B (pending):** pinned structure (cages, regions, clues) for variants like killer and jigsaw, which waits on the board authoring pass.
+  - A23 opens lesson boards to sandwich, skyscraper and wordoku (done).
+- **Part B (pending):** pinned structure (cages, regions, dots) for the remaining structure variants like killer and jigsaw, which waits on the board authoring pass.
 
 ### Lesson board requirements (confirmed 2026-09-25)
 
@@ -112,6 +113,7 @@ The checklist is ordered so every prerequisite appears above the item that depen
 - [x] A20. Update `docs/architecture.md` and `docs/lesson-authoring.md` for A18 and A19
 - [x] A21. ~~Add a `lesson-board-authoring` project skill~~ Superseded: the workflow lives in `docs/lesson-authoring.md` ("Authoring a board")
 - [x] A22. Dissolve `src/game/testing/` and colocate every file with its source (after A11)
+- [x] A23. Support sandwich, skyscraper and wordoku lesson boards (after A18-A20)
 
 ### Part B: pending decision
 
@@ -578,6 +580,71 @@ Original plan, kept for the record:
 - **Done when:** `src/game/testing/` no longer exists, the test count from `pnpm test` is the same as before the move, and `pnpm build && pnpm test && pnpm lint` and `pnpm contrast:report` pass.
 - **Order:** after A11, since `renderPlay` needs `boardReducer` or `usePlayableBoard`, and the gameplay tests move next to `usePlayableBoard`.
 
+### A23. Sandwich, skyscraper and wordoku lesson boards
+
+Decided 2026-09-28: lessons need these three variants. They split off from B1 because their structure needs no design work. Sandwich and skyscraper compute it from the solution, and wordoku's is one word.
+
+- **Current state:**
+  - `parseBoardConfig` in `src/curriculum/loader.ts` (around line 267) throws "needs a structure field, which lesson boards don't support yet" for any variant with `deriveStructure` or `deriveGutters`, and for any config with a `structure` key.
+  - `src/variants/sandwich.ts`: `deriveStructure(solution)` returns `computeSandwichClues(solution)` (`{ rows: number[]; cols: number[] }`), and `deriveGutters` turns it into gutter slots. It depends only on the solution.
+  - `src/variants/skyscraper.ts`: `deriveStructure(solution)` returns `{ clues: computeClues(solution) }` (`EdgeClues`), and `deriveGutters` calls `buildGutters(clues)`. It depends only on the solution.
+  - `src/variants/wordoku.ts`: `deriveStructure(solution)` returns `{ word: wordBySolution.get(solution) ?? WORDS[0] }`. `wordBySolution` is a module `WeakMap` filled by `generateWordokuSolution`, so a solution parsed from a lesson config is never in it and silently gets `WORDS[0]` ("WONDERFUL"). `renderSymbol(value, structure)` shows `word[value - 1]`, so value 1 is the word's first letter. The generator writes values 1-9 in order across one row. `wordokuAnnotator` (`src/board/annotators/wordoku.ts`) announces "word row" or "word column" when a row reads 1-9 left to right or a column reads 1-9 top to bottom.
+  - Three places build the model without structure, so a structure constraint (`sandwichSum`, `skyscraperVisibility`) has nothing to check against:
+    - the loader's `validate(solutionValues, model)` (around line 309), with `model = buildModel(variant)`
+    - `puzzleFromConfig(variant, givens, solution)` in `src/board/puzzleFromConfig.ts`, which returns `model: buildModel(variant)`
+    - the uniqueness test in `src/curriculum/curriculumIntegrity.test.ts` (around line 54), which calls `solve(buildModel(variant), givens, { max: 2 })`
+  - `useBoardView` (`src/board/useBoardView.ts:42`) always calls `assemblePuzzle(variant, baseModel, solution)` (`src/board/assemblePuzzle.ts`), which calls `variant.deriveStructure(solution, baseModel)` and replaces any structure already on `baseModel`. That already works for sandwich and skyscraper. For wordoku it overwrites a pinned word with the fallback.
+- **Config shape:**
+  - Sandwich and skyscraper need no new fields. `givens` and `solution` are enough, because the loader computes the clues from the solution the same way the game does. A lesson can't set its own clues, since every clue must match the solution anyway.
+  - Wordoku adds `"structure": { "word": "WONDERFUL" }`. `givens`, `solution` and checklist `values` tests stay digits 1-9 like every other variant (decided 2026-09-28). The author translates letters to digits: with the word "WONDERFUL", "Enter W in r3c5" is `{ "values": { "r3c5": 1 } }`. The word goes under `structure` rather than as a top-level `word` key, so killer cages and jigsaw regions can use the same field later (B1).
+- **Change:**
+  1. Add an optional hook to `Variant` in `src/engine/types.ts`:
+     ```ts
+     // Builds the structure for a lesson board from its config. Throws a plain
+     // message (no lesson prefix) when `raw` is invalid.
+     lessonStructure?: (raw: unknown, solution: Solution, model: VariantModel) => unknown;
+     ```
+  2. Implement it:
+     - `sandwich`: throw if `raw !== undefined` ("sandwich clues come from the solution; remove structure"). Otherwise return `computeSandwichClues(solution)`.
+     - `skyscraper`: same rule, returning `{ clues: computeClues(solution) }`.
+     - `wordoku`: `raw` must be `{ word: string }` with no other keys. `word` must be 9 uppercase letters A-Z with no repeats. A repeated letter would make two symbols look the same. The solution must spell it: some row holds values 1-9 left to right, or some column holds them top to bottom, matching `wordokuAnnotator`. Return `{ word }`. The word doesn't have to be in `WORDS`.
+  3. In `parseBoardConfig`, replace the blanket rejection:
+     - A variant with `deriveStructure` or `deriveGutters` and no `lessonStructure` still throws the current error.
+     - A variant with no structure hooks still throws if `structure` is set.
+     - Otherwise, call `variant.lessonStructure(value.structure, solution, model)` after the solution checks, and prefix any error with `${field}.structure`.
+     - Add `'structure'` to the allowed keys, and run `validate` against `{ ...model, structure }` instead of `model`.
+  4. Add `structure?: unknown` to `LessonBoardConfig` in `src/curriculum/types.ts`. It holds the value `lessonStructure` returned.
+  5. `puzzleFromConfig(variant, givens, solution, structure?)` returns `withStructure(buildModel(variant), structure)` (`withStructure` is exported from `src/board/assemblePuzzle.ts`). `BoardPanel` (`src/learn/BoardPanel/BoardPanel.tsx`, around line 46) passes `boardConfig.structure`.
+  6. Add `structure?: unknown` to `UseBoardViewOptions` and to the `usePlayableBoard` options. When it's set, `useBoardView` uses `withStructure(baseModel, structure)` and skips `assemblePuzzle`. The game doesn't pass it, so game behavior is unchanged. `BoardPanel` passes `boardConfig.structure`.
+  7. In `curriculumIntegrity.test.ts`, solve against `{ ...buildModel(variant), structure: board.structure }`, so the clues count toward uniqueness.
+  8. `scripts/lessonBoard.ts`: when the variant has `lessonStructure` and needs config input (wordoku), print `structure` with the word. Get it by calling `variant.deriveStructure(solution, model)` on the solution `generate` returned. `generate` keeps the same `Solution` object, so the `WeakMap` lookup works. Print nothing extra for sandwich and skyscraper.
+- **Gotchas:**
+  - Sandwich and skyscraper boards need far fewer givens than classic, because the clues also narrow the answer. Without step 7, the integrity test ignores the clues and reports a correctly trimmed board as having several solutions.
+  - A complete solution cannot break sandwich clues derived from that same solution. Lesson configs cannot supply replacement sandwich clues, so the loader cannot exercise a clue-mismatch conflict without bypassing the `lessonStructure` hook.
+  - `cellSizeForWidth` already reserves gutter space when a variant has `deriveGutters` (`src/board/layouts/cellSizeForWidth.ts:14`). Check a sandwich or skyscraper lesson at a 320px-wide viewport by hand, because the gutters make the board wider than classic.
+  - Wordoku checklist labels show letters, but `test` values are digits. The loader can't catch a wrong translation, so add a sentence and an example to `docs/lesson-authoring.md`.
+- **Tests:**
+  - `src/variants/sandwich.test.ts`, `skyscraper.test.ts`: should return the clues computed from the solution; should reject a `structure` value.
+  - `src/variants/wordoku.test.ts`: should return the configured word; should reject a missing word, a word that isn't 9 letters, a lowercase word, a repeated letter, extra keys, and a solution with no row or column reading 1-9.
+  - `src/curriculum/loader.test.ts`: should accept sandwich and skyscraper boards with no `structure`; should accept a wordoku board with a word; should still reject killer; should reject `structure` on classic; should name `config.board.structure` in wordoku errors.
+  - `src/board/puzzleFromConfig.test.ts`: should merge a given structure into the model.
+  - `src/board/useBoardView.test.ts`: should use a given structure instead of deriving one (wordoku's `renderSymbol` shows the configured word's letters).
+  - `src/learn/BoardPanel/BoardPanel.test.tsx`: should render sandwich clues in the gutters; should render the configured wordoku letters.
+- **Docs, `docs/lesson-authoring.md`:** A23 isn't done until this doc tells an author which variants a lesson board can use.
+  - **Current state:** the "Board config" section says `variant` is "A registered variant id". One paragraph after the field table says variants with a `deriveStructure` or `deriveGutters` hook ("killer, jigsaw, arrow, and others") aren't supported, and that the loader rejects a `structure` field. The doc names no supported variant, and "and others" leaves the unsupported list unclear.
+  - **Change:**
+    1. Add a `structure` row to the field table: "Wordoku only. `{ "word": "..." }`. Any other variant fails the build if it's set."
+    2. Replace the paragraph after the table with a "Supported variants" subsection. Use the registry ids an author types, not display names, since some differ (`sudoku-x`, `six-by-six`, `center-dot`, `gattai-3`, `super`, `even-odd`, `greater-than`).
+       - **Supported, digits only:** `classic`, `sudoku-x`, `windoku`, `argyle`, `asterisk`, `center-dot`, `girandola`, `color`, `mini`, `six-by-six`, `super`, `butterfly`, `cross`, `flower`, `gattai-3`, `kazaguruma`, `samurai`, `sohei`, `tripledoku`, `twodoku`, `sujiken`.
+       - **Supported, clues from the solution:** `sandwich`, `skyscraper`. No `structure` field. Note that their boards need fewer givens because the clues also narrow the answer.
+       - **Supported with `structure`:** `wordoku`, with the rules for `word` (9 uppercase letters, no repeats, spelled 1-9 along one row or column of the solution) and the letter-to-digit example ("Enter W in r3c5" is `{ "values": { "r3c5": 1 } }` when the word is "WONDERFUL").
+       - **Not supported yet:** `arrow`, `chain`, `consecutive`, `even-odd`, `greater-than`, `jigsaw`, `killer`, `kropki`. Keep the existing warning not to invent a `structure` shape for them.
+       - **Size caveat:** `super`, the multigrids and `sujiken` load, but the panel sizes boards to fit without pan/zoom (A12), so they can overflow on a narrow screen. Say so, and tell authors to check the lesson at 320px before using one.
+    3. In "Authoring a board" step 2, say that `pnpm lesson:board wordoku` also prints `structure` with the generated word.
+  - **Keep the lists in sync:** add a test to `src/curriculum/curriculumIntegrity.test.ts` that reads `docs/lesson-authoring.md`. Don't create a separate test file, since no source file for it to mirror exists. It checks that every id in `variantRegistry` appears in exactly one of the lists, that a variant is in "Not supported yet" exactly when the loader rejects it, and that the lists name no unknown ids. Then a new variant, or B1 moving a variant into a supported list, fails the test until the doc changes. `src/app/colorDocs.test.ts` does the same for `docs/colors.md`.
+- **Docs, `docs/architecture.md`:** describe the `lessonStructure` hook and the `structure` option on `useBoardView`/`usePlayableBoard`.
+- **Order:** after A18-A20. It's independent of B1, and it sets the pattern B1 follows for each remaining variant.
+
 ---
 
 ## Part B: pending decision
@@ -586,7 +653,7 @@ Each item lists the exact questions it's waiting on and why each answer changes 
 
 ### B1. Pinned structure for variants with a structure hook
 
-- **What:** add an optional `structure` field to the A18 `board` block for variants whose spec has a `deriveStructure` or `deriveGutters` hook (currently `arrow`, `chain`, `consecutive`, `evenOdd`, `greaterThan`, `jigsaw`, `killer`, `kropki`, `sandwich`, `skyscraper`, `wordoku`). Today their structure (cages, arrows, regions, clues, dots) comes from `deriveStructure(solution, model)` or seeded generation. A lesson must pin it in the config, or a change to the generator silently changes the lesson.
+- **What:** add an optional `structure` field to the A18 `board` block for variants whose spec has a `deriveStructure` or `deriveGutters` hook and no `lessonStructure` hook (A23). After A23 that is `arrow`, `chain`, `consecutive`, `evenOdd`, `greaterThan`, `jigsaw`, `killer`, `kropki`. Each one implements `lessonStructure` the way A23 does for wordoku. Today their structure (cages, arrows, regions, clues, dots) comes from `deriveStructure(solution, model)` or seeded generation. A lesson must pin it in the config, or a change to the generator silently changes the lesson.
 - **Approach:** per-variant JSON that reuses the existing engine types (`Cage`, `Arrow`, `EdgeClues`, `GutterSlots` in `src/engine/types.ts`) with 1-based cell ids. Each variant gets a validator that checks its structure against the board and the solution, and a way to hand the parsed structure to `useBoardView` (A8) in place of `deriveStructure`. The variant specs have no load hook today, so each variant is new work. `lesson:board` (A18) prints the structure too.
 - **Waiting on:** the board authoring pass reaching each variant (decided 2026-09-25: do this one variant at a time, when a lesson needs it). The structure shape differs per variant, so design each one against a real lesson.
 

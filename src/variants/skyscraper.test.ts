@@ -45,6 +45,24 @@ describe('skyscraper variant', () => {
     expect(structure.clues.end).toHaveLength(9);
   });
 
+  it('should return clues computed from the solution for lesson boards', () => {
+    const model = buildModel(skyscraper);
+    const solution = generateSolution(model, seeded(79));
+
+    expect(skyscraper.lessonStructure?.(undefined, solution, model)).toEqual(
+      skyscraper.deriveStructure?.(solution, model)
+    );
+  });
+
+  it('should reject a structure value for lesson boards', () => {
+    const model = buildModel(skyscraper);
+    const solution = generateSolution(model, seeded(78));
+
+    expect(() => skyscraper.lessonStructure?.({}, solution, model)).toThrow(
+      'skyscraper clues come from the solution; remove structure'
+    );
+  });
+
   it('should derive valid clues: all values in 1..9', () => {
     const model = buildModel(skyscraper);
     const solution = generateSolution(model, seeded(81));

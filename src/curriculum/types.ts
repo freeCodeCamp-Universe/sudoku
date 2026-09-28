@@ -35,6 +35,7 @@ export interface LessonBoardConfig {
   variant: string;
   givens: Record<CellId, SymbolValue>;
   solution: Record<CellId, SymbolValue>;
+  structure?: unknown;
   cellSelection: 'single' | 'multiple';
   highlights: {
     peers?: boolean;

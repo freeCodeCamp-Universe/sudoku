@@ -52,6 +52,29 @@ function renderPanel(
 }
 
 describe('BoardPanel', () => {
+  it('should render solution-derived sandwich clues in the gutters', () => {
+    const lesson = makeLesson([]);
+    lesson.config.board = {
+      ...lesson.config.board!,
+      variant: 'sandwich',
+    };
+    renderPanel(lesson);
+
+    expect(screen.getAllByText('35')).toHaveLength(2);
+  });
+
+  it('should render the configured wordoku letters', () => {
+    const lesson = makeLesson([]);
+    lesson.config.board = {
+      ...lesson.config.board!,
+      variant: 'wordoku',
+      structure: { word: 'ABCDEFGHI' },
+    };
+    renderPanel(lesson);
+
+    expect(screen.getByRole('gridcell', { name: /row 1, column 1/i })).toHaveTextContent('A');
+  });
+
   it('should tick and untick a selected-cell item as the selection changes', async () => {
     const user = userEvent.setup();
     const onUpdate = vi.fn();

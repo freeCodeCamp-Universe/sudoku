@@ -38,4 +38,22 @@ describe('sandwich variant - generate + solve', () => {
 
     expect(givens.size).toBeGreaterThan(0);
   });
+
+  it('should return clues computed from the solution for lesson boards', () => {
+    const model = buildModel(sandwich);
+    const { solution } = generate(model, 'intermediate', seeded(43));
+
+    expect(sandwich.lessonStructure?.(undefined, solution, model)).toEqual(
+      sandwich.deriveStructure?.(solution, model)
+    );
+  });
+
+  it('should reject a structure value for lesson boards', () => {
+    const model = buildModel(sandwich);
+    const { solution } = generate(model, 'intermediate', seeded(44));
+
+    expect(() => sandwich.lessonStructure?.({}, solution, model)).toThrow(
+      'sandwich clues come from the solution; remove structure'
+    );
+  });
 });

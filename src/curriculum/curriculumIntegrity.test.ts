@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { loadFullCurriculum } from '@/curriculum/loader';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { buildCurriculum, loadFullCurriculum } from '@/curriculum/loader';
 import { buildModel } from '@/engine/buildModel';
 import { solve } from '@/engine/solve';
 import { variantRegistry } from '@/variants/registry';
@@ -52,11 +54,55 @@ describe('curriculum integrity', () => {
       const variant = variantRegistry[board.variant];
       if (!variant) throw new Error(`${lessonId} uses an unknown board variant`);
       const model = buildModel(variant);
-      const solutions = solve(model, new Map(Object.entries(board.givens)), { max: 2 });
+      const modelWithStructure =
+        board.structure === undefined ? model : { ...model, structure: board.structure };
+      const solutions = solve(modelWithStructure, new Map(Object.entries(board.givens)), {
+        max: 2,
+      });
       expect(solutions, `${lessonId} should have exactly one solution`).toHaveLength(1);
       expect(solutions[0], `${lessonId} solution should match its config`).toEqual(
         new Map(Object.entries(board.solution))
       );
+    }
+  });
+
+  it('should keep lesson-board variant documentation in sync with the registry', () => {
+    const docs = readFileSync(resolve(process.cwd(), 'docs/lesson-authoring.md'), 'utf8');
+    const supportedSections = [
+      'Supported, digits only',
+      'Supported, clues from the solution',
+      'Supported with `structure`',
+      'Not supported yet',
+    ].map((heading) => {
+      const start = docs.indexOf(`##### ${heading}`);
+      expect(start).toBeGreaterThanOrEqual(0);
+      const bodyStart = docs.indexOf('\n', start) + 1;
+      const nextHeading = docs.slice(bodyStart).search(/^#{1,6} /m);
+      return docs.slice(bodyStart, nextHeading === -1 ? undefined : bodyStart + nextHeading);
+    });
+    const documented = supportedSections.map((section) => {
+      const variantList = /^Variants: (.+)$/m.exec(section)?.[1] ?? '';
+      return [...variantList.matchAll(/`([a-z0-9-]+)`/g)].map((match) => match[1]);
+    });
+    const allIds = documented.flat();
+    const registryIds = Object.keys(variantRegistry);
+
+    expect(new Set(allIds).size).toBe(allIds.length);
+    expect([...allIds].sort()).toEqual([...registryIds].sort());
+
+    const notSupportedIds = new Set(documented[3]);
+    for (const variantId of registryIds) {
+      const board = { variant: variantId, givens: {}, solution: {} };
+      const config = ['```json', JSON.stringify({ board }), '```'].join('\n');
+      let rejection = '';
+      try {
+        buildCurriculum([{ module: 1, slug: 'test', title: 'Test', lessons: ['lesson.md'] }], {
+          './lessons/lesson.md': `---\nid: 64a2f3b1c7d8e9f0a1b2c3d4\ntitle: Test\n---\n\n# --config--\n\n${config}`,
+        });
+      } catch (error) {
+        rejection = error instanceof Error ? error.message : String(error);
+      }
+      expect(notSupportedIds.has(variantId)).toBe(rejection.includes('needs a structure field'));
     }
   });
 });

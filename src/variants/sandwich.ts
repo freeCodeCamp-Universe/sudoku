@@ -85,6 +85,12 @@ export const sandwich: Variant = {
   deriveStructure(solution: Solution): SandwichClues {
     return computeSandwichClues(solution);
   },
+  lessonStructure(raw: unknown, solution: Solution): SandwichClues {
+    if (raw !== undefined) {
+      throw new Error('sandwich clues come from the solution; remove structure');
+    }
+    return computeSandwichClues(solution);
+  },
   deriveGutters(structure: unknown): GutterSlots | undefined {
     const clues = structure as SandwichClues | undefined;
     return clues?.rows ? buildGutters(clues) : undefined;

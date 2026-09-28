@@ -120,6 +120,49 @@ export const wordoku: Variant = {
   deriveStructure(solution): { word: string } {
     return { word: wordBySolution.get(solution) ?? WORDS[0] };
   },
+  lessonStructure(raw: unknown, solution: Solution, model: VariantModel): { word: string } {
+    if (
+      typeof raw !== 'object' ||
+      raw === null ||
+      Array.isArray(raw) ||
+      Object.keys(raw).length !== 1 ||
+      !Object.prototype.hasOwnProperty.call(raw, 'word')
+    ) {
+      throw new Error('structure must contain only a word field');
+    }
+
+    const { word } = raw as { word?: unknown };
+    if (typeof word !== 'string' || !/^[A-Z]{9}$/.test(word)) {
+      throw new Error('word must be 9 uppercase letters A-Z');
+    }
+    if (new Set(word).size !== 9) {
+      throw new Error('word must not contain repeated letters');
+    }
+
+    const hasWordLine = (axis: 'row' | 'col') => {
+      const lineCount = Math.max(...model.cells.map((cell) => cell[axis])) + 1;
+      for (let line = 0; line < lineCount; line += 1) {
+        const cells = model.cells
+          .filter((cell) => cell[axis] === line)
+          .sort(
+            (left, right) =>
+              left[axis === 'row' ? 'col' : 'row'] - right[axis === 'row' ? 'col' : 'row']
+          );
+        if (
+          cells.length === 9 &&
+          cells.every((cell, index) => solution.get(cell.id) === index + 1)
+        ) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (!hasWordLine('row') && !hasWordLine('col')) {
+      throw new Error('word must match a row or column of the solution that reads 1-9');
+    }
+    return { word };
+  },
   renderSymbol(value: SymbolValue, structure?: unknown): string {
     const word = (structure as { word?: string } | undefined)?.word;
 

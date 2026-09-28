@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { buildModel } from '@/engine/buildModel';
+import { generateSolution } from '@/engine/generate';
 import { getVariant } from '@/variants/registry';
 import { useBoardView } from './useBoardView';
 
@@ -69,5 +70,26 @@ describe('useBoardView', () => {
         }),
       })
     ).toBe('region 0');
+  });
+
+  it('should use configured structure instead of deriving it', () => {
+    const variant = getVariant('wordoku');
+    const baseModel = buildModel(variant);
+    const solution = generateSolution(baseModel);
+    const structure = { word: 'ABCDEFGHI' };
+    const { result } = renderHook(() =>
+      useBoardView({
+        variant,
+        baseModel,
+        solution,
+        structure,
+        cellSize: 40,
+        seedBase: 1,
+      })
+    );
+
+    expect(result.current.structure).toBe(structure);
+    expect(result.current.renderSymbol(1)).toBe('A');
+    expect(result.current.renderSymbol(9)).toBe('I');
   });
 });

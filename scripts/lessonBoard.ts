@@ -42,7 +42,7 @@ const variant = variantRegistry[variantId];
 if (!variant) {
   throw new Error(`Unknown variant: ${variantId}`);
 }
-if (variant.deriveStructure || variant.deriveGutters) {
+if ((variant.deriveStructure || variant.deriveGutters) && !variant.lessonStructure) {
   throw new Error(
     `Variant ${variantId} needs a structure field, which lesson boards don't support yet`
   );
@@ -51,6 +51,7 @@ if (variant.deriveStructure || variant.deriveGutters) {
 const model = buildModel(variant);
 const rng = seed === undefined ? Math.random : createSeededRng(seed);
 const { givens, solution } = generate(model, variant.difficulty, rng);
+const structure = variant.id === 'wordoku' ? variant.deriveStructure?.(solution, model) : undefined;
 
 console.log(
   JSON.stringify(
@@ -59,6 +60,7 @@ console.log(
         variant: variant.id,
         givens: valuesForLesson(model.cells, givens),
         solution: valuesForLesson(model.cells, solution),
+        ...(structure === undefined ? {} : { structure }),
       },
     },
     null,

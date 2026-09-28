@@ -174,12 +174,39 @@ Cell ids use the 1-based rc notation learners see, so `"r1c1"` is the top-left c
 | `variant`       | Required. A registered variant id.                                                                                                                                                                            |
 | `givens`        | Required. The prefilled cells only. Each must match `solution`.                                                                                                                                               |
 | `solution`      | Required. Every cell on the board, with no conflicts under the variant's rules.                                                                                                                               |
+| `structure`     | Wordoku only: `{ "word": "..." }`. Any other variant fails the build if this field is set.                                                                                                                    |
 | `cellSelection` | `"single"` (default) or `"multiple"`. Use `"multiple"` when the learner must select a set of cells. Selected cells then show a background fill and check mark, and the blue ring marks only the focused cell. |
 | `highlights`    | Booleans for `peers`, `sameValue`, and `conflicts`. Each defaults to `true`. `conflicts: false` also drops "in conflict" from the spoken cell label.                                                          |
 
 Values must be symbols of the variant. Any other field fails the build.
 
-Variants with a `deriveStructure` or `deriveGutters` hook (killer, jigsaw, arrow, and others) are not supported yet, because the config can't pin their cages, regions, or clues. The loader rejects them, and it rejects a `structure` field. Don't invent a `structure` shape from the variant's engine or overlay types.
+#### Supported variants
+
+Variants must be listed here before authors can use them in a lesson board. Use the registry id, not the display name.
+
+##### Supported, digits only
+
+Variants: `classic`, `sudoku-x`, `windoku`, `argyle`, `asterisk`, `center-dot`, `girandola`, `color`, `mini`, `six-by-six`, `super`, `butterfly`, `cross`, `flower`, `gattai-3`, `kazaguruma`, `samurai`, `sohei`, `tripledoku`, `twodoku`, `sujiken`.
+
+##### Supported, clues from the solution
+
+Variants: `sandwich`, `skyscraper`.
+
+These variants compute their clues from the configured solution, so they don't take a `structure` field. Their clues also narrow the answer, so their boards need fewer givens than classic Sudoku.
+
+##### Supported with `structure`
+
+Variants: `wordoku`.
+
+The `structure.word` value must be nine uppercase letters A-Z with no repeated letters. The solution must have one complete row or column whose values read 1 through 9 in order; those cells then spell the configured word. Checklist values and solution entries remain digits. For example, when the word is `WONDERFUL`, "Enter W in r3c5" uses `{ "values": { "r3c5": 1 } }`.
+
+##### Not supported yet
+
+Variants: `arrow`, `chain`, `consecutive`, `even-odd`, `greater-than`, `jigsaw`, `killer`, `kropki`.
+
+These variants need a pinned structure such as arrows, regions, cages, or marks. Don't invent a `structure` shape from their engine or overlay types; the loader rejects these variants until their authoring config is designed.
+
+`super`, the multigrids, and `sujiken` load, but the panel has no pan/zoom and may overflow on a narrow screen. Check a lesson at 320px before using one.
 
 ## Checklist items
 
@@ -214,7 +241,7 @@ Lessons `102.md` (a `selected` test) and `103.md` (two `values` tests) show both
 ## Authoring a board
 
 1. Decide what the learner practices, and keep the board and checklist to that goal.
-2. Generate a puzzle. This prints a ready-to-paste `board` object with 1-based ids. `--seed` takes an integer and makes the output reproducible.
+2. Generate a puzzle. This prints a ready-to-paste `board` object with 1-based ids. `pnpm lesson:board wordoku` also prints `structure` with its generated word. `--seed` takes an integer and makes the output reproducible.
 
    ```bash
    pnpm lesson:board <variantId> [--seed n]

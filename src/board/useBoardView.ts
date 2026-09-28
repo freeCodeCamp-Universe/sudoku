@@ -1,7 +1,7 @@
 import { createElement, useMemo } from 'react';
 import { createSeededRng, hashSeed } from '@/engine/rng';
 import type { CellId, Solution, SymbolValue, Variant, VariantModel } from '@/engine/types';
-import { assemblePuzzle } from '@/board/assemblePuzzle';
+import { assemblePuzzle, withStructure } from '@/board/assemblePuzzle';
 import { resolveAnnotators } from '@/board/annotators/registry';
 import { jigsawAnnotator } from '@/board/annotators/jigsaw';
 import { buildMarkerGaps } from '@/board/markerGaps';
@@ -20,6 +20,7 @@ interface UseBoardViewOptions {
   solution: Solution;
   cellSize: number;
   seedBase: number;
+  structure?: unknown;
 }
 
 function shuffledDisplayOrder(symbols: SymbolValue[], seed: number): SymbolValue[] {
@@ -38,10 +39,14 @@ export function useBoardView({
   solution,
   cellSize,
   seedBase,
+  structure: configuredStructure,
 }: UseBoardViewOptions) {
   const { model, structure } = useMemo(
-    () => assemblePuzzle(variant, baseModel, solution),
-    [baseModel, solution, variant]
+    () =>
+      configuredStructure === undefined
+        ? assemblePuzzle(variant, baseModel, solution)
+        : { model: withStructure(baseModel, configuredStructure), structure: configuredStructure },
+    [baseModel, configuredStructure, solution, variant]
   );
   const layoutStrategy = useMemo(() => resolveLayout(variant.layout.kind), [variant.layout.kind]);
   const rects = useMemo(

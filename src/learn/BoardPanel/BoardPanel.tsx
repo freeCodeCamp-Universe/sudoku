@@ -43,8 +43,8 @@ function BoardPanelContent({
     [boardConfig.solution]
   );
   const puzzle = useMemo(
-    () => puzzleFromConfig(variant, givens, solution),
-    [variant, givens, solution]
+    () => puzzleFromConfig(variant, givens, solution, boardConfig.structure),
+    [variant, givens, solution, boardConfig.structure]
   );
   const engine = useMemo(() => createBoardLessonEngine(givens, solution), [givens, solution]);
   const requirements = lesson.config.checklist;
@@ -78,6 +78,7 @@ function BoardPanelContent({
     solution,
     seedBase: 0,
     cellSize,
+    structure: boardConfig.structure,
     highlights: boardConfig.highlights,
     cellSelection: boardConfig.cellSelection,
     selectedIds: state.selectedIds,

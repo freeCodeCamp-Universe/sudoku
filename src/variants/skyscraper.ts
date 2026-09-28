@@ -119,6 +119,12 @@ export const skyscraper: Variant = {
   deriveStructure(solution: Solution, _model: VariantModel): { clues: EdgeClues } {
     return { clues: computeClues(solution) };
   },
+  lessonStructure(raw: unknown, solution: Solution, _model: VariantModel): { clues: EdgeClues } {
+    if (raw !== undefined) {
+      throw new Error('skyscraper clues come from the solution; remove structure');
+    }
+    return { clues: computeClues(solution) };
+  },
   deriveGutters(structure: unknown): GutterSlots | undefined {
     const clues = (structure as { clues?: EdgeClues } | undefined)?.clues;
 

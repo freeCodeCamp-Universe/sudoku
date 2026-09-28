@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { withStructure } from '@/board/assemblePuzzle';
 import { buildModel } from '@/engine/buildModel';
 import { cellId } from '@/engine/grid';
 import { getVariant } from '@/variants/registry';
@@ -18,5 +19,16 @@ describe('puzzleFromConfig', () => {
     expect(puzzle.model).toEqual(buildModel(variant));
     expect(puzzle.givens).toBe(givens);
     expect(puzzle.solution).toBe(solution);
+  });
+
+  it('should merge configured structure into the model', () => {
+    const variant = getVariant('sandwich');
+    const givens = new Map();
+    const solution = new Map();
+    const structure = { rows: Array(9).fill(0), cols: Array(9).fill(0) };
+
+    const puzzle = puzzleFromConfig(variant, givens, solution, structure);
+
+    expect(puzzle.model).toEqual(withStructure(buildModel(variant), structure));
   });
 });

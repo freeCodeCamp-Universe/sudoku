@@ -144,6 +144,8 @@ export interface Variant {
   peerHouseFilter?: (house: House) => boolean;
   deriveStructure?: (solution: Solution, model: VariantModel) => unknown;
   deriveGutters?: (structure: unknown) => GutterSlots | undefined;
+  // Builds lesson-board structure from config. Throws a plain message when raw is invalid.
+  lessonStructure?: (raw: unknown, solution: Solution, model: VariantModel) => unknown;
   renderSymbol?: (value: SymbolValue, structure?: unknown) => string;
   generateSolution?: (model: VariantModel, rng?: () => number) => Solution;
   generateGivens?: (

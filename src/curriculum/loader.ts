@@ -264,14 +264,19 @@ function parseBoardConfig(
   if (!variant) {
     throw new Error(`${field}.variant is unknown: ${value.variant}`);
   }
-  if (variant.deriveStructure || variant.deriveGutters || value.structure !== undefined) {
+  const hasStructure = Object.prototype.hasOwnProperty.call(value, 'structure');
+  if ((variant.deriveStructure || variant.deriveGutters) && !variant.lessonStructure) {
     throw new Error(
       `${field}.variant: variant ${variant.id} needs a structure field, which lesson boards don't support yet`
     );
   }
+  if (hasStructure && !variant.lessonStructure) {
+    throw new Error(`${field}.structure is not supported for variant ${variant.id}`);
+  }
 
   const unknownKeys = Object.keys(value).filter(
-    (key) => !['variant', 'givens', 'solution', 'cellSelection', 'highlights'].includes(key)
+    (key) =>
+      !['variant', 'givens', 'solution', 'structure', 'cellSelection', 'highlights'].includes(key)
   );
   if (unknownKeys.length > 0) {
     throw new Error(`${field}.${unknownKeys[0]} is not supported`);
@@ -306,7 +311,16 @@ function parseBoardConfig(
   }
 
   const solutionValues: Values = new Map(Object.entries(solution));
-  const conflicts = validate(solutionValues, model);
+  let structure: unknown;
+  if (variant.lessonStructure) {
+    try {
+      structure = variant.lessonStructure(value.structure, solutionValues, model);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${field}.structure: ${message}`);
+    }
+  }
+  const conflicts = validate(solutionValues, { ...model, structure });
   if (conflicts.length > 0) {
     throw new Error(`${field}.solution has conflicts for variant ${variant.id}`);
   }
@@ -323,6 +337,7 @@ function parseBoardConfig(
       variant: variant.id,
       givens,
       solution,
+      ...(structure === undefined ? {} : { structure }),
       cellSelection,
       highlights,
     },

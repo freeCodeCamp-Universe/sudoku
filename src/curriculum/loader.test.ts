@@ -89,6 +89,15 @@ const MINI_BOARD = {
   highlights: { peers: false, sameValue: true },
 };
 
+const FULL_SOLUTION_9X9 = Object.fromEntries(
+  Array.from({ length: 9 }, (_, row) =>
+    Array.from({ length: 9 }, (_, col) => [
+      `r${row + 1}c${col + 1}`,
+      ((row * 3 + Math.floor(row / 3) + col) % 9) + 1,
+    ])
+  ).flat()
+);
+
 describe('buildCurriculum', () => {
   it('should build prose and interactive lessons', () => {
     const { lessons, modules } = buildCurriculum(ORDERING, MAP);
@@ -194,6 +203,28 @@ ${config}
   });
 
   it.each([
+    [
+      'sandwich',
+      undefined,
+      expect.objectContaining({ rows: expect.any(Array), cols: expect.any(Array) }),
+    ],
+    ['skyscraper', undefined, expect.objectContaining({ clues: expect.any(Object) })],
+    ['wordoku', { word: 'WONDERFUL' }, { word: 'WONDERFUL' }],
+  ])('should accept a %s lesson board', (variant, structure, expectedStructure) => {
+    const board = {
+      variant,
+      givens: { r1c1: 1 },
+      solution: FULL_SOLUTION_9X9,
+      ...(structure === undefined ? {} : { structure }),
+    };
+    const config = ['```json', JSON.stringify({ board }), '```'].join('\n');
+    const [lesson] = build(lessonWith('Do something.', config)).lessons;
+
+    expect(lesson.config?.board?.variant).toBe(variant);
+    expect(lesson.config?.board?.structure).toEqual(expectedStructure);
+  });
+
+  it.each([
     ['unknown variant', { ...MINI_BOARD, variant: 'missing' }, 'config.board.variant is unknown'],
     [
       'unknown board cell',
@@ -233,6 +264,42 @@ ${config}
   ])('should reject a board with %s', (_name, board, message) => {
     const config = ['```json', JSON.stringify({ board }), '```'].join('\n');
     expect(() => build(lessonWith('Do something.', config))).toThrow(message);
+  });
+
+  it.each([
+    ['missing word', undefined, 'structure must contain only a word field'],
+    ['lowercase word', { word: 'wonderful' }, 'word must be 9 uppercase letters A-Z'],
+    [
+      'word with extra keys',
+      { word: 'WONDERFUL', extra: true },
+      'structure must contain only a word field',
+    ],
+  ])('should prefix wordoku structure errors for %s', (_name, structure, message) => {
+    const board = {
+      variant: 'wordoku',
+      givens: { r1c1: 1 },
+      solution: FULL_SOLUTION_9X9,
+      ...(structure === undefined ? {} : { structure }),
+    };
+    const config = ['```json', JSON.stringify({ board }), '```'].join('\n');
+
+    expect(() => build(lessonWith('Do something.', config))).toThrow(
+      `config.board.structure: ${message}`
+    );
+  });
+
+  it('should reject structure on a variant without a lesson structure hook', () => {
+    const board = {
+      variant: 'classic',
+      givens: { r1c1: 1 },
+      solution: FULL_SOLUTION_9X9,
+      structure: { word: 'WONDERFUL' },
+    };
+    const config = ['```json', JSON.stringify({ board }), '```'].join('\n');
+
+    expect(() => build(lessonWith('Do something.', config))).toThrow(
+      'config.board.structure is not supported for variant classic'
+    );
   });
 
   it('should reject an unknown cell id in a board checklist test', () => {
